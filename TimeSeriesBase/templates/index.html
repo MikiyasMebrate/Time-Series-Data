@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+ {% include "includes/head.html" %}
+  <body
+    style="
+      background-image: url(assets/svg/background_snow.svg);
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position-x: center;
+    "
+  >
+    <!--Navbar Start-->
+    
+    <!--Navbar End-->
+    {% include "includes/navbar.html" %}
+    <!--Introduction Start-->
+    <div class="container-sm">
+      <div class="row justify-content-center">
+        <div
+          class="col-md-6 mt-2 ps-sm-5"
+          style="padding-bottom: 5%; padding-top: 5%"
+        >
+          <h1 class="fw-bold mb-2 text-center">MoPD Analysis Tool</h1>
+          <p class="fs-5">
+            This analysis tool is designed to provide insights into various
+            economic factors, such as GDP growth, inflation rates, employment
+            levels, and other relevant indicators. By utilizing this tool, the
+            MOPD aims to make informed decisions and develop effective policies
+            that can drive economic growth and improve the overall well-being of
+            the country.
+          </p>
+        </div>
+
+        <div
+          class="col-md-6 mt-2 ps-sm-5"
+          style="padding-bottom: 5%; padding-top: 5%"
+        >
+          <img class="img-fluid" src="assets/svg/undraw_data_re_80ws.svg" />
+        </div>
+      </div>
+    </div>
+    <!--Introduction End-->
+
+    <!--Latest Data Start-->
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <h2 class="text-center mb-3">Latest Data and update</h2>
+        <hr />
+        <!--Card Start-->
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h1>Indicator</h1>
+              <h5>CPI Time <span class="badge bg-success .h1">New</span></h5>
+            </div>
+            <div class="icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <!--Card End-->
+
+        <!--Card Start-->
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h1>Indicator</h1>
+              <h5>CPI Time <span class="badge bg-success .h1">New</span></h5>
+            </div>
+            <div class="icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <!--Card End-->
+
+        <!--Card Start-->
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h1>Indicator</h1>
+              <h5>CPI Time <span class="badge bg-success .h1">New</span></h5>
+            </div>
+            <div class="icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <!--Card End-->
+
+        <!--Card Start-->
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h1>Indicator</h1>
+              <h5>CPI Time <span class="badge bg-success .h1">New</span></h5>
+            </div>
+            <div class="icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <!--Card End-->
+      </div>
+    </div>
+    <!--Latest Data End-->
+
+    <!--Mission Start-->
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-5 mt-2">
+          <img class="img-fluid" src="assets/svg/undraw_target_re_fi8j.svg" />
+        </div>
+        <div class="col-md-7 mt-2">
+          <h3 class="text-center">Mission</h3>
+          <hr />
+          <p class="fs-5">
+            Our mission is to provide comprehensive policy analysis, guidance,
+            and support to drive the multidimensional development endeavors of
+            our country. We aim to play a pivotal role in shaping Ethiopia's
+            future by preparing medium and long-term national development plans
+            through effective coordination with sectoral ministries and relevant
+            government agencies.
+          </p>
+          <p class="fs-5">
+            We are committed to developing robust public investment
+            administration and management capabilities to ensure efficient
+            appraisal, selection, and prioritization of policies, programs, and
+            development projects. By enhancing these capacities, we strive to
+            maximize the impact of public resources and promote sustainable and
+            inclusive development.
+          </p>
+          <p class="fs-5">
+            A key aspect of our mission is the regular monitoring and evaluation
+            (M&E) of development plans, policies, programs, and projects.
+            Through rigorous M&E practices, we assess the effectiveness and
+            efficiency of our initiatives, identify areas for improvement, and
+            make evidence-based decisions to optimize the allocation of
+            resources.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--Mission End-->
+
+    <!--Landing Graph Start-->
+    <div class="container mt-5">
+      <h3 class="text-center">CPI Time Series</h3>
+      <hr />
+      <div class="row justify-content-center">
+        <!--Bar Chart Start-->
+        <div class="col-md-6">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="far fa-chart-bar"></i>
+                Bar Chart
+              </h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                ></button>
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="remove"
+                ></button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="bar-chart" style="height: 300px"></div>
+            </div>
+          </div>
+        </div>
+        <!--Bar Chart End-->
+
+        <!--Line Chart Start-->
+        <div class="col-md-6">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="far fa-chart-bar"></i>
+                Line Chart
+              </h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                ></button>
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="remove"
+                ></button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="line-chart" style="height: 300px"></div>
+            </div>
+          </div>
+        </div>
+        <!--Line Chart End-->
+      </div>
+    </div>
+    {% include "includes/footer.html" %}
+    <!--Landing Graph End-->
+  </body>
+  {% include "includes/js.html" %}
+  <script>
+    $(function () {
+      /*
+       * BAR CHART
+       * ---------
+       */
+
+      var bar_data = {
+        data: [
+          [1, 10],
+          [2, 8],
+          [3, 4],
+          [4, 13],
+          [5, 17],
+          [6, 9],
+        ],
+        bars: { show: true },
+      };
+      $.plot("#bar-chart", [bar_data], {
+        grid: {
+          borderWidth: 1,
+          borderColor: "#f3f3f3",
+          tickColor: "#f3f3f3",
+        },
+        series: {
+          bars: {
+            show: true,
+            barWidth: 0.5,
+            align: "center",
+          },
+        },
+        colors: ["#3c8dbc"],
+        xaxis: {
+          ticks: [
+            [1, "January"],
+            [2, "February"],
+            [3, "March"],
+            [4, "April"],
+            [5, "May"],
+            [6, "June"],
+          ],
+        },
+      });
+      /* END BAR CHART */
+    });
+
+    /*
+     * LINE CHART
+     * ----------
+     */
+    //LINE randomly generated data
+
+    var sin = [],
+      cos = [];
+    for (var i = 0; i < 14; i += 0.5) {
+      sin.push([i, Math.sin(i)]);
+      cos.push([i, Math.cos(i)]);
+    }
+    var line_data1 = {
+      data: sin,
+      color: "#3c8dbc",
+    };
+    var line_data2 = {
+      data: cos,
+      color: "#00c0ef",
+    };
+    $.plot("#line-chart", [line_data1, line_data2], {
+      grid: {
+        hoverable: true,
+        borderColor: "#f3f3f3",
+        borderWidth: 1,
+        tickColor: "#f3f3f3",
+      },
+      series: {
+        shadowSize: 0,
+        lines: {
+          show: true,
+        },
+        points: {
+          show: true,
+        },
+      },
+      lines: {
+        fill: false,
+        color: ["#3c8dbc", "#f56954"],
+      },
+      yaxis: {
+        show: true,
+      },
+      xaxis: {
+        show: true,
+      },
+    });
+    //Initialize tooltip on hover
+    $('<div class="tooltip-inner" id="line-chart-tooltip"></div>')
+      .css({
+        position: "absolute",
+        display: "none",
+        opacity: 0.8,
+      })
+      .appendTo("body");
+    $("#line-chart").bind("plothover", function (event, pos, item) {
+      if (item) {
+        var x = item.datapoint[0].toFixed(2),
+          y = item.datapoint[1].toFixed(2);
+
+        $("#line-chart-tooltip")
+          .html(item.series.label + " of " + x + " = " + y)
+          .css({
+            top: item.pageY + 5,
+            left: item.pageX + 5,
+          })
+          .fadeIn(200);
+      } else {
+        $("#line-chart-tooltip").hide();
+      }
+    });
+    /* END LINE CHART */
+
+    /*
+     * Custom Label formatter
+     * ----------------------
+     */
+    function labelFormatter(label, series) {
+      return (
+        '<div style="font-size:13px; text-align:center; padding:2px; color: #fff; font-weight: 600;">' +
+        label +
+        "<br>" +
+        Math.round(series.percent) +
+        "%</div>"
+      );
+    }
+  </script>
+</html>
