@@ -126,6 +126,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+import os
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
 
 #Custom User
 AUTH_USER_MODEL = 'UserManagement.CustomUser'
