@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{%load static%}
 <html lang="en">
  {% include "includes/head.html" %}
   <body
@@ -35,7 +35,7 @@
           class="col-md-6 mt-2 ps-sm-5"
           style="padding-bottom: 5%; padding-top: 5%"
         >
-          <img class="img-fluid" src="assets/svg/undraw_data_re_80ws.svg" />
+          <img class="img-fluid" src="{% static 'assets/svg/undraw_data_re_80ws.svg' %}" />
         </div>
       </div>
     </div>
@@ -216,10 +216,14 @@
         </div>
         <!--Line Chart End-->
       </div>
+      <div class="col-mb-8">
+        {% include "includes/footer.html" %}
+        </div>
+    
     </div>
-    {% include "includes/footer.html" %}
-    <!--Landing Graph End-->
+       <!--Landing Graph End-->
   </body>
+ 
   {% include "includes/js.html" %}
   <script>
     $(function () {
