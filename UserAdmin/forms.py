@@ -1,9 +1,5 @@
 from django import forms
-<<<<<<< HEAD
-from TimeSeriesBase.models import Topic, Location, Indicator
-=======
-from TimeSeriesBase.models import Topic, Location,Source,Measurement
->>>>>>> 42655ba7b08806e34f84d014d3ead771e771fe47
+from TimeSeriesBase.models import Topic, Location,Source,Measurement, Indicator
 
 
 class LocationForm(forms.ModelForm):
@@ -19,7 +15,6 @@ class LocationForm(forms.ModelForm):
                 'class' : 'form-control'
             })
         }
-<<<<<<< HEAD
         
 class IndicatorForm(forms.ModelForm):
     class Meta:
@@ -38,7 +33,6 @@ class IndicatorForm(forms.ModelForm):
             })
         }
     
-=======
 
 class TopicForm(forms.ModelForm):
     class Meta:
@@ -89,4 +83,3 @@ class MeasurmentForm(forms.ModelForm):
                 'class': 'form-control'
             })
     }
->>>>>>> 42655ba7b08806e34f84d014d3ead771e771fe47

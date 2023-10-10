@@ -1,12 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
-<<<<<<< HEAD
 from TimeSeriesBase.models import Location
-from .forms import LocationForm, IndicatorForm
-=======
-from TimeSeriesBase.models import Location,Topic,Source
-from .forms import LocationForm,TopicForm,SourceForm,MeasurmentForm
->>>>>>> 42655ba7b08806e34f84d014d3ead771e771fe47
+from .forms import LocationForm, IndicatorForm,TopicForm,SourceForm,MeasurmentForm
+
 
 # Create your views here.
 def index(request):
