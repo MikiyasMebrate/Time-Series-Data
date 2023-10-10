@@ -1,14 +1,31 @@
 from django.shortcuts import render, HttpResponse
 from django.contrib import messages
-from TimeSeriesBase.models import Location
-from .forms import LocationForm
+from TimeSeriesBase.models import Location,Category
+from .forms import LocationForm,catagoryForm
 
 # Create your views here.
 def index(request):
     return render(request, 'user-admin/index.html')
 
 def category(request):
-    return render(request, 'user-admin/categories.html')
+    category = Category.objects.all()
+    
+    form = catagoryForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.save()
+            form= catagoryForm()
+            messages.success(request, "catagory has been successfully Added!")
+        else:
+            messages.error(request, "Please Try again!")
+            
+    context = {
+        'form' : form,
+        'category' : category
+    }
+    return render(request, 'user-admin/categories.html',context)
 
 def data_list(request):
     return render(request, 'user-admin/data_list_view.html')
@@ -20,18 +37,23 @@ def indicator(request):
     return render(request, 'user-admin/indicators.html')
 
 def location(request):
-    form = LocationForm(request.POST or None)
     
+    location = Location.objects.all()
+    
+    form = LocationForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form = form.save(commit=False)
             form.user = request.user
             form.save()
+            form= LocationForm()
+            messages.success(request, "Location has been successfully Added!")
+        else:
+            messages.error(request, "Please Try again!")
             
-            
-    
     context = {
-        'form' : form
+        'form' : form,
+        'locations' : location
     }
     return render(request, 'user-admin/location.html', context)
 
