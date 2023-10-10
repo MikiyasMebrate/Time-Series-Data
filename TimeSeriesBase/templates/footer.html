@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from adminlte.io/themes/v3/pages/layout/fixed-footer.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 08 Sep 2023 12:52:16 GMT -->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Fixed Footer Layout</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
+    <link rel="stylesheet" href="assets/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/adminlte.min2167.css?v=3.2.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.0.0/css/ionicons.min.css">
+
+
+
+
+
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Serif+Pro:400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+        .footer-02 h2,
+        .footer-02 h3,
+        .footer-02 p,
+        .footer-02 a {
+            color: #ffffff;
+            /* Text Color */
+        }
+        
+        .footer-02 a:hover {
+            color: #f8f9fa;
+            /* Hover Text Color */
+        }
+        
+        .footer-02 .btn-custom {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+    </style>
+    <script nonce="aebb6235-fff0-4dfe-9e09-c9b024d923b0">
+        (function(w, d) {
+            ! function(bg, bh, bi, bj) {
+                bg[bi] = bg[bi] || {};
+                bg[bi].executed = [];
+                bg.zaraz = {
+                    deferred: [],
+                    listeners: []
+                };
+                bg.zaraz.q = [];
+                bg.zaraz._f = function(bk) {
+                    return async function() {
+                        var bl = Array.prototype.slice.call(arguments);
+                        bg.zaraz.q.push({
+                            m: bk,
+                            a: bl
+                        })
+                    }
+                };
+                for (const bm of["track", "set", "debug"]) bg.zaraz[bm] = bg.zaraz._f(bm);
+                bg.zaraz.init = () => {
+                    var bn = bh.getElementsByTagName(bj)[0],
+                        bo = bh.createElement(bj),
+                        bp = bh.getElementsByTagName("title")[0];
+                    bp && (bg[bi].t = bh.getElementsByTagName("title")[0].text);
+                    bg[bi].x = Math.random();
+                    bg[bi].w = bg.screen.width;
+                    bg[bi].h = bg.screen.height;
+                    bg[bi].j = bg.innerHeight;
+                    bg[bi].e = bg.innerWidth;
+                    bg[bi].l = bg.location.href;
+                    bg[bi].r = bh.referrer;
+                    bg[bi].k = bg.screen.colorDepth;
+                    bg[bi].n = bh.characterSet;
+                    bg[bi].o = (new Date).getTimezoneOffset();
+                    if (bg.dataLayer)
+                        for (const bt of Object.entries(Object.entries(dataLayer).reduce(((bu, bv) => ({...bu[1],
+                                ...bv[1]
+                            })), {}))) zaraz.set(bt[0], bt[1], {
+                            scope: "page"
+                        });
+                    bg[bi].q = [];
+                    for (; bg.zaraz.q.length;) {
+                        const bw = bg.zaraz.q.shift();
+                        bg[bi].q.push(bw)
+                    }
+                    bo.defer = !0;
+                    for (const bx of[localStorage, sessionStorage]) Object.keys(bx || {}).filter((bz => bz.startsWith("_zaraz_"))).forEach((by => {
+                        try {
+                            bg[bi]["z_" + by.slice(7)] = JSON.parse(bx.getItem(by))
+                        } catch {
+                            bg[bi]["z_" + by.slice(7)] = bx.getItem(by)
+                        }
+                    }));
+                    bo.referrerPolicy = "origin";
+                    bo.src = "assets/assets/cdn-cgi/zaraz/sd0d9.js?z=" + btoa(encodeURIComponent(JSON.stringify(bg[bi])));
+                    bn.parentNode.insertBefore(bo, bn)
+                };
+                ["complete", "interactive"].includes(bh.readyState) ? zaraz.init() : bg.addEventListener("DOMContentLoaded", zaraz.init)
+            }(w, d, "zarazData", "script");
+        })(window, document);
+    </script>
+</head>
+
+<body>
+
+
+
+    <footer class="footer-02 ">
+        <div class="container mb-0">
+            <div class="row">
+                <div class="col-md-4 col-lg-5">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-8 mb-md-0 mb-4">
+                            <h2 class="footer-heading"><a href="#" class="logo">MoPD</a></h2>
+                            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+                            <a href="#">read more <span class="ion-ios-arrow-round-forward"></span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-lg-7">
+                    <div class="row">
+                        <div class="col-md-3 mb-md-0 mb-4 border-left">
+                            <h2 class="footer-heading">Discover</h2>
+                            <ul class="list-unstyled">
+                                <li><a href="#" class="py-1 d-block">Buy &amp; Sell</a></li>
+                                <li><a href="#" class="py-1 d-block">Merchant</a></li>
+                                <li><a href="#" class="py-1 d-block">Giving back</a></li>
+                                <li><a href="#" class="py-1 d-block">Help &amp; Support</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3 mb-md-0 mb-4 border-left">
+                            <h2 class="footer-heading">About</h2>
+                            <ul class="list-unstyled">
+                                <li><a href="#" class="py-1 d-block">Staff</a></li>
+                                <li><a href="#" class="py-1 d-block">Team</a></li>
+                                <li><a href="#" class="py-1 d-block">Careers</a></li>
+                                <li><a href="#" class="py-1 d-block">Blog</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3 mb-md-0 mb-4 border-left">
+                            <h2 class="footer-heading">Resources</h2>
+                            <ul class="list-unstyled">
+                                <li><a href="#" class="py-1 d-block">Security</a></li>
+                                <li><a href="#" class="py-1 d-block">Global</a></li>
+                                <li><a href="#" class="py-1 d-block">Charts</a></li>
+                                <li><a href="#" class="py-1 d-block">Privacy</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-3 mb-md-0 mb-4 border-left">
+                            <h2 class="footer-heading">Social</h2>
+                            <ul class="list-unstyled">
+                                <li><a href="#" class="py-1 d-block"><i class="icon ion-logo-facebook"></i> Facebook</a></li>
+                                <li><a href="#" class="py-1 d-block"><i class="icon ion-logo-twitter"></i> Twitter</a></li>
+                                <li><a href="#" class="py-1 d-block"><i class="icon ion-logo-instagram"></i> Instagram</a></li>
+                                <li><a href="#" class="py-1 d-block"><i class="icon ion-logo-googleplus"></i> Googleplus</a></li>
+                            </ul>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="row partner-wrap mt-5">
+                <div class="col-md-12">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0">Our Partner:</h3>
+                        </div>
+                        <div class="col-md-9">
+                            <p class="partner-name mb-0">
+                                <a href="#"><span class="ion-logo-ionic mr-2"></span>Company 01</a>
+                                <a href="#"><span class="ion-logo-ionic mr-2"></span>Company 02</a>
+                                <a href="#"><span class="ion-logo-ionic mr-2"></span>Company 03</a>
+                                <a href="#"><span class="ion-logo-ionic mr-2"></span>Company 04</a>
+                                <a href="#"><span class="ion-logo-ionic mr-2"></span>Company 05</a>
+                                <a href="#"><span class="ion-logo-ionic mr-2"></span>Company 06</a>
+                            </p>
+                        </div>
+                        <div class="col text-md-right">
+                            <p class="mb-0"><a href="#" class="btn-custom">See All <span class="ion-ios-arrow-round-forward"></span></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-6 col-lg-8">
+
+                    <p class="copyright">
+
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script> All rights reserved </i> by
+                        <a href="" target="_blank"></a>
+
+                    </p>
+                </div>
+                <div class="col-md-6 col-lg-4 text-md-right">
+                    <p class="mb-0 list-unstyled">
+                        <a class="mr-md-3" href="#">Terms</a>
+                        <a class="mr-md-3" href="#">Privacy</a>
+                        <a class="mr-md-3" href="#">Compliances</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/popper.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/plugins/jquery/jquery.min.js"></script>
+
+    <script src="assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/adminlte.min2167.js?v=3.2.0"></script>
+
+    <script src="assets/js/demo.js"></script>
+</body>
+
+
+</html>

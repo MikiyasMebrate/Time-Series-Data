@@ -1,18 +1,25 @@
-{%load static%}
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
- {% include "includes/head.html" %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    {% include 'includes/head.html'%}
+
+ 
+
+
+  </head>
   <body
     style="
-      background-image: url(assets/svg/background_snow.svg);
+      background-image: url('{% static 'assets/svg/background_snow.svg' %});
       background-repeat: no-repeat;
       background-size: contain;
       background-position-x: center;
     "
   >
-    <!--Navbar Start-->
-    
-    <!--Navbar End-->
-    {% include "includes/navbar.html" %}
+    {% include 'includes/navbar.html'%}
     <!--Introduction Start-->
     <div class="container-sm">
       <div class="row justify-content-center">
@@ -35,7 +42,10 @@
           class="col-md-6 mt-2 ps-sm-5"
           style="padding-bottom: 5%; padding-top: 5%"
         >
-          <img class="img-fluid" src="{% static 'assets/svg/undraw_data_re_80ws.svg' %}" />
+          <img
+            class="img-fluid"
+            src="{% static 'assets/svg/undraw_data_re_80ws.svg' %}"
+          />
         </div>
       </div>
     </div>
@@ -121,7 +131,10 @@
     <div class="container mt-5">
       <div class="row justify-content-center">
         <div class="col-md-5 mt-2">
-          <img class="img-fluid" src="{% static 'assets/svg/undraw_target_re_fi8j.svg' %}" />
+          <img
+            class="img-fluid"
+            src="{% static 'assets/svg/undraw_target_re_fi8j.svg' %}"
+          />
         </div>
         <div class="col-md-7 mt-2">
           <h3 class="text-center">Mission</h3>
@@ -216,16 +229,13 @@
         </div>
         <!--Line Chart End-->
       </div>
-      <div class="col-mb-8">
-        {% include "includes/footer.html" %}
-        </div>
-    
     </div>
-       <!--Landing Graph End-->
-       
+    <!--Landing Graph End-->
+   {% include 'includes/footer.html'%}
   </body>
- 
-  {% include "includes/js.html" %}
+
+  {% include 'includes/footer_js.html'%}
+  <script src="{% static '/assets/dist/js/demo.js' %}"></script>
   <script>
     $(function () {
       /*
