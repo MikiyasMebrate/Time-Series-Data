@@ -1,7 +1,12 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
+<<<<<<< HEAD
 from TimeSeriesBase.models import Location
 from .forms import LocationForm, IndicatorForm
+=======
+from TimeSeriesBase.models import Location,Topic,Source
+from .forms import LocationForm,TopicForm,SourceForm,MeasurmentForm
+>>>>>>> 42655ba7b08806e34f84d014d3ead771e771fe47
 
 # Create your views here.
 def index(request):
@@ -85,10 +90,44 @@ def profile(request):
     return render(request, 'user-admin/profile.html')
 
 def source(request):
-    return render(request, 'user-admin/source.html')
+    sources = Source.objects.all()
+
+    form = SourceForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.save()
+            form = SourceForm(request.POST or None)
+            messages.success(request, "Source has been successfully Added!")
+        else:
+            messages.error(request, "Please Try again!")
+            
+    context = {
+        'form' : form,
+        'sources' : sources
+    }
+    return render(request, 'user-admin/source.html',context=context)
 
 def topic(request):
-    return render(request, 'user-admin/topic.html')
+    topics = Topic.objects.all()
+
+    form = TopicForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
+            form= TopicForm()
+            messages.success(request, "Topic has been successfully Added!")
+        else:
+            messages.error(request, "Please Try again!")
+
+    context = {
+        'form' : form,
+        'topics' : topics
+    }
+    print(topics)
+    return render(request, 'user-admin/topic.html',context=context)
 
 def users_list(request):
     return render(request, 'user-admin/users_list.html')
