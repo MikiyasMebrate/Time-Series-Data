@@ -18,7 +18,7 @@ class LocationForm(forms.ModelForm):
 class catagoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields =  ('name_ENG', 'name_AMH')
+        fields =  ('name_ENG', 'name_AMH','topic')
         
         widgets = {
             'name_ENG' : forms.TextInput(attrs={
@@ -26,7 +26,12 @@ class catagoryForm(forms.ModelForm):
             }),
             'name_AMH' : forms.TextInput(attrs={
                 'class' : 'form-control'
+            }),
+              'topic' : forms.SelectMultiple(attrs={
+                'class' : 'form-control'
             })
+            
+          
             
         }
     

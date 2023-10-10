@@ -47,7 +47,7 @@
               </div>
               <div class="mb-3">
                 <label for="id_location" class="col-form-label">Topic:<small class="text-danger"></small></label>
-                {{category.topic}}
+                {{form.topic}}
               </div>
           </div>
           <div class="modal-footer">
@@ -110,21 +110,28 @@
           <div class="row justify-content-center">
             <div class="col-md-12">
               <div class="table-responsive border p-3 shadow">
-                <table
-                  id="example"
-                  class="table table-striped table-hover table-sm"
-                >
+                <table id="example" class="table table-striped table-hover table-sm">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Created Date</th>
+                      <th>Name English</th>
+                      <th>Name Amharic</th>
+                      <th>topic</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
+                    {% for catagory in catagorys%}
                     <tr>
-                      <td>MikiyasMebrate</td>
-                      <td>Aug, 23, 2000</td>
+                      <td> {{catagory.name_ENG }}</td>
+                      <td> {{catagory.name_AMH }}</td>
+                      <td> {{catagory.topic }}</td>
+                      <td>
+                        <div class="d-flex justify-content-around text-center">
+                          <a href="{% url 'user-catagory-detail' catagory.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                        </div>
+                      </td>
                     </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>

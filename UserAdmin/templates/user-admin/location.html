@@ -98,8 +98,7 @@
                     <td> {{location.created | date:'F d, Y' }}</td>
                     <td>
                       <div class="d-flex justify-content-around text-center">
-                        <a href="#"><i class="fas text-primary fa-pen"></i></a>
-                        <a href="#"><i class="fas text-danger fa-trash"></i></a>
+                        <a href="{% url 'user-location-detail' location.pk %}"><i class="fas text-primary fa-pen"></i></a>
                       </div>
                     </td>
                   </tr>
