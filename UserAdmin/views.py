@@ -2,7 +2,8 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
 from TimeSeriesBase.models import Location,Topic,Source
 from .forms import LocationForm, IndicatorForm,TopicForm,SourceForm,MeasurmentForm
-
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 # Create your views here.
 def index(request):
@@ -93,7 +94,7 @@ def source(request):
         if form.is_valid():
             form = form.save(commit=False)
             form.save()
-            form = SourceForm(request.POST or None)
+            form = SourceForm()
             messages.success(request, "Source has been successfully Added!")
         else:
             messages.error(request, "Please Try again!")
@@ -104,6 +105,36 @@ def source(request):
     }
     return render(request, 'user-admin/source.html',context=context)
 
+def source_detail(request, pk):
+    source = Source.objects.get(pk=pk)
+    
+    form = SourceForm(request.POST or None, instance=source)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('user-admin-source')
+        else:
+            messages.error(request, 'Please try Again!')
+    context = {
+        'form' : form,
+        'source' : source
+    }  
+    return render(request, 'user-admin/source_detail.html', context)
+
+def delete_source(request,pk):
+    source = Source.objects.get(pk=pk)
+    if source.delete():
+        messages.success(request, "Successfully Deleted!")
+        return redirect('user-admin-source')
+    else:
+        messages.error(request, "Please Try again!")
+        return redirect('user-admin-source')
+
+#topic
 def topic(request):
     topics = Topic.objects.all()
 
@@ -125,5 +156,33 @@ def topic(request):
     print(topics)
     return render(request, 'user-admin/topic.html',context=context)
 
+def topic_detail(request, pk):
+    topic = Topic.objects.get(pk=pk)
+    form = TopicForm(request.POST or None, instance=topic)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('user-admin-topic')
+        else:
+            messages.error(request, 'Please try Again!')
+    context = {
+        'form' : form,
+        'topic' : topic
+    }  
+    return render(request, 'user-admin/topic_detail.html', context)
+
+def delete_topic(request,pk):
+    topic = Topic.objects.get(pk=pk)
+    if topic.delete():
+        messages.success(request, "Successfully Deleted!")
+        return redirect('user-admin-topic')
+    else:
+        messages.error(request, "Please Try again!")
+        return redirect('user-admin-topic')
+    
 def users_list(request):
     return render(request, 'user-admin/users_list.html')

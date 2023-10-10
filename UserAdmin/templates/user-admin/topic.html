@@ -124,8 +124,7 @@
                       <td>{{ topic.created|date:'F d, Y' }}</td>
                       <td>
                         <div class="d-flex justify-content-around text-center">
-                          <a href="#"><i class="fas text-primary fa-pen"></i></a>
-                          <a href="#"><i class="fas text-danger fa-trash"></i></a>
+                          <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
                         </div>
                       </td>
                     </tr>

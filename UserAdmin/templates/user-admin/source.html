@@ -34,7 +34,6 @@
             <form method='POST'>
               {% csrf_token %}
               <div class="mb-3">
-  
                 <label for="id_source" class="col-form-label">Name English: {% for err in form.title_ENG.errors%}<small
                     class="text-danger">{{err}}</small> {% endfor %}</label>
                 {{form.title_ENG}}
@@ -113,8 +112,7 @@
                       <td> {{source.created | date:'F d, Y' }}</td>
                       <td>
                         <div class="d-flex justify-content-around text-center">
-                          <a href="#"><i class="fas text-primary fa-pen"></i></a>
-                          <a href="#"><i class="fas text-danger fa-trash"></i></a>
+                          <a href="{% url 'user-source-detail' source.pk %}"><i class="fas text-primary fa-pen"></i></a>
                         </div>
                       </td>
                     </tr>
