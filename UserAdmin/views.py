@@ -20,18 +20,23 @@ def indicator(request):
     return render(request, 'user-admin/indicators.html')
 
 def location(request):
-    form = LocationForm(request.POST or None)
     
+    location = Location.objects.all()
+    
+    form = LocationForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form = form.save(commit=False)
             form.user = request.user
             form.save()
+            form= LocationForm()
+            messages.success(request, "Location has been successfully Added!")
+        else:
+            messages.error(request, "Please Try again!")
             
-            
-    
     context = {
-        'form' : form
+        'form' : form,
+        'locations' : location
     }
     return render(request, 'user-admin/location.html', context)
 
