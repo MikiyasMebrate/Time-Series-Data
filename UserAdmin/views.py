@@ -1,4 +1,7 @@
 from django.shortcuts import render, HttpResponse
+from django.contrib import messages
+from TimeSeriesBase.models import Location
+from .forms import LocationForm
 
 # Create your views here.
 def index(request):
@@ -17,7 +20,20 @@ def indicator(request):
     return render(request, 'user-admin/indicators.html')
 
 def location(request):
-    return render(request, 'user-admin/location.html')
+    form = LocationForm(request.POST or None)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.save()
+            
+            
+    
+    context = {
+        'form' : form
+    }
+    return render(request, 'user-admin/location.html', context)
 
 def measurement(request):
     return render(request, 'user-admin/measurement.html')

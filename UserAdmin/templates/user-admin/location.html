@@ -1,4 +1,5 @@
-{% load static %}
+{% load static %} {% load widget_tweaks %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -21,7 +22,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="userRegistrationLabel">
-              New User Registration
+              New Location Registration
             </h5>
             <button
               type="button"
@@ -33,40 +34,12 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="id_username" class="col-form-label"
-                  >Username:</label
-                >
-                <input type="text" class="form-control" id="id_username" />
-              </div>
-              <div class="row">
-                <div class="col mb-3">
-                  <label for="id_first_name" class="col-form-label"
-                    >First Name:</label
-                  >
-                  <input type="text" class="form-control" id="id_first_name" />
-                </div>
-                <div class="col mb-3">
-                  <label for="id_last_name" class="col-form-label"
-                    >Last Name:</label
-                  >
-                  <input type="text" class="form-control" id="id_last_name" />
-                </div>
+                <label for="id_location" class="col-form-label">Name English:</label>
+                {{form.name_ENG |add_class:"form-control"|append_attr:"placeholder:Location English(Required)" }}
               </div>
               <div class="mb-3">
-                <label for="id_email" class="col-form-label">Email:</label>
-                <input type="email" class="form-control" id="id_email" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password1" class="col-form-label"
-                  >Password:</label
-                >
-                <input type="password" class="form-control" id="id_password1" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password2" class="col-form-label"
-                  >Confirm Password:</label
-                >
-                <input type="password" class="form-control" id="id_password2" />
+                <label for="id_location" class="col-form-label">Name Amharic:</label>
+                {{form.name_AMH |add_class:"form-control" |append_attr:"placeholder:Location Amharic(Required)"  }}
               </div>
             </form>
           </div>
@@ -84,7 +57,7 @@
       </div>
     </div>
     <!--Location Registration Modal End-->
-    {% include 'user-admin/include/navbar.html'%}
+    {% include 'user-admin/include/navbar.html'%} 
     {% include 'user-admin/include/sidebar.html'%}
     <!--Body Start-->
     <div class="content-wrapper">
@@ -99,7 +72,6 @@
         </div>
       </div>
       <!--Title End-->
-
       <section class="content">
         <div class="container-fluid">
           <!--Add Topic Button Start-->
