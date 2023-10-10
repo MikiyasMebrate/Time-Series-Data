@@ -16,7 +16,7 @@ class Topic(models.Model):
         return self.title_ENG
 
 
-class Catagory(models.Model):
+class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
     name_AMH = models.CharField(max_length=50)
     topic = models.ManyToManyField(Topic)
@@ -29,7 +29,7 @@ class Indicator(models.Model):
     title_AMH = models.CharField(max_length=100)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    for_catagory = models.ManyToManyField(Catagory)
+    for_category = models.ManyToManyField(Category)
 
     def str(self):
         return self.get_full_path()

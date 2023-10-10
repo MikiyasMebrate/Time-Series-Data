@@ -1,28 +1,57 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Data Display Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"
+    />
 
     <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-            integrity="sha512-..." crossorigin="anonymous" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..."
+        crossorigin="anonymous"
+      />
     </head>
 
-
-    <link rel="stylesheet" href="assets/dist/css/adminlte.min2167.css?v=3.2.0">
-    <link rel="stylesheet" href="assets/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/dist/css/adminlte.min2167.css'%}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/plugins/fontawesome-free/css/all.min.css'%}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css'%}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css'%}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css'%}"
+    />
 
     <!-- Map Libraries -->
     <script src="https://code.highcharts.com/maps/highmaps.js"></script>
@@ -30,794 +59,829 @@
     <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
 
     <style>
-        .green-checkmark::before {
-            content: "\2714";
-            color: green !important;
-        }
+      .green-checkmark::before {
+        content: "\2714";
+        color: green !important;
+      }
 
-        /* Add this code to set the default color of the checkmark */
-        .filter-option-selection .filter-option-checkmark::before {
-            color: green !important;
-        }
+      /* Add this code to set the default color of the checkmark */
+      .filter-option-selection .filter-option-checkmark::before {
+        color: green !important;
+      }
 
-        .highcharts-figure {
-            min-width: 320px;
-            max-width: 750px;
-            margin: 0 auto;
-        }
+      .highcharts-figure {
+        min-width: 320px;
+        max-width: 750px;
+        margin: 0 auto;
+      }
 
-        #map {
-            height: 500px;
-        }
+      #map {
+        height: 500px;
+      }
 
-        .loading {
-            margin-top: 10em;
-            text-align: center;
-            color: gray;
-        }
+      .loading {
+        margin-top: 10em;
+        text-align: center;
+        color: gray;
+      }
 
-        .bar {
-            border-right: 3px solid gray;
-            opacity: 0.7;
-            height: 16px;
-            margin-top: 5px;
-            margin-bottom: 1px;
-        }
+      .bar {
+        border-right: 3px solid gray;
+        opacity: 0.7;
+        height: 16px;
+        margin-top: 5px;
+        margin-bottom: 1px;
+      }
 
-        .card-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      .card-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        .card {
-            margin: auto;
-            /* set margin to auto to center the card horizontally */
-        }
-        #filterColumn {
-            border-right: 0.5px solid rgb(165, 161, 161);
-            display: flex;
-            flex-direction: column;
-          }
-          
-          #dataColumn {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-          }  
-          .form-check-input {
-            cursor: pointer;
-        }
+      .card {
+        margin: auto;
+        /* set margin to auto to center the card horizontally */
+      }
+      #filterColumn {
+        border-right: 0.5px solid rgb(165, 161, 161);
+        display: flex;
+        flex-direction: column;
+      }
 
-        .btn.active {
-            background-color:rgb(0, 119, 255);; /* Replace with your desired color */
-        }
-        /* Add this code to hide the data display section by default */
+      #dataColumn {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .form-check-input {
+        cursor: pointer;
+      }
+
+      .btn.active {
+        background-color: rgb(
+          0,
+          119,
+          255
+        ); /* Replace with your desired color */
+      }
+      /* Add this code to hide the data display section by default */
     </style>
-</head>
+  </head>
 
-<body>
-    <!--Navbar Start-->
-    <nav class="navbar navbar-expand-lg p-0 navbar-light shadow bg-light">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#"
-            ><img
-              src="assets/image/mopd_logo_green.png"
-              width="60px"
-              class="img-fluid ms-2"
-              alt="MoPD-logo"
-              srcset=""
-          /></a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse fs-5" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item ms-2">
-                <a class="nav-link active" aria-current="page" href="index.html">Home</a>
-              </li>
-              <li class="nav-item ms-2">
-                <a class="nav-link" href="data.html">Data</a>
-              </li>
-              <li class="nav-item ms-2">
-                <a class="nav-link" href="contact.html">Contact</a>
-              </li>
-              <li class="nav-item ms-2">
-                <a class="nav-link" href="about.html">About</a>
-              </li>
-            </ul>
-            <div class="dropdown dropstart">
-              <button
-                class="btn btn-primary btn-lg dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton1"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+  <body>
+
+    {% include 'includes/navbar.html'%}
+    <div class="container-fluid mt-3">
+      <h2>Ethiopia Development Indicator</h2>
+      <hr class="divider" />
+      <div class="row">
+        <div class="col-md-4 col-sm-6 col-lg-4" id="filterColumn">
+          <h4 class="ms-1">Indicator Variables</h4>
+          <hr class="dropdown-divider" />
+          <div class="accordion collapsed mt-3" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="databaseHeader">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#databaseOptions"
+                  aria-expanded="false"
+                  aria-controls="databaseOptions"
+                >
+                  <span class="d-flex align-items-center w-100">
+                    <strong class="me-auto">Database</strong>
+                    <span class="d-flex align-items-center">
+                      <span class="">Available</span>
+                      <span class="badge rounded-pill bg-info ms-1">10</span>
+                      <span class="ps-1 pe-1 bar"></span>
+                      <span class="ms-2">Selected</span>
+                      <span class="badge rounded-pill bg-info ms-1 me-2"
+                        >1</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </h2>
+              <div
+                id="databaseOptions"
+                class="accordion-collapse collapse"
+                aria-labelledby="databaseHeader"
+                data-bs-parent="#accordionExample"
               >
-                <i class="fas fa-user"></i>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
-                <li><a class="dropdown-item" href="#">Logout</a></li>
-              </ul>
+                <div class="accordion-body">
+                  <div class="filter-submenu">
+                    <input type="checkbox" id="gdpCheckbox" /> GDP
+                  </div>
+                  <div class="filter-submenu">
+                    <input type="checkbox" id="revenueCheckbox" /> Revenue
+                  </div>
+                  <!-- Add more options here -->
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="regionHeader">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#regionOptions"
+                  aria-expanded="false"
+                  aria-controls="regionOptions"
+                >
+                  <span class="d-flex align-items-center w-100">
+                    <strong class="me-auto">Region</strong>
+                    <span class="d-flex align-items-center">
+                      <span class="">Available</span>
+                      <span class="badge rounded-pill bg-info ms-1">10</span>
+                      <span class="ps-1 pe-1 bar"></span>
+                      <span class="ms-2">Selected</span>
+                      <span class="badge rounded-pill bg-info ms-1 me-2"
+                        >1</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </h2>
+              <div
+                id="regionOptions"
+                class="accordion-collapse collapse"
+                aria-labelledby="regionHeader"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">
+                  <div class="filter-submenu">
+                    <input type="checkbox" id="region1Checkbox" /> Region 1
+                  </div>
+                  <div class="filter-submenu">
+                    <input type="checkbox" id="region2Checkbox" /> Region 2
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="seriesHeader">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#seriesOptions"
+                  aria-expanded="false"
+                  aria-controls="seriesOptions"
+                >
+                  <span class="d-flex align-items-center w-100">
+                    <strong class="me-auto">Year</strong>
+                    <span class="d-flex align-items-center">
+                      <span class="">Available</span>
+                      <span class="badge rounded-pill bg-info ms-1">10</span>
+                      <span class="ps-1 pe-1 bar"></span>
+                      <span class="ms-2">Selected</span>
+                      <span class="badge rounded-pill bg-info ms-1 me-2"
+                        >1</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </h2>
+              <div
+                id="seriesOptions"
+                class="accordion-collapse collapse"
+                aria-labelledby="seriesHeader"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">
+                  <div class="filter-submenu d-flex align-items-center">
+                    <input type="checkbox" id="series1Checkbox" class="me-2" />
+                    <label for="series1Checkbox" class="mb-0">Series 1</label>
+                  </div>
+                  <div class="filter-submenu d-flex align-items-center">
+                    <input type="checkbox" id="series2Checkbox" class="me-2" />
+                    <label for="series2Checkbox" class="mb-0">Series 2</label>
+                  </div>
+                  <!-- Add more options here -->
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="yearHeader">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#yearOptions"
+                  aria-expanded="false"
+                  aria-controls="yearOptions"
+                >
+                  <span class="d-flex align-items-center w-100">
+                    <strong class="me-auto">Series</strong>
+                    <span class="d-flex align-items-center">
+                      <span class="">Available</span>
+                      <span class="badge rounded-pill bg-info ms-1">10</span>
+                      <span class="ps-1 pe-1 bar"></span>
+                      <span class="ms-2">Selected</span>
+                      <span class="badge rounded-pill bg-info ms-1 me-2"
+                        >1</span
+                      >
+                    </span>
+                  </span>
+                </button>
+              </h2>
+              <div
+                id="yearOptions"
+                class="accordion-collapse collapse"
+                aria-labelledby="yearHeader"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="accordion-body">
+                  <div class="filter-submenu">
+                    <input type="checkbox" id="region1Checkbox" /> Year 1
+                  </div>
+                  <div class="filter-submenu">
+                    <input type="checkbox" id="region2Checkbox" /> Year 2
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-    </nav>
-    <!--Navbar End-->
+        <!-- end of col-md-4 -->
 
-    <div class="container-fluid mt-3">
-        <h2>Ethiopia Development Indicator</h2>
-        <hr class="divider">
-        <div class="row">
-            <div class="col-md-4 col-sm-6 col-lg-4" id="filterColumn">
-                <h4 class="ms-1">Indicator Variables</h4>
-                <hr class="dropdown-divider">
-                <div class="accordion collapsed mt-3" id="accordionExample">
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="databaseHeader">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#databaseOptions" aria-expanded="false" aria-controls="databaseOptions">
-                                <span class="d-flex align-items-center w-100">
-                                    <strong class="me-auto">Database</strong>
-                                    <span class="d-flex align-items-center">
-                                        <span class="">Available</span>
-                                        <span class="badge rounded-pill bg-info ms-1">10</span>
-                                        <span class="ps-1 pe-1 bar"></span>
-                                        <span class="ms-2">Selected</span>
-                                        <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                    </span>
-                                </span>
-                            </button>
-                        </h2>
-                        <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <div class="filter-submenu">
-                                    <input type="checkbox" id="gdpCheckbox"> GDP
-                                </div>
-                                <div class="filter-submenu">
-                                    <input type="checkbox" id="revenueCheckbox"> Revenue
-                                </div>
-                                <!-- Add more options here -->
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="regionHeader">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#regionOptions" aria-expanded="false" aria-controls="regionOptions">
-                                <span class="d-flex align-items-center w-100">
-                                    <strong class="me-auto">Region</strong>
-                                    <span class="d-flex align-items-center">
-                                        <span class="">Available</span>
-                                        <span class="badge rounded-pill bg-info ms-1">10</span>
-                                        <span class="ps-1 pe-1 bar"></span>
-                                        <span class="ms-2">Selected</span>
-                                        <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                    </span>
-                                </span>
-                            </button>
-                        </h2>
-                        <div id="regionOptions" class="accordion-collapse collapse" aria-labelledby="regionHeader"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <div class="filter-submenu">
-                                    <input type="checkbox" id="region1Checkbox"> Region 1
-                                </div>
-                                <div class="filter-submenu">
-                                    <input type="checkbox" id="region2Checkbox"> Region 2
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="seriesHeader">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#seriesOptions" aria-expanded="false" aria-controls="seriesOptions">
-                                <span class="d-flex align-items-center w-100">
-                                    <strong class="me-auto">Year</strong>
-                                    <span class="d-flex align-items-center">
-                                        <span class="">Available</span>
-                                        <span class="badge rounded-pill bg-info ms-1">10</span>
-                                        <span class="ps-1 pe-1 bar"></span>
-                                        <span class="ms-2">Selected</span>
-                                        <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                    </span>
-                                </span>
-                            </button>
-                        </h2>
-                        <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <div class="filter-submenu d-flex align-items-center">
-                                    <input type="checkbox" id="series1Checkbox" class="me-2">
-                                    <label for="series1Checkbox" class="mb-0">Series 1</label>
-                                </div>
-                                <div class="filter-submenu d-flex align-items-center">
-                                    <input type="checkbox" id="series2Checkbox" class="me-2">
-                                    <label for="series2Checkbox" class="mb-0">Series 2</label>
-                                </div>
-                                <!-- Add more options here -->
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="yearHeader">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#yearOptions" aria-expanded="false" aria-controls="yearOptions">
-                                <span class="d-flex align-items-center w-100">
-                                    <strong class="me-auto">Series</strong>
-                                    <span class="d-flex align-items-center">
-                                        <span class="">Available</span>
-                                        <span class="badge rounded-pill bg-info ms-1">10</span>
-                                        <span class="ps-1 pe-1 bar"></span>
-                                        <span class="ms-2">Selected</span>
-                                        <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                    </span>
-                                </span>
-                            </button>
-                        </h2>
-                        <div id="yearOptions" class="accordion-collapse collapse" aria-labelledby="yearHeader"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <div class="filter-submenu">
-                                    <input type="checkbox" id="region1Checkbox"> Year 1
-                                </div>
-                                <div class="filter-submenu">
-                                    <input type="checkbox" id="region2Checkbox"> Year 2
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- end of col-md-4 -->
-
-            <div class="col-md-8 col-sm-6 col-lg-8 pb-5 pt-1" id="dataColumn">
-
-                <!-- Add disabled attribute to the display options buttons before the apply button is clicked -->
-                <div id="displayOptions" class="d-flex justify-content-between align-items-end mb-2 flex-row-reverse">
-                    <div class="d-flex">
-                        <a class="btn btn-info text-white me-3" style="width: 100px; height: 38px "><i
-                                class="fas fa-table"></i> Table</a>
-                        <a class="btn btn-info text-white me-3" style="width: 100px; height: 38px "><i
-                                class="fas fa-chart-bar"></i> Chart</a>
-                        <a class="btn btn-info text-white me-3" style="width: 100px; height: 38px "><i
-                                class="fas fa-map"></i> Map</a>
-                        <!-- Example single danger button -->
-                        <div class="dropdown">
-                            <button class="btn btn-info text-white dropdown-toggle me-3 " type="button" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Download
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="#">Excel</a></li>
-                                <li><a class="dropdown-item" href="#">CSV</a></li>
-                                <li><a class="dropdown-item" href="#">PDF</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="form-check form-switch ms-3">
-                        <input type="checkbox" class="form-check-input" role="switch" id="toggleButton">
-                    </div>
-                </div>
-                     
-                
-                <!-- Move the data display section below the filter selection card -->
-                <div class="card-container">
-                    <div class="card mt-3" style="width:300px;  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
-                        <div class="card-body pe-5 ps-5">
-                            <div id="filterSelections" class="d-flex flex-column">
-                                <div class="filter-option-selection mb-2">
-                                    <span class="filter-option-label">Database:</span>
-                                    <span class="filter-option-checkmark"></span>
-                                </div>
-                                <div class="filter-option-selection mb-2">
-                                    <span class="filter-option-label">Region:</span>
-                                    <span class="filter-option-checkmark"></span>
-                                </div>
-                                <div class="filter-option-selection mb-2">
-                                    <span class="filter-option-label">Series:</span>
-                                    <span class=" filter-option-checkmark"></span>
-                                </div>
-                                <div class="filter-option-selection mb-2">
-                                    <span class="filter-option-label">Year:</span>
-                                    <span class="filter-option-checkmark"></span>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <!-- Add event listener to the apply button to hide the filter selection card and show the data display section -->
-                                <button id="applyButton" class="btn btn-info text-white mt-3">Apply</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Add this code to move the data display section below the filter selection card -->
-                <div id="dataDisplay" class="data-display">
-                    <div id="table-container" class="container">
-                        <table id="table" class="table table-bordered table-hover">
-                            <thead>
-                                <tr id="header-row">
-                                    <!-- Table columns will be dynamically added here -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Add table rows here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="chart" class="container">
-                        <!-- Add chart here -->
-                    </div>
-                    <figure class="highcharts-figure container">
-                        <div id="map"></div>
-
-                    </figure>
-                </div>
+        <div class="col-md-8 col-sm-6 col-lg-8 pb-5 pt-1" id="dataColumn">
+          <!-- Add disabled attribute to the display options buttons before the apply button is clicked -->
+          <div
+            id="displayOptions"
+            class="d-flex justify-content-between align-items-end mb-2 flex-row-reverse"
+          >
+            <div class="d-flex">
+              <a
+                class="btn btn-info text-white me-3"
+                style="width: 100px; height: 38px"
+                ><i class="fas fa-table"></i> Table</a
+              >
+              <a
+                class="btn btn-info text-white me-3"
+                style="width: 100px; height: 38px"
+                ><i class="fas fa-chart-bar"></i> Chart</a
+              >
+              <a
+                class="btn btn-info text-white me-3"
+                style="width: 100px; height: 38px"
+                ><i class="fas fa-map"></i> Map</a
+              >
+              <!-- Example single danger button -->
+              <div class="dropdown">
+                <button
+                  class="btn btn-info text-white dropdown-toggle me-3"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Download
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li><a class="dropdown-item" href="#">Excel</a></li>
+                  <li><a class="dropdown-item" href="#">CSV</a></li>
+                  <li><a class="dropdown-item" href="#">PDF</a></li>
+                </ul>
+              </div>
             </div>
+            <div class="form-check form-switch ms-3">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                role="switch"
+                id="toggleButton"
+              />
+            </div>
+          </div>
+
+          <!-- Move the data display section below the filter selection card -->
+          <div class="card-container">
+            <div
+              class="card mt-3"
+              style="width: 300px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)"
+            >
+              <div class="card-body pe-5 ps-5">
+                <div id="filterSelections" class="d-flex flex-column">
+                  <div class="filter-option-selection mb-2">
+                    <span class="filter-option-label">Database:</span>
+                    <span class="filter-option-checkmark"></span>
+                  </div>
+                  <div class="filter-option-selection mb-2">
+                    <span class="filter-option-label">Region:</span>
+                    <span class="filter-option-checkmark"></span>
+                  </div>
+                  <div class="filter-option-selection mb-2">
+                    <span class="filter-option-label">Series:</span>
+                    <span class="filter-option-checkmark"></span>
+                  </div>
+                  <div class="filter-option-selection mb-2">
+                    <span class="filter-option-label">Year:</span>
+                    <span class="filter-option-checkmark"></span>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <!-- Add event listener to the apply button to hide the filter selection card and show the data display section -->
+                  <button id="applyButton" class="btn btn-info text-white mt-3">
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add this code to move the data display section below the filter selection card -->
+          <div id="dataDisplay" class="data-display">
+            <div id="table-container" class="container">
+              <table id="table" class="table table-bordered table-hover">
+                <thead>
+                  <tr id="header-row">
+                    <!-- Table columns will be dynamically added here -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Add table rows here -->
+                </tbody>
+              </table>
+            </div>
+            <div id="chart" class="container">
+              <!-- Add chart here -->
+            </div>
+            <figure class="highcharts-figure container">
+              <div id="map"></div>
+            </figure>
+          </div>
         </div>
+      </div>
     </div>
 
-
     <!-- Button -->
-    <script src="assets/plugins/jquery/jquery.min.js"></script>
-    <script src="assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
     <!-- datatable -->
-    <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="assets/plugins/jszip/jszip.min.js"></script>
-    <script src="assets/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="assets/plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="{% static 'assets/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/jszip/jszip.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/pdfmake/pdfmake.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/pdfmake/vfs_fonts.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
 
-    <script src="assets/dist/js/adminlte.min2167.js?v=3.2.0"></script>
-    <script src="assets/dist/js/demo.js"></script>
+    <script src="{% static 'assets/dist/js/adminlte.min2167.js?v=3.2.0' %}"></script>
+    <script src="{% static 'assets/dist/js/demo.js' %}"></script>
 
     <!-- chart js -->
-    <script src="../../assets/plugins/chart.js/Chart.min.js"></script>
+    <script src="{% static 'assets/plugins/chart.js/Chart.min.js' %}"></script>
     <script>
-        $(document).ready(function () {
+      $(document).ready(function () {
+        $(".card").show();
+        // Hide data display section by default
+        $(".data-display").hide();
+        // Hide apply button by default
+        $("#applyButton").hide();
+        // Add event listeners to the filter checkboxes
+        $('.filter-submenu input[type="checkbox"]').on("change", function () {
+          updateFilterSelection();
+        });
 
-            $(".card").show();
-            // Hide data display section by default
-            $(".data-display").hide();
-            // Hide apply button by default
-            $("#applyButton").hide();
-            // Add event listeners to the filter checkboxes
-            $('.filter-submenu input[type="checkbox"]').on('change', function () {
-                updateFilterSelection();
-            });
+        //collpase button
+        $("#toggleButton").click(function () {
+          $("#filterColumn").toggleClass("d-none");
+          $("#dataColumn").toggleClass("col-md-8 col-lg-12");
+        });
+        //make the first button in display-option div display table when clicked
+        $("#displayOptions a:nth-child(1)").click(function () {
+          // Show table
+          $(".data-display #table-container").show();
 
-            //collpase button 
-            $("#toggleButton").click(function () {
-                $("#filterColumn").toggleClass("d-none");
-                $("#dataColumn").toggleClass("col-md-8 col-lg-12");
-            });
-            //make the first button in display-option div display table when clicked
-            $("#displayOptions a:nth-child(1)").click(function () {
-                // Show table
-                $(".data-display #table-container").show();
+          // Hide chart
+          $(".data-display #chart").hide();
+          $(".data-display #map").hide();
 
-                // Hide chart
-                $(".data-display #chart").hide();
-                $(".data-display #map").hide();
+          // Set table button active
+          $("#displayOptions a:nth-child(1)").addClass("active");
+          $("#displayOptions a:nth-child(2)").removeClass("active");
+          $("#displayOptions a:nth-child(3)").removeClass("active");
+        });
 
-                // Set table button active
-                $("#displayOptions a:nth-child(1)").addClass("active");
-                $("#displayOptions a:nth-child(2)").removeClass("active");
-                $("#displayOptions a:nth-child(3)").removeClass("active");
-            });
+        //make the second button in display-option div display chart when clicked
+        $("#displayOptions a:nth-child(2)").click(function () {
+          // Show chart
+          $(".data-display #chart").show();
 
-            //make the second button in display-option div display chart when clicked
-            $("#displayOptions a:nth-child(2)").click(function () {
-                // Show chart
-                $(".data-display #chart").show();
+          // Hide table
+          $(".data-display #table-container").hide();
+          $(".data-display #map").hide();
 
-                // Hide table
-                $(".data-display #table-container").hide();
-                $(".data-display #map").hide();
+          // Set chart button active
+          $("#displayOptions a:nth-child(2)").addClass("active");
+          $("#displayOptions a:nth-child(1)").removeClass("active");
+          $("#displayOptions a:nth-child(3)").removeClass("active");
+        });
 
-                // Set chart button active
-                $("#displayOptions a:nth-child(2)").addClass("active");
-                $("#displayOptions a:nth-child(1)").removeClass("active");
-                $("#displayOptions a:nth-child(3)").removeClass("active");
-            });
+        //make the third button in display-option div display map when clicked
+        $("#displayOptions a:nth-child(3)").click(function () {
+          // Show map
+          $(".data-display #map").show();
 
-            //make the third button in display-option div display map when clicked
-            $("#displayOptions a:nth-child(3)").click(function () {
-                // Show map
-                $(".data-display #map").show();
+          // Hide table and chart
+          $(".data-display #table-container").hide();
+          $(".data-display #chart").hide();
 
-                // Hide table and chart
-                $(".data-display #table-container").hide();
-                $(".data-display #chart").hide();
+          // Set map button active
+          $("#displayOptions a:nth-child(3)").addClass("active");
+          $("#displayOptions a:nth-child(1)").removeClass("active");
+          $("#displayOptions a:nth-child(2)").removeClass("active");
 
-                // Set map button active
-                $("#displayOptions a:nth-child(3)").addClass("active");
-                $("#displayOptions a:nth-child(1)").removeClass("active");
-                $("#displayOptions a:nth-child(2)").removeClass("active");
+          (async () => {
+            let sonifyOnHover = false;
 
-                (async () => {
-                    let sonifyOnHover = false;
+            const topology = await fetch(
+              "https://code.highcharts.com/mapdata/countries/fr/fr-all.topo.json"
+            ).then((response) => response.json());
 
-                    const topology = await fetch(
-                        'https://code.highcharts.com/mapdata/countries/fr/fr-all.topo.json'
-                    ).then(response => response.json());
-
-                    // Instantiate the map
-                    Highcharts.mapChart('map', {
-                        chart: {
-                            map: topology
+            // Instantiate the map
+            Highcharts.mapChart("map", {
+              chart: {
+                map: topology,
+              },
+              subtitle: {
+                text: "Click a map area to start sonifying as you interact with the map",
+                align: "left",
+              },
+              sonification: {
+                // Play marker / tooltip can make it hard to click other points
+                // while a point is playing, so we turn it off
+                showTooltip: false,
+              },
+              legend: {
+                layout: "vertical",
+                backgroundColor: "rgba(255,255,255,0.85)",
+                floating: true,
+                verticalAlign: "bottom",
+                align: "left",
+                symbolHeight: 450,
+              },
+              colorAxis: {
+                min: 1,
+                max: 1000,
+                type: "logarithmic",
+                stops: [
+                  [0, "#0B4C63"],
+                  [0.5, "#7350BB"],
+                  [0.7, "#3CD391"],
+                  [0.9, "#4AA0FF"],
+                ],
+                marker: {
+                  color: "#343",
+                },
+              },
+              responsive: {
+                rules: [
+                  {
+                    condition: {
+                      maxWidth: 580,
+                    },
+                    chartOptions: {
+                      legend: {
+                        layout: "horizontal",
+                        floating: false,
+                        align: "center",
+                        symbolHeight: 10,
+                      },
+                    },
+                  },
+                ],
+              },
+              tooltip: {
+                valueSuffix: "/km²",
+              },
+              series: [
+                {
+                  name: "Population density",
+                  sonification: {
+                    tracks: [
+                      {
+                        // First play a note to indicate new map area
+                        instrument: "vibraphone",
+                        mapping: {
+                          pitch: "c7",
+                          volume: 0.3,
                         },
-                        subtitle: {
-                            text: 'Click a map area to start sonifying as you interact with the map',
-                            align: 'left'
-                        },
-                        sonification: {
-                            // Play marker / tooltip can make it hard to click other points
-                            // while a point is playing, so we turn it off
-                            showTooltip: false
-                        },
-                        legend: {
-                            layout: 'vertical',
-                            backgroundColor: 'rgba(255,255,255,0.85)',
-                            floating: true,
-                            verticalAlign: 'bottom',
-                            align: 'left',
-                            symbolHeight: 450
-                        },
-                        colorAxis: {
-                            min: 1,
+                      },
+                      {
+                        mapping: {
+                          // Array of notes to play. We just repeat the same note
+                          // and vary the gap between the notes to indicate
+                          // density. Note: Can use Array.from in modern browsers
+                          pitch: Array.apply(null, Array(25)).map(function () {
+                            return "g2";
+                          }),
+                          gapBetweenNotes: {
+                            mapTo: "-value", // Smaller value = bigger gaps
+                            min: 90,
                             max: 1000,
-                            type: 'logarithmic',
-                            stops: [
-                                [0, '#0B4C63'],
-                                [0.5, '#7350BB'],
-                                [0.7, '#3CD391'],
-                                [0.9, '#4AA0FF']
-                            ],
-                            marker: {
-                                color: '#343'
-                            }
+                            mapFunction: "logarithmic",
+                          },
+                          pan: 0,
+                          noteDuration: 500,
+                          playDelay: 150, // Make space for initial notification
                         },
-                        responsive: {
-                            rules: [{
-                                condition: {
-                                    maxWidth: 580
-                                },
-                                chartOptions: {
-                                    legend: {
-                                        layout: 'horizontal',
-                                        floating: false,
-                                        align: 'center',
-                                        symbolHeight: 10
-                                    }
-                                }
-                            }]
+                      },
+                      {
+                        // Speak the name after a while
+                        type: "speech",
+                        language: "fr-FR", // Speak in French, preferably
+                        mapping: {
+                          text: "{point.name}",
+                          volume: 0.4,
+                          rate: 1.5,
+                          playDelay: 1500,
                         },
-                        tooltip: {
-                            valueSuffix: '/km²'
-                        },
-                        series: [{
-                            name: 'Population density',
-                            sonification: {
-                                tracks: [{
-                                    // First play a note to indicate new map area
-                                    instrument: 'vibraphone',
-                                    mapping: {
-                                        pitch: 'c7',
-                                        volume: 0.3
-                                    }
-                                }, {
-                                    mapping: {
-                                        // Array of notes to play. We just repeat the same note
-                                        // and vary the gap between the notes to indicate
-                                        // density. Note: Can use Array.from in modern browsers
-                                        pitch: Array.apply(null, Array(25)).map(function () {
-                                            return 'g2';
-                                        }),
-                                        gapBetweenNotes: {
-                                            mapTo: '-value', // Smaller value = bigger gaps
-                                            min: 90,
-                                            max: 1000,
-                                            mapFunction: 'logarithmic'
-                                        },
-                                        pan: 0,
-                                        noteDuration: 500,
-                                        playDelay: 150 // Make space for initial notification
-                                    }
-                                }, {
-                                    // Speak the name after a while
-                                    type: 'speech',
-                                    language: 'fr-FR', // Speak in French, preferably
-                                    mapping: {
-                                        text: '{point.name}',
-                                        volume: 0.4,
-                                        rate: 1.5,
-                                        playDelay: 1500
-                                    }
-                                }]
-                            },
-                            accessibility: {
-                                point: {
-                                    valueDescriptionFormat: '{xDescription}, {point.value} people per square kilometer.'
-                                }
-                            },
-                            events: {
-                                mouseOut: function () {
-                                    // Cancel sonification when mousing out of point
-                                    this.chart.sonification.cancel();
-                                }
-                            },
-                            point: {
-                                // Handle when to sonify and not
-                                events: {
-                                    // We require a click before we start playing, so we don't
-                                    // surprise users. Also some browsers will block audio
-                                    // until there have been interactions.
-                                    click: function () {
-                                        if (!sonifyOnHover) {
-                                            this.sonify();
-                                        } else {
-                                            this.series.chart.sonification.cancel();
-                                        }
-                                        sonifyOnHover = !sonifyOnHover;
-                                    },
-                                    mouseOver: function () {
-                                        if (sonifyOnHover) {
-                                            this.sonify();
-                                        }
-                                    }
-                                }
-                            },
-                            cursor: 'pointer',
-                            borderColor: '#4A5A4A',
-                            dataLabels: {
-                                enabled: true,
-                                format: '{point.name}'
-                            },
-                            data: [
-                                ['fr-hdf', 189],
-                                ['fr-nor', 111],
-                                ['fr-idf', 1021],
-                                ['fr-ges', 97],
-                                ['fr-bre', 123],
-                                ['fr-pdl', 119],
-                                ['fr-cvl', 66],
-                                ['fr-bfc', 59],
-                                ['fr-naq', 72],
-                                ['fr-ara', 115],
-                                ['fr-occ', 82],
-                                ['fr-pac', 162],
-                                ['fr-lre', 344],
-                                ['fr-may', 1],
-                                ['fr-gf', 3],
-                                ['fr-mq', 323],
-                                ['fr-gua', 236],
-                                ['fr-cor', 39]
-                            ]
-                        }]
-                    });
-                })();
-
-            });
-
-            // Add sample data for the table
-            var data = [
-                { year: 2018, gdp: 1000, revenue: 500 },
-                { year: 2019, gdp: 1200, revenue: 600 },
-                { year: 2020, gdp: 1500, revenue: 750 },
-                { year: 2021, gdp: 1800, revenue: 900 },
-                { year: 2022, gdp: 2000, revenue: 1000 }
-            ];
-
-            // Get the header row of the table
-            var headerRow = document.getElementById("header-row");
-
-            // Format the column names before adding them to the table
-            Object.keys(data[0]).forEach(function (key) {
-                var formattedColumnName = key.charAt(0).toUpperCase() + key.slice(1);
-                formattedColumnName = formattedColumnName.replace(/_/g, " ");
-
-                var th = document.createElement("th");
-                th.textContent = formattedColumnName;
-                headerRow.appendChild(th);
-            });
-
-            // Populate the table with the sample data
-            var tbody = "";
-            //append data to table
-            for (var i = 0; i < data.length; i++) {
-                tbody += "<tr>";
-                Object.values(data[i]).forEach(function (value) {
-                    tbody += "<td>" + value + "</td>";
-                });
-                tbody += "</tr>";
-            }
-
-            document.querySelector("#table tbody").innerHTML = tbody;
-
-            // Add sample data for the chart
-            var chartData = [
-                { year: "2018", value: 1000 },
-                { year: "2019", value: 1200 },
-                { year: "2020", value: 1500 },
-                { year: "2021", value: 1800 },
-                { year: "2022", value: 2000 }
-            ];
-
-            // Create the chart using highcharts library
-            Highcharts.chart('chart', {
-                chart: {
-                    type: 'line'
-                },
-                title: {
-                    text: 'Sample Chart'
-                },
-                xAxis: {
-                    categories: chartData.map(function (data) { return data.year; })
-                },
-                yAxis: {
-                    title: {
-                        text: 'Value'
-                    }
-                },
-                series: [{
-                    name: 'Value',
-                    data: chartData.map(function (data) { return data.value; })
-                }],
-                exporting: {
+                      },
+                    ],
+                  },
+                  accessibility: {
+                    point: {
+                      valueDescriptionFormat:
+                        "{xDescription}, {point.value} people per square kilometer.",
+                    },
+                  },
+                  events: {
+                    mouseOut: function () {
+                      // Cancel sonification when mousing out of point
+                      this.chart.sonification.cancel();
+                    },
+                  },
+                  point: {
+                    // Handle when to sonify and not
+                    events: {
+                      // We require a click before we start playing, so we don't
+                      // surprise users. Also some browsers will block audio
+                      // until there have been interactions.
+                      click: function () {
+                        if (!sonifyOnHover) {
+                          this.sonify();
+                        } else {
+                          this.series.chart.sonification.cancel();
+                        }
+                        sonifyOnHover = !sonifyOnHover;
+                      },
+                      mouseOver: function () {
+                        if (sonifyOnHover) {
+                          this.sonify();
+                        }
+                      },
+                    },
+                  },
+                  cursor: "pointer",
+                  borderColor: "#4A5A4A",
+                  dataLabels: {
                     enabled: true,
-                    csv: {
-                        dateFormat: '%Y-%m-%d'
-                    }
-                }
+                    format: "{point.name}",
+                  },
+                  data: [
+                    ["fr-hdf", 189],
+                    ["fr-nor", 111],
+                    ["fr-idf", 1021],
+                    ["fr-ges", 97],
+                    ["fr-bre", 123],
+                    ["fr-pdl", 119],
+                    ["fr-cvl", 66],
+                    ["fr-bfc", 59],
+                    ["fr-naq", 72],
+                    ["fr-ara", 115],
+                    ["fr-occ", 82],
+                    ["fr-pac", 162],
+                    ["fr-lre", 344],
+                    ["fr-may", 1],
+                    ["fr-gf", 3],
+                    ["fr-mq", 323],
+                    ["fr-gua", 236],
+                    ["fr-cor", 39],
+                  ],
+                },
+              ],
             });
-
-            // Add event listener to table button to be active color
-            $("#tableButton").click(function () {
-                // Show table
-                $(".data-display #table-container").show();
-
-                // Hide chart
-                $(".data-display #chart").hide();
-                $(".data-display #map").hide();
-
-                // Set table button active
-                $("#tableButton").addClass("active");
-                $("#chartButton").removeClass("active");
-                $("#mapbutton").removeClass("active");
-            });
-
-            // Add event listener to chart button to be active color
-            $("#chartButton").click(function () {
-                // Show chart
-                $(".data-display #chart").show();
-
-                // Hide table
-                $(".data-display #table-container").hide();
-                $(".data-display #map").hide();
-
-                // Set chart button active
-                $("#chartButton").addClass("active");
-                $("#tableButton").removeClass("active");
-                $("#mapbutton").removeClass("active");
-
-            });
-
-            // Add event listener to map button to be active color
-            $("#mapbutton").click(function () {
-                // Show chart
-                $(".data-display #map").show();
-
-                // Hide table
-                $(".data-display #chart").hide();
-                $(".data-display #table-container").hide();
-
-                // Set chart button active
-                $("#mapbutton").addClass("active");
-                $("#chartButton").removeClass("active");
-                $("#tableButton").removeClass("active");
-            });
-
-
-            // Add event listener to apply button
-            $("#applyButton").click(function () {
-                // Hide filter selection card
-                $(".card").hide();
-
-                // Show data display section
-                $("#dataDisplay").show();
-
-                // Show table
-                $("#table-container").show();
-
-                // Hide chart
-                $("#chart").hide();
-                $("#map").hide();
-            });
-
-            // Initialize the filter selection card
-            updateFilterSelection();
+          })();
         });
 
-        //make datatable
-        $(function () {
-            $('#table').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
+        // Add sample data for the table
+        var data = [
+          { year: 2018, gdp: 1000, revenue: 500 },
+          { year: 2019, gdp: 1200, revenue: 600 },
+          { year: 2020, gdp: 1500, revenue: 750 },
+          { year: 2021, gdp: 1800, revenue: 900 },
+          { year: 2022, gdp: 2000, revenue: 1000 },
+        ];
+
+        // Get the header row of the table
+        var headerRow = document.getElementById("header-row");
+
+        // Format the column names before adding them to the table
+        Object.keys(data[0]).forEach(function (key) {
+          var formattedColumnName = key.charAt(0).toUpperCase() + key.slice(1);
+          formattedColumnName = formattedColumnName.replace(/_/g, " ");
+
+          var th = document.createElement("th");
+          th.textContent = formattedColumnName;
+          headerRow.appendChild(th);
         });
 
-        //update chack mark when selected
-        function updateFilterSelection(checkbox) {
-            var isFilterSelected = true;
-        
-            // Check if at least one filter submenu is selected from each filter option
-            $('.accordion .accordion-item').each(function () {
-                var filterOption = $(this);
-                var filterOptionName = filterOption.find('a').text();
-                var filterSubmenu = filterOption.find('.filter-submenu');
-        
-                if (filterSubmenu.find('input[type="checkbox"]:checked').length === 0) {
-                    isFilterSelected = false;
-                }
-        
-                // Update the checkmark color based on the submenu selection
-                var filterOptionSelection = $('#filterSelections .filter-option-selection:contains("' + filterOptionName + '")');
-                var filterOptionCheckmark = filterOptionSelection.find('.filter-option-checkmark');
-                if (filterSubmenu.find('input[type="checkbox"]').is(':checked')) {
-                    filterOptionCheckmark.addClass('green-checkmark');
-                } else {
-                    filterOptionCheckmark.removeClass('green-checkmark');
-                }
-        
-                // Add this code to set the color dynamically using JavaScript
-                if (filterOptionCheckmark.hasClass('green-checkmark')) {
-                    filterOptionCheckmark.css('color', 'green');
-                } else {
-                    filterOptionCheckmark.css('color', '');
-                }
-            });
-        
-            // Update the apply button visibility and show the filter selection card if at least one filter is selected
-            if (isFilterSelected) {
-                $('#applyButton').show();
-                $('.card').show();
-            } else {
-                $('#applyButton').hide();
-                $('.card').show();
-            }
+        // Populate the table with the sample data
+        var tbody = "";
+        //append data to table
+        for (var i = 0; i < data.length; i++) {
+          tbody += "<tr>";
+          Object.values(data[i]).forEach(function (value) {
+            tbody += "<td>" + value + "</td>";
+          });
+          tbody += "</tr>";
         }
-    </script>
-</body>
 
+        document.querySelector("#table tbody").innerHTML = tbody;
+
+        // Add sample data for the chart
+        var chartData = [
+          { year: "2018", value: 1000 },
+          { year: "2019", value: 1200 },
+          { year: "2020", value: 1500 },
+          { year: "2021", value: 1800 },
+          { year: "2022", value: 2000 },
+        ];
+
+        // Create the chart using highcharts library
+        Highcharts.chart("chart", {
+          chart: {
+            type: "line",
+          },
+          title: {
+            text: "Sample Chart",
+          },
+          xAxis: {
+            categories: chartData.map(function (data) {
+              return data.year;
+            }),
+          },
+          yAxis: {
+            title: {
+              text: "Value",
+            },
+          },
+          series: [
+            {
+              name: "Value",
+              data: chartData.map(function (data) {
+                return data.value;
+              }),
+            },
+          ],
+          exporting: {
+            enabled: true,
+            csv: {
+              dateFormat: "%Y-%m-%d",
+            },
+          },
+        });
+
+        // Add event listener to table button to be active color
+        $("#tableButton").click(function () {
+          // Show table
+          $(".data-display #table-container").show();
+
+          // Hide chart
+          $(".data-display #chart").hide();
+          $(".data-display #map").hide();
+
+          // Set table button active
+          $("#tableButton").addClass("active");
+          $("#chartButton").removeClass("active");
+          $("#mapbutton").removeClass("active");
+        });
+
+        // Add event listener to chart button to be active color
+        $("#chartButton").click(function () {
+          // Show chart
+          $(".data-display #chart").show();
+
+          // Hide table
+          $(".data-display #table-container").hide();
+          $(".data-display #map").hide();
+
+          // Set chart button active
+          $("#chartButton").addClass("active");
+          $("#tableButton").removeClass("active");
+          $("#mapbutton").removeClass("active");
+        });
+
+        // Add event listener to map button to be active color
+        $("#mapbutton").click(function () {
+          // Show chart
+          $(".data-display #map").show();
+
+          // Hide table
+          $(".data-display #chart").hide();
+          $(".data-display #table-container").hide();
+
+          // Set chart button active
+          $("#mapbutton").addClass("active");
+          $("#chartButton").removeClass("active");
+          $("#tableButton").removeClass("active");
+        });
+
+        // Add event listener to apply button
+        $("#applyButton").click(function () {
+          // Hide filter selection card
+          $(".card").hide();
+
+          // Show data display section
+          $("#dataDisplay").show();
+
+          // Show table
+          $("#table-container").show();
+
+          // Hide chart
+          $("#chart").hide();
+          $("#map").hide();
+        });
+
+        // Initialize the filter selection card
+        updateFilterSelection();
+      });
+
+      //make datatable
+      $(function () {
+        $("#table").DataTable({
+          paging: true,
+          lengthChange: false,
+          searching: false,
+          ordering: true,
+          info: true,
+          autoWidth: false,
+          responsive: true,
+        });
+      });
+
+      //update chack mark when selected
+      function updateFilterSelection(checkbox) {
+        var isFilterSelected = true;
+
+        // Check if at least one filter submenu is selected from each filter option
+        $(".accordion .accordion-item").each(function () {
+          var filterOption = $(this);
+          var filterOptionName = filterOption.find("a").text();
+          var filterSubmenu = filterOption.find(".filter-submenu");
+
+          if (
+            filterSubmenu.find('input[type="checkbox"]:checked').length === 0
+          ) {
+            isFilterSelected = false;
+          }
+
+          // Update the checkmark color based on the submenu selection
+          var filterOptionSelection = $(
+            '#filterSelections .filter-option-selection:contains("' +
+              filterOptionName +
+              '")'
+          );
+          var filterOptionCheckmark = filterOptionSelection.find(
+            ".filter-option-checkmark"
+          );
+          if (filterSubmenu.find('input[type="checkbox"]').is(":checked")) {
+            filterOptionCheckmark.addClass("green-checkmark");
+          } else {
+            filterOptionCheckmark.removeClass("green-checkmark");
+          }
+
+          // Add this code to set the color dynamically using JavaScript
+          if (filterOptionCheckmark.hasClass("green-checkmark")) {
+            filterOptionCheckmark.css("color", "green");
+          } else {
+            filterOptionCheckmark.css("color", "");
+          }
+        });
+
+        // Update the apply button visibility and show the filter selection card if at least one filter is selected
+        if (isFilterSelected) {
+          $("#applyButton").show();
+          $(".card").show();
+        } else {
+          $("#applyButton").hide();
+          $(".card").show();
+        }
+      }
+    </script>
+  </body>
 </html>
