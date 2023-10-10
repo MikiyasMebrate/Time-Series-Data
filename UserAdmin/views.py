@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
 from TimeSeriesBase.models import Location
 from .forms import LocationForm
@@ -40,6 +40,34 @@ def location(request):
     }
     return render(request, 'user-admin/location.html', context)
 
+def location_detail(request, pk):
+    location = Location.objects.get(pk=pk)
+    form = LocationForm(request.POST or None, instance=location)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('user-admin-location')
+        else:
+            messages.error(request, 'Please try Again!')
+    context = {
+        'form' : form,
+        'location' : location
+    }  
+    return render(request, 'user-admin/location_detail.html', context)
+
+def delete_location(request,pk):
+    location = Location.objects.get(pk=pk)
+    if location.delete():
+        messages.success(request, "Successfully Deleted!")
+        return redirect('user-admin-location')
+    else:
+        messages.error(request, "Please Try again!")
+        return redirect('user-admin-location')
+    
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
 
