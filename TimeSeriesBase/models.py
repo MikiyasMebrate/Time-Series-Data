@@ -19,6 +19,8 @@ class Topic(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
     for_location = models.ManyToManyField(Location)
+    updated =  models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title_ENG
@@ -101,6 +103,8 @@ class Measurement(models.Model):
     Amount_AMH = models.CharField(max_length=50)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     Measure = models.CharField(max_length=50, null=True)
+    updated =  models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     
     def str(self):
         return self.get_full_path()
@@ -131,6 +135,8 @@ class DataValue(models.Model):
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
+    updated =  models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.title_ENG

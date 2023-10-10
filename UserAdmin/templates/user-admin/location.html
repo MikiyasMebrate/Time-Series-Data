@@ -27,7 +27,6 @@
           <form method='POST'>
             {% csrf_token %}
             <div class="mb-3">
-
               <label for="id_location" class="col-form-label">Name English: {% for err in form.name_ENG.errors%}<small
                   class="text-danger">{{err}}</small> {% endfor %}</label>
               {{form.name_ENG}}
