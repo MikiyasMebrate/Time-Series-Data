@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
 from TimeSeriesBase.models import Location
-from .forms import LocationForm
+from .forms import LocationForm, IndicatorForm
 
 # Create your views here.
 def index(request):
@@ -16,9 +16,9 @@ def data_list(request):
 def data_list_detail(request):
     return render(request, 'user-admin/data_list_detail.html')
 
-def indicator(request):
-    return render(request, 'user-admin/indicators.html')
 
+
+#Location
 def location(request):
     
     location = Location.objects.all()
@@ -67,6 +67,16 @@ def delete_location(request,pk):
     else:
         messages.error(request, "Please Try again!")
         return redirect('user-admin-location')
+
+#Indicator 
+def indicator(request):
+    form = IndicatorForm(request.POST or None)
+    context = {
+        'form' : form
+    }
+    return render(request, 'user-admin/indicators.html', context)
+    
+    
     
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
