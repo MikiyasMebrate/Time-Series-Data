@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
-from TimeSeriesBase.models import Location
+from TimeSeriesBase.models import Location, Topic
 from .forms import LocationForm, IndicatorForm,TopicForm,SourceForm,MeasurmentForm
 
 
@@ -122,7 +122,6 @@ def topic(request):
         'form' : form,
         'topics' : topics
     }
-    print(topics)
     return render(request, 'user-admin/topic.html',context=context)
 
 def users_list(request):
