@@ -210,9 +210,9 @@ def topic_detail(request, pk):
     
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-topic')
         else:
