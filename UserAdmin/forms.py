@@ -28,11 +28,10 @@ class catagoryForm(forms.ModelForm):
                 'class' : 'form-control'
             }),
               'topic' : forms.SelectMultiple(attrs={
-                'class' : 'form-control'
-            })
-            
-          
-            
+                'class' : 'select2 form-control',
+                'multiple': "multiple",
+                'data-placeholder' : "Select a State"
+            })        
         }
 
 class IndicatorForm(forms.ModelForm):
@@ -67,7 +66,6 @@ class SubIndicatorForm(forms.ModelForm):
             }),
         }
     
-
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
@@ -81,7 +79,9 @@ class TopicForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'for_location': forms.SelectMultiple(attrs={
-                'class': 'form-control'
+                'class' : 'select2 form-control',
+                'multiple': "multiple",
+                'data-placeholder' : "Select a State"
             })
         }
 
@@ -108,9 +108,6 @@ class MeasurmentForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'Amount_AMH': forms.TextInput(attrs={
-                'class': 'form-control'
-            }),
-            'parent': forms.TextInput(attrs={
                 'class': 'form-control'
             }),
             'Measure': forms.TextInput(attrs={
