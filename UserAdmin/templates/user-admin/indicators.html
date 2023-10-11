@@ -18,13 +18,26 @@
         <div class="modal-header">
           <h5 class="modal-title" id="userRegistrationLabel">
             New Indicator
+
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form method='POST'>
           {% csrf_token %}
         <div class="modal-body">
-          {{form}}
+          <div class="form-group">
+            {{form.title_ENG.label}}
+            {{form.title_ENG}}
+
+            {{form.title_AMH.label}}
+            {{form.title_AMH}}
+
+
+            {{form.for_category.label}}
+            <div class="d-grid mt-2">
+              {{form.for_category}}
+            </div>
+          </div>
           <button type="button" class="btn btn-info mt-2">
             Add Sub-Indicator
           </button>
@@ -57,6 +70,18 @@
         </div>
       </div>
       <!--Title End-->
+      <div class="form-group">
+        <label>Multiple</label>
+        <select class="select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+          <option>Alabama</option>
+          <option>Alaska</option>
+          <option>California</option>
+          <option>Delaware</option>
+          <option>Tennessee</option>
+          <option>Texas</option>
+          <option>Washington</option>
+        </select>
+      </div>
 
       <section class="content">
         <div class="container-fluid">
@@ -119,5 +144,20 @@
 
     {% include 'user-admin/include/footer_js.html'%}
 
+    <script>
+    
+        $(function () {
+          //Initialize Select2 Elements
+          $('.select2').select2()
+    
+          //Initialize Select2 Elements
+          $('.select2bs4').select2({
+            theme: 'bootstrap4'
+          })
+        })
+        </script>
+    
+  
+    
   </body>
 </html>

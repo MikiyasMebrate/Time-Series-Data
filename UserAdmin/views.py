@@ -195,7 +195,6 @@ def topic(request):
         'form' : form,
         'topics' : topics
     }
-    print(topics)
     return render(request, 'user-admin/topic.html',context=context)
 
 def topic_detail(request, pk):
