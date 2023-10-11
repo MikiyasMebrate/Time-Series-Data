@@ -21,12 +21,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <h2>Are you sure you want to delete {{form.name_ENG.value}}/{{form.name_AMH.value}} ? </h2>      
+        <h2>Are you sure you want to delete {{source.title_ENG}}/{{source.title_AMH}} ? </h2>      
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <a  href="{% url 'user-location-delete' location.pk %}" type="submit" class="btn btn-primary">Yes</a>
+        <a  href="{% url 'user-source-delete' source.pk %}" type="submit" class="btn btn-primary">Yes</a>
       </div>
     </div>
   </div>
@@ -56,16 +56,16 @@
                         <form method="post">
                             {% csrf_token %}
 
-                            <div class="mb-2">
-                                <label class="form-label">Name English:  {% for err in form.name_ENG.errors%}<small
+                            <div class="mb-3">
+                                <label for="id_source" class="col-form-label">Name English: {% for err in form.title_ENG.errors%}<small
                                     class="text-danger">{{err}}</small> {% endfor %}</label>
-                                {{form.name_ENG}}
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Name Amharic:  {% for err in form.name_AMH.errors%}<small
+                                {{form.title_ENG}}
+                              </div>
+                              <div class="mb-3">
+                                <label for="id_source" class="col-form-label">Name Amharic: {% for err in form.title_AMH.errors%}<small
                                     class="text-danger">{{err}}</small> {% endfor %}</label>
-                                {{form.name_AMH}}
-                            </div>
+                                {{form.title_AMH}}
+                              </div>
 
                             <div class="text-start mt-2">
                                 <button type="submit" class="btn btn-primary mb-2" >
