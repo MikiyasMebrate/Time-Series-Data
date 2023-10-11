@@ -7,6 +7,8 @@ from .forms import *
 def index(request):
     return render(request, 'user-admin/index.html')
 
+
+#Category
 def category(request):
     catagory = Category.objects.all()
     
@@ -53,7 +55,9 @@ def delete_category(request,pk):
     else:
         messages.error(request, "Please Try again!")
         return redirect('user-admin-category')
-    
+  
+  
+#Data List    
 def data_list(request):
     return render(request, 'user-admin/data_list_view.html')
 
@@ -114,9 +118,12 @@ def delete_location(request,pk):
 
 #Indicator 
 def indicator(request):
+    indicators = Indicator.objects.all()
     form = IndicatorForm(request.POST or None)
+    
     context = {
-        'form' : form
+        'form' : form,
+        'indicators' : indicators
     }
     return render(request, 'user-admin/indicators.html', context)
     
