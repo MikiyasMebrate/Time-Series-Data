@@ -4,6 +4,9 @@ from . import views
 urlpatterns = [
     path('', views.index, name="user-admin-index"),
     path('category/', views.category, name="user-admin-category"),
+    path('category/<int:pk>', views.catagory_detail, name="user-catagory-detail"),
+    path('category-delete/<int:pk>', views.delete_category, name='user-catagory-delete'),
+    
     path('data-list/', views.data_list, name="user-admin-data-list"),
     path('data-list-detail/', views.data_list_detail, name="user-admin-data-list-detail"),
     path('indicators/', views.indicator, name="user-admin-indicators"),
