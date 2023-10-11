@@ -48,7 +48,9 @@ class IndicatorForm(forms.ModelForm):
                 'class' : 'form-control'
             }),
             'for_category' : forms.SelectMultiple(attrs={
-                'class' : 'form-control'
+                'class' : 'select2 form-control',
+                'multiple': "multiple",
+                'data-placeholder' : "Select a State"
             })
         }
     

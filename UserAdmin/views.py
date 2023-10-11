@@ -13,9 +13,9 @@ def category(request):
     form = catagoryForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
             form= catagoryForm()
             messages.success(request, "catagory has been successfully Added!")
         else:
@@ -25,16 +25,16 @@ def category(request):
         'form' : form,
         'catagorys' : catagory
     }
-    return render(request, 'user-admin/categories.html',context)
+    return render(request, 'user-admin/categories.html',context=context)
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
     
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-category')
         else:
@@ -195,7 +195,6 @@ def topic(request):
         'form' : form,
         'topics' : topics
     }
-    print(topics)
     return render(request, 'user-admin/topic.html',context=context)
 
 def topic_detail(request, pk):

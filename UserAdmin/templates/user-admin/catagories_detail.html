@@ -37,12 +37,15 @@
 
     <!--Body Start-->
     <div class="content-wrapper">
+        {% if messages %}
+        {% include 'user-admin/include/messages.html'%}
+        {% endif %}
         <!-- TItle Start-->
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Location Detail</h1>
+                        <h1 class="m-0">catagory Detail</h1>
                     </div>
                 </div>
             </div>
