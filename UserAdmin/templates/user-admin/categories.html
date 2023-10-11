@@ -45,6 +45,7 @@
                     class="text-danger">{{err}}</small> {% endfor %}</label>
                 {{form.name_AMH}}
               </div>
+             
               <div class="mb-3">
                 <label for="id_catagores" class="col-form-label">Topic:<small class="text-danger"></small></label>
                 {{form.topic}}
@@ -118,7 +119,12 @@
                     <tr>
                       <td> {{catagory.name_ENG }}</td>
                       <td> {{catagory.name_AMH }}</td>
-                      <td> {{catagory.topic }}</td>
+                      <td> 
+                        {% for catagory1 in catagory.topic.all %}
+                          {{ catagory1.title_ENG }} {% if not forloop.last %}, {% endif %}
+                        {% endfor %} 
+                      </td>
+                      
                       <td>
                         <div class="d-flex justify-content-around text-center">
                           <a href="{% url 'user-catagory-detail' catagory.pk %}"><i class="fas text-primary fa-pen"></i></a>
