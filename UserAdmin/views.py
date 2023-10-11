@@ -128,7 +128,6 @@ def indicator(request):
     return render(request, 'user-admin/indicators.html', context)
     
     
-    
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
 
