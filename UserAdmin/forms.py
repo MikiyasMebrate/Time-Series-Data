@@ -49,9 +49,22 @@ class IndicatorForm(forms.ModelForm):
             }),
             'for_category' : forms.SelectMultiple(attrs={
                 'class' : 'select2 form-control',
-                'multiple': "multiple",
-                'data-placeholder' : "Select a State"
+                'data-placeholder' : "Select Categories"
             })
+        }
+
+class SubIndicatorForm(forms.ModelForm):
+    class Meta:
+        model = Indicator
+        fields =  ('title_ENG', 'title_AMH')
+        
+        widgets = {
+            'title_ENG' : forms.TextInput(attrs={
+                'class' : 'form-control'
+            }),
+            'title_AMH' : forms.TextInput(attrs={
+                'class' : 'form-control'
+            }),
         }
     
 

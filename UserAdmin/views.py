@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
+from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
@@ -115,19 +116,70 @@ def delete_location(request,pk):
         return redirect('user-admin-location')
     else:
         messages.error(request, "Please Try again!")
-        return redirect('user-admin-location')
+        
 
 #Indicator 
 def indicator(request):
-    indicators = Indicator.objects.all()
+    indicators = Indicator.objects.filter(parent = None)
     form = IndicatorForm(request.POST or None)
     
+    if request.method == "POST":
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
+            form = IndicatorForm()
+            messages.success(request, "Indicator has been successfully Added")
+        else:
+            messages.error(request, "Please try Again!")
     context = {
         'form' : form,
         'indicators' : indicators
     }
     return render(request, 'user-admin/indicators.html', context)
+
+def indicator_detail(request, pk):
+    indicator = Indicator.objects.get(pk=pk)
+    sub_indicators = Indicator.objects.filter(parent=pk)
+    form_add = SubIndicatorForm(request.POST or None, prefix='form_add')
+    form = IndicatorForm(request.POST or None, instance=indicator, prefix='form')
     
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
+            form = IndicatorForm(request.POST or None, instance=indicator)
+            messages.success(request, 'Successfully Updated')
+            return redirect('user-admin-indicators')
+        elif form_add.is_valid():
+            obj = form_add.save(commit=False)
+            obj.parent = indicator
+            obj.save()
+            form_add.save_m2m()
+            form = IndicatorForm(request.POST or None, instance=indicator)
+            form_add = SubIndicatorForm()
+            messages.success(request, 'Successfully Added') 
+            return redirect(indicator)
+        else:
+            messages.error(request, 'Please Try Again!')
+            
+    
+    context = {
+        'indicator' : indicator,
+        'form' : form,
+        'form_add' : form_add,
+        'sub_indicators' : sub_indicators
+    }
+    return render(request, 'user-admin/indicator_detail.html', context)
+
+def delete_indicator(request,pk):
+    indicator = Indicator.objects.get(pk=pk)
+    if indicator.delete():
+        messages.success(request, "Successfully Deleted")
+        return redirect('user-admin-indicators')
+    else:
+        messages.error(request, "Please Try again!")
     
     
 def measurement(request):

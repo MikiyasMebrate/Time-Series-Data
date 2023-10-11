@@ -3,16 +3,26 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name="user-admin-index"),
+    #Category
     path('category/', views.category, name="user-admin-category"),
     path('category/<int:pk>', views.catagory_detail, name="user-catagory-detail"),
     path('category-delete/<int:pk>', views.delete_category, name='user-catagory-delete'),
     
+    #Data List
     path('data-list/', views.data_list, name="user-admin-data-list"),
     path('data-list-detail/', views.data_list_detail, name="user-admin-data-list-detail"),
+   
+   #Indicators
     path('indicators/', views.indicator, name="user-admin-indicators"),
+    path('indicators-detail/<int:pk>', views.indicator_detail, name="user-admin-indicators-detail"),
+    path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
+    
+    #Location
     path('location/', views.location, name="user-admin-location"),
     path('location/<int:pk>', views.location_detail, name="user-location-detail"),
     path('location-delete/<int:pk>', views.delete_location, name='user-location-delete'),
+   
+   
     path('measurement/', views.measurement, name="user-admin-measurement"),
     path('profile/', views.profile, name="user-admin-profile"),
     path('source/', views.source, name="user-admin-source"),

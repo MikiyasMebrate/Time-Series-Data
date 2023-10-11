@@ -26,21 +26,22 @@
           {% csrf_token %}
         <div class="modal-body">
           <div class="form-group">
-            {{form.title_ENG.label}}
-            {{form.title_ENG}}
+            {{form.title_ENG.label}}:   {% for err in form_add.title_ENG.errors%}<small
+            class="text-danger">{{err}}</small> {% endfor %}
+            
+            {{form.title_ENG}}: 
 
-            {{form.title_AMH.label}}
+            {{form.title_AMH.label}}:  {% for err in form_add.title_AMH.errors%}<small
+            class="text-danger">{{err}}</small> {% endfor %}
             {{form.title_AMH}}
 
 
-            {{form.for_category.label}}
+            {{form.for_category.label}}: {% for err in form_add.for_category.errors%}<small
+            class="text-danger">{{err}}</small> {% endfor %}
             <div class="d-grid mt-2">
               {{form.for_category}}
             </div>
           </div>
-          <button type="button" class="btn btn-info mt-2">
-            Add Sub-Indicator
-          </button>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -59,6 +60,10 @@
 
     <!--Body Start-->
     <div class="content-wrapper">
+      {% if messages %}
+      {% include 'user-admin/include/messages.html'%}
+      {% endif %}
+      <!-- TItle St
       <!-- TItle Start-->
       <div class="content-header">
         <div class="container-fluid">
@@ -106,9 +111,13 @@
                     {% for indicator_list in indicators%}
                     <tr>
                       <td>{{indicator_list.title_ENG}}</td>
-                      <td>Aug, 23, 2000</td>
-                      <td>MikiyasMebrate</td>
-                      <td>Aug, 23, 2000</td>
+                      <td>{{indicator_list.title_AMH}}</td>
+                      <td>{{indicator_list.created_at | date:'F d, Y'}}</td>
+                      <td>
+                        <div class="d-flex justify-content-around text-center">
+                          <a href="{% url 'user-admin-indicators-detail' indicator_list.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                        </div>
+                      </td>
                     </tr>
                     {% endfor %}
                   </tbody>
