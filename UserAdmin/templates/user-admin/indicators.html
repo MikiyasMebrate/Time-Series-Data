@@ -11,59 +11,75 @@
 
   <body class="hold-transition sidebar-mini layout-fixed">
     <!--Add Indicator  Modal Start-->
-    <div class="modal fade " id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="userRegistrationLabel">
-            New Indicator
-
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form method='POST'>
-          {% csrf_token %}
-        <div class="modal-body">
-          <div class="form-group">
-            {{form.title_ENG.label}}:   {% for err in form_add.title_ENG.errors%}<small
-            class="text-danger">{{err}}</small> {% endfor %}
-            
-            {{form.title_ENG}}: 
-
-            {{form.title_AMH.label}}:  {% for err in form_add.title_AMH.errors%}<small
-            class="text-danger">{{err}}</small> {% endfor %}
-            {{form.title_AMH}}
-
-
-            {{form.for_category.label}}: {% for err in form_add.for_category.errors%}<small
-            class="text-danger">{{err}}</small> {% endfor %}
-            <div class="d-grid mt-2">
-              {{form.for_category}}
-            </div>
+    <div
+      class="modal fade"
+      id="userRegistration"
+      tabindex="-1"
+      aria-labelledby="userRegistrationLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="userRegistrationLabel">
+              New Indicator
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-group">
+                {{form.title_ENG.label}}:
+                 {% for err in form_add.title_ENG.errors%}<small class="text-danger"
+                  >{{err}}</small
+                >
+                {% endfor %}
+                {{form.title_ENG}}: {{form.title_AMH.label}}: 
+                {%for err in form_add.title_AMH.errors%}<small class="text-danger"
+                  >{{err}}</small
+                >
+                {% endfor %}
+                 {{form.title_AMH}} {{form.for_category.label}}: 
+                 {%for err in form_add.for_category.errors%}<small
+                  class="text-danger"
+                  >{{err}}</small
+                >
+                {% endfor %}
+                <div class="d-grid mt-2">{{form.for_category}}</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save Indicator
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary">Save Indicator</button>
-        </div>
-        </form>
       </div>
     </div>
-  </div>
     <!--Add Indicator Modal End-->
 
-    {% include 'user-admin/include/navbar.html'%}
-    {% include 'user-admin/include/sidebar.html'%}
+    {% include 'user-admin/include/navbar.html' %}
+    {% include 'user-admin/include/sidebar.html' %}
 
     <!--Body Start-->
     <div class="content-wrapper">
-      {% if messages %}
-      {% include 'user-admin/include/messages.html'%}
-      {% endif %}
-      <!-- TItle St
+      {% if messages %} 
+      {% include 'user-admin/include/messages.html'%} 
+      {% endif%}
       <!-- TItle Start-->
       <div class="content-header">
         <div class="container-fluid">
@@ -114,8 +130,15 @@
                       <td>{{indicator_list.title_AMH}}</td>
                       <td>{{indicator_list.created_at | date:'F d, Y'}}</td>
                       <td>
-                        <div class="d-flex justify-content-around text-center">
-                          <a href="{% url 'user-admin-indicators-detail' indicator_list.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                        <div class="d-flex justify-content-center text-center">
+                          <a
+                            href="{% url 'user-admin-indicator-sub' indicator_list.pk %}"
+                            ><i class="fas me-4 text-primary fa-eye"></i
+                          ></a>
+                          <a
+                            href="{% url 'user-admin-indicators-detail' indicator_list.pk %}"
+                            ><i class="fas ms-2 text-primary fa-pen"></i
+                          ></a>
                         </div>
                       </td>
                     </tr>
@@ -126,14 +149,49 @@
             </div>
           </div>
           <!--Topic Table List End-->
+
+          {% if subIndicator %}
+          <h2 class="mt-5">Sub-Indicators</h2>
+          <hr />
+          <p class="fw-bold p-0 m-0">{{single_indicator.title_ENG}}/ {{single_indicator.title_AMH}}</p>
+          <!--Directory Start-->
+          <ul class="tree ">
+            {% for indicator_list in subIndicator%}
+            <li class="dir">
+              <a class="text-dark" href="{% url 'user-admin-indicators-detail' indicator_list.pk%}" target="_blank"> {{indicator_list.title_ENG}}</a>
+              {% comment %} <a href="{% url '' indicator_list.pk%}" class="btn btn-primary pt-1 pb-1 ps-2 pe-2">+</a href="{% url ''%}"> {% endcomment %}
+              <ul>
+                {% for indicator_sub_list in indicator_list_all%}
+                {% if  indicator_sub_list.parent == indicator_list %}    
+                <li class="file">
+                  <a class="text-dark" href="{% url 'user-admin-indicators-detail' indicator_sub_list.pk%}" target="_blank">{{indicator_sub_list.title_ENG}}</a>
+
+                  <ul>
+                    {% for indicator_sub_sub_list in  indicator_list_all%}
+                    {% if  indicator_sub_sub_list.parent == indicator_sub_list %}    
+                    <li class="file">
+                      <a class="text-dark" href="{% url 'user-admin-indicators-detail' indicator_sub_sub_list.pk%}" target="_blank">{{indicator_sub_sub_list.title_ENG}}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                  </ul>
+
+                </li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!--Directory End-->
+          {% endif %}
         </div>
       </section>
     </div>
     <!--Body End-->
     {% include 'user-admin/include/footer.html' %}
     <aside class="control-sidebar control-sidebar-dark"></aside>
-
-
 
     <!--Chart -->
     <script src="/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
@@ -145,7 +203,17 @@
     <script src="/assets/plugins/summernote/summernote-bs4.min.js"></script>
     <script src="/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 
-    {% include 'user-admin/include/footer_js.html'%}  
-    
+    {% include 'user-admin/include/footer_js.html'%}
+    {% block scripts %}
+    <script>
+        // JavaScript to handle expand/collapse functionality
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', () => {
+                button.parentElement.querySelector('ul').classList.toggle('show');
+                button.textContent = (button.textContent === '+' ? '-' : '+');
+            });
+        });
+    </script>
+    {% endblock %}
   </body>
 </html>

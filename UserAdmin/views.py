@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
-
 # Create your views here.
 def index(request):
     return render(request, 'user-admin/index.html')
@@ -29,6 +28,7 @@ def category(request):
         'catagorys' : catagory
     }
     return render(request, 'user-admin/categories.html',context=context)
+
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
@@ -137,6 +137,35 @@ def indicator(request):
     }
     return render(request, 'user-admin/indicators.html', context)
 
+
+def indicator_sub_lists(request,pk):
+    
+    single_indicator = Indicator.objects.get(pk=pk)
+    indicators = Indicator.objects.filter(parent = None)
+    sub_indicators = Indicator.objects.filter(parent__pk = pk)
+    form = IndicatorForm(request.POST or None)
+    indicator_list_all = Indicator.objects.all()
+
+    
+    if request.method == "POST":
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            form.save_m2m()
+            form = IndicatorForm()
+            messages.success(request, "Indicator has been successfully Added")
+        else:
+            messages.error(request, "Please try Again!")
+    
+    context = {
+        'form' : form,
+        'subIndicator' : sub_indicators,
+        'indicators' : indicators,
+        'indicator_list_all': indicator_list_all,
+        'single_indicator' : single_indicator
+    }
+    return render(request, 'user-admin/indicators.html', context)
+
 def indicator_detail(request, pk):
     indicator = Indicator.objects.get(pk=pk)
     sub_indicators = Indicator.objects.filter(parent=pk)
@@ -159,7 +188,7 @@ def indicator_detail(request, pk):
             form = IndicatorForm(request.POST or None, instance=indicator)
             form_add = SubIndicatorForm()
             messages.success(request, 'Successfully Added') 
-            return redirect(indicator)
+            return redirect(request.path_info)
         else:
             messages.error(request, 'Please Try Again!')
             
@@ -174,11 +203,14 @@ def indicator_detail(request, pk):
 
 def delete_indicator(request,pk):
     indicator = Indicator.objects.get(pk=pk)
+    
     if indicator.delete():
         messages.success(request, "Successfully Deleted")
         return redirect('user-admin-indicators')
     else:
         messages.error(request, "Please Try again!")
+    
+    
     
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
