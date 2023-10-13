@@ -137,7 +137,6 @@ def indicator(request):
     }
     return render(request, 'user-admin/indicators.html', context)
 
-
 def indicator_sub_lists(request,pk):
     
     single_indicator = Indicator.objects.get(pk=pk)
@@ -191,8 +190,6 @@ def indicator_detail(request, pk):
             return redirect(request.path_info)
         else:
             messages.error(request, 'Please Try Again!')
-            
-    
     context = {
         'indicator' : indicator,
         'form' : form,
@@ -200,6 +197,30 @@ def indicator_detail(request, pk):
         'sub_indicators' : sub_indicators
     }
     return render(request, 'user-admin/indicator_detail.html', context)
+
+def indicator_detail_add(request, pk, mainParent ):
+    indicator = Indicator.objects.get(pk=pk)
+    form_add = SubIndicatorForm(request.POST or None)
+
+    if request.method == 'POST':
+        if form_add.is_valid():
+            obj = form_add.save(commit=False)
+            obj.parent = indicator
+            obj.save()
+            form_add.save_m2m()
+            form_add = SubIndicatorForm()
+            messages.success(request, 'Successfully Added') 
+            redirect_url = reverse('user-admin-indicator-sub', kwargs={'pk': mainParent})
+            return redirect(redirect_url)
+      
+        else:
+            messages.error(request, 'Please Try Again!')
+            
+    
+    context = {
+        'form' : form_add,
+    }
+    return render(request, 'user-admin/sub_indicator_add.html', context)
 
 def delete_indicator(request,pk):
     indicator = Indicator.objects.get(pk=pk)
@@ -209,7 +230,8 @@ def delete_indicator(request,pk):
         return redirect('user-admin-indicators')
     else:
         messages.error(request, "Please Try again!")
-    
+ 
+   
     
     
 def measurement(request):

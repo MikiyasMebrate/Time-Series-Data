@@ -4,245 +4,112 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-      .dir {
-        color: #161414;
-        font-weight: bold;
-      }
-
-      .sub {
-        color: #f2f2f2;
-        font-weight: bold;
-      }
-
-      .file {
-        font: normal normal 14px/20px Helvetica, Arial, sans-serif;
-        color: #444444;
-      }
-
-      .tree,
-      .tree ul {
-        font: normal normal 14px/20px Helvetica, Arial, sans-serif;
-        color: #f2f2f2;
-        list-style-type: none;
-        margin-left: 0 0 0 10px;
-        padding: 0;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .tree li {
-        margin: 0;
-        padding: 0 14px;
-        position: relative;
-      }
-
-      .tree li::before,
-      .tree li::after {
-        content: "";
-        position: absolute;
-        left: 0;
-      }
-
-      .tree li::before {
-        border-top: 1px solid #444444;
-        top: 10px;
-        width: 10px;
-        height: 0;
-      }
-
-      .tree li:after {
-        border-left: 1px solid #444444;
-        height: 100%;
-        width: 0px;
-        top: -10px;
-      }
-
-      .tree > li::after {
-        top: 10px;
-      }
-
-      .tree > li:last-child::after {
-        display: none;
-      }
-
-      .center {
-        margin: auto;
-        float: left;
-      }
-    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
   </head>
 
   <body>
     <div class="align">
-      <div class="center">
-        <ul class="tree">
-          <li class="dir">
-            Web
-            <ul>
-              <li class="file">
-                <a href="https://onextrapixel.com/" target="_blank"
-                  >One Extra Pixel</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://www.hongkiat.com/blog/" target="_blank"
-                  >Hongkiat</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://line25.com/" target="_blank">Line 25</a>
-              </li>
-              <li class="file">
-                <a href="https://unsplash.com/" target="_blank">Unsplash</a>
-              </li>
-              <li class="file">
-                <a href="http://explosm.net/" target="_blank">Explosm</a>
-              </li>
-              <li class="file">
-                <a href="http://youtube.com/" target="_blank">Youtube</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dir">
-            Html
-            <ul>
-              <li class="file">
-                <a href="https://computerhope.com/htmcolor.htm" target="_blank"
-                  >Htmlcolors</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://colorhexa.com/" target="_blank">Colorhexa</a>
-              </li>
-              <li class="file">
-                <a href="https://mycolor.space/" target="_blank">My Color</a>
-              </li>
-              <li class="file">
-                <a href="https://coolors.co/" target="_blank">Coolors</a>
-              </li>
-              <li class="file">
-                <a href="http://colormind.io/" target="_blank">Color Mind</a>
-              </li>
-              <li class="file">
-                <a href="http://codepen.io/" target="_blank">Codepen</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dir">
-            Fonts
-            <ul>
-              <li class="file">
-                <a href="https://wildtype.design/" target="_blank">Wildtype</a>
-              </li>
-              <li class="file">
-                <a href="http://dafont.com/" target="_blank">Dafont</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dir">
-            Unix
-            <ul>
-              <li class="file">
-                <a href="https://forum.xfce.org/" target="_blank"
-                  >Xfce Forums</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://discussion.fedoraproject.org/" target="_blank"
-                  >Fedora Discussion</a
-                >
-              </li>
-              <li class="file">
-                <a href="http://forums.debian.net/" target="_blank"
-                  >Debian Forums
-                </a>
-              </li>
-              <li class="file">
-                <a href="https://ubuntuforums.org/" target="_blank"
-                  >Ubuntu Forums</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://omgubuntu.co.uk/" target="_blank"
-                  >Omg Ubuntu</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://itsfoss.com/" target="_blank">Its Foss</a>
-              </li>
-              <li class="file">
-                <a href="https://fedoramagazine.org/" target="_blank"
-                  >Fedora Magazine</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://opensource.com/" target="_blank"
-                  >Open Source</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://feedly.com/i/latest" target="_blank"
-                  >Linux Feed</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="dir">
-            Reddit
-            <ul>
-              <li class="file">
-                <a href="https://www.reddit.com/r/startpages/" target="_blank"
-                  >Startpages</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://www.reddit.com/r/unixporn/" target="_blank"
-                  >Unixporn</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://www.reddit.com/r/unixporn/" target="_blank"
-                  >Firefox.css</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://www.reddit.com/r/waterfox/" target="_blank"
-                  >Waterfox</a
-                >
-              </li>
-              <li class="file">
-                <a
-                  href="https://www.reddit.com/r/androidthemes/"
-                  target="_blank"
-                  >Android Themes</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="dir">
-            TF2
-            <ul>
-              <li class="file">
-                <a href="https://huds.tf/" target="_blank">Huds</a>
-              </li>
-              <li class="file">
-                <a href="https://potato.tf/" target="_blank">Canteen Crasher</a>
-              </li>
-              <li class="file">
-                <a href="https://serveme.tf/" target="_blank">Server</a>
-              </li>
-              <li class="file">
-                <a href="https://marketplace.tf/" target="_blank"
-                  >Marketplace</a
-                >
-              </li>
-              <li class="file">
-                <a href="https://mannco.trade/" target="_blank">Mannco</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
+      <div class="">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Indicator</th>
+              <th scope="col">2000</th>
+              <th scope="col">2001</th>
+              <th scope="col">2002</th>
+              <th scope="col">2003</th>
+              <th scope="col">2004</th>
+              <th scope="col">2005</th>
+              <th scope="col">2006</th>
+              <th scope="col">2007</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td >Jacob</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+            </tr>
+            <tr>
+              <td class="ps-4">Jacob</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+            </tr>
+            <tr>
+              <td class="ps-5">Jacob</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+            </tr>
+            <tr>
+              <tr>
+                <td class="ps-5">Jacob</td>
+                <td >1</td>
+                <td >2</td>
+                <td >1</td>
+                <td >2</td>
+                <td >1</td>
+                <td >2</td>
+                <td >1</td>
+                <td >2</td>
+              </tr>
+              <tr>
+              <td class="ps-4">Jacob</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+            </tr>
+            <tr>
+              <td >Jacob</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+            </tr>
+            <tr>
+              <td class="ps-4">Jacob</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+              <td >1</td>
+              <td >2</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </body>
