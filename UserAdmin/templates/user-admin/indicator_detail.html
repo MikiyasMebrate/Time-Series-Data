@@ -54,6 +54,106 @@
     </div>
     <!--Delete Indicator Modal End-->
 
+    <!--Delete Sub_indicator Modal Start-->
+{% if subIndicator %}
+<div class="modal fade " id="deleteIndicator{{single_indicator.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+ <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="deleteIndicatorLabel">
+        Deletion Form
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <h2>Are you sure you want to delete {{single_indicator.title_ENG}}/{{single_indicator.title_AMH}} ? </h2>      
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      <a  href="{% url 'user-admin-indicator-delete' single_indicator.pk %}" type="submit" class="btn btn-primary">Yes</a>
+    </div>
+  </div>
+ </div>
+</div>
+{% for indicator_list in subIndicator%}
+<div class="modal fade " id="deleteIndicator{{indicator_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="deleteIndicatorLabel">
+         Deletion Form
+       </h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body">
+       <h2>Are you sure you want to delete {{indicator_list.title_ENG}}/{{indicator_list.title_AMH}} ? </h2>      
+     </div>
+
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+       <a  href="{% url 'user-admin-indicator-delete' indicator_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+     </div>
+   </div>
+  </div>
+ </div>
+
+ {% for indicator_sub_list in indicator_list_all%}
+ {% if  indicator_sub_list.parent == indicator_list %}
+ <div class="modal fade " id="deleteIndicator{{indicator_sub_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="deleteIndicatorLabel">
+         Deletion Form
+       </h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body">
+       <h2>Are you sure you want to delete {{indicator_sub_list.title_ENG}}/{{indicator_sub_list.title_AMH}} ? </h2>      
+     </div>
+
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+       <a  href="{% url 'user-admin-indicator-delete' indicator_sub_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+     </div>
+   </div>
+  </div>
+ </div> 
+
+ {% for indicator_sub_sub_list in  indicator_list_all%}
+
+ {% if  indicator_sub_sub_list.parent == indicator_sub_list %}
+<div class="modal fade " id="deleteIndicator{{indicator_sub_sub_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="deleteIndicatorLabel">
+         Deletion Form
+       </h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body">
+       <h2>Are you sure you want to delete {{indicator_sub_sub_list.title_ENG}}/{{indicator_sub_sub_list.title_AMH}} ? </h2>      
+     </div>
+
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+       <a  href="{% url 'user-admin-indicator-delete' indicator_sub_sub_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+     </div>
+   </div>
+  </div>
+ </div> 
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+<!--Delete Sub_Indicator Modal End-->
+
+
     <!--Add Indicator Modal Start-->
     <div
       class="modal fade"

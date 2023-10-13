@@ -196,7 +196,7 @@ def indicator_detail(request, pk):
             return redirect('user-admin-indicators')
         elif form_add.is_valid():
             obj = form_add.save(commit=False)
-            obj.parent = indicator
+            obj.parent = single_indicator
             obj.save()
             form_add.save_m2m()
             form = IndicatorForm(request.POST or None, instance=single_indicator)
