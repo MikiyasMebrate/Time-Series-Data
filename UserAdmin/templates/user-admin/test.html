@@ -1,116 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-  </head>
+<!-- my_template.html -->
+{% load static %}
 
-  <body>
-    <div class="align">
-      <div class="">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Indicator</th>
-              <th scope="col">2000</th>
-              <th scope="col">2001</th>
-              <th scope="col">2002</th>
-              <th scope="col">2003</th>
-              <th scope="col">2004</th>
-              <th scope="col">2005</th>
-              <th scope="col">2006</th>
-              <th scope="col">2007</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td >Jacob</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-            </tr>
-            <tr>
-              <td class="ps-4">Jacob</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-            </tr>
-            <tr>
-              <td class="ps-5">Jacob</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-            </tr>
-            <tr>
-              <tr>
-                <td class="ps-5">Jacob</td>
-                <td >1</td>
-                <td >2</td>
-                <td >1</td>
-                <td >2</td>
-                <td >1</td>
-                <td >2</td>
-                <td >1</td>
-                <td >2</td>
-              </tr>
-              <tr>
-              <td class="ps-4">Jacob</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-            </tr>
-            <tr>
-              <td >Jacob</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-            </tr>
-            <tr>
-              <td class="ps-4">Jacob</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-              <td >1</td>
-              <td >2</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </body>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recursive Template</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Recursive Template</h1>
+    
+    {% for item in items %}
+        <div class="item">
+            <p>{{ item.name }}</p>
+            
+            {% if item.children %}
+                <!-- Recursive call to include the same template -->
+                {% include 'my_template.html' with items=item.children %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
 </html>

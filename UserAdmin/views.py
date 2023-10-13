@@ -138,14 +138,28 @@ def indicator(request):
     return render(request, 'user-admin/indicators.html', context)
 
 def indicator_sub_lists(request,pk):
-    
     single_indicator = Indicator.objects.get(pk=pk)
     indicators = Indicator.objects.filter(parent = None)
     sub_indicators = Indicator.objects.filter(parent__pk = pk)
     form = IndicatorForm(request.POST or None)
     indicator_list_all = Indicator.objects.all()
-
     
+    
+    def print_child(parent,space):
+        space = space +  "  "
+        for child in Indicator.objects.all():
+            if child.parent == parent:
+                print(space,child)
+                print_child(child,space)
+        
+                
+    
+    print("Parent: ", single_indicator)
+    for child in Indicator.objects.all():
+            if child.parent == single_indicator:
+                print(child)
+                print_child(child, " ")
+
     if request.method == "POST":
         if form.is_valid():
             obj = form.save(commit=False)
@@ -161,22 +175,23 @@ def indicator_sub_lists(request,pk):
         'subIndicator' : sub_indicators,
         'indicators' : indicators,
         'indicator_list_all': indicator_list_all,
-        'single_indicator' : single_indicator
+        'single_indicator' : single_indicator,
     }
     return render(request, 'user-admin/indicators.html', context)
 
 def indicator_detail(request, pk):
-    indicator = Indicator.objects.get(pk=pk)
-    sub_indicators = Indicator.objects.filter(parent=pk)
+    single_indicator = Indicator.objects.get(pk=pk)
+    sub_indicators = Indicator.objects.filter(parent__pk=pk)
+    indicator_list_all = Indicator.objects.all()
     form_add = SubIndicatorForm(request.POST or None, prefix='form_add')
-    form = IndicatorForm(request.POST or None, instance=indicator, prefix='form')
+    form = IndicatorForm(request.POST or None, instance=single_indicator, prefix='form')
     
     if request.method == 'POST':
         if form.is_valid():
             obj = form.save(commit=False)
             obj.save()
             form.save_m2m()
-            form = IndicatorForm(request.POST or None, instance=indicator)
+            form = IndicatorForm(request.POST or None, instance=single_indicator)
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-indicators')
         elif form_add.is_valid():
@@ -184,17 +199,18 @@ def indicator_detail(request, pk):
             obj.parent = indicator
             obj.save()
             form_add.save_m2m()
-            form = IndicatorForm(request.POST or None, instance=indicator)
+            form = IndicatorForm(request.POST or None, instance=single_indicator)
             form_add = SubIndicatorForm()
             messages.success(request, 'Successfully Added') 
             return redirect(request.path_info)
         else:
             messages.error(request, 'Please Try Again!')
-    context = {
-        'indicator' : indicator,
+    context = {      
         'form' : form,
         'form_add' : form_add,
-        'sub_indicators' : sub_indicators
+        'subIndicator' : sub_indicators,
+        'indicator_list_all': indicator_list_all,
+        'single_indicator' : single_indicator,
     }
     return render(request, 'user-admin/indicator_detail.html', context)
 

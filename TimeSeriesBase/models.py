@@ -39,7 +39,7 @@ class Indicator(models.Model):
     title_AMH = models.CharField(max_length=100)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    for_category = models.ManyToManyField(Category, null=True, blank=True)
+    for_category = models.ManyToManyField(Category, blank=True)
 
     def str(self):
         return self.get_full_path()

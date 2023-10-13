@@ -21,23 +21,32 @@
           >
             <span class="navbar-toggler-icon"></span>
           </button>
+       
           <div class="collapse navbar-collapse fs-5" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item ms-2">
-                <a class="nav-link active" aria-current="page" href="{% url "index" %}"
+                <a class="nav-link " aria-current="page" href="{% url "index" %}"
                   >Home</a
                 >
               </li>
               <li class="nav-item ms-2">
-                <a class="nav-link" href="{% url "data" %}">Data</a>
+                <a class="nav-link " href="{% url "data" %}">Data</a>
               </li>
               <li class="nav-item ms-2">
-                <a class="nav-link" href="{% url "contact" %}">Contact</a>
+                <a class="nav-link " href="{% url "contact" %}">Contact</a>
               </li>
               <li class="nav-item ms-2">
-                <a class="nav-link" href="{% url "about" %}">About</a>
+                <a class="nav-link " href="{% url "about" %}">About</a>
               </li>
             </ul>
+            <script>
+              document.querySelectorAll(".nav-link").forEach((link) => {
+                if (link.href === window.location.href) {
+                    link.classList.add("active");
+                    link.setAttribute("aria-current", "page");
+                }
+            });
+          </script>
             <div class="dropdown dropstart">
               <button
                 class="btn btn-primary btn-lg dropdown-toggle"
