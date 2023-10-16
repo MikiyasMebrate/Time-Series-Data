@@ -92,12 +92,12 @@
                 <tbody>
                   {% for data_point in data_points%}
                   <tr>
-                    <td> {{data_points.year_EC }}</td>
-                    <td> {{data_points.year_GC }}</td>
-                    <td> {{data_points.created | date:'F d, Y' }}</td>
+                    <td> {{data_point.year_EC }}</td>
+                    <td> {{data_point.year_GC }}</td>
+                    <td> {{data_point.created_at | date:'F d, Y' }}</td>
                     <td>
                       <div class="d-flex justify-content-around text-center">
-                        {% comment %} <a href="{% url 'user-location-detail' location.pk %}"><i class="fas text-primary fa-pen"></i></a> {% endcomment %}
+                        <a href="{% url 'user-admin-data-point-detail' data_point.pk %}"><i class="fas text-primary fa-pen"></i></a>
                       </div>
                     </td>
                   </tr>

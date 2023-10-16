@@ -75,6 +75,7 @@ class Indicator_Point(models.Model):
 class DataPoint(models.Model):
     year_EC = models.CharField(max_length=50, null=True, blank=True)
     year_GC = models.CharField(max_length=50, null=True, blank=True)
+    is_interval = models.BooleanField(default=False)
     year_start_EC = models.CharField(max_length=50, null=True, blank=True)
     year_start_GC = models.CharField(max_length=50, null=True, blank=True)
     year_end_EC = models.CharField(max_length=50, null=True, blank=True)

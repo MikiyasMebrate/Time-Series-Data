@@ -26,6 +26,7 @@ urlpatterns = [
    
    #Data-Point
     path('data-point/', views.data_point, name="user-admin-data-point"),
+    path('data-point-detail/<int:pk>', views.data_point_detail, name="user-admin-data-point-detail"),
     
     
     

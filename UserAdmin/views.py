@@ -365,5 +365,22 @@ def data_point(request):
     }
     return render(request, 'user-admin/data_point.html', context)     
     
+    
+def data_point_detail(request, pk):
+    data_point = DataPoint.objects.get(pk = pk) 
+    form = DataPointForm(request.POST or None, instance=data_point)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+    
+    context = {
+        'data_point' : data_point,
+        'form' : form
+    }
+    
+    return render(request, 'user-admin/data_point_detail.html', context )
+
+
 def users_list(request):
     return render(request, 'user-admin/users_list.html')
