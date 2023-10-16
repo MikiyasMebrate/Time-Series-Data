@@ -21,12 +21,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <h2>Are you sure you want to delete {{topic.title_ENG}}/{{topic.title_AMH}} ? </h2>      
+        <h2>Are you sure you want to delete {{data_point.year_EC}}/{{data_point.year_GC}} ? </h2>      
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        {% comment %} <a  href="{% url 'user-topic-delete' topic.pk %}" type="submit" class="btn btn-primary">Yes</a> {% endcomment %}
+        <a  href="{% url 'user-admin-data-point-delete' data_point.pk %}" type="submit" class="btn btn-primary">Yes</a>
       </div>
     </div>
   </div>
@@ -52,20 +52,50 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <form method="post">
                             {% csrf_token %}
 
                             <div class="mb-3">
   
-                                <label for="id_topic" class="col-form-label">Gregorian Calendar: {% for err in form.title_ENG.errors%}<small
+                                <label for="id_topic" class="col-form-label">Gregorian Calendar: {% for err in form.year_EC.errors%}<small
                                     class="text-danger">{{err}}</small> {% endfor %}</label>
                                 {{form.year_EC}}
                               </div>
                               <div class="mb-3">
-                                <label for="id_topic" class="col-form-label">Ethiopian Calendar: {% for err in form.title_AMH.errors%}<small
+                                <label for="id_topic" class="col-form-label">Ethiopian Calendar: {% for err in form.year_GC.errors%}<small
                                     class="text-danger">{{err}}</small> {% endfor %}</label>
                                 {{form.year_GC}}
+                              </div>
+                              <div class="mb-3">
+                                <label for="id_topic" class="col-form-label">Interval : {% for err in form.is_interval.errors%}<small
+                                    class="text-danger">{{err}}</small> {% endfor %}</label>
+                                {{form.is_interval}}
+                              </div>
+
+                              <div class="row form-group">
+                                <div class="col-6 mb-3">
+                                    <label for="id_topic" class="col-form-label">Ethiopian Year Interval Start : {% for err in form.year_start_EC.errors%}<small
+                                        class="text-danger">{{err}}</small> {% endfor %}</label>
+                                    {{form.year_start_EC}}
+                                  </div>
+                                  <div class="col-6 mb-3">
+                                    <label for="id_topic" class="col-form-label">Ethiopian Year Interval End : {% for err in form.year_end_EC.errors%}<small
+                                        class="text-danger">{{err}}</small> {% endfor %}</label>
+                                    {{form.year_end_EC}}
+                                  </div>
+                              </div>
+                              <div class="row form-group">
+                                <div class="col-6 mb-3">
+                                    <label for="id_topic" class="col-form-label">Gregorian Year Interval Start : {% for err in form.year_start_GC.errors%}<small
+                                        class="text-danger">{{err}}</small> {% endfor %}</label>
+                                    {{form.year_start_GC}}
+                                  </div>
+                                  <div class="col-6 mb-3">
+                                    <label for="id_topic" class="col-form-label">Gregorian Year Interval End : {% for err in form.year_end_GC.errors%}<small
+                                        class="text-danger">{{err}}</small> {% endfor %}</label>
+                                    {{form.year_end_GC}}
+                                  </div>
                               </div>
                               
                             <div class="text-start mt-2">
@@ -75,7 +105,7 @@
                                 <a  class="btn btn-warning mb-2" href="{% url 'user-admin-topic'%}">Cancel Changes</a>
                                 <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#userRegistration"
                                 data-bs-whatever="@mdo">
-                                Delete Topic
+                                Delete Data Point
                               </button>
                             </div>
                         </form>

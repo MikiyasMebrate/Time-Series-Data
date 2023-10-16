@@ -359,20 +359,33 @@ def delete_topic(request,pk):
 #Data Point 
 def data_point(request):
     data_points = DataPoint.objects.all()
+    form = DataPointForm(request.POST or None)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            form = DataPointForm()
+            messages.success(request, 'Successfully Created')
+        else:
+            messages.error(request, 'Please Try Again!')
     
     context = {
+        'form' : form,
         'data_points' : data_points 
     }
     return render(request, 'user-admin/data_point.html', context)     
-    
-    
+       
 def data_point_detail(request, pk):
     data_point = DataPoint.objects.get(pk = pk) 
     form = DataPointForm(request.POST or None, instance=data_point)
     
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save(commit=False)
+            form = form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('user-admin-data-point')
+        else:
+            messages.error(request, 'Please try Again!')
     
     context = {
         'data_point' : data_point,
@@ -381,6 +394,25 @@ def data_point_detail(request, pk):
     
     return render(request, 'user-admin/data_point_detail.html', context )
 
+def data_point_delate(request, pk):
+    data_point = DataPoint.objects.get(pk=pk)
+    if data_point.delete():
+        messages.success(request, "Successfully Deleted!")
+        return redirect('user-admin-data-point')
+    else:
+        messages.error(request, "Please Try again!")
+    
 
+
+#Month
+def month(request):
+    months = Month.objects.all()
+    context = {
+        'months' : months,
+    }
+    return render(request, 'user-admin/month.html', context )
+
+
+#User
 def users_list(request):
     return render(request, 'user-admin/users_list.html')

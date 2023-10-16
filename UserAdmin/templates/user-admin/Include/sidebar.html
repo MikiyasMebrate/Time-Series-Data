@@ -53,6 +53,8 @@
         {% if request.path == '/user-admin/measurement/' %}active menu-open{% endif %}
         {% if request.path == '/user-admin/source/' %}active menu-open{% endif %}
         {% if request.path == '/user-admin/location/' %}active menu-open{% endif %}
+        {% if request.path == '/user-admin/month/' %}active menu-open{% endif %}
+        {% if request.path == '/user-admin/data-point/' %}active menu-open{% endif %}
         
         ">
           <a href="#" class="nav-link 
@@ -63,6 +65,8 @@
           {% if request.path == '/user-admin/measurement/' %}active{% endif %}
           {% if request.path == '/user-admin/source/' %}active{% endif %}
           {% if request.path == '/user-admin/location/' %}active{% endif %}
+          {% if request.path == '/user-admin/month/' %}active{% endif %}
+          {% if request.path == '/user-admin/data-point/' %}active{% endif %}
           ">
             <i class="nav-icon fas fa-database"></i>
             <p>
@@ -108,7 +112,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{% url 'user-admin-indicators'%}" class="nav-link {% if request.path == '/user-admin/month/' %}active{% endif %}">
+              <a href="{% url 'user-admin-month'%}" class="nav-link {% if request.path == '/user-admin/month/' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Month</p>
               </a>

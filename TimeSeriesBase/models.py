@@ -80,6 +80,7 @@ class DataPoint(models.Model):
     year_start_GC = models.CharField(max_length=50, null=True, blank=True)
     year_end_EC = models.CharField(max_length=50, null=True, blank=True)
     year_end_GC = models.CharField(max_length=50, null=True, blank=True)
+    months = models.ManyToManyField('Month', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     
@@ -97,6 +98,8 @@ class Quarter(models.Model):
 class Month(models.Model):
     month_ENG = models.CharField(max_length=50)
     month_AMH = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.month_ENG
