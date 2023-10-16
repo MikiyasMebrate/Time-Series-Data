@@ -75,10 +75,10 @@ class Indicator_Point(models.Model):
 class DataPoint(models.Model):
     year_EC = models.CharField(max_length=50)
     year_GC = models.CharField(max_length=50)
-    year_start_EC = models.CharField(max_length=50)
-    year_start_GC = models.CharField(max_length=50)
-    year_end_EC = models.CharField(max_length=50)
-    year_end_GC = models.CharField(max_length=50)
+    year_start_EC = models.CharField(max_length=50, null=True, blank=True)
+    year_start_GC = models.CharField(max_length=50, null=True, blank=True)
+    year_end_EC = models.CharField(max_length=50, null=True, blank=True)
+    year_end_GC = models.CharField(max_length=50, null=True, blank=True)
     
     def __str__(self):
         return self.year_EC

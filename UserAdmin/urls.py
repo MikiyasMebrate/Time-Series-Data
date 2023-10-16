@@ -24,7 +24,11 @@ urlpatterns = [
     path('location/<int:pk>', views.location_detail, name="user-location-detail"),
     path('location-delete/<int:pk>', views.delete_location, name='user-location-delete'),
    
-   
+   #Data-Point
+    path('data-point/', views.data_point, name="user-admin-data-point"),
+    
+    
+    
     path('measurement/', views.measurement, name="user-admin-measurement"),
     path('profile/', views.profile, name="user-admin-profile"),
     path('source/', views.source, name="user-admin-source"),

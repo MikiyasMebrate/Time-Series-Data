@@ -256,6 +256,8 @@ def measurement(request):
 def profile(request):
     return render(request, 'user-admin/profile.html')
 
+
+#Source
 def source(request):
     sources = Source.objects.all()
 
@@ -352,6 +354,11 @@ def delete_topic(request,pk):
     else:
         messages.error(request, "Please Try again!")
         return redirect('user-admin-topic')
+ 
+ 
+#Data Point 
+def data_point(request):
+    return render(request, 'user-admin/data_point.html')     
     
 def users_list(request):
     return render(request, 'user-admin/users_list.html')
