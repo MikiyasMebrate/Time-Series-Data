@@ -358,7 +358,12 @@ def delete_topic(request,pk):
  
 #Data Point 
 def data_point(request):
-    return render(request, 'user-admin/data_point.html')     
+    data_points = DataPoint.objects.all()
+    
+    context = {
+        'data_points' : data_points 
+    }
+    return render(request, 'user-admin/data_point.html', context)     
     
 def users_list(request):
     return render(request, 'user-admin/users_list.html')

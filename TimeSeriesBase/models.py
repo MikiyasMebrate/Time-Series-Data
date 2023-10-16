@@ -79,6 +79,8 @@ class DataPoint(models.Model):
     year_start_GC = models.CharField(max_length=50, null=True, blank=True)
     year_end_EC = models.CharField(max_length=50, null=True, blank=True)
     year_end_GC = models.CharField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.year_EC
