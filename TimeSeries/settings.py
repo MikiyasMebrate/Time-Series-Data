@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'TimeSeriesBase',
     'UserManagement',
     'UserAdmin',
-    'widget_tweaks'
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
