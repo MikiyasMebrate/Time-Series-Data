@@ -1,5 +1,5 @@
 from django import forms
-from TimeSeriesBase.models import Topic, Location,Category,Source,Measurement, Indicator
+from TimeSeriesBase.models import Topic, Location,Category,Source,Measurement, Indicator, DataPoint, Month
 
 class LocationForm(forms.ModelForm):
     class Meta:
@@ -100,7 +100,7 @@ class SourceForm(forms.ModelForm):
         }
 
 class MeasurmentForm(forms.ModelForm):
-    model = Measurement
+    model = DataPoint
     fields = '__all__'
 
     widgets = {
@@ -114,3 +114,53 @@ class MeasurmentForm(forms.ModelForm):
                 'class': 'form-control'
             })
     }
+
+
+class DataPointForm(forms.ModelForm):
+    class Meta:
+        model = DataPoint
+        fields = '__all__'
+        
+        widgets = {
+            'year_EC' : forms.DateInput(attrs={
+                'class' : 'form-control',
+                'type' : 'number',
+                'placeholder':'Please Enter Year E.C (Required for Non-Interval) ',
+                'min' : '1900',
+            }),
+            'year_GC' : forms.DateInput(attrs={
+                'class' : 'form-control',
+                'type' : 'number',
+                'placeholder':'Please Enter Year G.C (Required for Non-Interval)',
+                'min' : '1900',
+            }),
+            'year_start_EC' : forms.DateInput(attrs={
+                'class' : 'form-control',
+                'type' : 'number',
+                'placeholder':'Please Enter Year (Not Required, For Interval Year)',
+                'min' : '1900',
+            }),
+            'year_end_EC' : forms.DateInput(attrs={
+                'class' : 'form-control',
+                'type' : 'number',
+                'placeholder':'Please Enter Year (Not Required, For Interval Year)',
+                'min' : '1900',
+            }),
+            'year_start_GC' : forms.DateInput(attrs={
+                'class' : 'form-control',
+                'type' : 'number',
+                'placeholder':'Please Enter Year (Not Required, For Interval Year)',
+                'min' : '1900',
+            }),
+            'year_end_GC' : forms.DateInput(attrs={
+                'class' : 'form-control',
+                'type' : 'number',
+                'placeholder':'Please Enter Year (Not Required, For Interval Year)',
+                'min' : '1900',
+            }),
+            'is is_interval' : forms.CheckboxInput(attrs={
+                'class' : 'form-check'
+            })
+        }
+        
+        

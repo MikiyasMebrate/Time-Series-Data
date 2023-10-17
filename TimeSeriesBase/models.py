@@ -39,7 +39,7 @@ class Indicator(models.Model):
     title_AMH = models.CharField(max_length=100)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    for_category = models.ManyToManyField(Category, null=True, blank=True)
+    for_category = models.ManyToManyField(Category, blank=True)
 
     def str(self):
         return self.get_full_path()
@@ -73,12 +73,16 @@ class Indicator_Point(models.Model):
 
 
 class DataPoint(models.Model):
-    year_EC = models.CharField(max_length=50)
-    year_GC = models.CharField(max_length=50)
-    year_start_EC = models.CharField(max_length=50)
-    year_start_GC = models.CharField(max_length=50)
-    year_end_EC = models.CharField(max_length=50)
-    year_end_GC = models.CharField(max_length=50)
+    year_EC = models.CharField(max_length=50, null=True, blank=True)
+    year_GC = models.CharField(max_length=50, null=True, blank=True)
+    is_interval = models.BooleanField(default=False)
+    year_start_EC = models.CharField(max_length=50, null=True, blank=True)
+    year_start_GC = models.CharField(max_length=50, null=True, blank=True)
+    year_end_EC = models.CharField(max_length=50, null=True, blank=True)
+    year_end_GC = models.CharField(max_length=50, null=True, blank=True)
+    months = models.ManyToManyField('Month', blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.year_EC
@@ -94,6 +98,8 @@ class Quarter(models.Model):
 class Month(models.Model):
     month_ENG = models.CharField(max_length=50)
     month_AMH = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.month_ENG

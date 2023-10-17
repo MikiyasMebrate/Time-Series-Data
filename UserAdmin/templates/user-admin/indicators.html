@@ -10,6 +10,10 @@
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
+
+
+
+
     <!--Add Indicator  Modal Start-->
     <div
       class="modal fade"
@@ -72,6 +76,134 @@
     </div>
     <!--Add Indicator Modal End-->
 
+
+    <!--Delete Indicator Modal Start-->
+    {% for indicator_list in indicators%}
+    <div class="modal fade " id="deleteIndicator{{indicator_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteIndicatorLabel">
+              Deletion Form
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h2>Are you sure you want to delete {{indicator_list.title_ENG}}/{{indicator_list.title_AMH}} ? </h2>      
+          </div>
+    
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <a  href="{% url 'user-admin-indicator-delete' indicator_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <!--Delete Indicator Modal End-->
+
+
+<!--Delete Sub_indicator Modal Start-->
+{% if subIndicator %}
+<div class="modal fade " id="deleteIndicator{{single_indicator.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+ <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="deleteIndicatorLabel">
+        Deletion Form
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <h2>Are you sure you want to delete {{single_indicator.title_ENG}}/{{single_indicator.title_AMH}} ? </h2>      
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      <a  href="{% url 'user-admin-indicator-delete' single_indicator.pk %}" type="submit" class="btn btn-primary">Yes</a>
+    </div>
+  </div>
+ </div>
+</div>
+{% for indicator_list in subIndicator%}
+<div class="modal fade " id="deleteIndicator{{indicator_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="deleteIndicatorLabel">
+         Deletion Form
+       </h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body">
+       <h2>Are you sure you want to delete {{indicator_list.title_ENG}}/{{indicator_list.title_AMH}} ? </h2>      
+     </div>
+
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+       <a  href="{% url 'user-admin-indicator-delete' indicator_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+     </div>
+   </div>
+  </div>
+ </div>
+
+ {% for indicator_sub_list in indicator_list_all%}
+ {% if  indicator_sub_list.parent == indicator_list %}
+ <div class="modal fade " id="deleteIndicator{{indicator_sub_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="deleteIndicatorLabel">
+         Deletion Form
+       </h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body">
+       <h2>Are you sure you want to delete {{indicator_sub_list.title_ENG}}/{{indicator_sub_list.title_AMH}} ? </h2>      
+     </div>
+
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+       <a  href="{% url 'user-admin-indicator-delete' indicator_sub_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+     </div>
+   </div>
+  </div>
+ </div> 
+
+ {% for indicator_sub_sub_list in  indicator_list_all%}
+
+ {% if  indicator_sub_sub_list.parent == indicator_sub_list %}
+<div class="modal fade " id="deleteIndicator{{indicator_sub_sub_list.pk}}" tabindex="-1" aria-labelledby="deleteIndicatorLabel"aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="deleteIndicatorLabel">
+         Deletion Form
+       </h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body">
+       <h2>Are you sure you want to delete {{indicator_sub_sub_list.title_ENG}}/{{indicator_sub_sub_list.title_AMH}} ? </h2>      
+     </div>
+
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+       <a  href="{% url 'user-admin-indicator-delete' indicator_sub_sub_list.pk %}" type="submit" class="btn btn-primary">Yes</a>
+     </div>
+   </div>
+  </div>
+ </div> 
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+<!--Delete Sub_Indicator Modal End-->
+
+
     {% include 'user-admin/include/navbar.html' %}
     {% include 'user-admin/include/sidebar.html' %}
 
@@ -89,7 +221,7 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
       <!--Title End-->
 
       <section class="content">
@@ -120,7 +252,7 @@
                       <th>Name English</th>
                       <th>Name Amharic</th>
                       <th>Created Date</th>
-                      <th>Action</th>
+                      <th class="text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -133,12 +265,21 @@
                         <div class="d-flex justify-content-center text-center">
                           <a
                             href="{% url 'user-admin-indicator-sub' indicator_list.pk %}"
-                            ><i class="fas me-4 text-primary fa-eye"></i
+                            ><i class="fas ms-3 text-primary fa-eye"></i
                           ></a>
                           <a
                             href="{% url 'user-admin-indicators-detail' indicator_list.pk %}"
-                            ><i class="fas ms-2 text-primary fa-pen"></i
+                            ><i class="fas ms-3 text-warning fa-pen"></i
                           ></a>
+                          <button
+                          type="button"
+                          class="btn  m-0 p-0 text-center"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteIndicator{{indicator_list.pk}}"
+                          data-bs-whatever="@mdo"
+                        >
+                        <i class="fas ms-3  text-danger fa-trash"></i>
+                        </button>
                         </div>
                       </td>
                     </tr>
@@ -154,37 +295,170 @@
           <h2 class="mt-5">Sub-Indicators</h2>
           <hr />
           <p class="fw-bold p-0 m-0">{{single_indicator.title_ENG}}/ {{single_indicator.title_AMH}}</p>
-          <!--Directory Start-->
-          <ul class="tree ">
-            {% for indicator_list in subIndicator%}
-            <li class="dir">
-              <a class="text-dark" href="{% url 'user-admin-indicators-detail' indicator_list.pk%}" target="_blank"> {{indicator_list.title_ENG}}</a>
-              {% comment %} <a href="{% url '' indicator_list.pk%}" class="btn btn-primary pt-1 pb-1 ps-2 pe-2">+</a href="{% url ''%}"> {% endcomment %}
-              <ul>
-                {% for indicator_sub_list in indicator_list_all%}
-                {% if  indicator_sub_list.parent == indicator_list %}    
-                <li class="file">
-                  <a class="text-dark" href="{% url 'user-admin-indicators-detail' indicator_sub_list.pk%}" target="_blank">{{indicator_sub_list.title_ENG}}</a>
+                    <!--Topic Table List Start-->
+                    <div class="row justify-content-center">
+                      <div class="col-md-12">
+                        <div class="table-responsive border p-3 shadow">
+                          <table
+                            id="example"
+                            class="table table-striped table-hover table-sm"
+                          >
+                            <thead>
+                              <tr>
+                                <th scope="col">Indicator</th>
+                                <th scope="col">2000</th>
+                                <th scope="col">2001</th>
+                                <th scope="col">2002</th>
+                                <th scope="col">2003</th>
+                                <th scope="col">2004</th>
+                                <th scope="col">2005</th>
+                                <th scope="col">2006</th>
+                                <th scope="col">2007</th>
+                                <th class="text-center">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <!--Main Level Start-->
+                              <tr>
+                                <td  class="fw-bold ps-1">{{single_indicator.title_ENG}}</td>
+                                <td >1</td>
+                                <td >2</td>
+                                <td >1</td>
+                                <td >2</td>
+                                <td >1</td>
+                                <td >2</td>
+                                <td >1</td>
+                                <td >2</td>
+                                <td>
+                                  <div class="d-flex justify-content-center">
+                                    <a
+                                      href="{% url 'user-admin-indicators-detail' single_indicator.pk %}"
+                                      ><i class="fas ms-3 text-primary fa-pen"></i
+                                    ></a>
+                                    <button
+                                    type="button"
+                                    class="btn  m-0 p-0 text-center"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteIndicator{{single_indicator.pk}}"
+                                    data-bs-whatever="@mdo"
+                                  >
+                                  <i class="fas ms-3  text-danger fa-trash"></i>
+                                  </button>
+                                  </div>
+                                </td>
+                              </tr>
+                              <!--Main Level End-->
+                            
+                              {% for indicator_list in subIndicator%}
+                                <!--1st Level Start -->
+                                <tr>
+                                  <td class="p-2" >{{indicator_list.title_ENG}}</td>
+                                  <td >1</td>
+                                  <td >2</td>
+                                  <td >1</td>
+                                  <td >2</td>
+                                  <td >1</td>
+                                  <td >2</td>
+                                  <td >1</td>
+                                  <td >2</td>
+                                  <td>
+                                    <div class="d-flex justify-content-center">
+                                      <a
+                                        href="{% url 'user-admin-indicators-detail' indicator_list.pk %}"
+                                        ><i class="fas ms-3 text-primary fa-pen"></i
+                                      ></a>
+                                      <button
+                                      type="button"
+                                      class="btn  m-0 p-0 text-center"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#deleteIndicator{{indicator_list.pk}}"
+                                      data-bs-whatever="@mdo"
+                                    >
+                                    <i class="fas ms-3  text-danger fa-trash"></i>
+                                    </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <!--1st Level End-->
+                                  {% for indicator_sub_list in indicator_list_all%}
+                                  {% if  indicator_sub_list.parent == indicator_list %}    
+                                    <!--2nd Level Start -->
+                                    <tr >
+                                      <td class="ps-3">{{indicator_sub_list.title_ENG}}</td>
+                                      <td >1</td>
+                                      <td >2</td>
+                                      <td >1</td>
+                                      <td >2</td>
+                                      <td >1</td>
+                                      <td >2</td>
+                                      <td >1</td>
+                                      <td >2</td>
+                                      <td>
+                                        <div class="d-flex justify-content-center">
+                                          <a
+                                            href="{% url 'user-admin-indicators-detail' indicator_sub_list.pk %}"
+                                            ><i class="fas ms-3 text-primary fa-pen"></i
+                                          ></a>
+                                          <button
+                                          type="button"
+                                          class="btn  m-0 p-0 text-center"
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#deleteIndicator{{indicator_sub_list.pk}}"
+                                          data-bs-whatever="@mdo"
+                                        >
+                                        <i class="fas ms-3  text-danger fa-trash"></i>
+                                        </button>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                    <!--2nd Level End-->
+                                    <ul>
+                                      {% for indicator_sub_sub_list in  indicator_list_all%}
+                                      {% if  indicator_sub_sub_list.parent == indicator_sub_list %}    
+                                     <!--3rd Level Start-->
+                                        <tr>
+                                          <td class="ps-5">{{indicator_sub_sub_list.title_ENG}}</td>
+                                          <td >1</td>
+                                          <td >2</td>
+                                          <td >1</td>
+                                          <td >2</td>
+                                          <td >1</td>
+                                          <td >2</td>
+                                          <td >1</td>
+                                          <td >2</td>
+                                          <td>
+                                            <div class="d-flex justify-content-center">
+                                              <a
+                                                href="{% url 'user-admin-indicators-detail' indicator_sub_sub_list.pk %}"
+                                                ><i class="fas ms-3 text-primary fa-pen"></i
+                                              ></a>
+                                              <button
+                                              type="button"
+                                              class="btn  m-0 p-0 text-center"
+                                              data-bs-toggle="modal"
+                                              data-bs-target="#deleteIndicator{{indicator_sub_sub_list.pk}}"
+                                              data-bs-whatever="@mdo"
+                                            >
+                                            <i class="fas ms-3  text-danger fa-trash"></i>
+                                            </button>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                        <!--3rd Level End-->
+                                     
+                                      {% endif %}
+                                      {% endfor %}
+                                    </ul>
+                                  {% endif %}
+                                  {% endfor %}
+                              {% endfor %}
 
-                  <ul>
-                    {% for indicator_sub_sub_list in  indicator_list_all%}
-                    {% if  indicator_sub_sub_list.parent == indicator_sub_list %}    
-                    <li class="file">
-                      <a class="text-dark" href="{% url 'user-admin-indicators-detail' indicator_sub_sub_list.pk%}" target="_blank">{{indicator_sub_sub_list.title_ENG}}</a>
-                    </li>
-                    {% endif %}
-                    {% endfor %}
-                  </ul>
-
-                </li>
-                {% endif %}
-                {% endfor %}
-              </ul>
-            </li>
-            {% endfor %}
-          </ul>
-
-          <!--Directory End-->
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <!--Topic Table List End-->
           {% endif %}
         </div>
       </section>
@@ -204,16 +478,5 @@
     <script src="/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 
     {% include 'user-admin/include/footer_js.html'%}
-    {% block scripts %}
-    <script>
-        // JavaScript to handle expand/collapse functionality
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', () => {
-                button.parentElement.querySelector('ul').classList.toggle('show');
-                button.textContent = (button.textContent === '+' ? '-' : '+');
-            });
-        });
-    </script>
-    {% endblock %}
   </body>
 </html>
