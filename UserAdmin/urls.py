@@ -3,6 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name="user-admin-index"),
+    
+    #JSON
+    path('json/', views.json,name="json"),
     #Category
     path('category/', views.category, name="user-admin-category"),
     path('category/<int:pk>', views.catagory_detail, name="user-catagory-detail"),

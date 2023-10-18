@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
@@ -6,7 +7,6 @@ from .forms import *
 # Create your views here.
 def index(request):
     return render(request, 'user-admin/index.html')
-
 
 #Category
 def category(request):
@@ -59,6 +59,30 @@ def delete_category(request,pk):
   
   
 #Data List    
+def json(request):
+    topic = Topic.objects.all()
+    category = Category.objects.all()
+    indicator = Indicator.objects.all()
+    
+    topic_data = list(topic.values())
+    category_data = list(category.values())
+    indicator_data = list(indicator.values())
+
+    # Retrieve the many-to-many related objects for each category
+    for category in category_data:
+        category_obj = Category.objects.get(id=category['id'])
+        related_topics = list(category_obj.topic.values())
+        category['topics'] = related_topics
+        
+        
+    context = {
+        'topics': topic_data,
+        'categories': category_data,
+        'indicators':indicator_data
+    }
+    return(JsonResponse(context))
+
+
 def data_list(request):
     return render(request, 'user-admin/data_list_view.html')
 

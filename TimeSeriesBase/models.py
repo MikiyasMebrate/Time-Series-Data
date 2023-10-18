@@ -2,23 +2,10 @@ from django.db import models
 from UserManagement.models import CustomUser
 
 
-class Location(models.Model):
-    name_ENG = models.CharField(max_length=50) 
-    name_AMH = models.CharField(max_length=50) 
-    user =  models.ForeignKey(CustomUser, null=True, blank=True ,on_delete=models.SET_NULL)
-    updated =  models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        ordering = ['-created','-updated']
-    
-    def __str__(self):
-        return self.name_ENG
-
 class Topic(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
-    for_location = models.ManyToManyField(Location)
+    user = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -39,7 +26,7 @@ class Indicator(models.Model):
     title_AMH = models.CharField(max_length=100)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    for_category = models.ManyToManyField(Category, blank=True)
+    for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
 
     def str(self):
         return self.get_full_path()
@@ -85,7 +72,10 @@ class DataPoint(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.year_EC
+        if self.is_interval:
+            return self.year_start_EC + " - " + self.year_end_EC + "E.C"
+        else:
+            return self.year_EC+" "+"E.C"
 
 class Quarter(models.Model):
     quarter = models.CharField(max_length=50)
@@ -134,6 +124,7 @@ class DataValue(models.Model):
     for_month = models.ForeignKey("Month", on_delete=models.CASCADE, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.CASCADE, blank=True, null=True)
     for_source = models.ManyToManyField("Source")
+    for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
     
     def __str__(self):
         return self.value
@@ -146,3 +137,16 @@ class Source(models.Model):
     
     def __str__(self):
         return self.title_ENG
+    
+
+class Location(models.Model):
+    name_ENG = models.CharField(max_length=50) 
+    name_AMH = models.CharField(max_length=50) 
+    updated =  models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created','-updated']
+    
+    def __str__(self):
+        return self.name_ENG

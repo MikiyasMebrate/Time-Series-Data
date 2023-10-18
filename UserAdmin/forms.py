@@ -46,8 +46,8 @@ class IndicatorForm(forms.ModelForm):
             'title_AMH' : forms.TextInput(attrs={
                 'class' : 'form-control'
             }),
-            'for_category' : forms.SelectMultiple(attrs={
-                'class' : 'select2 form-control',
+            'for_category' : forms.Select(attrs={
+                'class' : 'form-select',
                 'data-placeholder' : "Select Categories"
             })
         }

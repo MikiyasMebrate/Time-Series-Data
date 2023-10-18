@@ -12,16 +12,15 @@
     <!--Data Add Modal Start-->
     <div
       class="modal fade"
-      id="userRegistration"
+      id="newDataAdd"
       tabindex="-1"
-      aria-labelledby="userRegistrationLabel"
-      aria-hidden="true"
-    >
+      aria-labelledby="newDataAddLabel"
+      aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="userRegistrationLabel">
-              New User Registration
+            <h5 class="modal-title" id="newDataAddLabel">
+              New Data Registration
             </h5>
             <button
               type="button"
@@ -32,41 +31,13 @@
           </div>
           <div class="modal-body">
             <form>
-              <div class="mb-3">
-                <label for="id_username" class="col-form-label"
-                  >Username:</label
-                >
-                <input type="text" class="form-control" id="id_username" />
-              </div>
               <div class="row">
-                <div class="col mb-3">
-                  <label for="id_first_name" class="col-form-label"
-                    >First Name:</label
-                  >
-                  <input type="text" class="form-control" id="id_first_name" />
-                </div>
-                <div class="col mb-3">
-                  <label for="id_last_name" class="col-form-label"
-                    >Last Name:</label
-                  >
-                  <input type="text" class="form-control" id="id_last_name" />
-                </div>
-              </div>
-              <div class="mb-3">
-                <label for="id_email" class="col-form-label">Email:</label>
-                <input type="email" class="form-control" id="id_email" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password1" class="col-form-label"
-                  >Password:</label
-                >
-                <input type="password" class="form-control" id="id_password1" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password2" class="col-form-label"
-                  >Confirm Password:</label
-                >
-                <input type="password" class="form-control" id="id_password2" />
+                <select id="id_topic_option" class="form-select">
+                </select>
+                <select id="id_categories_option" class="form-select mt-2">
+                </select>
+                <select id="id_indicators_option" class="form-select mt-2">
+                </select>
               </div>
             </form>
           </div>
@@ -486,7 +457,7 @@
                   type="button"
                   class="btn btn-primary mb-2"
                   data-bs-toggle="modal"
-                  data-bs-target="#userRegistration"
+                  data-bs-target="#newDataAdd"
                   data-bs-whatever="@mdo"
                 >
                   + Add Data
@@ -538,7 +509,7 @@
                             </p>
                           </a>
                         </td>
-                        <td>0.2</td>
+                        <td >0.2</td>
                         <td>0.4</td>
                         <td>0.4</td>
                         <td>0.6</td>
@@ -607,6 +578,91 @@
         .buttons()
         .container()
         .appendTo("#example1_wrapper .col-md-6:eq(0)");
+    </script>
+
+    <script>
+      function fetchData() {
+        fetch('/user-admin/json/')
+          .then(response => response.json())
+          .then(data => {
+            let topic = document.getElementById('id_topic_option')
+            let categories = document.getElementById('id_categories_option')
+            let indicator = document.getElementById('id_indicators_option')
+
+            selectOptionEmpty = '<option selected>-- Select Topic --</option>'
+            const selectOptions = data.topics.map(({ title_ENG, title_AMH, id }) => (
+             `<option   value=${id}>${title_ENG} ${title_AMH} </option>` ));
+
+            topic.innerHTML = `${selectOptionEmpty}${selectOptions}`
+             
+            
+            
+            topic.addEventListener('change', ()=>{
+              selectOptionEmptyCategory = '<option>-- Select Categories --</option>'
+            
+
+              const selectCategoriesOptions = data.categories.map(({name_ENG, name_AMH, id, topics})=>{
+                if (String(topics[0].id) === String(topic.value)) {
+                  return `<option  value=${id}>${name_ENG} ${name_AMH} </option>`
+                }else{
+                  return null
+                }
+              })
+              categories.innerHTML = `${selectOptionEmptyCategory} ${selectCategoriesOptions}`
+              
+              categories.addEventListener('change', ()=>{
+                selectOptionEmptyIndicator = '<option>-- Select Indicator --</option>'
+                const selectIndicatorOptions = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
+                  let li = []
+                  let child = []
+                  
+                  if (String(categories.value) === String(for_category_id)) {
+                    child_list = (parent, title_ENG, space)=>{
+                      space += 2
+                      for(i of data.indicators){
+                        if(String(i.parent_id) === String(parent)){
+                          child.push(`<option  class="ml-${space}" value=${i.id}>  ${i.title_ENG} ${i.title_AMH} </option>`)
+                          child_list(i.id, i.title_ENG, space)
+                        }
+                      }
+                    }
+
+                    for(k of data.indicators){
+                      if(String(k.parent_id) == String(id)){
+                        li.push(`<optgroup label="${title_ENG}">`)
+                          li.push(`<option value=${k.id}>${k.title_ENG} ${k.title_AMH} </option>`)
+                          child_list( k.id, k.title_ENG, 0)
+                          li.push(child)
+                        li.push('</optgroup>')
+                        
+                      }
+                    }
+
+                   
+                      
+                    
+                    
+                    return li
+                  }else{
+                    return null
+                  }
+                  
+                })
+                indicator.innerHTML = selectOptionEmptyIndicator + selectIndicatorOptions
+              })
+  
+            
+            });
+          })
+          .catch(error => console.error(error));
+      }
+
+      fetchData()
+
+      
+      
+      // Call the fetchData() function periodically to keep updating the data
+      //setInterval(fetchData, 5000); 
     </script>
   </body>
 </html>

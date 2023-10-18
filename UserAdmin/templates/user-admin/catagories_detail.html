@@ -10,27 +10,26 @@
 
 <body class="hold-transition sidebar-mini layout-fixed">
       <!--Delete Location Modal Start-->
-  <div class="modal fade " id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="userRegistrationLabel">
-          Deletion Form
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h2>Are you sure you want to delete {{form.name_ENG.value}}/{{form.name_AMH.value}}? </h2>      
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <a  href="{% url 'user-catagory-delete' catagorys.pk %}" type="submit" class="btn btn-primary">Yes</a>
+    <div class="modal fade " id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="userRegistrationLabel">
+              Deletion Form
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h2>Are you sure you want to delete {{form.name_ENG.value}}/{{form.name_AMH.value}}? </h2>      
+          </div>
+    
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <a  href="{% url 'user-catagory-delete' catagorys.pk %}" type="submit" class="btn btn-primary">Yes</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 <!--Delete Location Modal End-->
     {% include 'user-admin/include/navbar.html'%}
     {% include 'user-admin/include/sidebar.html' %}
