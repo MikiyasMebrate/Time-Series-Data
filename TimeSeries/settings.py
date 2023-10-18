@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'TimeSeriesBase',
     'UserManagement',
     'UserAdmin',
-    'widget_tweaks'
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +122,7 @@ import os
 STATIC_URL = 'static/'
 
 MEDIA_ROOT=os.path.join(BASE_DIR,"media/")
+MEDIA_URL='/media/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),

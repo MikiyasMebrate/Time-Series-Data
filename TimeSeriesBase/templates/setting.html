@@ -1,0 +1,97 @@
+{% load static%}
+<html lang="en">
+  {% include "includes/head.html" %}
+  <body>
+    <!--Navbar Start-->
+    {% include "includes/navbar.html" %}
+    <section class="content mt-5">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-md-9">
+    <div class="card card-primary card-outline">
+        <div class="card-body box-profile">
+          <div class="text-center">
+           
+          </div>
+          <h3 class="profile-username text-center">{{user.username}}</h3>
+          <p class="text-muted text-center">{{user.email}}</p>
+        </div>
+      </div>
+      <div class="card">
+        <!--Menu Start-->
+        <div class="card-header p-2">
+          <ul class="nav nav-pills">
+           
+            <li class="nav-item">
+              <a class="nav-link" href="{% url "setting" %}" 
+                >Settings</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url "change_password" %}" 
+                >Change Password</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+           
+<div class="tab-pane" id="changePassword">
+    <form class="form-horizontal" method="POST">
+      {% csrf_token %}
+      <div class="form-group row">
+        <label for="oldPassword" class="col-sm-2 col-form-label"
+          >Username</label
+        >
+        <div class="col-sm-10">
+          {{form.username}}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="newPassword" class="col-sm-2 col-form-label"
+          >First name:</label
+        >
+        <div class="col-sm-10">
+            {{form.first_name}}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="newPassword" class="col-sm-2 col-form-label"
+          >Last name:</label
+        >
+        <div class="col-sm-10">
+            {{form.last_name}}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label
+          for="confirmPassword"
+          class="col-sm-2 col-form-label"
+          >Email</label
+        >
+        <div class="col-sm-10">
+            {{form.email}}
+        </div>
+      </div>
+       <div class="form-group row">
+        <div class="offset-sm-2 col-sm-10">
+          <button type="submit" class="btn btn-danger">
+            save changes
+          </button>
+        </div>
+      </form>
+  </div>
+
+  <script src="{% static "assets/plugins/jquery/jquery.min.js" %}"></script>
+
+<script src="{% static "assets/plugins/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+
+<script src="{% static "assets/dist/js/adminlte.min2167.js?v=3.2.0" %}"></script>
+
+<script src="{% static "assets/plugins/flot/jquery.flot.js" %}"></script>
+
+<script src="{% static "assets/plugins/flot/plugins/jquery.flot.resize.js" %}"></script>
+
+<script src="{% static "assets/plugins/flot/plugins/jquery.flot.pie.js" %}"></script>
+
+<script src="{% static "assets/dist/js/demo.js" %}"></script>
