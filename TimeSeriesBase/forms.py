@@ -1,4 +1,5 @@
 from django import forms
+# from UserManagement.models import CustomUser
 from django.contrib.auth.forms import PasswordChangeForm,UserChangeForm
 from django.contrib.auth.models import User  
 class PasswordChangingForm(PasswordChangeForm):
@@ -22,5 +23,11 @@ class UserChangingForm(UserChangeForm):
                 'class' : 'form-control','placeholder': 'email'}))
     class Meta:
         model=User
-        fields= ['username','last_name','first_name','email']    
+        fields= ['username','last_name','first_name','email'] 
+# class profilepcform(forms.ModelForm):
+#     profile_image=forms.ImageField(label="profile picture")  
+#     class Meta:
+#         model=CustomUser     
+#         fields=('image',)
+        
     
