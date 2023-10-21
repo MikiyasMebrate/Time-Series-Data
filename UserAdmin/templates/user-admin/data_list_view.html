@@ -31,25 +31,46 @@
           </div>
           <div class="modal-body">
             <form>
-              <div class="row">
-                <select id="id_topic_option" class="form-select">
+              {% csrf_token %}
+              <div class="row" id="form_data">
+                <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
+                <select name="topic" id="id_topic_option" class="form-select">
                 </select>
-                <select id="id_categories_option" class="form-select mt-2">
+                <label class="mt-2 form-label" for="id_categories_option">Category: </label>
+                <select name="category" id="id_categories_option" class="form-select mt-2">
                 </select>
-                <select id="id_indicators_option" class="form-select mt-2">
+                <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
+                <select name="indicator" id="id_indicators_option" class="form-select mt-2">
                 </select>
+                <div class="div">
+                  <label class="mt-2 form-label" for="id_is_interval">Is Interval: </label>
+                  <input name="id_is_interval" class="form-check" type="checkbox" id="id_is_interval">
+                </div>
+                <div id="id_div_year">
+                  <label class="mt-2 form-label" for="id_year_option">Year: </label>
+                  <select name="type" id="id_year_option" class="form-select mt-2">
+                  </select>
+                </div>
+                <div class="div">
+                  <label class="mt-2 form-label" for="id_is_actual">Is Actual: </label>
+                  <input name="is_actual" class="form-check" type="checkbox" id="id_is_actual">
+                </div>
+                <div id="id_div_type">
+                </div>
+                <div id="id_div_value">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">Save Data</button>
               </div>
             </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-primary">Save User</button>
           </div>
         </div>
       </div>
@@ -585,9 +606,14 @@
         fetch('/user-admin/json/')
           .then(response => response.json())
           .then(data => {
+            let parent = document.getElementById('form_data')
             let topic = document.getElementById('id_topic_option')
             let categories = document.getElementById('id_categories_option')
             let indicator = document.getElementById('id_indicators_option')
+            let interval = document.getElementById('id_is_interval')
+            let year = document.getElementById('id_year_option')
+       
+
 
             selectOptionEmpty = '<option selected>-- Select Topic --</option>'
             const selectOptions = data.topics.map(({ title_ENG, title_AMH, id }) => (
@@ -598,6 +624,7 @@
             
             
             topic.addEventListener('change', ()=>{
+              selectCategory = ''
               selectOptionEmptyCategory = '<option>-- Select Categories --</option>'
             
 
@@ -618,11 +645,11 @@
                   
                   if (String(categories.value) === String(for_category_id)) {
                     child_list = (parent, title_ENG, space)=>{
-                      space += 2
+                      space += String('&nbsp;&nbsp;&nbsp;')
                       for(i of data.indicators){
                         if(String(i.parent_id) === String(parent)){
-                          child.push(`<option  class="ml-${space}" value=${i.id}>  ${i.title_ENG} ${i.title_AMH} </option>`)
-                          child_list(i.id, i.title_ENG, space)
+                          child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
+                          child_list(i.id, i.title_ENG, String(space))
                         }
                       }
                     }
@@ -631,37 +658,93 @@
                       if(String(k.parent_id) == String(id)){
                         li.push(`<optgroup label="${title_ENG}">`)
                           li.push(`<option value=${k.id}>${k.title_ENG} ${k.title_AMH} </option>`)
-                          child_list( k.id, k.title_ENG, 0)
+                          child_list( k.id, k.title_ENG, ' ')
                           li.push(child)
                         li.push('</optgroup>')
                         
                       }
                     }
-
-                   
-                      
-                    
-                    
                     return li
                   }else{
                     return null
                   }
                   
                 })
+                
                 indicator.innerHTML = selectOptionEmptyIndicator + selectIndicatorOptions
-              })
+
+                indicator.addEventListener('change', ()=>{
+                  selectOptionEmptyYear = '<option>-- Select Year --</option>'
+              
+                  interval.addEventListener('change', ()=>{
+                    if(interval.checked){
+                       const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
+                        if(is_interval){
+                           return `<option value='${id}'>${year_start_EC} -  ${year_end_EC}EC / ${year_start_GC} -  ${year_end_GC}GC </option>`
+                        }else return null
+                      })
+                      
+                      year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
+                    }else if(!interval.checked){
+                      const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
+                        if(!is_interval){
+                          return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`
+                        }else return null
+                      })
+                      
+                      year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
+                    }
+                  })
+
+
+                  if(!interval.checked){
+                    const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
+                     if(!is_interval){
+                       return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`
+                     }else return null
+                   })
+
+                   year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
+                 }
+
   
-            
+                 
+                 year.addEventListener('change', ()=>{
+                  selectOptionEmptyType = '<option>-- Select Type --</option>'
+                  selectOptionType = `
+                  <option value="yearly">Yearly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly</option>`
+                  
+                  type = `
+                  <label class="mt-2 form-label" for="id_type_option">Type: </label>
+                  <select name="type" id="id_type_option" class="form-select mt-2">
+                    ${selectOptionEmptyType} ${selectOptionType}
+                  </select>`
+                  let div = document.getElementById('id_div_type')
+                  div.innerHTML = type
+                
+                  let data_type = document.getElementById('id_type_option')
+
+
+                  data_type.addEventListener('change', ()=>{
+                    if(data_type.value === 'yearly'){
+                        value = `
+                          <label class="mt-2 form-label" for="id_value">Value: </label>
+                          <input name="value" type="text" class="form-control" id="id_value">
+                        `;
+                        div.innerHTML = value ;
+                    }
+                  })
+                 })
+                })
+              })
             });
           })
           .catch(error => console.error(error));
       }
 
       fetchData()
-
-      
-      
-      // Call the fetchData() function periodically to keep updating the data
       //setInterval(fetchData, 5000); 
     </script>
   </body>

@@ -63,10 +63,12 @@ def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
     indicator = Indicator.objects.all()
+    year = DataPoint.objects.all()
     
     topic_data = list(topic.values())
     category_data = list(category.values())
     indicator_data = list(indicator.values())
+    year = list(year.values())
 
     # Retrieve the many-to-many related objects for each category
     for category in category_data:
@@ -78,7 +80,8 @@ def json(request):
     context = {
         'topics': topic_data,
         'categories': category_data,
-        'indicators':indicator_data
+        'indicators':indicator_data,
+        'year' : year
     }
     return(JsonResponse(context))
 
