@@ -87,7 +87,31 @@ def json(request):
 
 
 def data_list(request):
-    return render(request, 'user-admin/data_list_view.html')
+    form = dataListForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            topic = form.cleaned_data['topic']
+            category = form.cleaned_data['category']
+            is_interval = form.cleaned_data['is_interval']
+            year = form.cleaned_data['year']
+            indicator = form.cleaned_data['indicator']
+            is_actual = form.cleaned_data['is_actual']
+            type = form.cleaned_data['type']
+            value = form.cleaned_data['value']
+            source  = form.cleaned_data['source']
+            
+            
+            i = DataValue.objects.create(value=value, for_datapoint=year, for_indicator=indicator)
+            i.for_source.add(source)
+            messages.success(request, 'Successfully Added!')
+            return  HttpResponse('Successfully Added!')
+        else:
+            return  HttpResponse('error!')
+            
+    context = {
+        'form' : form
+    }
+    return render(request, 'user-admin/data_list_view.html', context)
 
 def data_list_detail(request):
     return render(request, 'user-admin/data_list_detail.html')
