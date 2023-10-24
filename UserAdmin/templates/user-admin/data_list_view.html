@@ -41,37 +41,51 @@
               {% csrf_token %}
             <ul>
               <div class="row" id="form_data">
-                <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
-                <select name="topic" id="id_topic_option" class="form-select">
-                </select>
-                <label class="mt-2 form-label" for="id_categories_option">Category: </label>
-                <select name="category" id="id_categories_option" class="form-select mt-2">
-                </select>
+                <div>
+                  <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
+                  <select name="topic" id="id_topic_option" class="form-select">
+                  </select>
+                </div>
+                <!---->
+                <div>
+                  <label class="mt-2 form-label" for="id_categories_option">Category: </label>
+                  <select name="category" id="id_categories_option" class="form-select mt-2">
+                  </select>
+                </div>
+                <!---->
                 <div class="div">
                   <label class="mt-2 form-label" for="id_is_interval">Is Interval: </label>
                   <input name="is_interval" class="form-check" type="checkbox" id="id_is_interval">
                 </div>
+                <!---->
                 <div id="id_div_year">
                   <label class="mt-2 form-label" for="id_year_option">Year: </label>
                   <select name="year" id="id_year_option" class="form-select mt-2">
                   </select>
                 </div>
-                <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
+                <!---->
+                <div>
+                  <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
                 <select name="indicator" id="id_indicators_option" class="form-select mt-2">
                 </select>
+                </div>
+                <!---->
                 <div class="div">
                   <label class="mt-2 form-label" for="id_is_actual">Is Actual: </label>
                   <input name="is_actual" class="form-check" type="checkbox" id="id_is_actual">
                 </div>
-
+                <!---->
                 <div id="id_div_type">
                 </div>
-
-                {{form.source.label}}
+                <!---->
+                <div>
+                  {{form.source.label}}
                 {{form.source}}
+                </div>
+                <!---->
                 <div id="id_div_value">
                 </div>
-
+                <!---->
                 
 
               </div>
@@ -687,7 +701,7 @@
                  }
 
                 year.addEventListener('change', ()=>{
-                  selectOptionEmptyIndicator = '<option>-- Select Indicator --</option>'
+                  selectOptionEmptyIndicator = `<option value='none'>-- Select Indicator --</option>`
                 const selectIndicatorOptions = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
                   let li = []
                   let child = []
@@ -760,8 +774,6 @@
       }
 
       fetchData()
-      //setInterval(fetchData, 5000); 
-
 
       let form = document.getElementById('addDataForm')
       $(document).on('submit', '#addDataForm', function(e){
@@ -784,28 +796,72 @@
             xhr.setRequestHeader('X-CSRFToken', $('input[name=csrfmiddlewaretoken]').val());
           },
           success: function(response) {
-            console.log(response);
+            if (response == 'Successfully Added!'){
+              swal({
+                title: "Successfully Added! Do you want to Add Another data?",
+                icon: "success",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+              })
+              .then((willProceed) => {
+                if (willProceed) {
+                  const selectElement = document.getElementById("id_indicators_option");
+                  selectElement.selectedIndex = 0;
+                  const value = document.getElementById("id_value").value = '';
+                
+                } else {
+                  location.reload()
+                }
+              });
+            }else if (response == 'The Data Already Added'){
+              swal({
+                title: "The Data Already Submitted!",
+                icon: "error",
+                buttons: ["No",'Re-Enter'],
+                dangerMode: true,
+              })
+              .then((willProceed) => {
+                if (willProceed) {                
+                } else {
+                  location.reload()
+                }
+              });
+            }else{
+              swal({
+                title: "Please Try Again!",
+                icon: "error",
+                buttons: ["No",'Re-Enter'],
+                dangerMode: true,
+              })
+              .then((willProceed) => {
+                if (willProceed) {                
+                } else {
+                }
+              });
+            }           
+          },
+
+          error: function(error) {
+            // handle any errors that occurred during the request
+            console.log(error);
             swal({
-              title: "Do you want to Add Another data?",
-              icon: "success",
+              title: "Please Try Again!",
+              icon: "error",
               buttons: ["No", "Yes"],
               dangerMode: true,
             })
             .then((willProceed) => {
               if (willProceed) {
-                // Yes option selected
-                // Add your code here for the "Yes" scenario
+                const selectElement = document.getElementById("id_indicators_option");
+                selectElement.selectedIndex = 0;
+
+                const value = document.getElementById("id_value").value = '';
+              
               } else {
                 // No option selected
                 // Add your code here for the "No" scenario
               }
             });
-            
-            
-          },
-          error: function(error) {
-            // handle any errors that occurred during the request
-            console.log(error);
           }
         });
       });

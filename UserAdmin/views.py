@@ -100,11 +100,15 @@ def data_list(request):
             value = form.cleaned_data['value']
             source  = form.cleaned_data['source']
             
-            
-            i = DataValue.objects.create(value=value, for_datapoint=year, for_indicator=indicator)
-            i.for_source.add(source)
-            messages.success(request, 'Successfully Added!')
-            return  HttpResponse('Successfully Added!')
+            check = DataValue.objects.filter(for_indicator = indicator, for_datapoint=year)
+            if check.exists():
+                return HttpResponse('The Data Already Added')
+            else:
+                i = DataValue.objects.create(value=value, for_datapoint=year, for_indicator=indicator)
+                i.for_source.add(source)
+                
+                messages.success(request, 'Successfully Added!')
+                return  HttpResponse('Successfully Added!')
         else:
             return  HttpResponse('error!')
             
