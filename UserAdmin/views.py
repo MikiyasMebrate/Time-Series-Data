@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib import messages
@@ -192,45 +192,50 @@ def indicator(request):
     }
     return render(request, 'user-admin/indicators.html', context)
 
-def indicator_sub_lists(request,pk):
-    single_indicator = Indicator.objects.get(pk=pk)
-    indicators = Indicator.objects.filter(parent = None)
-    sub_indicators = Indicator.objects.filter(parent__pk = pk)
-    form = IndicatorForm(request.POST or None)
+def get_indicator_children_recursive(indicator):
+    children = []
+    for child in Indicator.objects.filter(parent=indicator):
+        child_data = {
+            'pk': child.pk,
+            'title_ENG': child.title_ENG,
+            'title_AMH': child.title_AMH,
+            'created_at': child.created_at,
+            'edit_url': reverse('user-admin-indicators-detail', args=[child.pk]),
+        }
+        grandchildren = get_indicator_children_recursive(child)
+        if grandchildren:
+            child_data['children'] = grandchildren
+        children.append(child_data)
+    return children
+
+def indicator_sub_lists(request, pk):
+    single_indicator = get_object_or_404(Indicator, pk=pk)
+    sub_indicators = Indicator.objects.filter(parent=single_indicator)
+    indicators = Indicator.objects.filter(parent=None)
     indicator_list_all = Indicator.objects.all()
-    
-    
-    def print_child(parent,space):
-        space = space +  "  "
-        for child in Indicator.objects.all():
-            if child.parent == parent:
-                print(space,child)
-                print_child(child,space)
-        
-                
-    
-    print("Parent: ", single_indicator)
-    for child in Indicator.objects.all():
-            if child.parent == single_indicator:
-                print(child)
-                print_child(child, " ")
 
     if request.method == "POST":
+        form = IndicatorForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
+            obj.parent = single_indicator
             obj.save()
             form.save_m2m()
             form = IndicatorForm()
-            messages.success(request, "Indicator has been successfully Added")
+            messages.success(request, "Indicator has been successfully added")
         else:
-            messages.error(request, "Please try Again!")
-    
+            messages.error(request, "Please try again!")
+    else:
+        form = IndicatorForm()
+
+    immediate_children = get_indicator_children_recursive(single_indicator)
     context = {
-        'form' : form,
-        'subIndicator' : sub_indicators,
-        'indicators' : indicators,
+        'form': form,
+        'subIndicator': immediate_children,
+        'indicators': indicators,
+        'parent_indicator_pk': pk,
         'indicator_list_all': indicator_list_all,
-        'single_indicator' : single_indicator,
+        'single_indicator': single_indicator,
     }
     return render(request, 'user-admin/indicators.html', context)
 
