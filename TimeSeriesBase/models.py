@@ -119,11 +119,11 @@ class Measurement(models.Model):
 
 class DataValue(models.Model):
     value = models.CharField(max_length=50)
-    for_measurement = models.ManyToManyField(Measurement)
+    for_measurement = models.ManyToManyField(Measurement, blank=True)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.CASCADE, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.CASCADE, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.CASCADE, blank=True, null=True)
-    for_source = models.ManyToManyField("Source")
+    for_source = models.ManyToManyField("Source", blank=True)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
     
     def __str__(self):

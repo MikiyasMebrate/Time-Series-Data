@@ -163,4 +163,34 @@ class DataPointForm(forms.ModelForm):
             })
         }
         
-        
+
+
+class dataListForm(forms.Form):
+    topic = forms.ModelChoiceField(queryset=Topic.objects.all(),required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+    category = forms.ModelChoiceField(queryset=Category.objects.all(),required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+    is_interval = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class' : 'form-check'
+    }))
+    year  = forms.ModelChoiceField(queryset=DataPoint.objects.all(),required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+    indicator = forms.ModelChoiceField(queryset=Indicator.objects.all(),required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+    is_actual = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class' : 'form-check'
+    }))
+    type = forms.CharField(required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+    value = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    }))
+    source = forms.ModelChoiceField(required=False,queryset=Source.objects.all(),widget=forms.Select(attrs={
+        'class' : 'form-select mt-2'
+    }))
+                                     

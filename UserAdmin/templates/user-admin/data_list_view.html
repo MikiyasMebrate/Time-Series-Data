@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DPMEs</title>
     {% include 'user-admin/include/head.html'%}
+    <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+      </head>
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
@@ -16,7 +21,7 @@
       tabindex="-1"
       aria-labelledby="newDataAddLabel"
       aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-lg  modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="newDataAddLabel">
@@ -29,36 +34,60 @@
               aria-label="Close"
             ></button>
           </div>
+          <div id="messages">
+          </div>
           <div class="modal-body">
-            <form>
+            <form method="post" id="addDataForm">
               {% csrf_token %}
+            <ul>
               <div class="row" id="form_data">
-                <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
-                <select name="topic" id="id_topic_option" class="form-select">
-                </select>
-                <label class="mt-2 form-label" for="id_categories_option">Category: </label>
-                <select name="category" id="id_categories_option" class="form-select mt-2">
-                </select>
-                <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
-                <select name="indicator" id="id_indicators_option" class="form-select mt-2">
-                </select>
-                <div class="div">
-                  <label class="mt-2 form-label" for="id_is_interval">Is Interval: </label>
-                  <input name="id_is_interval" class="form-check" type="checkbox" id="id_is_interval">
-                </div>
-                <div id="id_div_year">
-                  <label class="mt-2 form-label" for="id_year_option">Year: </label>
-                  <select name="type" id="id_year_option" class="form-select mt-2">
+                <div>
+                  <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
+                  <select name="topic" id="id_topic_option" class="form-select">
                   </select>
                 </div>
+                <!---->
+                <div>
+                  <label class="mt-2 form-label" for="id_categories_option">Category: </label>
+                  <select name="category" id="id_categories_option" class="form-select mt-2">
+                  </select>
+                </div>
+                <!---->
+                <div class="div">
+                  <label class="mt-2 form-label" for="id_is_interval">Is Interval: </label>
+                  <input name="is_interval" class="form-check" type="checkbox" id="id_is_interval">
+                </div>
+                <!---->
+                <div id="id_div_year">
+                  <label class="mt-2 form-label" for="id_year_option">Year: </label>
+                  <select name="year" id="id_year_option" class="form-select mt-2">
+                  </select>
+                </div>
+                <!---->
+                <div>
+                  <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
+                <select name="indicator" id="id_indicators_option" class="form-select mt-2">
+                </select>
+                </div>
+                <!---->
                 <div class="div">
                   <label class="mt-2 form-label" for="id_is_actual">Is Actual: </label>
                   <input name="is_actual" class="form-check" type="checkbox" id="id_is_actual">
                 </div>
+                <!---->
                 <div id="id_div_type">
                 </div>
+                <!---->
+                <div>
+                  {{form.source.label}}
+                {{form.source}}
+                </div>
+                <!---->
                 <div id="id_div_value">
                 </div>
+                <!---->
+                
+
               </div>
               <div class="modal-footer">
                 <button
@@ -638,7 +667,41 @@
               categories.innerHTML = `${selectOptionEmptyCategory} ${selectCategoriesOptions}`
               
               categories.addEventListener('change', ()=>{
-                selectOptionEmptyIndicator = '<option>-- Select Indicator --</option>'
+                selectOptionEmptyYear = '<option>-- Select Year --</option>'
+              
+                  interval.addEventListener('change', ()=>{
+                    if(interval.checked){
+                       const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
+                        if(is_interval){
+                           return `<option value='${id}'>${year_start_EC} -  ${year_end_EC}EC / ${year_start_GC} -  ${year_end_GC}GC </option>`
+                        }else return null
+                      })
+                      
+                      year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
+                    }else if(!interval.checked){
+                      const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
+                        if(!is_interval){
+                          return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`
+                        }else return null
+                      })
+                      
+                      year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
+                    }
+                  })
+
+
+                  if(!interval.checked){
+                    const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
+                     if(!is_interval){
+                       return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`
+                     }else return null
+                   })
+
+                   year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
+                 }
+
+                year.addEventListener('change', ()=>{
+                  selectOptionEmptyIndicator = `<option value='none'>-- Select Indicator --</option>`
                 const selectIndicatorOptions = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
                   let li = []
                   let child = []
@@ -673,43 +736,8 @@
                 
                 indicator.innerHTML = selectOptionEmptyIndicator + selectIndicatorOptions
 
-                indicator.addEventListener('change', ()=>{
-                  selectOptionEmptyYear = '<option>-- Select Year --</option>'
-              
-                  interval.addEventListener('change', ()=>{
-                    if(interval.checked){
-                       const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
-                        if(is_interval){
-                           return `<option value='${id}'>${year_start_EC} -  ${year_end_EC}EC / ${year_start_GC} -  ${year_end_GC}GC </option>`
-                        }else return null
-                      })
-                      
-                      year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
-                    }else if(!interval.checked){
-                      const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
-                        if(!is_interval){
-                          return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`
-                        }else return null
-                      })
-                      
-                      year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
-                    }
-                  })
-
-
-                  if(!interval.checked){
-                    const selectYearOptions = data.year.map(({id, year_EC,year_GC, is_interval, year_start_EC, year_end_EC, year_start_GC, year_end_GC})=>{
-                     if(!is_interval){
-                       return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`
-                     }else return null
-                   })
-
-                   year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`
-                 }
-
-  
                  
-                 year.addEventListener('change', ()=>{
+                indicator.addEventListener('change', ()=>{
                   selectOptionEmptyType = '<option>-- Select Type --</option>'
                   selectOptionType = `
                   <option value="yearly">Yearly</option>
@@ -728,12 +756,13 @@
 
 
                   data_type.addEventListener('change', ()=>{
+                    let divValue = document.getElementById('id_div_value')
                     if(data_type.value === 'yearly'){
                         value = `
                           <label class="mt-2 form-label" for="id_value">Value: </label>
                           <input name="value" type="text" class="form-control" id="id_value">
                         `;
-                        div.innerHTML = value ;
+                        divValue.innerHTML = value ;
                     }
                   })
                  })
@@ -745,7 +774,97 @@
       }
 
       fetchData()
-      //setInterval(fetchData, 5000); 
+
+      let form = document.getElementById('addDataForm')
+      $(document).on('submit', '#addDataForm', function(e){
+        e.preventDefault()
+        $.ajax({
+          type: 'POST',
+          url: '/user-admin/data-list/',
+          data: {
+            topic : $('#id_topic_option').val(),
+            category : $('#id_categories_option').val(),
+            is_interval : $('#is_interval').val(),
+            year : $('#id_year_option').val(),
+            indicator : $('#id_indicators_option').val(),
+            is_actual : $('#is_actual').val(),
+            type : $('#id_type_option').val(),
+            value :$('#id_value').val(),
+            source : $('#id_source').val()
+          },
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader('X-CSRFToken', $('input[name=csrfmiddlewaretoken]').val());
+          },
+          success: function(response) {
+            if (response == 'Successfully Added!'){
+              swal({
+                title: "Successfully Added! Do you want to Add Another data?",
+                icon: "success",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+              })
+              .then((willProceed) => {
+                if (willProceed) {
+                  const selectElement = document.getElementById("id_indicators_option");
+                  selectElement.selectedIndex = 0;
+                  const value = document.getElementById("id_value").value = '';
+                
+                } else {
+                  location.reload()
+                }
+              });
+            }else if (response == 'The Data Already Added'){
+              swal({
+                title: "The Data Already Submitted!",
+                icon: "error",
+                buttons: ["No",'Re-Enter'],
+                dangerMode: true,
+              })
+              .then((willProceed) => {
+                if (willProceed) {                
+                } else {
+                  location.reload()
+                }
+              });
+            }else{
+              swal({
+                title: "Please Try Again!",
+                icon: "error",
+                buttons: ["No",'Re-Enter'],
+                dangerMode: true,
+              })
+              .then((willProceed) => {
+                if (willProceed) {                
+                } else {
+                }
+              });
+            }           
+          },
+
+          error: function(error) {
+            // handle any errors that occurred during the request
+            console.log(error);
+            swal({
+              title: "Please Try Again!",
+              icon: "error",
+              buttons: ["No", "Yes"],
+              dangerMode: true,
+            })
+            .then((willProceed) => {
+              if (willProceed) {
+                const selectElement = document.getElementById("id_indicators_option");
+                selectElement.selectedIndex = 0;
+
+                const value = document.getElementById("id_value").value = '';
+              
+              } else {
+                // No option selected
+                // Add your code here for the "No" scenario
+              }
+            });
+          }
+        });
+      });
     </script>
   </body>
 </html>
