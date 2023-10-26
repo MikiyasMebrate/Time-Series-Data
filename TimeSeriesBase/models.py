@@ -23,7 +23,7 @@ class Category(models.Model):
 
 class Indicator(models.Model):
     title_ENG = models.CharField(max_length=100) 
-    title_AMH = models.CharField(max_length=100)
+    title_AMH = models.CharField(max_length=100 , null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
