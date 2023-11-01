@@ -187,12 +187,13 @@ function fetchData() {
       fetch("/user-admin/json/")
       .then((response) => response.json())
       .then((data)=>{
-          selectTopic = data.topics.map(({ title_ENG, title_AMH, id})=>
+          
+        selectTopic = data.topics.map(({ title_ENG, title_AMH, id})=>
                   `
                   <li>
                   <div class="flex-grow-2">
                      <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                      <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} / ${title_AMH}</label>
+                      <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
                     </div>
                 </li>
                   `
@@ -206,7 +207,7 @@ function fetchData() {
               topicRadio.addEventListener('change', (event)=>{
                   selectedTopicId  = event.target.value
   
-                  selectCategory = data.categories.map(({name_ENG, name_AMH, id, topics})=>{
+                  let selectCategory = data.categories.map(({name_ENG, name_AMH, id, topics})=>{
                       if(String(topics[0].id) === String(selectedTopicId)){
                           return(
                               `
@@ -217,7 +218,7 @@ function fetchData() {
                                          <input  type="radio" value=${id} name="category_lists" id="category_list${id}">
                                     </div>
                                     <div class="col-11">
-                                       <label class="form-label" for="category_list${id}" style="font-size: small;">${name_ENG} / ${name_AMH}</label></div>
+                                       <label class="form-label" for="category_list${id}" style="font-size: small;">${name_ENG} - ${name_AMH}</label></div>
                                    </div>
                                 </div>
                             </li>
@@ -231,90 +232,202 @@ function fetchData() {
                   categoryHtml.innerHTML = selectCategory.join('')
   
                   categoryHtmlList = document.getElementsByName('category_lists')
-                  categoryHtmlList.forEach((categoryRadio) =>{
-                      categoryRadio.addEventListener('change', (eventCategory)=>{
-                          selectedCategoryId = eventCategory.target.value
-                          selectedName = 'name_ENG + " " + name_AMH'
+                  
 
-                          let displayApplyButton = document.getElementById('apply_button')
+                  categoryHtmlList.forEach((categoryRadio)=>{
+                    categoryRadio.addEventListener('change', (eventCategory)=>{
+                      let selectedCategoryId = eventCategory.target.value
+
+                      selectIndicator = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
+                        if(String(for_category_id) === String(selectedCategoryId)){
+                          let title_amharic = ''
+
+                          if (!title_AMH == null){
+                            title_amharic = " - " + title_AMH
+                          }
+
+                          return(
+                            `
+                            <li>
+                            <div class="flex-grow-2 ">
+                               <div class="row ">
+                                  <div class="col-1"> 
+                                       <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
+                                  </div>
+                                  <div class="col-11">
+                                     <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                                 </div>
+                              </div>
+                            </div>
+                          </li>
+                            `
+                        )
+                        }
+                    })
+
+                    let selectAll = `
+                        <li>
+                          <div class="flex-grow-2 ">
+                             <div class="row ">
+                                <div class="col-1"> 
+                                     <input class='form-check' type="checkbox"  id="select_all">
+                                </div>
+                                <div class="col-11">
+                                   <label class="form-label" for="select_all" style="font-size: small;">Select All</label></div>
+                               </div>
+                               <hr>
+                            </div>
+                          </div>
+                        </li>
+                        `
+
+
+
+
+                    let indicatorHtml = document.getElementById('indicator_list_filter')
+                    indicatorHtml.innerHTML = selectAll + selectIndicator.join('')
+
+
+
+                    //Select-all Button for Indicator
+                    let selectAllIndicator = document.getElementById('select_all')
+                    let selectedIndictorId = []
+                    selectAllIndicator.addEventListener('change', ()=>{
+                      let indicatorListCheckAll = document.getElementsByName('indicator_lists')
+                      
+
+                      if(selectAllIndicator.checked)
+                      {
+                        indicatorListCheckAll.forEach((event)=>{
+                          event.checked = true
+                          if(!selectedIndictorId.includes(event.value)){
+                            selectedIndictorId.push(event.value)
+                          }
+                          //Active apply Button
                           displayApplyButton.style.display = 'block'
-  
-                          let table = ''
-                          table+=
-                            `
-                            <table
-                            id="newTable"
-                            class="table table-striped table-responsive"
-                          >
-                            <thead>
-                              <tr>
-                                <th class="ps-5 pe-5">Name</th>
-                                <th>2000</th>
-                                <th>2001</th>
-                                <th>2002</th>
-                                <th>2003</th>
-                                <th>2004</th>
-                                <th>2005</th>
-                                <th>2006</th>
-                                <th>2007</th>
-                                <th>2008</th>
-                                <th>2009</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            `
-                          displayApplyButton.addEventListener('click', ()=>{
-                            selectIndicator = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
-                              if(String(for_category_id) === String(selectedCategoryId)){
-                                let title_amharic = ''
-                                if (!title_AMH === null) title_amharic = title_AMH
-                                table+=
-                                  `
-                                  <tr>
-                                  <td>
-                                  <a>
-                                    <h6 class="mb-1">
-                                      <a
-                                        href="/Admin/data_list_detail.html"
-                                        class="d-block text-reset"
-                                        >${title_ENG} / ${title_amharic}</a
-                                      >
-                                    </h6>
-                                  </a>
-                                </td>
-                                <td >0.2</td>
-                                <td>0.4</td>
-                                <td>0.4</td>
-                                <td>0.6</td>
-                                <td>0.2</td>
-                                <td>0.4</td>
-                                <td>0.4</td>
-                                <td>0.6</td>
-                                <td>0.2</td>
-                                <td>0.4</td>
-                                </tr>
-                                  `
-                                return table
+                        })
+                      }else{
+                        indicatorListCheckAll.forEach((event)=>{
+                          event.checked = false
+                          try{
+                            selectedIndictorId.pop(event.value)
+                          }
+                          catch{
+                            null
+                          }
+                       
+                        })
+                      }
+                    })
+
+                    //indicator list HTML
+                    let indicatorHtmlList = document.getElementsByName('indicator_lists')
+
+                    //apply Button 
+                    let displayApplyButton = document.getElementById('apply_button')
+
+
+
+                    //Display Indicator into Table
+
+
+                    
+                    indicatorHtmlList.forEach((categoryCheckBox) =>{
+                        categoryCheckBox.addEventListener('change', (eventIndicator)=>{
+                            if(eventIndicator.target.checked && !selectedIndictorId.includes(eventIndicator.target.value)){
+                              selectedIndictorId.push(eventIndicator.target.value)
+                            }else{
+                              try{
+                                selectedIndictorId.pop(eventIndicator.target.value)
                               }
-                          })
-
-                          table+=
-                            `</tbody>
-                            </table>`
-
-                          let data_listsmmm = document.getElementById('list_table_view')
-                          data_listsmmm.innerHTML = table
-
-                          table2 = $('#newTable').DataTable( {
-                            retrieve: true,
-                            paging: true,
-                            searching: true,
-                          } );
-                          
-
-                          })
+                              catch{
+                                null
+                              }
+                            }
+                            //Active apply Button
+                            displayApplyButton.style.display = 'block'
                       })
+                    })
+
+
+                    displayApplyButton.addEventListener('click', ()=>{
+                      console.log(selectedIndictorId)
+                      let table = ''
+                      table+=
+                      `
+                      <table
+                      id="newTable"
+                      class="table table-striped table-responsive">
+                      <thead>
+                        <tr>
+                          <th class="ps-5 pe-5">Name</th>
+                          <th>2000</th>
+                          <th>2001</th>
+                          <th>2002</th>
+                          <th>2003</th>
+                          <th>2004</th>
+                          <th>2005</th>
+                          <th>2006</th>
+                          <th>2007</th>
+                          <th>2008</th>
+                          <th>2009</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      `
+                      selectIndicator = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
+                    
+                        if(String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) ){
+                          let title_amharic = ''
+                          if (!title_AMH === null) title_amharic = " - " + title_AMH
+                          table+=
+                            `
+                            <tr>
+                            <td>
+                            <a>
+                              <h6 class="mb-1">
+                                <a
+                                  href="/Admin/data_list_detail.html"
+                                  class="d-block text-reset"
+                                  >${title_ENG} ${title_amharic}</a
+                                >
+                              </h6>
+                            </a>
+                          </td>
+                          <td >0.2</td>
+                          <td>0.4</td>
+                          <td>0.4</td>
+                          <td>0.6</td>
+                          <td>0.2</td>
+                          <td>0.4</td>
+                          <td>0.4</td>
+                          <td>0.6</td>
+                          <td>0.2</td>
+                          <td>0.4</td>
+                          </tr>
+                            `
+                          return null
+                        }
+                    })
+
+                    table+=
+                      `</tbody>
+                      </table>`
+
+                    let dataListViewTable = document.getElementById('list_table_view')
+                    dataListViewTable.innerHTML = table
+                    table = ''
+
+                    table2 = $('#newTable').DataTable( {
+                      retrieve: true,
+                      paging: true,
+                      searching: true,
+                    } );
                   })
+                    //End Indicator table
+                    })
+                  })
+                 
   
                   
               })

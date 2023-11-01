@@ -423,7 +423,21 @@ def data_point(request):
     
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            check_interval = form.cleaned_data['is_interval']
+            
+            if(check_interval):
+                year_et_start = form.cleaned_data['year_start_EC']
+                year_et_end = form.cleaned_data['year_end_EC']
+                
+                obj.year_start_GC = f'{str(int(year_et_start) + 7)}/{str(int(year_et_start) + 8)}'
+                obj.year_end_GC =  f'{str(int(year_et_end) + 7)}/{str(int(year_et_end) + 8)}'
+            else:
+                year_ec = form.cleaned_data['year_EC']
+                obj.year_GC = f'{str(int(year_ec )+ 7)}/{str(int(year_ec)+ 8)}'
+            
+            
+            obj.save()
             form = DataPointForm()
             messages.success(request, 'Successfully Created')
         else:
@@ -441,12 +455,27 @@ def data_point_detail(request, pk):
     
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save()
-            messages.success(request, 'Successfully Updated')
+            obj = form.save(commit=False)
+            check_interval = form.cleaned_data['is_interval']
+            
+            if(check_interval):
+                year_et_start = form.cleaned_data['year_start_EC']
+                year_et_end = form.cleaned_data['year_end_EC']
+                
+                obj.year_start_GC = f'{str(int(year_et_start) + 7)}/{str(int(year_et_start) + 8)}'
+                obj.year_end_GC =  f'{str(int(year_et_end) + 7)}/{str(int(year_et_end) + 8)}'
+            else:
+                year_ec = form.cleaned_data['year_EC']
+                obj.year_GC = f'{str(int(year_ec )+ 7)}/{str(int(year_ec)+ 8)}'
+            
+            
+            obj.save()
+            form = DataPointForm()
+            messages.success(request, 'Successfully Created')
             return redirect('user-admin-data-point')
         else:
-            messages.error(request, 'Please try Again!')
-    
+            messages.error(request, 'Please Try Again!')
+            
     context = {
         'data_point' : data_point,
         'form' : form
