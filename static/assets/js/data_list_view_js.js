@@ -330,7 +330,11 @@ function fetchData() {
 
                     //Display Indicator into Table
 
-
+                    let yearTableList = data.year.map(({id, year_EC, year_GC, is_interval})=>{
+                     if(!is_interval){
+                      return([id, year_EC, year_GC ])  
+                     }
+                    }) 
                     
                     indicatorHtmlList.forEach((categoryCheckBox) =>{
                         categoryCheckBox.addEventListener('change', (eventIndicator)=>{
@@ -351,29 +355,20 @@ function fetchData() {
 
 
                     displayApplyButton.addEventListener('click', ()=>{
-                      console.log(selectedIndictorId)
                       let table = ''
                       table+=
                       `
-                      <table
-                      id="newTable"
-                      class="table table-striped table-responsive">
+                      <table id="newTable" class="table table-striped table-responsive">
                       <thead>
                         <tr>
-                          <th class="ps-5 pe-5">Name</th>
-                          <th>2000</th>
-                          <th>2001</th>
-                          <th>2002</th>
-                          <th>2003</th>
-                          <th>2004</th>
-                          <th>2005</th>
-                          <th>2006</th>
-                          <th>2007</th>
-                          <th>2008</th>
-                          <th>2009</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                          <th class="ps-5 pe-5">Name</th>`
+                          for(let i of yearTableList){
+                            table+=`<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`
+                          }
+                          
+                      table+= `</tr>
+                                 </thead>
+                            <tbody>
                       `
                       selectIndicator = data.indicators.map(({title_ENG, title_AMH, id, for_category_id})=>{
                     
@@ -382,30 +377,33 @@ function fetchData() {
                           if (!title_AMH === null) title_amharic = " - " + title_AMH
                           table+=
                             `
-                            <tr>
+                          <tr>
                             <td>
-                            <a>
-                              <h6 class="mb-1">
-                                <a
-                                  href="/Admin/data_list_detail.html"
-                                  class="d-block text-reset"
-                                  >${title_ENG} ${title_amharic}</a
-                                >
-                              </h6>
-                            </a>
-                          </td>
-                          <td >0.2</td>
-                          <td>0.4</td>
-                          <td>0.4</td>
-                          <td>0.6</td>
-                          <td>0.2</td>
-                          <td>0.4</td>
-                          <td>0.4</td>
-                          <td>0.6</td>
-                          <td>0.2</td>
-                          <td>0.4</td>
-                          </tr>
-                            `
+                              <a>
+                                <h6 class="mb-1">
+                                  <a href="/Admin/data_list_detail.html" class="d-block text-reset">${title_ENG} ${title_amharic}</a>
+                                </h6>
+                              </a>
+                            </td>`
+
+                          for(j of yearTableList){
+                            let statusData = false
+                            for(k of data.value){
+                              if(String(j[0]) === String(k.for_datapoint_id) && (String(id) === String(k.for_indicator_id)) ){
+                                table+=`<td>${k.value}</td>`
+                                statusData = false
+                                break;
+                              }else{
+                                statusData = true
+                              }
+                            }
+                            if (statusData){
+                              table+=`<td> - </td>`
+                            }
+                          }
+
+
+                          table+=`</tr>`
                           return null
                         }
                     })
