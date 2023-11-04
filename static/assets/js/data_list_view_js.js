@@ -289,6 +289,297 @@ let filterData = () => {
               );
               indicatorHtml.innerHTML = selectAll + selectIndicator.join("");
 
+              //Return Selected Year
+              let yearTableList = [];
+
+              let yearList = () => {
+                //Year list
+                let selectYear = data.year.map(
+                  ({ id, year_EC, year_GC, is_interval }) => {
+                    if (!is_interval) {
+                      return `
+                    <li>
+                    <div class="flex-grow-2 ">
+                       <div class="row ">
+                          <div class="col-1"> 
+                               <input  type="checkbox" value=${id} name="yearListsCheckBox" id="yearList${id}">
+                          </div>
+                          <div class="col-11">
+                             <label class="form-label" for="yearList${id}" style="font-size: small;">${year_EC} E.C  - ${year_GC} G.C </label></div>
+                         </div>
+                      </div>
+                    </div>
+                  </li>
+                    `;
+                    }
+                  }
+                );
+
+                let selectYearAll = `
+                <li>
+                  <div class="flex-grow-2 ">
+                     <div class="row ">
+                        <div class="col-1"> 
+                             <input class='form-check' type="checkbox"  id="select_all_year_filter">
+                        </div>
+                        <div class="col-11">
+                           <label class="form-label" for="select_all_year_filter" style="font-size: small;">Select All</label></div>
+                       </div>
+                       <hr>
+                    </div>
+                  </div>
+                </li>
+                `;
+
+                let viewRecentYear = `
+                <p class="m-0 mb-1 fw-bold">View Recent Year </p>
+                <div class="mb-2">
+                  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>
+                </div>
+                <hr>
+                `;
+
+                let yearHtml = document.getElementById("Year_list_filter");
+                yearHtml.innerHTML =
+                  viewRecentYear + selectYearAll + selectYear.join("");
+
+                let selectAllYear = document.getElementById(
+                  "select_all_year_filter"
+                );
+
+                selectAllYear.addEventListener("change", () => {
+                  let yearListCheckAll =
+                    document.getElementsByName("yearListsCheckBox");
+                  if (selectAllYear.checked) {
+                    yearListCheckAll.forEach((eventYear) => {
+                      eventYear.checked = true;
+                      displayApplyButton.style.display = "block";
+                      yearTableList = data.year.map(
+                        ({ id, year_EC, year_GC, is_interval }) => {
+                          if (!is_interval) {
+                            return [id, year_EC, year_GC];
+                          }
+                        }
+                      );
+                    });
+                  } else {
+                    yearListCheckAll.forEach((eventYear) => {
+                      eventYear.checked = false;
+                      displayApplyButton.style.display = "none";
+                      yearTableList = [];
+                    });
+                  }
+                });
+
+                let yearListCheckAll =
+                  document.getElementsByName("yearListsCheckBox");
+
+                //Select last 5 Year
+                let lastFiveYear = document.getElementById("last_5_year");
+                lastFiveYear.addEventListener("click", () => {
+                  for (
+                    let uncheck = 0;
+                    uncheck < yearListCheckAll.length;
+                    uncheck++
+                  ) {
+                    try {
+                      yearListCheckAll[uncheck].checked = false;
+                    } catch {
+                      null;
+                    }
+                  }
+                  yearTableList = []
+                  for (let checkedYear = 0; checkedYear < 5; checkedYear++) {
+                    try {
+                      yearListCheckAll[checkedYear].checked = true;
+                    } catch {
+                      null;
+                    }
+                    if (
+                      !data.year[checkedYear].is_interval &&
+                      String(yearListCheckAll[checkedYear].value) ===
+                        String(data.year[checkedYear].id)
+                    ) {
+                     
+                      yearTableList.push([
+                        data.year[checkedYear].id,
+                        data.year[checkedYear].year_EC,
+                        data.year[checkedYear].year_GC,
+                      ]);
+                    }
+                  }
+                  displayApplyButton.style.display = "block";
+                });
+
+                //Select last 10 Year
+                let lastTenYear = document.getElementById("last_10_year");
+                lastTenYear.addEventListener("click", () => {
+                  for (
+                    let uncheck = 0;
+                    uncheck < yearListCheckAll.length;
+                    uncheck++
+                  ) {
+                    try {
+                      yearListCheckAll[uncheck].checked = false;
+                    } catch {
+                      null;
+                    }
+                  }
+                  yearTableList = []
+                  for (let checkedYear = 0; checkedYear < 10; checkedYear++) {
+                    
+                    try {
+                      yearListCheckAll[checkedYear].checked = true;
+                    } catch {
+                      null;
+                    }
+                    if (
+                      !data.year[checkedYear].is_interval &&
+                      String(yearListCheckAll[checkedYear].value) ===
+                        String(data.year[checkedYear].id)
+                    ) {
+                      
+                        yearTableList.push([
+                          data.year[checkedYear].id,
+                          data.year[checkedYear].year_EC,
+                          data.year[checkedYear].year_GC,
+                        ]);
+                      
+                    }
+                  }
+                  displayApplyButton.style.display = "block";
+                });
+
+                //Select last 15 Year
+                let lastFiftyYear = document.getElementById("last_15_year");
+                lastFiftyYear.addEventListener("click", () => {
+                  for (
+                    let uncheck = 0;
+                    uncheck < yearListCheckAll.length;
+                    uncheck++
+                  ) {
+                    try {
+                      yearListCheckAll[uncheck].checked = false;
+                    } catch {
+                      null;
+                    }
+                  }
+
+                  yearTableList = []
+                  for (let checkedYear = 0; checkedYear < 15; checkedYear++) {
+                    try {
+                      yearListCheckAll[checkedYear].checked = true;
+                    } catch {
+                      null;
+                    }
+                    if (
+                      !data.year[checkedYear].is_interval &&
+                      String(yearListCheckAll[checkedYear].value) ===
+                        String(data.year[checkedYear].id)
+                    ) {
+                      
+                      yearTableList.push([
+                        data.year[checkedYear].id,
+                        data.year[checkedYear].year_EC,
+                        data.year[checkedYear].year_GC,
+                      ]);
+                    }
+                  }
+                  displayApplyButton.style.display = "block";
+                });
+
+                //Select last 20 Year
+                let lastTwentyYear = document.getElementById("last_20_year");
+                lastTwentyYear.addEventListener("click", () => {
+                  for (
+                    let uncheck = 0;
+                    uncheck < yearListCheckAll.length;
+                    uncheck++
+                  ) {
+                    try {
+                      yearListCheckAll[uncheck].checked = false;
+                    } catch {
+                      null;
+                    }
+                  }
+
+                  yearTableList = []
+                  for (let checkedYear = 0; checkedYear < 20; checkedYear++) {
+                    try {
+                      yearListCheckAll[checkedYear].checked = true;
+                    } catch {
+                      null;
+                    }
+                    if (
+                      !data.year[checkedYear].is_interval &&
+                      String(yearListCheckAll[checkedYear].value) ===
+                        String(data.year[checkedYear].id)
+                    ) {
+                      
+                      yearTableList.push([
+                        data.year[checkedYear].id,
+                        data.year[checkedYear].year_EC,
+                        data.year[checkedYear].year_GC,
+                      ]);
+                    }
+                  }
+                  displayApplyButton.style.display = "block";
+                });
+
+                yearListCheckAll.forEach((yearCheckBox) => {
+                  yearCheckBox.addEventListener(
+                    "change",
+                    (eventYearCheckBox) => {
+                      displayApplyButton.style.display = "block";
+                      if (eventYearCheckBox.target.checked) {
+                        for (checkedYear of data.year) {
+                          if (
+                            !checkedYear.is_interval &&
+                            String(yearCheckBox.value) ===
+                              String(checkedYear.id)
+                          ) {
+                            if (
+                              yearTableList.includes([
+                                data.year[checkedYear].id,
+                                data.year[checkedYear].year_EC,
+                                data.year[checkedYear].year_GC,
+                              ])
+                            ) {
+                              continue;
+                            } else {
+                              yearTableList.push([
+                                data.year[checkedYear].id,
+                                data.year[checkedYear].year_EC,
+                                data.year[checkedYear].year_GC,
+                              ]);
+                            }
+                          }
+                        }
+                      } else {
+                        selectAllYear.checked = false;
+                        try {
+                          for (checkedYear of data.year) {
+                            if (
+                              !checkedYear.is_interval &&
+                              String(yearCheckBox.value) ===
+                                String(checkedYear.id)
+                            ) {
+                              yearTableList.pop([
+                                checkedYear.id,
+                                checkedYear.year_EC,
+                                checkedYear.year_GC,
+                              ]);
+                            }
+                          }
+                        } catch {
+                          null;
+                        }
+                      }
+                    }
+                  );
+                });
+              };
+
               //Select-all Button for Indicator
               let selectAllIndicator = document.getElementById("select_all");
               let selectedIndictorId = [];
@@ -303,7 +594,7 @@ let filterData = () => {
                       selectedIndictorId.push(event.value);
                     }
                     //Active apply Button
-                    displayApplyButton.style.display = "block";
+                    yearList();
                   });
                 } else {
                   indicatorListCheckAll.forEach((event) => {
@@ -326,16 +617,9 @@ let filterData = () => {
 
               //Display Indicator into Table
 
-              let yearTableList = data.year.map(
-                ({ id, year_EC, year_GC, is_interval }) => {
-                  if (!is_interval) {
-                    return [id, year_EC, year_GC];
-                  }
-                }
-              );
-
-              indicatorHtmlList.forEach((categoryCheckBox) => {
-                categoryCheckBox.addEventListener(
+              //Push selected Indicator
+              indicatorHtmlList.forEach((indicatorCheckBox) => {
+                indicatorCheckBox.addEventListener(
                   "change",
                   (eventIndicator) => {
                     if (
@@ -350,10 +634,7 @@ let filterData = () => {
                         null;
                       }
                     }
-                    //Active apply Button
-                    displayApplyButton.style.display = "block";
-
-                    //Select Year
+                    yearList();
                   }
                 );
               });
@@ -362,7 +643,7 @@ let filterData = () => {
               displayApplyButton.addEventListener("click", () => {
                 let table = "";
                 table += `
-                      <table id="newTable" class="table table-striped table-responsive">
+                      <table id="newTable" class="table table-bordered m-0 p-0">
                       <thead>
                         <tr>
                           <th class="ps-5 pe-5">Name</th>`;
@@ -374,6 +655,7 @@ let filterData = () => {
                                  </thead>
                             <tbody>
                       `;
+
                 selectIndicator = data.indicators.map(
                   ({ title_ENG, title_AMH, id, for_category_id }) => {
                     if (
@@ -419,14 +701,14 @@ let filterData = () => {
                       //Table Row End
 
                       let table_child_list = (parent, title_ENG, space) => {
-                        space += String("&nbsp;&nbsp;&nbsp;");
+                        space += String("&nbsp;&nbsp;&nbsp;&nbsp");
                         let status = false;
 
                         for (i of data.indicators) {
                           if (String(i.parent_id) === String(parent)) {
                             status = true;
                             //Table Row Start
-                          table += `
+                            table += `
                           <tr>
                             <td>
                               <a>
@@ -435,7 +717,7 @@ let filterData = () => {
                                 </h6>
                               </a>
                             </td>`;
-  
+
                             for (j of yearTableList) {
                               let statusData = false;
                               for (k of data.value) {
@@ -454,11 +736,11 @@ let filterData = () => {
                                 table += `<td> - </td>`;
                               }
                             }
-  
+
                             table += `</tr>`;
-  
+
                             //Table Row End
-  
+
                             //child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
                             table_child_list(i.id, i.title_ENG, String(space));
                           }
@@ -478,7 +760,7 @@ let filterData = () => {
                           <td>
                             <a>
                               <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary ps-2 fw-normal">${indicator.title_ENG} </a>
+                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
                               </h6>
                             </a>
                           </td>`;
@@ -488,7 +770,8 @@ let filterData = () => {
                             for (k of data.value) {
                               if (
                                 String(j[0]) === String(k.for_datapoint_id) &&
-                                String(indicator.id) === String(k.for_indicator_id)
+                                String(indicator.id) ===
+                                  String(k.for_indicator_id)
                               ) {
                                 table += `<td>${k.value}</td>`;
                                 statusData = false;
@@ -515,8 +798,6 @@ let filterData = () => {
                           //li.push(child)
                           // li.push('</optgroup>')
                         }
-
-
                       }
                       return null;
                     }
@@ -531,25 +812,27 @@ let filterData = () => {
                 dataListViewTable.innerHTML = table;
                 table = "";
 
-                $(document).ready(function() {
-                  $('#newTable').DataTable( {
-                    dom: 'Bfrtip',
-                    buttons: [
-                      'copy',
-                      'excel',
-                      'csv',
-                      'pdf',
-                      'print'
+                $(document).ready(function () {
+                  $("#newTable").DataTable({
+                    retrieve: true,
+                    ordering: false,
+                    scrollX: true,
+                    responsive: true,
+                    paging: true,
+                    searching: true,
+                    orderNumber: true,
+                    lengthMenu: [
+                      [10, 25, 50, -1],
+                      ["10 rows", "25 rows", "50 rows", "Show all"],
                     ],
-                    retrieve: false,
-                  ordering: false,
-                  scrollX: true,
-                  responsive: true,
-                  paging: true,
-                  searching: true,
-                  } );
-                } )
-                
+                    columnDefs: [
+                      { width: "100%" },
+                      { width: "200px", targets: 0 },
+                    ],
+                    dom: "Bfrtip",
+                    buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                  });
+                });
               });
               //End Indicator table
             });

@@ -157,6 +157,7 @@
                 </div>
                 <!--Accordion 1 End-->
 
+                <!--Category-->
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingTwo">
                     <button
@@ -186,6 +187,7 @@
                   </div>
                 </div>
 
+                <!--Indicator-->
                 <div class="accordion-item">
                   <h2   class="accordion-header" id="headingThree">
                     <button
@@ -215,7 +217,8 @@
                   </div>
                 </div>
 
-                <!-- <div class="accordion-item">
+                <!--Year-->
+                <div class="accordion-item">
                   <h2   class="accordion-header" id="headingFour">
                     <button
                       class="accordion-button collapsed"
@@ -242,7 +245,7 @@
                       </div>
                     </div>
                   </div>
-                </div> -->
+                </div> 
 
 
                 <div class="d-grid" id="filter_apply_button">
@@ -313,7 +316,8 @@
           scrollX: true,
           paging: true,
           searching: false,
-          buttons: ["copy", "csv", "excel", "pdf", "print"],
+          orderNumber: false,
+          lengthMenu: [25, 50, 100],
         })
         .buttons()
         .container()
