@@ -63,11 +63,6 @@
                                 {{form.year_EC}}
                               </div>
                               <div class="mb-3">
-                                <label for="id_topic" class="col-form-label">Ethiopian Calendar: {% for err in form.year_GC.errors%}<small
-                                    class="text-danger">{{err}}</small> {% endfor %}</label>
-                                {{form.year_GC}}
-                              </div>
-                              <div class="mb-3">
                                 <label for="id_topic" class="col-form-label">Interval : {% for err in form.is_interval.errors%}<small
                                     class="text-danger">{{err}}</small> {% endfor %}</label>
                                 {{form.is_interval}}
@@ -85,18 +80,7 @@
                                     {{form.year_end_EC}}
                                   </div>
                               </div>
-                              <div class="row form-group">
-                                <div class="col-6 mb-3">
-                                    <label for="id_topic" class="col-form-label">Gregorian Year Interval Start : {% for err in form.year_start_GC.errors%}<small
-                                        class="text-danger">{{err}}</small> {% endfor %}</label>
-                                    {{form.year_start_GC}}
-                                  </div>
-                                  <div class="col-6 mb-3">
-                                    <label for="id_topic" class="col-form-label">Gregorian Year Interval End : {% for err in form.year_end_GC.errors%}<small
-                                        class="text-danger">{{err}}</small> {% endfor %}</label>
-                                    {{form.year_end_GC}}
-                                  </div>
-                              </div>
+
                               
                             <div class="text-start mt-2">
                                 <button type="submit" class="btn btn-primary mb-2" >
