@@ -71,6 +71,11 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     
+    
+    class Meta:
+        ordering = ['-year_EC'] #Oldest First
+        
+        
     def __str__(self):
         if self.is_interval:
             return self.year_start_EC + " - " + self.year_end_EC + "E.C"

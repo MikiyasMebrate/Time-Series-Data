@@ -50,21 +50,15 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form method='POST'>
-            {% csrf_token %}
             <form method="post">
               {% csrf_token %}
-
-              <div class="mb-3">
-                  <p class="text-warning">If the Year is based on the Interval Please fill Only the interval form and Check Interval checkbox</p>
-                  <label for="id_topic" class="col-form-label">Gregorian Calendar: {% for err in form.year_EC.errors%}<small
-                      class="text-danger">{{err}}</small> {% endfor %}</label>
-                  {{form.year_EC}}
-                </div>
+              <div class="alert alert-info" role="alert">
+                If the year is Interval Please click on the checkbox!
+              </div>
                 <div class="mb-3">
                   <label for="id_topic" class="col-form-label">Ethiopian Calendar: {% for err in form.year_GC.errors%}<small
                       class="text-danger">{{err}}</small> {% endfor %}</label>
-                  {{form.year_GC}}
+                  {{form.year_EC}}
                 </div>
                 <div class="mb-3">
                   <label for="id_topic" class="col-form-label">Interval : <p class="text-warning">Check for Interval Year</p> {% for err in form.is_interval.errors%}<small
@@ -84,7 +78,7 @@
                       {{form.year_end_EC}}
                     </div>
                 </div>
-                <div class="row form-group">
+                {% comment %} <div class="row form-group">
                   <div class="col-6 mb-3">
                       <label for="id_topic" class="col-form-label">Gregorian Year Interval Start : {% for err in form.year_start_GC.errors%}<small
                           class="text-danger">{{err}}</small> {% endfor %}</label>
@@ -95,7 +89,7 @@
                           class="text-danger">{{err}}</small> {% endfor %}</label>
                       {{form.year_end_GC}}
                     </div>
-                </div>
+                </div> {% endcomment %}
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancel
@@ -143,8 +137,8 @@
               <table id="example" class="table table-striped table-hover table-sm">
                 <thead>
                   <tr>
-                    <th>Year G.C</th>
                     <th>Year E.C</th>
+                    <th>Year G.C</th>
                     <th>Created Date</th>
                     <th class="text-center">Action</th>
                   </tr>
