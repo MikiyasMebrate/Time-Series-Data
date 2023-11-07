@@ -1,9 +1,12 @@
+import json
 from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
+from django.forms.models import model_to_dict
+
 # Create your views here.
 def index(request):
     return render(request, 'user-admin/index.html')
@@ -57,7 +60,36 @@ def delete_category(request,pk):
         messages.error(request, "Please Try again!")
         return redirect('user-admin-category')
   
-  
+
+def filter_indicator(request, pk):
+    single_indicator = Indicator.objects.get(pk = pk)
+    returned_json = []
+    returned_json.append(model_to_dict(single_indicator))
+    indicators = list(Indicator.objects.all().values())
+    year = list(DataPoint.objects.all().values())
+    value = list(DataValue.objects.all().values())
+
+    def child_list(parent, space):
+        space = space + "   "
+        for i in indicators:
+            if i['parent_id'] == parent.id:
+                returned_json.append(i)
+                child_list(Indicator.objects.get(id = i['id']), space)
+                    
+    
+    child_list(single_indicator, ' ')
+    
+    
+    context = {
+        'indicators' :  returned_json,
+        'year' : year,
+        'value' : value
+    }
+    
+    return JsonResponse(context)
+    
+    
+   
 #Data List    
 def json(request):
     topic = Topic.objects.all()
@@ -88,6 +120,7 @@ def json(request):
     }
     return(JsonResponse(context))
 
+ 
 
 def data_list(request):
     form = dataListForm(request.POST or None)
@@ -120,7 +153,7 @@ def data_list(request):
     }
     return render(request, 'user-admin/data_list_view.html', context)
 
-def data_list_detail(request):
+def data_list_detail(request, pk):
     return render(request, 'user-admin/data_list_detail.html')
 
 

@@ -1,193 +1,3 @@
-function fetchData() {
-  fetch("/user-admin/json/")
-    .then((response) => response.json())
-    .then((data) => {
-      let parent = document.getElementById("form_data");
-      let topic = document.getElementById("id_topic_option");
-      let categories = document.getElementById("id_categories_option");
-      let indicator = document.getElementById("id_indicators_option");
-      let interval = document.getElementById("id_is_interval");
-      let year = document.getElementById("id_year_option");
-
-      selectOptionEmpty = "<option selected>-- Select Topic --</option>";
-      const selectOptions = data.topics.map(
-        ({ title_ENG, title_AMH, id }) =>
-          `<option   value=${id}>${title_ENG} ${title_AMH} </option>`
-      );
-
-      topic.innerHTML = `${selectOptionEmpty}${selectOptions}`;
-
-      topic.addEventListener("change", () => {
-        selectCategory = "";
-        selectOptionEmptyCategory = "<option>-- Select Categories --</option>";
-
-        const selectCategoriesOptions = data.categories.map(
-          ({ name_ENG, name_AMH, id, topics }) => {
-            if (String(topics[0].id) === String(topic.value)) {
-              return `<option  value=${id}>${name_ENG} ${name_AMH} </option>`;
-            } else {
-              return null;
-            }
-          }
-        );
-        categories.innerHTML = `${selectOptionEmptyCategory} ${selectCategoriesOptions}`;
-
-        categories.addEventListener("change", () => {
-          selectOptionEmptyYear = "<option>-- Select Year --</option>";
-
-          interval.addEventListener("change", () => {
-            if (interval.checked) {
-              const selectYearOptions = data.year.map(
-                ({
-                  id,
-                  year_EC,
-                  year_GC,
-                  is_interval,
-                  year_start_EC,
-                  year_end_EC,
-                  year_start_GC,
-                  year_end_GC,
-                }) => {
-                  if (is_interval) {
-                    return `<option value='${id}'>${year_start_EC} -  ${year_end_EC}EC / ${year_start_GC} -  ${year_end_GC}GC </option>`;
-                  } else return null;
-                }
-              );
-
-              year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`;
-            } else if (!interval.checked) {
-              const selectYearOptions = data.year.map(
-                ({
-                  id,
-                  year_EC,
-                  year_GC,
-                  is_interval,
-                  year_start_EC,
-                  year_end_EC,
-                  year_start_GC,
-                  year_end_GC,
-                }) => {
-                  if (!is_interval) {
-                    return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`;
-                  } else return null;
-                }
-              );
-
-              year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`;
-            }
-          });
-
-          if (!interval.checked) {
-            const selectYearOptions = data.year.map(
-              ({
-                id,
-                year_EC,
-                year_GC,
-                is_interval,
-                year_start_EC,
-                year_end_EC,
-                year_start_GC,
-                year_end_GC,
-              }) => {
-                if (!is_interval) {
-                  return `<option value='${id}'>${year_EC} EC / ${year_GC} GC </option>`;
-                } else return null;
-              }
-            );
-
-            year.innerHTML = `${selectOptionEmptyYear} ${selectYearOptions}`;
-          }
-
-          year.addEventListener("change", () => {
-            selectOptionEmptyIndicator = `<option value='none'>-- Select Indicator --</option>`;
-            const selectIndicatorOptions = data.indicators.map(
-              ({ title_ENG, title_AMH, id, for_category_id }) => {
-                let li = [];
-                let child = [];
-
-                if (String(categories.value) === String(for_category_id)) {
-                  child_list = (parent, title_ENG, space) => {
-                    space += String("&nbsp;&nbsp;&nbsp;");
-                    let status = false;
-                    for (i of data.indicators) {
-                      if (String(i.parent_id) === String(parent)) {
-                        status = true;
-                        child.push(
-                          `<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`
-                        );
-                        child_list(i.id, i.title_ENG, String(space));
-                      }
-                    }
-                    return status;
-                  };
-
-                  let test = false;
-                  for (k of data.indicators) {
-                    if (String(k.parent_id) == String(id)) {
-                      test = true;
-                      //li.push(`<optgroup label="${title_ENG}">`)
-                      li.push(
-                        `<option value=${k.id}>${k.title_ENG} ${k.title_AMH} </option>`
-                      );
-                      child_list(k.id, k.title_ENG, " ");
-                      li.push(child);
-                      // li.push('</optgroup>')
-                    }
-                  }
-
-                  if (!test) {
-                    li.push(
-                      `<option value=${id}>${title_ENG} ${title_AMH} </option>`
-                    );
-                  }
-
-                  return li;
-                } else {
-                  return null;
-                }
-              }
-            );
-
-            indicator.innerHTML =
-              selectOptionEmptyIndicator + selectIndicatorOptions;
-
-            indicator.addEventListener("change", () => {
-              selectOptionEmptyType = "<option>-- Select Type --</option>";
-              selectOptionType = `
-                <option value="yearly">Yearly</option>
-                <option value="monthly">Monthly</option>
-                <option value="quarterly">Quarterly</option>`;
-
-              type = `
-                <label class="mt-2 form-label" for="id_type_option">Type: </label>
-                <select name="type" id="id_type_option" class="form-select mt-2">
-                  ${selectOptionEmptyType} ${selectOptionType}
-                </select>`;
-              let div = document.getElementById("id_div_type");
-              div.innerHTML = type;
-
-              let data_type = document.getElementById("id_type_option");
-
-              data_type.addEventListener("change", () => {
-                let divValue = document.getElementById("id_div_value");
-                if (data_type.value === "yearly") {
-                  value = `
-                        <label class="mt-2 form-label" for="id_value">Value: </label>
-                        <input name="value" type="text" class="form-control" id="id_value">
-                      `;
-                  divValue.innerHTML = value;
-                }
-              });
-            });
-          });
-        });
-      });
-    })
-    .catch((error) => console.error(error));
-}
-
-fetchData();
-
 let filterData = () => {
   fetch("/user-admin/json/")
     .then((response) => response.json())
@@ -204,30 +14,34 @@ let filterData = () => {
                   `
       );
 
+      //apply Button
+      let displayApplyButton = document.getElementById("apply_button");
+
       topicHtml = document.getElementById("topic_list_filter");
       topicHtml.innerHTML = selectTopic.join("");
 
       topicHtmlList = document.getElementsByName("topic_lists");
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
+          displayApplyButton.style.display = "none";
           selectedTopicId = event.target.value;
 
           let selectCategory = data.categories.map(
             ({ name_ENG, name_AMH, id, topics }) => {
               if (String(topics[0].id) === String(selectedTopicId)) {
                 return `
-                              <li>
-                              <div class="flex-grow-2 ">
-                                 <div class="row ">
-                                    <div class="col-1"> 
-                                         <input  type="radio" value=${id} name="category_lists" id="category_list${id}">
-                                    </div>
-                                    <div class="col-11">
-                                       <label class="form-label" for="category_list${id}" style="font-size: small;">${name_ENG} - ${name_AMH}</label></div>
-                                   </div>
-                                </div>
-                            </li>
-                              `;
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="radio" value=${id} name="category_lists" id="category_list${id}">
+                              </div>
+                              <div class="col-11">
+                                 <label class="form-label" for="category_list${id}" style="font-size: small;">${name_ENG} - ${name_AMH}</label></div>
+                             </div>
+                          </div>
+                      </li>
+                        `;
               }
             }
           );
@@ -239,8 +53,8 @@ let filterData = () => {
 
           categoryHtmlList.forEach((categoryRadio) => {
             categoryRadio.addEventListener("change", (eventCategory) => {
+              displayApplyButton.style.display = "none";
               let selectedCategoryId = eventCategory.target.value;
-
               selectIndicator = data.indicators.map(
                 ({ title_ENG, title_AMH, id, for_category_id }) => {
                   if (String(for_category_id) === String(selectedCategoryId)) {
@@ -388,7 +202,7 @@ let filterData = () => {
                       null;
                     }
                   }
-                  yearTableList = []
+                  yearTableList = [];
                   for (let checkedYear = 0; checkedYear < 5; checkedYear++) {
                     try {
                       yearListCheckAll[checkedYear].checked = true;
@@ -400,7 +214,6 @@ let filterData = () => {
                       String(yearListCheckAll[checkedYear].value) ===
                         String(data.year[checkedYear].id)
                     ) {
-                     
                       yearTableList.push([
                         data.year[checkedYear].id,
                         data.year[checkedYear].year_EC,
@@ -425,9 +238,8 @@ let filterData = () => {
                       null;
                     }
                   }
-                  yearTableList = []
+                  yearTableList = [];
                   for (let checkedYear = 0; checkedYear < 10; checkedYear++) {
-                    
                     try {
                       yearListCheckAll[checkedYear].checked = true;
                     } catch {
@@ -438,13 +250,11 @@ let filterData = () => {
                       String(yearListCheckAll[checkedYear].value) ===
                         String(data.year[checkedYear].id)
                     ) {
-                      
-                        yearTableList.push([
-                          data.year[checkedYear].id,
-                          data.year[checkedYear].year_EC,
-                          data.year[checkedYear].year_GC,
-                        ]);
-                      
+                      yearTableList.push([
+                        data.year[checkedYear].id,
+                        data.year[checkedYear].year_EC,
+                        data.year[checkedYear].year_GC,
+                      ]);
                     }
                   }
                   displayApplyButton.style.display = "block";
@@ -465,7 +275,7 @@ let filterData = () => {
                     }
                   }
 
-                  yearTableList = []
+                  yearTableList = [];
                   for (let checkedYear = 0; checkedYear < 15; checkedYear++) {
                     try {
                       yearListCheckAll[checkedYear].checked = true;
@@ -477,7 +287,6 @@ let filterData = () => {
                       String(yearListCheckAll[checkedYear].value) ===
                         String(data.year[checkedYear].id)
                     ) {
-                      
                       yearTableList.push([
                         data.year[checkedYear].id,
                         data.year[checkedYear].year_EC,
@@ -503,29 +312,33 @@ let filterData = () => {
                     }
                   }
 
-                  yearTableList = []
+                  yearTableList = [];
                   for (let checkedYear = 0; checkedYear < 20; checkedYear++) {
                     try {
                       yearListCheckAll[checkedYear].checked = true;
                     } catch {
                       null;
                     }
-                    if (
-                      !data.year[checkedYear].is_interval &&
-                      String(yearListCheckAll[checkedYear].value) ===
-                        String(data.year[checkedYear].id)
-                    ) {
-                      
-                      yearTableList.push([
-                        data.year[checkedYear].id,
-                        data.year[checkedYear].year_EC,
-                        data.year[checkedYear].year_GC,
-                      ]);
+                    try {
+                      if (
+                        !data.year[checkedYear].is_interval &&
+                        String(yearListCheckAll[checkedYear].value) ===
+                          String(data.year[checkedYear].id)
+                      ) {
+                        yearTableList.push([
+                          data.year[checkedYear].id,
+                          data.year[checkedYear].year_EC,
+                          data.year[checkedYear].year_GC,
+                        ]);
+                      }
+                    } catch {
+                      null;
                     }
                   }
                   displayApplyButton.style.display = "block";
                 });
 
+                //Selected Year
                 yearListCheckAll.forEach((yearCheckBox) => {
                   yearCheckBox.addEventListener(
                     "change",
@@ -540,17 +353,17 @@ let filterData = () => {
                           ) {
                             if (
                               yearTableList.includes([
-                                data.year[checkedYear].id,
-                                data.year[checkedYear].year_EC,
-                                data.year[checkedYear].year_GC,
+                                checkedYear.id,
+                                checkedYear.year_EC,
+                                checkedYear.year_GC,
                               ])
                             ) {
                               continue;
                             } else {
                               yearTableList.push([
-                                data.year[checkedYear].id,
-                                data.year[checkedYear].year_EC,
-                                data.year[checkedYear].year_GC,
+                                checkedYear.id,
+                                checkedYear.year_EC,
+                                checkedYear.year_GC,
                               ]);
                             }
                           }
@@ -564,11 +377,24 @@ let filterData = () => {
                               String(yearCheckBox.value) ===
                                 String(checkedYear.id)
                             ) {
-                              yearTableList.pop([
+                              let valueToCheck = [
                                 checkedYear.id,
                                 checkedYear.year_EC,
                                 checkedYear.year_GC,
-                              ]);
+                              ];
+                              // console.log([checkedYear.id, checkedYear.year_EC,checkedYear.year_GC])
+                              // console.log(yearTableList)
+                              // console.log(yearTableList.includes(valueToCheck))
+
+                              for (let i = 0; i < yearTableList.length; i++) {
+                                if (
+                                  String(yearTableList[i][0]) ===
+                                  String(valueToCheck[0])
+                                ) {
+                                  yearTableList.splice(i, 1);
+                                  console.log(yearTableList);
+                                }
+                              }
                             }
                           }
                         } catch {
@@ -584,6 +410,7 @@ let filterData = () => {
               let selectAllIndicator = document.getElementById("select_all");
               let selectedIndictorId = [];
               selectAllIndicator.addEventListener("change", () => {
+                displayApplyButton.style.display = "none";
                 let indicatorListCheckAll =
                   document.getElementsByName("indicator_lists");
 
@@ -612,9 +439,6 @@ let filterData = () => {
               let indicatorHtmlList =
                 document.getElementsByName("indicator_lists");
 
-              //apply Button
-              let displayApplyButton = document.getElementById("apply_button");
-
               //Display Indicator into Table
 
               //Push selected Indicator
@@ -622,6 +446,7 @@ let filterData = () => {
                 indicatorCheckBox.addEventListener(
                   "change",
                   (eventIndicator) => {
+                    displayApplyButton.style.display = "none";
                     if (
                       eventIndicator.target.checked &&
                       !selectedIndictorId.includes(eventIndicator.target.value)
@@ -672,7 +497,7 @@ let filterData = () => {
                             <td>
                               <a>
                                 <h6 class="mb-1">
-                                  <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-reset">${title_ENG} ${title_amharic}</a>
+                                  <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
                                 </h6>
                               </a>
                             </td>`;
@@ -713,7 +538,7 @@ let filterData = () => {
                             <td>
                               <a>
                                 <h6 class="mb-1">
-                                  <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary ps-2  fw-normal">${space} ${i.title_ENG} </a>
+                                  <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
                                 </h6>
                               </a>
                             </td>`;
@@ -760,7 +585,7 @@ let filterData = () => {
                           <td>
                             <a>
                               <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
+                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
                               </h6>
                             </a>
                           </td>`;
