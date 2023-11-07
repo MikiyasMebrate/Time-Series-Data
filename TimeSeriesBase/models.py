@@ -12,7 +12,6 @@ class Topic(models.Model):
     def __str__(self):
         return self.title_ENG
 
-
 class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
     name_AMH = models.CharField(max_length=50)
@@ -121,7 +120,6 @@ class Measurement(models.Model):
     def __str__(self):
         return self.Amount_ENG
     
-
 class DataValue(models.Model):
     value = models.CharField(max_length=50)
     for_measurement = models.ManyToManyField(Measurement, blank=True)
