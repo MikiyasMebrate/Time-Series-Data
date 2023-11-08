@@ -74,6 +74,7 @@ def filter_indicator(request, pk):
     indicators = list(Indicator.objects.all().values())
     year = list(DataPoint.objects.all().values())
     value = list(DataValue.objects.all().values())
+    indicator_point = list(Indicator_Point.objects.all().values())
 
     # @login_required
     def child_list(parent, space):
@@ -89,6 +90,7 @@ def filter_indicator(request, pk):
     
     context = {
         'indicators' :  returned_json,
+        'indicator_point': indicator_point,
         'year' : year,
         'value' : value
     }
@@ -164,7 +166,14 @@ def data_list(request):
 
 # @login_required
 def data_list_detail(request, pk):
-    return render(request, 'user-admin/data_list_detail.html')
+    form = ValueForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form()
+    context = {
+        'form' : form
+    }
+    return render(request, 'user-admin/data_list_detail.html', context)
 
 
 
