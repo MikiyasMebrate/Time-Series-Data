@@ -6,12 +6,15 @@ from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
 from django.forms.models import model_to_dict
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+# @login_required
 def index(request):
     return render(request, 'user-admin/index.html')
 
 #Category
+
+# @login_required
 def category(request):
     catagory = Category.objects.all()
     
@@ -24,7 +27,7 @@ def category(request):
             form= catagoryForm()
             messages.success(request, "catagory has been successfully Added!")
         else:
-            messages.error(request, "Please Try again!")
+            messages.error(request, "Value Exist or Please Try again!")
             
     context = {
         'form' : form,
@@ -32,6 +35,7 @@ def category(request):
     }
     return render(request, 'user-admin/categories.html',context=context)
 
+# @login_required
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
@@ -44,23 +48,25 @@ def catagory_detail(request, pk):
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-category')
         else:
-            messages.error(request, 'Please try Again!')
+            messages.error(request, 'Value Exist or Please try Again!')
     context = {
         'form' : form,
         'catagorys' : catagory
     }  
     return render(request, 'user-admin/catagories_detail.html', context)
 
+# @login_required
 def delete_category(request,pk):
     catagorys = Category.objects.get(pk=pk)
     if catagorys.delete():
         messages.success(request, "Successfully Deleted!")
         return redirect('user-admin-category')
     else:
-        messages.error(request, "Please Try again!")
+        messages.error(request, "Value Exist or Please Try again!")
         return redirect('user-admin-category')
   
 
+# @login_required
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -69,6 +75,7 @@ def filter_indicator(request, pk):
     year = list(DataPoint.objects.all().values())
     value = list(DataValue.objects.all().values())
 
+    # @login_required
     def child_list(parent, space):
         space = space + "   "
         for i in indicators:
@@ -91,6 +98,7 @@ def filter_indicator(request, pk):
     
    
 #Data List    
+# @login_required
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
@@ -122,6 +130,7 @@ def json(request):
 
  
 
+# @login_required
 def data_list(request):
     form = dataListForm(request.POST or None)
     if request.method == 'POST':
@@ -153,12 +162,15 @@ def data_list(request):
     }
     return render(request, 'user-admin/data_list_view.html', context)
 
+# @login_required
 def data_list_detail(request, pk):
     return render(request, 'user-admin/data_list_detail.html')
 
 
 
 #Location
+# @login_required
+
 def location(request):
     
     location = Location.objects.all()
@@ -172,7 +184,7 @@ def location(request):
             form= LocationForm()
             messages.success(request, "Location has been successfully Added!")
         else:
-            messages.error(request, "Please Try again!")
+            messages.error(request, "Value Exist or Please Try again!")
             
     context = {
         'form' : form,
@@ -180,6 +192,7 @@ def location(request):
     }
     return render(request, 'user-admin/location.html', context)
 
+# @login_required
 def location_detail(request, pk):
     location = Location.objects.get(pk=pk)
     form = LocationForm(request.POST or None, instance=location)
@@ -192,23 +205,25 @@ def location_detail(request, pk):
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-location')
         else:
-            messages.error(request, 'Please try Again!')
+            messages.error(request, 'Value Exist or Please try Again!')
     context = {
         'form' : form,
         'location' : location
     }  
     return render(request, 'user-admin/location_detail.html', context)
 
+# @login_required
 def delete_location(request,pk):
     location = Location.objects.get(pk=pk)
     if location.delete():
         messages.success(request, "Successfully Deleted!")
         return redirect('user-admin-location')
     else:
-        messages.error(request, "Please Try again!")
+        messages.error(request, "Value Exist or Please Try again!")
         
 
 #Indicator 
+# @login_required
 def indicator(request):
     indicators = Indicator.objects.filter(parent = None)
     form = IndicatorForm(request.POST or None)
@@ -221,13 +236,14 @@ def indicator(request):
             form = IndicatorForm()
             messages.success(request, "Indicator has been successfully Added")
         else:
-            messages.error(request, "Please try Again!")
+            messages.error(request, "Value Exist or Please try Again!")
     context = {
         'form' : form,
         'indicators' : indicators
     }
     return render(request, 'user-admin/indicators.html', context)
 
+# @login_required
 def get_indicator_children_recursive(indicator):
     children = []
     for child in Indicator.objects.filter(parent=indicator):
@@ -244,6 +260,7 @@ def get_indicator_children_recursive(indicator):
         children.append(child_data)
     return children
 
+# @login_required
 def indicator_sub_lists(request, pk):
     single_indicator = get_object_or_404(Indicator, pk=pk)
     sub_indicators = Indicator.objects.filter(parent=single_indicator)
@@ -260,7 +277,7 @@ def indicator_sub_lists(request, pk):
             form = IndicatorForm()
             messages.success(request, "Indicator has been successfully added")
         else:
-            messages.error(request, "Please try again!")
+            messages.error(request, "Value Exist or Please try again!")
     else:
         form = IndicatorForm()
 
@@ -275,6 +292,7 @@ def indicator_sub_lists(request, pk):
     }
     return render(request, 'user-admin/indicators.html', context)
 
+# @login_required
 def indicator_detail(request, pk):
     single_indicator = Indicator.objects.get(pk=pk)
     sub_indicators = Indicator.objects.filter(parent__pk=pk)
@@ -300,7 +318,7 @@ def indicator_detail(request, pk):
             messages.success(request, 'Successfully Added') 
             return redirect(request.path_info)
         else:
-            messages.error(request, 'Please Try Again!')
+            messages.error(request, 'Value Exist or Please Try Again!')
     context = {      
         'form' : form,
         'form_add' : form_add,
@@ -310,6 +328,7 @@ def indicator_detail(request, pk):
     }
     return render(request, 'user-admin/indicator_detail.html', context)
 
+# @login_required
 def indicator_detail_add(request, pk, mainParent ):
     indicator = Indicator.objects.get(pk=pk)
     form_add = SubIndicatorForm(request.POST or None)
@@ -326,7 +345,7 @@ def indicator_detail_add(request, pk, mainParent ):
             return redirect(redirect_url)
       
         else:
-            messages.error(request, 'Please Try Again!')
+            messages.error(request, 'Value Exist or Please Try Again!')
             
     
     context = {
@@ -334,6 +353,7 @@ def indicator_detail_add(request, pk, mainParent ):
     }
     return render(request, 'user-admin/sub_indicator_add.html', context)
 
+# @login_required
 def delete_indicator(request,pk):
     indicator = Indicator.objects.get(pk=pk)
     
@@ -341,19 +361,22 @@ def delete_indicator(request,pk):
         messages.success(request, "Successfully Deleted")
         return redirect('user-admin-indicators')
     else:
-        messages.error(request, "Please Try again!")
+        messages.error(request, "Value Exist or Please Try again!")
  
    
     
     
+# @login_required
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
 
+# @login_required
 def profile(request):
     return render(request, 'user-admin/profile.html')
 
 
 #Source
+# @login_required
 def source(request):
     sources = Source.objects.all()
 
@@ -365,7 +388,7 @@ def source(request):
             form = SourceForm()
             messages.success(request, "Source has been successfully Added!")
         else:
-            messages.error(request, "Please Try again!")
+            messages.error(request, "Value Exist or Please Try again!")
             
     context = {
         'form' : form,
@@ -373,6 +396,7 @@ def source(request):
     }
     return render(request, 'user-admin/source.html',context=context)
 
+# @login_required
 def source_detail(request, pk):
     source = Source.objects.get(pk=pk)
     
@@ -386,23 +410,25 @@ def source_detail(request, pk):
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-source')
         else:
-            messages.error(request, 'Please try Again!')
+            messages.error(request, 'Value Exist or Please try Again!')
     context = {
         'form' : form,
         'source' : source
     }  
     return render(request, 'user-admin/source_detail.html', context)
 
+# @login_required
 def delete_source(request,pk):
     source = Source.objects.get(pk=pk)
     if source.delete():
         messages.success(request, "Successfully Deleted!")
         return redirect('user-admin-source')
     else:
-        messages.error(request, "Please Try again!")
+        messages.error(request, "Value Exist or Please Try again!")
         return redirect('user-admin-source')
 
 #topic
+# @login_required
 def topic(request):
     topics = Topic.objects.all()
 
@@ -415,7 +441,7 @@ def topic(request):
             form= TopicForm()
             messages.success(request, "Topic has been successfully Added!")
         else:
-            messages.error(request, "Please Try again!")
+            messages.error(request, "Value Exist or Please Try again!")
 
     context = {
         'form' : form,
@@ -423,6 +449,7 @@ def topic(request):
     }
     return render(request, 'user-admin/topic.html',context=context)
 
+# @login_required
 def topic_detail(request, pk):
     topic = Topic.objects.get(pk=pk)
     form = TopicForm(request.POST or None, instance=topic)
@@ -435,24 +462,26 @@ def topic_detail(request, pk):
             messages.success(request, 'Successfully Updated')
             return redirect('user-admin-topic')
         else:
-            messages.error(request, 'Please try Again!')
+            messages.error(request, 'Value Exist or Please try Again!')
     context = {
         'form' : form,
         'topic' : topic
     }  
     return render(request, 'user-admin/topic_detail.html', context)
 
+# @login_required
 def delete_topic(request,pk):
     topic = Topic.objects.get(pk=pk)
     if topic.delete():
         messages.success(request, "Successfully Deleted!")
         return redirect('user-admin-topic')
     else:
-        messages.error(request, "Please Try again!")
+        messages.error(request, "Value Exist or Please Try again!")
         return redirect('user-admin-topic')
  
  
 #Data Point 
+# @login_required
 def data_point(request):
     data_points = DataPoint.objects.all()
     form = DataPointForm(request.POST or None)
@@ -477,7 +506,7 @@ def data_point(request):
             form = DataPointForm()
             messages.success(request, 'Successfully Created')
         else:
-            messages.error(request, 'Please Try Again!')
+            messages.error(request, 'Value Exist or Please Try Again!')
     
     context = {
         'form' : form,
@@ -485,6 +514,7 @@ def data_point(request):
     }
     return render(request, 'user-admin/data_point.html', context)     
        
+# @login_required
 def data_point_detail(request, pk):
     data_point = DataPoint.objects.get(pk = pk) 
     form = DataPointForm(request.POST or None, instance=data_point)
@@ -510,7 +540,7 @@ def data_point_detail(request, pk):
             messages.success(request, 'Successfully Created')
             return redirect('user-admin-data-point')
         else:
-            messages.error(request, 'Please Try Again!')
+            messages.error(request, 'Value Exist or Please Try Again!')
             
     context = {
         'data_point' : data_point,
@@ -519,17 +549,19 @@ def data_point_detail(request, pk):
     
     return render(request, 'user-admin/data_point_detail.html', context )
 
+# @login_required
 def data_point_delate(request, pk):
     data_point = DataPoint.objects.get(pk=pk)
     if data_point.delete():
         messages.success(request, "Successfully Deleted!")
         return redirect('user-admin-data-point')
     else:
-        messages.error(request, "Please Try again!")
+        messages.error(request, "Value Exist or Please Try again!")
     
 
 
 #Month
+# @login_required
 def month(request):
     months = Month.objects.all()
     context = {
@@ -539,5 +571,6 @@ def month(request):
 
 
 #User
+# @login_required
 def users_list(request):
     return render(request, 'user-admin/users_list.html')
