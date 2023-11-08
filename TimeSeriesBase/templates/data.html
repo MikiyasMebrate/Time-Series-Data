@@ -142,10 +142,11 @@
           cursor: pointer;
       }
       .column {
-          display: grid;
-          grid-template-columns: 1fr 1fr; /* Two equal-width columns */
-          grid-gap: 1px; /* Gap between columns */
-      }
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Create two columns */
+        gap: 1px; /* Space between grid items */
+        }
+
       .btn.active {
           background-color:rgb(0, 119, 255);; /* Replace with your desired color */
       }
@@ -180,155 +181,105 @@
               <hr class="dropdown-divider">
               <div class="accordion collapsed mt-3" id="accordionExample">
 
-                  <div class="accordion-item">
-                      <h2 class="accordion-header" id="databaseHeader">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                              data-bs-target="#databaseOptions" aria-expanded="false" aria-controls="databaseOptions">
-                              <span class="d-flex align-items-center w-100">
-                                  <strong class="me-auto">Database</strong>
-                                  <span class="d-flex align-items-center">
-                                      <span class="">Available</span>
-                                      <span class="badge rounded-pill bg-info ms-1">10</span>
-                                      <span class="ps-1 pe-1 bar"></span>
-                                      <span class="ms-2">Selected</span>
-                                      <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                  </span>
-                              </span>
-                          </button>
-                      </h2>
-                      <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
-                          data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                              <div class="filter-submenu">
-                                  <input type="radio" id="gdpCheckbox"> GDP
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="radio" id="revenueCheckbox"> Revenue
-                              </div>
-                              <!-- Add more options here -->
-                          </div>
-                      </div>
-                  </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="databaseHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#databaseOptions" aria-expanded="false" aria-controls="databaseOptions">
+                            <span class="d-flex align-items-center w-100">
+                                <strong class="me-auto">Database</strong>
+                                <span class="d-flex align-items-center">
+                                    <span class="">Available</span>
+                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="ps-1 pe-1 bar"></span>
+                                    <span class="ms-2">Selected</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                </span>
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body" id='topic_list_filter'>
+                            <!-- Add more options here -->
+                            <p class="text-danger">Please Select Topic
+                        </div>
+                    </div>
+                </div>
 
-                  <div class="accordion-item">
-                      <h2 class="accordion-header" id="regionHeader">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                              data-bs-target="#regionOptions" aria-expanded="false" aria-controls="regionOptions">
-                              <span class="d-flex align-items-center w-100">
-                                  <strong class="me-auto">Region</strong>
-                                  <span class="d-flex align-items-center">
-                                      <span class="">Available</span>
-                                      <span class="badge rounded-pill bg-info ms-1">10</span>
-                                      <span class="ps-1 pe-1 bar"></span>
-                                      <span class="ms-2">Selected</span>
-                                      <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                  </span>
-                              </span>
-                          </button>
-                      </h2>
-                      <div id="regionOptions" class="accordion-collapse collapse" aria-labelledby="regionHeader"
-                          data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                              <div class="column">
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="region1Checkbox"> Region 1
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="region2Checkbox"> Region 2
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="region3Checkbox"> Region 3
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="region4Checkbox"> Region 4
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="region5Checkbox"> Region 5
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="region6Checkbox"> Region 6
-                              </div>
-                          </div>
-                          </div>
-                      </div>
-                  </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="regionHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#regionOptions" aria-expanded="false" aria-controls="regionOptions">
+                            <span class="d-flex align-items-center w-100">
+                                <strong class="me-auto">Catagory</strong>
+                                <span class="d-flex align-items-center">
+                                    <span class="">Available</span>
+                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="ps-1 pe-1 bar"></span>
+                                    <span class="ms-2">Selected</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                </span>
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="regionOptions" class="accordion-collapse collapse" aria-labelledby="regionHeader"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body" id='category_list_filter'>
+                            <p class="text-danger">Please Select Catagory
+                        </div>
+                    </div>
+                </div>
 
-                  <div class="accordion-item">
-                      <h2 class="accordion-header" id="seriesHeader">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                              data-bs-target="#seriesOptions" aria-expanded="false" aria-controls="seriesOptions">
-                              <span class="d-flex align-items-center w-100">
-                                  <strong class="me-auto">Series</strong>
-                                  <span class="d-flex align-items-center">
-                                      <span class="">Available</span>
-                                      <span class="badge rounded-pill bg-info ms-1">10</span>
-                                      <span class="ps-1 pe-1 bar"></span>
-                                      <span class="ms-2">Selected</span>
-                                      <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                  </span>
-                              </span>
-                          </button>
-                      </h2>
-                      <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
-                          data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                              <div class="filter-submenu d-flex align-items-center">
-                                  <input type="checkbox" id="series1Checkbox" class="me-2">
-                                  <label for="series1Checkbox" class="mb-0">Series 1</label>
-                              </div>
-                              <div class="filter-submenu d-flex align-items-center">
-                                  <input type="checkbox" id="series2Checkbox" class="me-2">
-                                  <label for="series2Checkbox" class="mb-0">Series 2</label>
-                              </div>
-                              <!-- Add more options here -->
-                          </div>
-                      </div>
-                  </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="seriesHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#seriesOptions" aria-expanded="false" aria-controls="seriesOptions">
+                            <span class="d-flex align-items-center w-100">
+                                <strong class="me-auto">Series</strong>
+                                <span class="d-flex align-items-center">
+                                    <span class="">Available</span>
+                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="ps-1 pe-1 bar"></span>
+                                    <span class="ms-2">Selected</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                </span>
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body" id="indicator_list_filter">
+                            <!-- Add more options here -->
+                            <p class="text-danger">Please Select Series
+                        </div>
+                    </div>
+                </div>
 
 
-                  <div class="accordion-item ">
-                      <h2 class="accordion-header" id="yearHeader">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                              data-bs-target="#yearOptions" aria-expanded="false" aria-controls="yearOptions">
-                              <span class="d-flex align-items-center w-100">
-                                  <strong class="me-auto">Year</strong>
-                                  <span class="d-flex align-items-center">
-                                      <span class="">Available</span>
-                                      <span class="badge rounded-pill bg-info ms-1">10</span>
-                                      <span class="ps-1 pe-1 bar"></span>
-                                      <span class="ms-2">Selected</span>
-                                      <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
-                                  </span>
-                              </span>
-                          </button>
-                      </h2>
-                      <div id="yearOptions" class="accordion-collapse collapse" aria-labelledby="yearHeader"
-                          data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                              <div class="column">
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="year1Checkbox"> Year 1
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="year2Checkbox"> Year 2
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="year3Checkbox"> Year 3
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="year4Checkbox"> Year 4
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="year5Checkbox"> Year 5
-                              </div>
-                              <div class="filter-submenu">
-                                  <input type="checkbox" id="year6Checkbox"> Year 6
-                              </div>
-                          </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                <div class="accordion-item ">
+                    <h2 class="accordion-header" id="yearHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#yearOptions" aria-expanded="false" aria-controls="yearOptions">
+                            <span class="d-flex align-items-center w-100">
+                                <strong class="me-auto">Year</strong>
+                                <span class="d-flex align-items-center">
+                                    <span class="">Available</span>
+                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="ps-1 pe-1 bar"></span>
+                                    <span class="ms-2">Selected</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                </span>
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="yearOptions" class="accordion-collapse collapse" aria-labelledby="yearHeader"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body" id='Year_list_filter'>
+                            <p class="text-danger">Please Select Year
+                        </div>
+                    </div>
+                </div>
+            </div>
           </div> <!-- end of col-md-4 -->
 
           <div class="col-md-8 col-sm-6 col-lg-8 pb-5 pt-1" id="dataColumn">
@@ -371,7 +322,7 @@
                                   <span class="filter-option-checkmark" id="boot-icon1" ></span>
                               </div>
                               <div class="filter-option-selection mb-2">
-                                  <span class="filter-option-label">Region:</span>
+                                  <span class="filter-option-label">Catagory:</span>
                                   <span class="filter-option-checkmark " id="boot-icon2"></span>
                               </div>
                               <div class="filter-option-selection mb-2">
@@ -384,7 +335,7 @@
                               </div>
                           </div>
                           <div class="text-center" id="button">
-              
+                                
                           </div>
                       </div>
                   </div>
@@ -394,16 +345,21 @@
               <!-- Add this code to move the data display section below the filter selection card -->
               <div id="dataDisplay" class="data-display container">
                   <div id="table-container">
-                      <table id="table" class="table table-bordered table-hover">
-                          <thead>
-                              <tr id="header-row">
-                                  <!-- Table columns will be dynamically added here -->
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <!-- Add table rows here -->
-                          </tbody>
-                      </table>
+              <!--Data List Start-->
+              <div class="card">
+                <div class="card-body" id="list_table_view">
+                  <table
+                    id="example1"
+                    class="table table-striped table-responsive"
+                  >
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--Data List End-->
                   </div>
                   <div id="chart" class="container">
                       <!-- Add chart here -->
@@ -416,8 +372,11 @@
           </div>
       </div>
   </div>
-<div> {% include "includes/footer.html" %} 
-     </div>
+<div>
+     {% include "includes/footer.html" %} 
+    {% include "includes/footer_js.html" %} 
+</div>
+<script src="{% static 'assets/js/data_list.js' %}"></script>
 <!-- Button -->
 <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -862,16 +821,7 @@
 
   </script>
 
-  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
-  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
 
-  <!-- Template Main JS File -->
-  <script src="{% static 'assets/js/ff.js' %}"></script>
   </body>
  
 </html>

@@ -6,6 +6,8 @@ urlpatterns = [
     
     #JSON
     path('json/', views.json,name="json"),
+    path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),
+    
     #Category
     path('category/', views.category, name="user-admin-category"),
     path('category/<int:pk>', views.catagory_detail, name="user-catagory-detail"),
@@ -13,7 +15,7 @@ urlpatterns = [
     
     #Data List
     path('data-list/', views.data_list, name="user-admin-data-list"),
-    path('data-list-detail/', views.data_list_detail, name="user-admin-data-list-detail"),
+    path('data-list-detail/<int:pk>', views.data_list_detail, name="user-admin-data-list-detail"),
    
    #Indicators
     path('indicators/', views.indicator, name="user-admin-indicators"),
