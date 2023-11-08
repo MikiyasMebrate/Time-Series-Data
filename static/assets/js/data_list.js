@@ -1,3 +1,5 @@
+var yearTableList = [];
+let selectedIndictorId = [];
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -33,22 +35,8 @@ function updateFilterSelection() {
   }
 }
 
-
-//make datatable
-$(function () {
-  $('#table').DataTable({
-    "paging": true,
-    "lengthChange": false,
-    "searching": false,
-    "ordering": true,
-    "info": true,
-    "autoWidth": false,
-    "responsive": true,
-  });
-});
-
-
 function filterData() {
+  console.log('hello')
   $.ajax({
     url: "/user-admin/json/",
     type: "GET",
@@ -61,7 +49,7 @@ function filterData() {
           '  <label for="topic_list' + topic.id + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
           '</div>';
       }).join('');
-
+      let displayApplyButton = document.getElementById("apply_button");
       $('#topic_list_filter').html(selectTopic);
 
       $('input[name="topic_lists"]').on('change', function (event) {
@@ -78,10 +66,10 @@ function filterData() {
           return '';
         }).join('');
 
-        $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
+        $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
           updateFilterSelection();
         });
-        
+
         $('#category_list_filter').html(selectCategory);
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
@@ -104,13 +92,12 @@ function filterData() {
             '  <label class="form-label pl-1" for="select_all" style="font-size: small;">Select All</label>' +
             '</div>';
 
-            $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
-              updateFilterSelection();
-            });
-            
+          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
+            updateFilterSelection();
+          });
+
           $('#indicator_list_filter').html(selectAll + selectIndicator);
-          //apply Button
-          let displayApplyButton = document.getElementById("applyButton");
+
 
           // Attach event handler for 'Select All' for indicators
           $('#select_all').change(function () {
@@ -119,10 +106,10 @@ function filterData() {
               $(this).prop('checked', checkedStatus);
             });
           });
-          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
+          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
             updateFilterSelection();
           });
-          
+
           // Start the .column div before the map function
           var selectYear = '<div class="column">';
 
@@ -130,9 +117,9 @@ function filterData() {
           selectYear += data.year.map(function (year) {
             if (!year.is_interval) {
               return '<div class="filter-submenu">' +
-                    '  <input type="checkbox" value="' + year.id + '" name="yearListsCheckBox" id="yearList' + year.id + '">' +
-                    '  <label for="yearList' + year.id + '" style="font-size: small;">' + year.year_EC + ' E.C - ' + year.year_GC + ' G.C</label>' +
-                    '</div>';
+                '  <input type="checkbox" value="' + year.id + '" name="yearListsCheckBox" id="yearList' + year.id + '">' +
+                '  <label for="yearList' + year.id + '" style="font-size: small;">' + year.year_EC + ' E.C - ' + year.year_GC + ' G.C</label>' +
+                '</div>';
             }
             return '';
           }).join('');
@@ -155,54 +142,121 @@ function filterData() {
 
           $('#Year_list_filter').html(viewRecentYearButtons + selectYearAll + selectYear);
 
-          // Attach event handlers for 'Select All' for years
           $('#select_all_year_filter').change(function () {
             var checkedStatus = this.checked;
             $('input[name="yearListsCheckBox"]').each(function () {
               $(this).prop('checked', checkedStatus);
+              if (checkedStatus) {
+                // Construct yearTableList based on whether the year is an interval or not
+                yearTableList = data.year.filter(y => !y.is_interval)
+                  .map(y => [y.id, y.year_EC, y.year_GC]);
+              } else {
+                yearTableList = []; // Empty the array if all years are unchecked
+              }
             });
           });
-
-          // Attach event handlers for view recent year buttons
+        console.log(yearTableList)
           $('#last_5_year, #last_10_year, #last_15_year, #last_20_year').click(function () {
             var yearsToShow = parseInt($(this).text(), 10);
             $('input[name="yearListsCheckBox"]').prop('checked', false); // Uncheck all first
             $('input[name="yearListsCheckBox"]:lt(' + yearsToShow + ')').prop('checked', true); // Check the first N checkboxes
-            
+
+            // Construct or update yearTableList based on checked years
+            yearTableList = [];
+            $('input[name="yearListsCheckBox"]:checked').each(function () {
+              var yearId = $(this).val();
+              var yearData = data.year.find(y => y.id.toString() === yearId);
+              if (yearData && !yearData.is_interval) {
+                yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+              }
+            });
+
             // After changing the checkboxes, call updateFilterSelection to update the check mark
             updateFilterSelection();
           });
-          
-          
-          //Display Data with Apply Button
-          displayApplyButton.addEventListener("click", () => {
-            let table = "";
-            table += `
+
+          //Select-all Button for Indicator
+          let selectAllIndicator = document.getElementById("select_all");
+          let selectedIndictorId = [];
+          selectAllIndicator.addEventListener("change", () => {
+            let indicatorListCheckAll =
+              document.getElementsByName("indicator_lists");
+
+            if (selectAllIndicator.checked) {
+              indicatorListCheckAll.forEach((event) => {
+                event.checked = true;
+                if (!selectedIndictorId.includes(event.value)) {
+                  selectedIndictorId.push(event.value);
+                }
+                //Active apply Button
+                yearList();
+              });
+            } else {
+              indicatorListCheckAll.forEach((event) => {
+                event.checked = false;
+                try {
+                  selectedIndictorId.pop(event.value);
+                } catch {
+                  null;
+                }
+              });
+            }
+          });
+
+          //indicator list HTML
+          let indicatorHtmlList =
+            document.getElementsByName("indicator_lists");
+
+          //Display Indicator into Table
+
+          //Push selected Indicator
+          indicatorHtmlList.forEach((indicatorCheckBox) => {
+            indicatorCheckBox.addEventListener(
+              "change",
+              (eventIndicator) => {
+                if (
+                  eventIndicator.target.checked &&
+                  !selectedIndictorId.includes(eventIndicator.target.value)
+                ) {
+                  selectedIndictorId.push(eventIndicator.target.value);
+                } else {
+                  try {
+                    selectedIndictorId.pop(eventIndicator.target.value);
+                  } catch {
+                    null;
+                  }
+                }
+                yearList();
+              }
+            );
+          });
+
+          let table = "";
+          table += `
         <table id="newTable" class="table table-bordered m-0 p-0">
         <thead>
           <tr>
             <th class="ps-5 pe-5">Name</th>`;
-            for (let i of yearTableList) {
-              table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
-            }
+          for (let i of yearTableList) {
+            table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+          }
 
-            table += `</tr>
+          table += `</tr>
                    </thead>
               <tbody>
         `;
 
-            selectIndicator = data.indicators.map(
-              ({ title_ENG, title_AMH, id, for_category_id }) => {
-                if (
-                  String(for_category_id) === String(selectedCategoryId) &&
-                  selectedIndictorId.includes(String(id))
-                ) {
-                  let title_amharic = "";
-                  if (!title_AMH === null)
-                    title_amharic = " - " + title_AMH;
+          selectIndicator = data.indicators.map(
+            ({ title_ENG, title_AMH, id, for_category_id }) => {
+              if (
+                String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))
+              ) {
+                let title_amharic = "";
+                if (!title_AMH === null)
+                  title_amharic = " - " + title_AMH;
 
-                  //Table Row Start
-                  table += `
+                //Table Row Start
+                table += `
                         <tr>
                           <td>
                             <a>
@@ -212,38 +266,38 @@ function filterData() {
                             </a>
                           </td>`;
 
-                  for (j of yearTableList) {
-                    let statusData = false;
-                    for (k of data.value) {
-                      if (
-                        String(j[0]) === String(k.for_datapoint_id) &&
-                        String(id) === String(k.for_indicator_id)
-                      ) {
-                        table += `<td>${k.value}</td>`;
-                        statusData = false;
-                        break;
-                      } else {
-                        statusData = true;
-                      }
-                    }
-                    if (statusData) {
-                      table += `<td> - </td>`;
+                for (j of yearTableList) {
+                  let statusData = false;
+                  for (k of data.value) {
+                    if (
+                      String(j[0]) === String(k.for_datapoint_id) &&
+                      String(id) === String(k.for_indicator_id)
+                    ) {
+                      table += `<td>${k.value}</td>`;
+                      statusData = false;
+                      break;
+                    } else {
+                      statusData = true;
                     }
                   }
+                  if (statusData) {
+                    table += `<td> - </td>`;
+                  }
+                }
 
-                  table += `</tr>`;
+                table += `</tr>`;
 
-                  //Table Row End
+                //Table Row End
 
-                  let table_child_list = (parent, title_ENG, space) => {
-                    space += String("&nbsp;&nbsp;&nbsp;&nbsp");
-                    let status = false;
+                let table_child_list = (parent, title_ENG, space) => {
+                  space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                  let status = false;
 
-                    for (i of data.indicators) {
-                      if (String(i.parent_id) === String(parent)) {
-                        status = true;
-                        //Table Row Start
-                        table += `
+                  for (i of data.indicators) {
+                    if (String(i.parent_id) === String(parent)) {
+                      status = true;
+                      //Table Row Start
+                      table += `
                               <tr>
                                 <td>
                                   <a>
@@ -253,60 +307,12 @@ function filterData() {
                                   </a>
                                 </td>`;
 
-                        for (j of yearTableList) {
-                          let statusData = false;
-                          for (k of data.value) {
-                            if (
-                              String(j[0]) === String(k.for_datapoint_id) &&
-                              String(i.id) === String(k.for_indicator_id)
-                            ) {
-                              table += `<td>${k.value}</td>`;
-                              statusData = false;
-                              break;
-                            } else {
-                              statusData = true;
-                            }
-                          }
-                          if (statusData) {
-                            table += `<td> - </td>`;
-                          }
-                        }
-
-                        table += `</tr>`;
-
-                        //Table Row End
-
-                        //child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
-                        table_child_list(i.id, i.title_ENG, String(space));
-                      }
-                    }
-                    return status;
-                  };
-
-                  //Child Lists
-                  for (let indicator of data.indicators) {
-                    if (String(indicator.parent_id) == String(id)) {
-                      test = true;
-                      //li.push(`<optgroup label="${title_ENG}">`)
-
-                      //Table Row Start
-                      table += `
-                      <tr>
-                        <td>
-                          <a>
-                            <h6 class="mb-1">
-                              <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
-                            </h6>
-                          </a>
-                        </td>`;
-
                       for (j of yearTableList) {
                         let statusData = false;
                         for (k of data.value) {
                           if (
                             String(j[0]) === String(k.for_datapoint_id) &&
-                            String(indicator.id) ===
-                            String(k.for_indicator_id)
+                            String(i.id) === String(k.for_indicator_id)
                           ) {
                             table += `<td>${k.value}</td>`;
                             statusData = false;
@@ -324,51 +330,99 @@ function filterData() {
 
                       //Table Row End
 
-                      //li.push(`<option value=${indicator.id}>${indicator.title_ENG} ${indicator.title_AMH} </option>`)
-                      table_child_list(
-                        indicator.id,
-                        indicator.title_ENG,
-                        " "
-                      );
-                      //li.push(child)
-                      // li.push('</optgroup>')
+                      //child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
+                      table_child_list(i.id, i.title_ENG, String(space));
                     }
                   }
-                  return null;
-                }
-              }
-            );
+                  return status;
+                };
 
-            table += `</tbody>
+                //Child Lists
+                for (let indicator of data.indicators) {
+                  if (String(indicator.parent_id) == String(id)) {
+                    test = true;
+                    //li.push(`<optgroup label="${title_ENG}">`)
+
+                    //Table Row Start
+                    table += `
+                      <tr>
+                        <td>
+                          <a>
+                            <h6 class="mb-1">
+                              <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
+                            </h6>
+                          </a>
+                        </td>`;
+
+                    for (j of yearTableList) {
+                      let statusData = false;
+                      for (k of data.value) {
+                        if (
+                          String(j[0]) === String(k.for_datapoint_id) &&
+                          String(indicator.id) ===
+                          String(k.for_indicator_id)
+                        ) {
+                          table += `<td>${k.value}</td>`;
+                          statusData = false;
+                          break;
+                        } else {
+                          statusData = true;
+                        }
+                      }
+                      if (statusData) {
+                        table += `<td> - </td>`;
+                      }
+                    }
+
+                    table += `</tr>`;
+
+                    //Table Row End
+
+                    //li.push(`<option value=${indicator.id}>${indicator.title_ENG} ${indicator.title_AMH} </option>`)
+                    table_child_list(
+                      indicator.id,
+                      indicator.title_ENG,
+                      " "
+                    );
+                    //li.push(child)
+                    // li.push('</optgroup>')
+                  }
+                }
+                return null;
+              }
+            }
+          );
+
+          table += `</tbody>
         </table>`;
 
-            let dataListViewTable =
-              document.getElementById("list_table_view");
-            dataListViewTable.innerHTML = table;
-            table = "";
+          let dataListViewTable =
+            document.getElementById("list_table_view");
+          dataListViewTable.innerHTML = table;
+          table = "";
 
-            $(document).ready(function () {
-              $("#newTable").DataTable({
-                retrieve: true,
-                ordering: false,
-                scrollX: true,
-                responsive: true,
-                paging: true,
-                searching: true,
-                orderNumber: true,
-                lengthMenu: [
-                  [10, 25, 50, -1],
-                  ["10 rows", "25 rows", "50 rows", "Show all"],
-                ],
-                columnDefs: [
-                  { width: "100%" },
-                  { width: "200px", targets: 0 },
-                ],
-                dom: "Bfrtip",
-                buttons: ["pageLength", "excel", "csv", "pdf", "print"],
-              });
+          $(document).ready(function () {
+            $("#newTable").DataTable({
+              retrieve: true,
+              ordering: false,
+              scrollX: true,
+              responsive: true,
+              paging: true,
+              searching: true,
+              orderNumber: true,
+              lengthMenu: [
+                [10, 25, 50, -1],
+                ["10 rows", "25 rows", "50 rows", "Show all"],
+              ],
+              columnDefs: [
+                { width: "100%" },
+                { width: "200px", targets: 0 },
+              ],
+              dom: "Bfrtip",
+              buttons: ["pageLength", "excel", "csv", "pdf", "print"],
             });
           });
+
           //End Indicator table
 
         });
@@ -389,13 +443,11 @@ $(document).ready(function () {
   // Initialize the filter selection card
   $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
     updateFilterSelection();
-});
+  });
 
   $(".card").show();
   // Hide data display section by default
   $(".data-display").hide();
-
-
 
   //collpase button 
   $("#toggleButton").click(function () {
@@ -433,183 +485,19 @@ $(document).ready(function () {
   });
 
   //make the third button in display-option div display map when clicked
-  $("#displayOptions a:nth-child(3)").click(function () {
-    // Show map
-    $(".data-display #map").show();
+  // $("#displayOptions a:nth-child(3)").click(function () {
+  //   // Show map
+  //   $(".data-display #map").show();
 
-    // Hide table and chart
-    $(".data-display #table-container").hide();
-    $(".data-display #chart").hide();
+  //   // Hide table and chart
+  //   $(".data-display #table-container").hide();
+  //   $(".data-display #chart").hide();
 
-    // Set map button active
-    $("#displayOptions a:nth-child(3)").addClass("active");
-    $("#displayOptions a:nth-child(1)").removeClass("active");
-    $("#displayOptions a:nth-child(2)").removeClass("active");
-
-    (async () => {
-      let sonifyOnHover = false;
-
-      const topology = await fetch(
-        'https://code.highcharts.com/mapdata/countries/fr/fr-all.topo.json'
-      ).then(response => response.json());
-
-      // Instantiate the map
-      Highcharts.mapChart('map', {
-        chart: {
-          map: topology
-        },
-        subtitle: {
-          text: 'Click a map area to start sonifying as you interact with the map',
-          align: 'left'
-        },
-        sonification: {
-          // Play marker / tooltip can make it hard to click other points
-          // while a point is playing, so we turn it off
-          showTooltip: false
-        },
-        legend: {
-          layout: 'vertical',
-          backgroundColor: 'rgba(255,255,255,0.85)',
-          floating: true,
-          verticalAlign: 'bottom',
-          align: 'left',
-          symbolHeight: 450
-        },
-        colorAxis: {
-          min: 1,
-          max: 1000,
-          type: 'logarithmic',
-          stops: [
-            [0, '#0B4C63'],
-            [0.5, '#7350BB'],
-            [0.7, '#3CD391'],
-            [0.9, '#4AA0FF']
-          ],
-          marker: {
-            color: '#343'
-          }
-        },
-        responsive: {
-          rules: [{
-            condition: {
-              maxWidth: 580
-            },
-            chartOptions: {
-              legend: {
-                layout: 'horizontal',
-                floating: false,
-                align: 'center',
-                symbolHeight: 10
-              }
-            }
-          }]
-        },
-        tooltip: {
-          valueSuffix: '/km²'
-        },
-        series: [{
-          name: 'Population density',
-          sonification: {
-            tracks: [{
-              // First play a note to indicate new map area
-              instrument: 'vibraphone',
-              mapping: {
-                pitch: 'c7',
-                volume: 0.3
-              }
-            }, {
-              mapping: {
-                // Array of notes to play. We just repeat the same note
-                // and vary the gap between the notes to indicate
-                // density. Note: Can use Array.from in modern browsers
-                pitch: Array.apply(null, Array(25)).map(function () {
-                  return 'g2';
-                }),
-                gapBetweenNotes: {
-                  mapTo: '-value', // Smaller value = bigger gaps
-                  min: 90,
-                  max: 1000,
-                  mapFunction: 'logarithmic'
-                },
-                pan: 0,
-                noteDuration: 500,
-                playDelay: 150 // Make space for initial notification
-              }
-            }, {
-              // Speak the name after a while
-              type: 'speech',
-              language: 'fr-FR', // Speak in French, preferably
-              mapping: {
-                text: '{point.name}',
-                volume: 0.4,
-                rate: 1.5,
-                playDelay: 1500
-              }
-            }]
-          },
-          accessibility: {
-            point: {
-              valueDescriptionFormat: '{xDescription}, {point.value} people per square kilometer.'
-            }
-          },
-          events: {
-            mouseOut: function () {
-              // Cancel sonification when mousing out of point
-              this.chart.sonification.cancel();
-            }
-          },
-          point: {
-            // Handle when to sonify and not
-            events: {
-              // We require a click before we start playing, so we don't
-              // surprise users. Also some browsers will block audio
-              // until there have been interactions.
-              click: function () {
-                if (!sonifyOnHover) {
-                  this.sonify();
-                } else {
-                  this.series.chart.sonification.cancel();
-                }
-                sonifyOnHover = !sonifyOnHover;
-              },
-              mouseOver: function () {
-                if (sonifyOnHover) {
-                  this.sonify();
-                }
-              }
-            }
-          },
-          cursor: 'pointer',
-          borderColor: '#4A5A4A',
-          dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-          },
-          data: [
-            ['fr-hdf', 189],
-            ['fr-nor', 111],
-            ['fr-idf', 1021],
-            ['fr-ges', 97],
-            ['fr-bre', 123],
-            ['fr-pdl', 119],
-            ['fr-cvl', 66],
-            ['fr-bfc', 59],
-            ['fr-naq', 72],
-            ['fr-ara', 115],
-            ['fr-occ', 82],
-            ['fr-pac', 162],
-            ['fr-lre', 344],
-            ['fr-may', 1],
-            ['fr-gf', 3],
-            ['fr-mq', 323],
-            ['fr-gua', 236],
-            ['fr-cor', 39]
-          ]
-        }]
-      });
-    })();
-
-  });
+  //   // Set map button active
+  //   $("#displayOptions a:nth-child(3)").addClass("active");
+  //   $("#displayOptions a:nth-child(1)").removeClass("active");
+  //   $("#displayOptions a:nth-child(2)").removeClass("active");
+  // });
 
   // Add sample data for the chart
   var chartData = [
@@ -713,5 +601,5 @@ $(document).ready(function () {
   });
   $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
     updateFilterSelection();
-});
+  });
 });
