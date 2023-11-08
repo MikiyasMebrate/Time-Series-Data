@@ -1,21 +1,12 @@
-<!DOCTYPE html>
 {%load static%}
 <html lang="en">
   {% include 'includes/head.html'%}
-  <body
-    style="
-      background-image: url(assets/svg/background_snow.svg);
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position-x: center;
-    "
-  >
-    <!--Navbar Start-->
+  <body>
     {% include 'includes/navbar.html'%}
-    <!--Navbar End-->
+   <section>
 
     <!--Introduction Start-->
-    <div class="container-sm">
+    <div class="container-fluid mt-3">
       <div class="row justify-content-center">
         <div
           class="col-md-6 mt-2 ps-sm-5"
@@ -84,6 +75,7 @@
         </div>
       </div>
     </div>
+  </section>
     {% include 'includes/footer.html'%}
     <!--Mission End-->
 
@@ -105,5 +97,15 @@
   <script src="assets/plugins/flot/plugins/jquery.flot.pie.js"></script>
 
   <script src="assets/dist/js/demo.js"></script>
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/ff.js' %}"></script>
  
 </html>
