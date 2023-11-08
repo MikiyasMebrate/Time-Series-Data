@@ -25,6 +25,7 @@ class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
     form_class=PasswordChangingForm
     success_url=reverse_lazy("change_password")
     success_message = 'password successful updated'
+    
 class UserEditView(generic.UpdateView):
     form_class=UserChangingForm
     template_name='setting.html'

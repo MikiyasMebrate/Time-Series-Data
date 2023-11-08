@@ -45,9 +45,9 @@ fetch(url)
               String(id) === String(value.for_indicator_id)
             ) {
               if (checkParentHasChild) {
-                table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                table += `<td class="text-center fw-bold">  ${value.value} </td>`;
               } else {
-                table += ` <td class="p-0"><button class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
               }
 
               statusData = false;
@@ -60,7 +60,7 @@ fetch(url)
             if (checkParentHasChild) {
               table += `<td class="text-center fw-bold"> - </td>`;
             } else {
-              table += ` <td class="p-0"><button class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+              table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
             }
           }
         }
@@ -118,7 +118,7 @@ fetch(url)
                           if (checkChildOfChildHasChild) {
                             table += `<td class="text-center fw-bold"> ${value.value} </td>`;
                           } else {
-                            table += ` <td class="p-0"><button class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                           }
                           statusData = false;
                           break;
@@ -130,7 +130,7 @@ fetch(url)
                         if (checkChildOfChildHasChild) {
                           table += `<td class="text-center fw-bold"> - </td>`;
                         } else {
-                          table += ` <td class="p-0"><button class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                          table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${i.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                         }
                       }
                     }
@@ -156,7 +156,7 @@ fetch(url)
                     if (checkChildHasChild) {
                       table += `<td class="text-center fw-bold"> ${value.value} </td>`;
                     } else {
-                      table += ` <td class="p-0"><button class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                      table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                     }
                     statusData = false;
                     break;
@@ -168,7 +168,7 @@ fetch(url)
                   if (checkChildHasChild) {
                     table += `<td class="text-center fw-bold"> - </td>`;
                   } else {
-                    table += ` <td class="p-0"><button class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                    table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${indicator.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   }
                 }
               }
@@ -185,6 +185,8 @@ fetch(url)
         }
       }
     });
+
+
     document.getElementById("tableTest").innerHTML = table;
     $(document).ready(function () {
       $("#newTable").DataTable({
@@ -204,5 +206,28 @@ fetch(url)
         buttons: ["pageLength", "excel", "csv", "pdf", "print"],
       });
     });
+
+    let btn = document.getElementsByName('btnIndicator')
+
+    btn.forEach((clickableButton)=>{
+      clickableButton.addEventListener('click', (eventButton)=>{
+        let target = eventButton.target.getAttribute('id')
+        target = target.split('-')
+        console.log(target)
+        let indicatorId = target[0]
+        let yearId = target[1]
+        
+
+        document.getElementById('indicator_id').value = indicatorId
+        document.getElementById('data_point_id').value = yearId
+        
+        
+      })
+    })
+
   })
   .catch((err) => console.log(err));
+
+
+
+  
