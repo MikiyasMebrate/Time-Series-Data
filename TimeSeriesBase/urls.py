@@ -12,6 +12,6 @@ urlpatterns = [
     path('profile', MyView.as_view(template_name='profile.html'), name = 'profile'),
     path('change_password', PasswordChangeView.as_view(template_name='password_change.html'), name = 'change_password'),
     path('setting', UserEditView.as_view(template_name='setting.html'), name = 'setting'),
-    path('login/',login,name="login"),
+    path('login/',login_view,name="login"),
     
 ]
