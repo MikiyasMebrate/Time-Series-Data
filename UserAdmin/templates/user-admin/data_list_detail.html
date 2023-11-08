@@ -17,189 +17,52 @@
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
-    <!--Data Add Modal Start-->
-    <div
-      class="modal fade"
-      id="newDataAdd"
-      tabindex="-1"
-      aria-labelledby="newDataAddLabel"
-      aria-hidden="true">
-      <div class="modal-lg  modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+
+    <!-- Modal Edit -->
+    <div class="modal fade editIndicator" id="indicatorEditValue" tabindex="-1" aria-labelledby="indicatorEditValueLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="indicatorEditValueLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="newForm" method="post">
+          <input type="number" value=""  id="indicator_id"  name="indicator" style="display: none;">
+          <input type="number" value=""   id="data_point_id" name="data_point" style="display: none;">
+          <label for="id_value" class="form-label">Value: </label>
+          {{form.value}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+    </div>
+
+    <!-- Modal Add Data -->
+    <div class="modal fade" id="addNewData" tabindex="-1" aria-labelledby="addNewDataLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="newDataAddLabel">
-              New Data Registration
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div id="messages">
+            <h5 class="modal-title" id="addNewDataLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="post" id="addDataForm">
-              {% csrf_token %}
-            <ul>
-              <div class="row" id="form_data">
-                <div>
-                  <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
-                  <select name="topic" id="id_topic_option" class="form-select">
-                  </select>
-                </div>
-                <!---->
-                <div>
-                  <label class="mt-2 form-label" for="id_categories_option">Category: </label>
-                  <select name="category" id="id_categories_option" class="form-select mt-2">
-                  </select>
-                </div>
-                <!---->
-                <div class="div">
-                  <label class="mt-2 form-label" for="id_is_interval">Is Interval: </label>
-                  <input name="is_interval" class="form-check" type="checkbox" id="id_is_interval">
-                </div>
-                <!---->
-                <div id="id_div_year">
-                  <label class="mt-2 form-label" for="id_year_option">Year: </label>
-                  <select name="year" id="id_year_option" class="form-select mt-2">
-                  </select>
-                </div>
-                <!---->
-                <div>
-                  <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
-                <select name="indicator" id="id_indicators_option" class="form-select mt-2">
-                </select>
-                </div>
-                <!---->
-                <div class="div">
-                  <label class="mt-2 form-label" for="id_is_actual">Is Actual: </label>
-                  <input name="is_actual" class="form-check" type="checkbox" id="id_is_actual">
-                </div>
-                <!---->
-                <div id="id_div_type">
-                </div>
-                <!---->
-                <div>
-                  {{form.source.label}}
-                {{form.source}}
-                </div>
-                <!---->
-                <div id="id_div_value">
-                </div>
-                <!---->
-                
-
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button type="submit" class="btn btn-primary">Save Data</button>
-              </div>
-            </form>
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
-    </div>
-    <!--Data Add Modal End-->
-
-    <!--Edit Data Modal Start-->
-    <div
-      class="modal fade"
-      id="newDataAdd"
-      tabindex="-1"
-      aria-labelledby="newDataAddLabel"
-      aria-hidden="true">
-      <div class="modal-lg  modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="newDataAddLabel">
-              New Data Registration
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div id="messages">
-          </div>
-          <div class="modal-body">
-            <form method="post" id="addDataForm">
-              {% csrf_token %}
-            <ul>
-              <div class="row" id="form_data">
-                <div>
-                  <label class="mt-2 form-label" for="id_topic_option">Topic: </label>
-                  <select name="topic" id="id_topic_option" class="form-select">
-                  </select>
-                </div>
-                <!---->
-                <div>
-                  <label class="mt-2 form-label" for="id_categories_option">Category: </label>
-                  <select name="category" id="id_categories_option" class="form-select mt-2">
-                  </select>
-                </div>
-                <!---->
-                <div class="div">
-                  <label class="mt-2 form-label" for="id_is_interval">Is Interval: </label>
-                  <input name="is_interval" class="form-check" type="checkbox" id="id_is_interval">
-                </div>
-                <!---->
-                <div id="id_div_year">
-                  <label class="mt-2 form-label" for="id_year_option">Year: </label>
-                  <select name="year" id="id_year_option" class="form-select mt-2">
-                  </select>
-                </div>
-                <!---->
-                <div>
-                  <label class="mt-2 form-label" for="id_indicators_option">Indicator: </label>
-                <select name="indicator" id="id_indicators_option" class="form-select mt-2">
-                </select>
-                </div>
-                <!---->
-                <div class="div">
-                  <label class="mt-2 form-label" for="id_is_actual">Is Actual: </label>
-                  <input name="is_actual" class="form-check" type="checkbox" id="id_is_actual">
-                </div>
-                <!---->
-                <div id="id_div_type">
-                </div>
-                <!---->
-                <div>
-                  {{form.source.label}}
-                {{form.source}}
-                </div>
-                <!---->
-                <div id="id_div_value">
-                </div>
-                <!---->
-                
-
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button type="submit" class="btn btn-primary">Save Data</button>
-              </div>
-            </form>
-          </div>
         </div>
-      </div>
-    </div>
-    <!--Edit Data Modal End-->
+    
+
 
     {% include 'user-admin/include/navbar.html'%} 
     {% include 'user-admin/include/sidebar.html'%}
@@ -229,7 +92,7 @@
                   type="button"
                   class="btn btn-primary mb-2"
                   data-bs-toggle="modal"
-                  data-bs-target="#newDataAdd"
+                  data-bs-target="#addNewData"
                   data-bs-whatever="@mdo"
                 >
                   + Add  Data
@@ -247,12 +110,14 @@
                 </select>
               </div>
               <!--Measurement End-->
+              <input type="number" name="" id="" style="display: none;" value="9">
               </div>
 
               <!--Data List Start-->
               <div class="card">
                 <div class="card-body" id="list_table_view">
-                  <div id="tableTest"></div>
+                  <div id="tableTest">
+                  </div>
                 </div>
               </div>
               <!--Data List End-->
@@ -288,6 +153,10 @@
           buttons: ["pageLength", "excel", "csv", "pdf", "print"],
         });
       });
+
+
+
+
     </script>
 
    
@@ -301,7 +170,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
     <script src="{% static 'assets/js/data_list_detail.js'%}"></script>
-  
+=
+
   </body>
 </html>
 

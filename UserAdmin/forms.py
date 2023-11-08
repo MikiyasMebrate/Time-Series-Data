@@ -1,5 +1,5 @@
 from django import forms
-from TimeSeriesBase.models import Topic, Location,Category,Source,Measurement, Indicator, DataPoint, Month
+from TimeSeriesBase.models import Topic, Location,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
 
 class LocationForm(forms.ModelForm):
     class Meta:
@@ -115,7 +115,6 @@ class MeasurmentForm(forms.ModelForm):
             })
     }
 
-
 class DataPointForm(forms.ModelForm):
     class Meta:
         model = DataPoint
@@ -194,3 +193,13 @@ class dataListForm(forms.Form):
         'class' : 'form-select mt-2'
     }))
                                      
+class ValueForm(forms.ModelForm):
+    class Meta:
+        model = DataValue
+        fields = ('value',)
+        
+        widgets = {
+            'value' : forms.TextInput(attrs={
+                'class' : 'form-control'
+            })
+        }
