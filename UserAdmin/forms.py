@@ -203,3 +203,8 @@ class ValueForm(forms.ModelForm):
                 'class' : 'form-control'
             })
         }
+
+class ValueForm2(forms.Form):
+    value2 = forms.CharField(required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))

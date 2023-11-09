@@ -27,18 +27,38 @@
         <h5 class="modal-title" id="indicatorEditValueLabel">Modal title</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <form id="newForm" method="post">
-          <input type="number" value=""  id="indicator_id"  name="indicator" style="display: none;">
-          <input type="number" value=""   id="data_point_id" name="data_point" style="display: none;">
-          <label for="id_value" class="form-label">Value: </label>
-          {{form.value}}
+      <div id="form_1">
+        <div class="modal-body" id="form_body">
+          <form id="newForm" method="post">
+            {% csrf_token %}
+            <input type="number"  id="indicator_id"  name="indicator" style="display: none;">
+            <input type="number"  id="data_point_id" name="data_point"  style="display: none;">
+            <label for="id_value" class="form-label">Value: </label>
+            {{form.value}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" form="newForm">Save changes</button>
         </form>
+        </div>
+    </div>
+
+      <div id="form_2">
+        <div class="modal-body" id="form_body">
+          <form id="editForm" method="post">
+            {% csrf_token %}
+            <input type="number"  id="data_value"  name="data_value" style="display: none;">
+            <label for="id_value" class="form-label">Value: </label>
+            <input type="text" name="value2" class="form-control" maxlength="50" required="" id="id_value_form2">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button  type="submit" class="btn btn-primary" form="editForm">Save changes</button>
+        </form>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+
+
     </div>
   </div>
     </div>
@@ -110,8 +130,10 @@
                 </select>
               </div>
               <!--Measurement End-->
-              <input type="number" name="" id="" style="display: none;" value="9">
               </div>
+
+              <!--Messages-->
+              {% include 'user-admin/include/messages.html'%}
 
               <!--Data List Start-->
               <div class="card">

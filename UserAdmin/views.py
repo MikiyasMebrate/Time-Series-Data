@@ -167,11 +167,48 @@ def data_list(request):
 # @login_required
 def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
+    form_update = ValueForm2(request.POST or None)
+    err  = False
     if request.method == 'POST':
         if form.is_valid():
-            form = form()
+            try:
+                indicator_id = request.POST.get('indicator') 
+                data_point_id = request.POST.get('data_point')
+                value = form.cleaned_data['value']
+                indicator_obj = Indicator.objects.get(pk = indicator_id)
+                data_point_obj = DataPoint.objects.get(pk = data_point_id)
+            
+                value_obj = DataValue()
+                value_obj.value = value
+                value_obj.for_datapoint = data_point_obj
+                value_obj.for_indicator = indicator_obj
+                value_obj.save()
+                form = ValueForm()
+                err = False
+            except:
+                err = True
+        
+        if form_update.is_valid():
+            try: 
+                value = form_update.cleaned_data['value2']
+                value_id = request.POST.get('data_value')
+                data_value = DataValue.objects.get(pk = value_id)
+                data_value.value = value
+                data_value.save()
+                form = ValueForm()
+                err = False
+            except:
+                err = True
+                
+        if(err):
+            messages.error(request, 'Please Try Again!')
+        else:
+            messages.success(request, 'Successfully Added!')
+            
+            
     context = {
-        'form' : form
+        'form' : form,
+        'form_update' : form_update
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 

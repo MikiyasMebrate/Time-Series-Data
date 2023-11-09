@@ -47,7 +47,7 @@ fetch(url)
               if (checkParentHasChild) {
                 table += `<td class="text-center fw-bold">  ${value.value} </td>`;
               } else {
-                table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
               }
 
               statusData = false;
@@ -93,7 +93,6 @@ fetch(url)
 
                 for (i of data.indicators) {
                   if (String(i.parent_id) === String(parent)) {
-
                     let checkChildOfChildHasChild = false;
                     for (check of data.indicators) {
                       if (String(check.parent_id) === String(i.id)) {
@@ -118,7 +117,7 @@ fetch(url)
                           if (checkChildOfChildHasChild) {
                             table += `<td class="text-center fw-bold"> ${value.value} </td>`;
                           } else {
-                            table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                           }
                           statusData = false;
                           break;
@@ -156,7 +155,7 @@ fetch(url)
                     if (checkChildHasChild) {
                       table += `<td class="text-center fw-bold"> ${value.value} </td>`;
                     } else {
-                      table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                     }
                     statusData = false;
                     break;
@@ -186,7 +185,6 @@ fetch(url)
       }
     });
 
-
     document.getElementById("tableTest").innerHTML = table;
     $(document).ready(function () {
       $("#newTable").DataTable({
@@ -207,27 +205,39 @@ fetch(url)
       });
     });
 
-    let btn = document.getElementsByName('btnIndicator')
+    let btn = document.getElementsByName("btnIndicator");
 
-    btn.forEach((clickableButton)=>{
-      clickableButton.addEventListener('click', (eventButton)=>{
-        let target = eventButton.target.getAttribute('id')
-        target = target.split('-')
-        console.log(target)
-        let indicatorId = target[0]
-        let yearId = target[1]
-        
+    btn.forEach((clickableButton) => {
+      clickableButton.addEventListener("click", (eventButton) => {
+        let target = eventButton.target.getAttribute("id");
+        let form1 = document.getElementById("form_1");
+        let form2 = document.getElementById("form_2");
+        try {
+          target = target.split("-");
+          let indicatorId = target[0];
+          let yearId = target[1];
+          if(yearId != undefined){
+            let indicatorInput = document.getElementById("indicator_id");
+            let dataPointInput = document.getElementById("data_point_id");
+  
+            indicatorInput.value = indicatorId;
+            dataPointInput.value = yearId;
+            
+            form2.style.display = 'none'
+            form1.style.display = 'block'
+          }else{
+            let value_id = eventButton.target.getAttribute("id");;
+          let value =eventButton.target.getAttribute("value");
+          form1.style.display = 'none'
+          form2.style.display = 'block'
+          document.getElementById('data_value').value = value_id
+          let setValue = document.getElementById('id_value_form2').value = value
+          }
+        } catch {
+          null
 
-        document.getElementById('indicator_id').value = indicatorId
-        document.getElementById('data_point_id').value = yearId
-        
-        
-      })
-    })
-
+        }
+      });
+    });
   })
   .catch((err) => console.log(err));
-
-
-
-  
