@@ -49,7 +49,6 @@ function filterData() {
           '  <label for="topic_list' + topic.id + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
           '</div>';
       }).join('');
-      let displayApplyButton = document.getElementById("apply_button");
       $('#topic_list_filter').html(selectTopic);
 
       $('input[name="topic_lists"]').on('change', function (event) {
@@ -112,6 +111,8 @@ function filterData() {
 
           // Start the .column div before the map function
           var selectYear = '<div class="column">';
+
+          selectYear += yearList();
 
           // Append to selectYear within the map function without creating a new .column
           selectYear += data.year.map(function (year) {
