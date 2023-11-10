@@ -168,6 +168,7 @@ def data_list(request):
 def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
     form_update = ValueForm2(request.POST or None)
+    sub_indicator_form = SubIndicatorForm(request.POST or None)
     err  = False
     if request.method == 'POST':
         if form.is_valid():
@@ -199,6 +200,20 @@ def data_list_detail(request, pk):
                 err = False
             except:
                 err = True
+        
+        if sub_indicator_form.is_valid():
+            try:
+                indicator_id = request.POST.get('addNewIndicator')
+                indicator = Indicator.objects.get(pk = indicator_id)
+                new_sub_indicator = Indicator()
+                new_sub_indicator.title_ENG = sub_indicator_form.cleaned_data['title_ENG']
+                new_sub_indicator.title_AMH =  sub_indicator_form.cleaned_data['title_AMH']
+                new_sub_indicator.parent =  indicator
+                new_sub_indicator.save()
+                sub_indicator_form = SubIndicatorForm()
+                err = False
+            except:
+                err = True
                 
         if(err):
             messages.error(request, 'Please Try Again!')
@@ -208,7 +223,8 @@ def data_list_detail(request, pk):
             
     context = {
         'form' : form,
-        'form_update' : form_update
+        'form_update' : form_update,
+        'sub_indicator_form' : sub_indicator_form
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 

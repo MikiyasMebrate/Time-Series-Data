@@ -31,10 +31,17 @@ fetch(url)
           }
         }
         table += `
-             <tr>
-             <td class="fw-bold">
-                          ${title_ENG} ${title_amharic}
-                        </td>
+            <tr>
+              <td class="fw-bold">
+                  <div class="row">
+                    <div class="col-10">
+                        ${title_ENG} ${title_amharic}
+                    </div>
+                    <div class="col-2">
+                      <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                  </div>
+              </td>
                `;
 
         for (year of data.year) {
@@ -81,9 +88,16 @@ fetch(url)
               //Table Row Start
               table += `
             <tr>
-            <td class="fw-normal">
-                          &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
-                        </td>
+              <td class="fw-normal">   
+                  <div class="row">
+                    <div class="col-10">
+                        &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
+                    </div>
+                    <div class="col-2">
+                        <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                  </div>
+              </td>
             `;
 
               //Child of Child List
@@ -104,8 +118,15 @@ fetch(url)
                     table += `
                     <tr>
                     <td class="fw-normal">
+                      <div class="row">
+                        <div class="col-10">
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
-                        </td>`;
+                        </div>
+                        <div class="col-2">
+                          <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                        </div>
+                      </div>
+                    </td>`;
 
                     for (year of data.year) {
                       let statusData = false;
@@ -205,9 +226,9 @@ fetch(url)
       });
     });
 
-    let btn = document.getElementsByName("btnIndicator");
+    let btnIndicator = document.getElementsByName("btnIndicator");
 
-    btn.forEach((clickableButton) => {
+    btnIndicator.forEach((clickableButton) => {
       clickableButton.addEventListener("click", (eventButton) => {
         let target = eventButton.target.getAttribute("id");
         let form1 = document.getElementById("form_1");
@@ -239,5 +260,16 @@ fetch(url)
         }
       });
     });
+
+    let btnAddIndicator = document.getElementsByName("btnAddIndicator")
+    btnAddIndicator.forEach((clickableButton)=>{
+      clickableButton.addEventListener('click', (eventButton)=>{
+        let indicatorId = eventButton.target.getAttribute('indicator_id')
+        document.getElementById('addNewIndicatorId').value = indicatorId
+
+      })
+    })
+
+
   })
   .catch((err) => console.log(err));

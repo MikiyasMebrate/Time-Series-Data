@@ -52,6 +52,7 @@ class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
     for_datapoint = models.ForeignKey("DataPoint",on_delete=models.CASCADE)
     for_indicator = models.ForeignKey("Indicator",on_delete=models.CASCADE)
+    for_measurement = models.ManyToManyField('Measurement', blank=True)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
     
     def __str__(self):
@@ -122,7 +123,6 @@ class Measurement(models.Model):
     
 class DataValue(models.Model):
     value = models.CharField(max_length=50)
-    for_measurement = models.ManyToManyField(Measurement, blank=True)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
