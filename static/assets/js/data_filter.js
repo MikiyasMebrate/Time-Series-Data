@@ -1,4 +1,4 @@
-var yearTableList = [];
+
 let selectedIndictorId = [];
 function updateFilterSelection() {
   var isFilterSelected = true;
@@ -109,79 +109,96 @@ function filterData() {
             updateFilterSelection();
           });
 
-          // Start the .column div before the map function
-          var selectYear = '<div class="column">';
+          //Return Selected Year
+          let yearTableList = [];
 
-          selectYear += yearList();
+          let yearList = () => {
+            //Year list
+            let selectYear = data.year.map(
+              ({ id, year_EC, year_GC, is_interval }) => {
+                if (!is_interval) {
+                  return '<div class="filter-submenu">' +
+                    '  <input type="checkbox" value="' + id + '" name="yearListsCheckBox" id="yearList' + id + '">' +
+                    '  <label for="yearList' + id + '" style="font-size: small;">' + year_EC + ' E.C - ' + year_GC + ' G.C</label>' +
+                    '</div>';
+                }
+              }
+            );
 
-          // Append to selectYear within the map function without creating a new .column
-          selectYear += data.year.map(function (year) {
-            if (!year.is_interval) {
-              return '<div class="filter-submenu">' +
-                '  <input type="checkbox" value="' + year.id + '" name="yearListsCheckBox" id="yearList' + year.id + '">' +
-                '  <label for="yearList' + year.id + '" style="font-size: small;">' + year.year_EC + ' E.C - ' + year.year_GC + ' G.C</label>' +
-                '</div>';
-            }
-            return '';
-          }).join('');
+            var selectYearAll = '<div class="filter-submenu d-flex">' +
+              '  <input class="form-check" type="checkbox" id="select_all_year_filter">' +
+              '  <label class="form-label pl-1" for="select_all_year_filter" style="font-size: small;"> Select All</label>' +
+              '</div>';
 
-          // Close the .column div after the map function
-          selectYear += '</div>';
+            var viewRecentYear = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
+              '<div class="filter-submenu mb-2">' +
+              '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
+              '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button>' +
+              '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button>' +
+              '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>' +
+              '</div>';
 
-          var selectYearAll = '<div class="filter-submenu d-flex">' +
-            '  <input class="form-check" type="checkbox" id="select_all_year_filter">' +
-            '  <label class="form-label pl-1" for="select_all_year_filter" style="font-size: small;"> Select All</label>' +
-            '</div>';
+            let yearHtml = document.getElementById("Year_list_filter");
+            yearHtml.innerHTML =
+              viewRecentYear + selectYearAll + selectYear.join("");
 
-          var viewRecentYearButtons = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
-            '<div class="filter-submenu mb-2">' +
-            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
-            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button>' +
-            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button>' +
-            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>' +
-            '</div>';
+            let selectAllYear = document.getElementById(
+              "select_all_year_filter"
+            );
 
-          $('#Year_list_filter').html(viewRecentYearButtons + selectYearAll + selectYear);
+            selectAllYear.addEventListener("change", () => {
+              let yearListCheckAll =
+                document.getElementsByName("yearListsCheckBox");
+              if (selectAllYear.checked) {
+                yearListCheckAll.forEach((eventYear) => {
+                  eventYear.checked = true;
 
-          $('#select_all_year_filter').change(function () {
-            var checkedStatus = this.checked;
-            $('input[name="yearListsCheckBox"]').each(function () {
-              $(this).prop('checked', checkedStatus);
-              if (checkedStatus) {
-                // Construct yearTableList based on whether the year is an interval or not
-                yearTableList = data.year.filter(y => !y.is_interval)
-                  .map(y => [y.id, y.year_EC, y.year_GC]);
+                  yearTableList = data.year.map(
+                    ({ id, year_EC, year_GC, is_interval }) => {
+                      if (!is_interval) {
+                        return [id, year_EC, year_GC];
+                      }
+                    }
+                  );
+                });
+
               } else {
-                yearTableList = []; // Empty the array if all years are unchecked
-              }
-            });
-          });
-        console.log(yearTableList)
-          $('#last_5_year, #last_10_year, #last_15_year, #last_20_year').click(function () {
-            var yearsToShow = parseInt($(this).text(), 10);
-            $('input[name="yearListsCheckBox"]').prop('checked', false); // Uncheck all first
-            $('input[name="yearListsCheckBox"]:lt(' + yearsToShow + ')').prop('checked', true); // Check the first N checkboxes
+                yearListCheckAll.forEach((eventYear) => {
+                  eventYear.checked = false;
 
-            // Construct or update yearTableList based on checked years
-            yearTableList = [];
-            $('input[name="yearListsCheckBox"]:checked').each(function () {
-              var yearId = $(this).val();
-              var yearData = data.year.find(y => y.id.toString() === yearId);
-              if (yearData && !yearData.is_interval) {
-                yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+                  yearTableList = [];
+                });
               }
             });
 
-            // After changing the checkboxes, call updateFilterSelection to update the check mark
-            updateFilterSelection();
-          });
+            $('#last_5_year, #last_10_year, #last_15_year, #last_20_year').click(function () {
+              var yearsToShow = parseInt($(this).text(), 10);
+              $('input[name="yearListsCheckBox"]').prop('checked', false); // Uncheck all first
+              $('input[name="yearListsCheckBox"]:lt(' + yearsToShow + ')').prop('checked', true); // Check the first N checkboxes
+
+              // Construct or update yearTableList based on checked years
+              yearTableList = [];
+              $('input[name="yearListsCheckBox"]:checked').each(function () {
+                var yearId = $(this).val();
+                var yearData = data.year.find(y => y.id.toString() === yearId);
+                if (yearData && !yearData.is_interval) {
+                  yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+                }
+              });
+
+              // After changing the checkboxes, call updateFilterSelection to update the check mark
+              updateFilterSelection();
+            });
+          };
+          // After changing the checkboxes, call updateFilterSelection to update the check mark
+          updateFilterSelection();
 
           //Select-all Button for Indicator
           let selectAllIndicator = document.getElementById("select_all");
           let selectedIndictorId = [];
+
           selectAllIndicator.addEventListener("change", () => {
-            let indicatorListCheckAll =
-              document.getElementsByName("indicator_lists");
+            let indicatorListCheckAll = document.getElementsByName("indicator_lists");
 
             if (selectAllIndicator.checked) {
               indicatorListCheckAll.forEach((event) => {
@@ -189,7 +206,7 @@ function filterData() {
                 if (!selectedIndictorId.includes(event.value)) {
                   selectedIndictorId.push(event.value);
                 }
-                //Active apply Button
+                // Active apply Button
                 yearList();
               });
             } else {
@@ -202,6 +219,9 @@ function filterData() {
                 }
               });
             }
+
+            // Log the selectedIndictorId array after changes
+            console.log(selectedIndictorId);
           });
 
           //indicator list HTML
@@ -215,6 +235,7 @@ function filterData() {
             indicatorCheckBox.addEventListener(
               "change",
               (eventIndicator) => {
+
                 if (
                   eventIndicator.target.checked &&
                   !selectedIndictorId.includes(eventIndicator.target.value)
@@ -232,175 +253,97 @@ function filterData() {
             );
           });
 
-          let table = "";
-          table += `
-        <table id="newTable" class="table table-bordered m-0 p-0">
-        <thead>
-          <tr>
-            <th class="ps-5 pe-5">Name</th>`;
-          for (let i of yearTableList) {
-            table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
-          }
 
-          table += `</tr>
-                   </thead>
-              <tbody>
-        `;
+          let table = generateTable();
 
-          selectIndicator = data.indicators.map(
-            ({ title_ENG, title_AMH, id, for_category_id }) => {
-              if (
-                String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))
-              ) {
-                let title_amharic = "";
-                if (!title_AMH === null)
-                  title_amharic = " - " + title_AMH;
+          function generateTable() {
 
-                //Table Row Start
-                table += `
-                        <tr>
-                          <td>
-                            <a>
-                              <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-reset">${title_ENG} ${title_amharic}</a>
-                              </h6>
-                            </a>
-                          </td>`;
+            let tableHTML = `
+              <table id="newTable" class="table table-bordered m-0 p-0">
+                <thead>
+                  <tr>
+                    <th class="ps-5 pe-5">Name</th>`;
 
-                for (j of yearTableList) {
-                  let statusData = false;
-                  for (k of data.value) {
-                    if (
-                      String(j[0]) === String(k.for_datapoint_id) &&
-                      String(id) === String(k.for_indicator_id)
-                    ) {
-                      table += `<td>${k.value}</td>`;
-                      statusData = false;
-                      break;
-                    } else {
-                      statusData = true;
-                    }
-                  }
-                  if (statusData) {
-                    table += `<td> - </td>`;
-                  }
-                }
+            for (let i of yearTableList) {
+              tableHTML += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+            }
+            console.log('selectindicator', selectedIndictorId)
+            tableHTML += `</tr>
+                         </thead>
+                         <tbody>`;
+            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
+              console.log('Checking for id:', id);
+              console.log('String(id):', String(id), 'Length:', String(id).length);
+              console.log('selectedIndictorId.includes(String(id)):', selectedIndictorId.includes(String(id).trim()), 'Length:', selectedIndictorId.length);
 
-                table += `</tr>`;
-
-                //Table Row End
+              if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+                console.log('Condition met.');
+                let title_amharic = title_AMH !== null ? " - " + title_AMH : "";
+                tableHTML += generateTableRow(id, title_ENG, title_amharic);
 
                 let table_child_list = (parent, title_ENG, space) => {
-                  space += String("&nbsp;&nbsp;&nbsp;&nbsp");
-                  let status = false;
-
-                  for (i of data.indicators) {
+                  space += "&nbsp;&nbsp;&nbsp;&nbsp";
+                  for (let i of data.indicators) {
                     if (String(i.parent_id) === String(parent)) {
-                      status = true;
-                      //Table Row Start
-                      table += `
-                              <tr>
-                                <td>
-                                  <a>
-                                    <h6 class="mb-1">
-                                      <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary ps-2  fw-normal">${space} ${i.title_ENG} </a>
-                                    </h6>
-                                  </a>
-                                </td>`;
-
-                      for (j of yearTableList) {
-                        let statusData = false;
-                        for (k of data.value) {
-                          if (
-                            String(j[0]) === String(k.for_datapoint_id) &&
-                            String(i.id) === String(k.for_indicator_id)
-                          ) {
-                            table += `<td>${k.value}</td>`;
-                            statusData = false;
-                            break;
-                          } else {
-                            statusData = true;
-                          }
-                        }
-                        if (statusData) {
-                          table += `<td> - </td>`;
-                        }
-                      }
-
-                      table += `</tr>`;
-
-                      //Table Row End
-
-                      //child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
-                      table_child_list(i.id, i.title_ENG, String(space));
+                      tableHTML += generateTableRow(i.id, title_ENG + " " + i.title_ENG, "", space);
+                      table_child_list(i.id, i.title_ENG, space);
                     }
                   }
-                  return status;
                 };
 
-                //Child Lists
                 for (let indicator of data.indicators) {
                   if (String(indicator.parent_id) == String(id)) {
-                    test = true;
-                    //li.push(`<optgroup label="${title_ENG}">`)
-
-                    //Table Row Start
-                    table += `
-                      <tr>
-                        <td>
-                          <a>
-                            <h6 class="mb-1">
-                              <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
-                            </h6>
-                          </a>
-                        </td>`;
-
-                    for (j of yearTableList) {
-                      let statusData = false;
-                      for (k of data.value) {
-                        if (
-                          String(j[0]) === String(k.for_datapoint_id) &&
-                          String(indicator.id) ===
-                          String(k.for_indicator_id)
-                        ) {
-                          table += `<td>${k.value}</td>`;
-                          statusData = false;
-                          break;
-                        } else {
-                          statusData = true;
-                        }
-                      }
-                      if (statusData) {
-                        table += `<td> - </td>`;
-                      }
-                    }
-
-                    table += `</tr>`;
-
-                    //Table Row End
-
-                    //li.push(`<option value=${indicator.id}>${indicator.title_ENG} ${indicator.title_AMH} </option>`)
-                    table_child_list(
-                      indicator.id,
-                      indicator.title_ENG,
-                      " "
-                    );
-                    //li.push(child)
-                    // li.push('</optgroup>')
+                    tableHTML += generateTableRow(indicator.id, indicator.title_ENG, "", "  ");
+                    table_child_list(indicator.id, indicator.title_ENG, " ");
                   }
                 }
+
                 return null;
+              } else {
+                console.log('Condition not met.');
+              }
+            });
+
+            tableHTML += `</tbody>
+              </table>`;
+
+            return tableHTML;
+          }
+
+          function generateTableRow(id, title, title_amharic = "", space = "") {
+            console.log("==============================================in the row  ============================")
+            let rowHTML = `
+              <tr>
+                <td>
+                  <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-reset">
+                    <h6 class="mb-1">${title} ${title_amharic}</h6>
+                  </a>
+                </td>`;
+
+            for (let j of yearTableList) {
+              let statusData = false;
+              for (let k of data.value) {
+                if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
+                  rowHTML += `<td>${k.value}</td>`;
+                  statusData = false;
+                  break;
+                } else {
+                  statusData = true;
+                }
+              }
+              if (statusData) {
+                rowHTML += `<td> - </td>`;
               }
             }
-          );
 
-          table += `</tbody>
-        </table>`;
+            rowHTML += `</tr>`;
+            return rowHTML;
+          }
 
-          let dataListViewTable =
-            document.getElementById("list_table_view");
+          let dataListViewTable = document.getElementById("list_table_view");
           dataListViewTable.innerHTML = table;
-          table = "";
+
+          console.log('indicator lenght', selectedIndictorId.length)
 
           $(document).ready(function () {
             $("#newTable").DataTable({
@@ -424,12 +367,45 @@ function filterData() {
             });
           });
 
-          //End Indicator table
+          // Function to update the table in the DOM
+          function updateTable() {
+            // Replace the inner HTML with the newly generated table
+            dataListViewTable.innerHTML = table;
 
+            $("#newTable").DataTable({
+              retrieve: true,
+              ordering: false,
+              scrollX: true,
+              responsive: true,
+              paging: true,
+              searching: true,
+              orderNumber: true,
+              lengthMenu: [
+                [10, 25, 50, -1],
+                ["10 rows", "25 rows", "50 rows", "Show all"],
+              ],
+              columnDefs: [
+                { width: "100%" },
+                { width: "200px", targets: 0 },
+              ],
+              dom: "Bfrtip",
+              buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+            });
+          }
+
+          // Example of updating the table when your data changes
+          function onDataChanged() {
+            // Update the table when data changes
+            table = generateTable();
+            updateTable();
+          }
+          //End Indicator table
+          onDataChanged()
         });
       });
 
       // ... the rest of your code for setting up years and handling 'Select All' logic ...
+
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error('Error fetching data: ' + textStatus, errorThrown);
@@ -594,7 +570,8 @@ $(document).ready(function () {
 
     // Show table
     $("#table-container").show();
-
+    let displayecard = document.getElementById("main-card")
+    displayecard.style.display = "block";
     document.getElementById("downloadButton").disabled = false;
     // Hide chart
     $("#chart").hide();
@@ -603,4 +580,4 @@ $(document).ready(function () {
   $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
     updateFilterSelection();
   });
-});
+}); 

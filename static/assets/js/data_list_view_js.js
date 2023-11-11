@@ -434,7 +434,7 @@ let filterData = () => {
                   });
                 }
               });
-
+              console.log(selectedIndictorId)
               //indicator list HTML
               let indicatorHtmlList =
                 document.getElementsByName("indicator_lists");
@@ -481,12 +481,9 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(
-                  ({ title_ENG, title_AMH, id, for_category_id }) => {
-                    if (
-                      String(for_category_id) === String(selectedCategoryId) &&
-                      selectedIndictorId.includes(String(id))
-                    ) {
+                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
+                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+                      console.log('hello from check')
                       let title_amharic = "";
                       if (!title_AMH === null)
                         title_amharic = " - " + title_AMH;
