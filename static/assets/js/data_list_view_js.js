@@ -492,11 +492,11 @@ let filterData = () => {
                       table += `
                           <tr>
                             <td>
-                              <a>
-                                <h6 class="mb-1">
-                                  <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
-                                </h6>
-                              </a>
+                                <div class="row">
+                                   <div class="col-10">
+                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                   </div>
+                                </div>
                             </td>`;
 
                       for (j of yearTableList) {
@@ -582,7 +582,7 @@ let filterData = () => {
                           <td>
                             <a>
                               <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
                               </h6>
                             </a>
                           </td>`;
