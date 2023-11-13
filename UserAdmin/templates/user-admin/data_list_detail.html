@@ -40,6 +40,28 @@
         </div>
       </div>
 
+      <!-- Remove Indicator -->
+      <div class="modal fade" id="removeIndicatorModal" tabindex="-1" aria-labelledby="removeIndicatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="removeIndicatorModalLabel">Add New Sub-Indicator</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form  method="post" id="formAddIndicator">
+              {% csrf_token %}
+            <div class="modal-body">
+              <p>Are you sure you want to remove? </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              <a href="#"  id="forRemoveIndicator" class="btn btn-danger">Yes</a>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>
+
 
     <!-- Modal Edit -->
     <div class="modal fade editIndicator" id="indicatorEditValue" tabindex="-1" aria-labelledby="indicatorEditValueLabel" aria-hidden="true">

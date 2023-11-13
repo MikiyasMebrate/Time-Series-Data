@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
@@ -418,13 +418,14 @@ def indicator_detail_add(request, pk, mainParent ):
 # @login_required
 def delete_indicator(request,pk):
     indicator = Indicator.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
     
     if indicator.delete():
-        messages.success(request, "Successfully Deleted")
-        return redirect('user-admin-indicators')
+        messages.success(request, "Successfully Removed!")
+        return HttpResponseRedirect(previous_page)
     else:
-        messages.error(request, "Value Exist or Please Try again!")
- 
+        messages.error(request, "Please Try again later!")
+  
    
     
     
