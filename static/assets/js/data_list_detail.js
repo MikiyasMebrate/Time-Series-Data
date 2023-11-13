@@ -34,15 +34,20 @@ fetch(url)
             <tr>
               <td class="fw-bold">
                   <div class="row">
-                    <div class="col-10">
+                    <div class="col-9">
                         ${title_ENG} ${title_amharic}
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                       <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                    <div class="col-1">
+                      <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                     </div>
                   </div>
               </td>
                `;
+               
+               
 
         for (year of data.year) {
           let statusData = false;
@@ -90,11 +95,14 @@ fetch(url)
             <tr>
               <td class="fw-normal">   
                   <div class="row">
-                    <div class="col-10">
+                    <div class="col-9">
                         &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                    <div class="col-1">
+                      <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                     </div>
                   </div>
               </td>
@@ -119,12 +127,15 @@ fetch(url)
                     <tr>
                     <td class="fw-normal">
                       <div class="row">
-                        <div class="col-10">
+                        <div class="col-9">
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
                         </div>
-                        <div class="col-2">
+                        <div class="col-1">
                           <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
                         </div>
+                        <div class="col-1">
+                      <button type="button" name="btnDeleteIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                    </div>
                       </div>
                     </td>`;
 
@@ -261,12 +272,25 @@ fetch(url)
       });
     });
 
+
+    //Add Indicator 
     let btnAddIndicator = document.getElementsByName("btnAddIndicator")
     btnAddIndicator.forEach((clickableButton)=>{
       clickableButton.addEventListener('click', (eventButton)=>{
         let indicatorId = eventButton.target.getAttribute('indicator_id')
         document.getElementById('addNewIndicatorId').value = indicatorId
 
+      })
+    })
+
+
+    //Remove Indicator 
+    let btnRemoveIndicator = document.getElementsByName("btnDeleteIndicator")
+    btnRemoveIndicator.forEach((btn)=>{
+      btn.addEventListener('click', (eventDelete)=>{
+        let indicatorId =  eventDelete.target.getAttribute('indicator_id')
+        document.getElementById('forRemoveIndicator').setAttribute('href', `/user-admin/indicator-delete/${indicatorId}`)
+        console.log(indicatorId)
       })
     })
 
