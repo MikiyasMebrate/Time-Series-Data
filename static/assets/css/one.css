@@ -41,7 +41,7 @@
 /*  01. Theme default CSS
 /*----------------------------------------*/
 /* 1. Theme default css */
-@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&amp;family=Lato:wght@300;400;700&amp;display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&amp;family=nunito:wght@300;400;700&amp;display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -49,7 +49,7 @@
 }
 
 body {
-  font-family: "Lato", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 16px;
   font-weight: normal;
   color: #686777;
@@ -133,7 +133,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Frank Ruhl Libre", serif;
+  font-family: "Nunito", sans-serif;
   color: #1f1841;
   margin-top: 0px;
   font-weight: 900;
@@ -822,13 +822,13 @@ p {
 }
 .header__info ul li {
   display: inline-block;
-  margin-left: 30px;
+  margin-left: 0px;
   padding-left: 20px;
   border-left: 1px solid #5323ca;
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .header__info ul li {
-    margin-left: 15px;
+    margin-left: 0px;
   }
 }
 .header__info ul li:first-child {
@@ -985,7 +985,7 @@ p {
   margin-right: 0;
 }
 .main-menu ul li a {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: capitalize;
   color: #ffffff;
@@ -2149,7 +2149,7 @@ p {
 }
 .capabilities__list ol li {
   list-style: inherit;
-  margin-left: 22px;
+  margin-left: px;
   margin-bottom: 25px;
   font-size: 22px;
   color: #777689;
@@ -3708,7 +3708,7 @@ p {
   -webkit-border-radius: 6px 6px 0px 0px;
   -moz-border-radius: 6px 6px 0px 0px;
   border-radius: 6px 6px 0px 0px;
-  margin-left: 10px;
+  margin-left: 0px;
 }
 .expart__nav .nav-link.active {
   background: #4636ff;
