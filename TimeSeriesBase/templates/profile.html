@@ -2,65 +2,153 @@
 <html lang="en">
   {% include "includes/head.html" %}
   <body>
+  
     <!--Navbar Start-->
-    {% include "includes/navbar.html" %}
+    {% include 'includes/navbar.html' %}
+   
+<style>
+       
+      .emp-profile{
+          padding: 3%;
+          margin-top: 3%;
+          margin-bottom: 3%;
+          border-radius: 0.5rem;
+          background: #fff;
+      }
+      .profile-img{
+          text-align: center;
+      }
+      .profile-img img{
+          width: 70%;
+          height: 100%;
+      }
+      .profile-img .file {
+          position: relative;
+          overflow: hidden;
+          margin-top: -20%;
+          width: 70%;
+          border: none;
+          border-radius: 0;
+          font-size: 15px;
+          background: #212529b8;
+      }
+      .profile-img .file input {
+          position: absolute;
+          opacity: 0;
+          right: 0;
+          top: 0;
+      }
+      .profile-head h5{
+          color: #333;
+      }
+      .profile-head h6{
+          color: #0062cc;
+      }
+      .profile-edit-btn{
+          border: none;
+          border-radius: 1.5rem;
+          width: 70%;
+          padding: 2%;
+          font-weight: 600;
+          color: #6c757d;
+          cursor: pointer;
+      }
+      .proile-rating{
+          font-size: 12px;
+          color: #818182;
+          margin-top: 5%;
+      }
+      .proile-rating span{
+          color: #495057;
+          font-size: 15px;
+          font-weight: 600;
+      }
+      .profile-head .nav-tabs{
+          margin-bottom:5%;
+      }
+      .profile-head .nav-tabs .nav-link{
+          font-weight:600;
+          border: none;
+      }
+      .profile-head .nav-tabs .nav-link.active{
+          border: none;
+          border-bottom:2px solid #0062cc;
+      }
+      .profile-work{
+          padding: 14%;
+          margin-top: -15%;
+      }
+      .profile-work p{
+          font-size: 12px;
+          color: #818182;
+          font-weight: 600;
+          margin-top: 10%;
+      }
+      .profile-work a{
+          text-decoration: none;
+          color: #495057;
+          font-weight: 600;
+          font-size: 14px;
+      }
+      .profile-work ul{
+          list-style: none;
+      }
+      .profile-tab label{
+          font-weight: 600;
+      }
+      .profile-tab p{
+          font-weight: 600;
+          color: #0062cc;
+      }
+      </style>
+
+    </head>
     <!--Navbar End-->
-    <main>
-    <section class="content mt-5">
-      <div class="container-fluid">
-        <div class="row justify-content-center">
-          <div class="col-md-9">
-            <!--Profile Start-->
-            <div class="card card-primary card-outline">
-              <div class="card-body box-profile">
-                <div class="text-center">
-                  
+ 
+
+
+
+<div class="container emp-profile">
+  {%load static%}
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="profile-img">
+                            <img src="{% static "assets/image/mopd_logo_green.png" %}" alt=""/>
+                           
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="profile-head">
+                                    <h5>
+                                      {{user.username}}
+                                    </h5>
+                                    <h6>
+                                      {{user.email}}
+                                    </h6>
+                                
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url "setting" %}"  aria-selected="true">Edit Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link"  href="{% url "change_password" %}"   aria-selected="false">change password</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% comment %} <div class="col-md-2">
+                        <a  class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
+                    </div> {% endcomment %}
                 </div>
-                
-                <h3 class="profile-username text-center">{{user.username}}</h3>
-                <p class="text-muted text-center">{{user.email}}</p>
-                
-              </div>
-            </div>
-            <!--Profile End-->
-
-            <div class="card">
-              <!--Menu Start-->
-              <div class="card-header p-2">
-                <ul class="nav nav-pills">
-                 
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url "setting" %}" 
-                      >Settings</a
-                    >
-                  </li>
-                  <li class="nav-item ">
-                    <a class="nav-link " href="{% url "change_password" %}" 
-                      >Change Password</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <!--Menu End-->
-
-           
-            </div>
-          </div>
+               
+            </form>           
         </div>
-      </div>
-    </section>
+<main>
+    
+  
+
   </body>
-  <script src="{% static "assets/plugins/jquery/jquery.min.js" %}"></script>
-
-  <script src="{% static "assets/plugins/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
-
-  <script src="{% static "assets/dist/js/adminlte.min2167.js?v=3.2.0" %}"></script>
-
-  <script src="{% static "assets/plugins/flot/jquery.flot.js" %}"></script>
-
-  <script src="{% static "assets/plugins/flot/plugins/jquery.flot.resize.js" %}"></script>
-
-  <script src="{% static "assets/plugins/flot/plugins/jquery.flot.pie.js" %}"></script>
-
-  <script src="{% static "assets/dist/js/demo.js" %}"></script>
+{%include "includes/footer.html" %}
+{%include "includes/footer_js.html" %}
 </html>
