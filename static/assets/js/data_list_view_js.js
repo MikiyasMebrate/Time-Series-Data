@@ -23,6 +23,8 @@ let filterData = () => {
       topicHtmlList = document.getElementsByName("topic_lists");
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
+          document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+          document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           displayApplyButton.style.display = "none";
           selectedTopicId = event.target.value;
           defaultTable = `
@@ -103,6 +105,7 @@ let filterData = () => {
 
           categoryHtmlList.forEach((categoryRadio) => {
             categoryRadio.addEventListener("change", (eventCategory) => {
+              document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
               displayApplyButton.style.display = "none";
               let selectedCategoryId = eventCategory.target.value;
               selectIndicator = data.indicators.map(
