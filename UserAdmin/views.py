@@ -167,11 +167,64 @@ def data_list(request):
 # @login_required
 def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
+    form_update = ValueForm2(request.POST or None)
+    sub_indicator_form = SubIndicatorForm(request.POST or None)
+    err  = False
     if request.method == 'POST':
         if form.is_valid():
-            form = form()
+            try:
+                indicator_id = request.POST.get('indicator') 
+                data_point_id = request.POST.get('data_point')
+                value = form.cleaned_data['value']
+                indicator_obj = Indicator.objects.get(pk = indicator_id)
+                data_point_obj = DataPoint.objects.get(pk = data_point_id)
+            
+                value_obj = DataValue()
+                value_obj.value = value
+                value_obj.for_datapoint = data_point_obj
+                value_obj.for_indicator = indicator_obj
+                value_obj.save()
+                form = ValueForm()
+                err = False
+            except:
+                err = True
+        
+        if form_update.is_valid():
+            try: 
+                value = form_update.cleaned_data['value2']
+                value_id = request.POST.get('data_value')
+                data_value = DataValue.objects.get(pk = value_id)
+                data_value.value = value
+                data_value.save()
+                form = ValueForm()
+                err = False
+            except:
+                err = True
+        
+        if sub_indicator_form.is_valid():
+            try:
+                indicator_id = request.POST.get('addNewIndicator')
+                indicator = Indicator.objects.get(pk = indicator_id)
+                new_sub_indicator = Indicator()
+                new_sub_indicator.title_ENG = sub_indicator_form.cleaned_data['title_ENG']
+                new_sub_indicator.title_AMH =  sub_indicator_form.cleaned_data['title_AMH']
+                new_sub_indicator.parent =  indicator
+                new_sub_indicator.save()
+                sub_indicator_form = SubIndicatorForm()
+                err = False
+            except:
+                err = True
+                
+        if(err):
+            messages.error(request, 'Please Try Again!')
+        else:
+            messages.success(request, 'Successfully Added!')
+            
+            
     context = {
-        'form' : form
+        'form' : form,
+        'form_update' : form_update,
+        'sub_indicator_form' : sub_indicator_form
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 

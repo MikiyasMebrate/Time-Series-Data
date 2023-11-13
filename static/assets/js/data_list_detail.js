@@ -31,10 +31,17 @@ fetch(url)
           }
         }
         table += `
-             <tr>
-             <td class="fw-bold">
-                          ${title_ENG} ${title_amharic}
-                        </td>
+            <tr>
+              <td class="fw-bold">
+                  <div class="row">
+                    <div class="col-10">
+                        ${title_ENG} ${title_amharic}
+                    </div>
+                    <div class="col-2">
+                      <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                  </div>
+              </td>
                `;
 
         for (year of data.year) {
@@ -47,7 +54,7 @@ fetch(url)
               if (checkParentHasChild) {
                 table += `<td class="text-center fw-bold">  ${value.value} </td>`;
               } else {
-                table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
               }
 
               statusData = false;
@@ -81,9 +88,16 @@ fetch(url)
               //Table Row Start
               table += `
             <tr>
-            <td class="fw-normal">
-                          &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
-                        </td>
+              <td class="fw-normal">   
+                  <div class="row">
+                    <div class="col-10">
+                        &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
+                    </div>
+                    <div class="col-2">
+                        <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                  </div>
+              </td>
             `;
 
               //Child of Child List
@@ -93,7 +107,6 @@ fetch(url)
 
                 for (i of data.indicators) {
                   if (String(i.parent_id) === String(parent)) {
-
                     let checkChildOfChildHasChild = false;
                     for (check of data.indicators) {
                       if (String(check.parent_id) === String(i.id)) {
@@ -105,8 +118,15 @@ fetch(url)
                     table += `
                     <tr>
                     <td class="fw-normal">
+                      <div class="row">
+                        <div class="col-10">
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
-                        </td>`;
+                        </div>
+                        <div class="col-2">
+                          <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                        </div>
+                      </div>
+                    </td>`;
 
                     for (year of data.year) {
                       let statusData = false;
@@ -118,7 +138,7 @@ fetch(url)
                           if (checkChildOfChildHasChild) {
                             table += `<td class="text-center fw-bold"> ${value.value} </td>`;
                           } else {
-                            table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                           }
                           statusData = false;
                           break;
@@ -156,7 +176,7 @@ fetch(url)
                     if (checkChildHasChild) {
                       table += `<td class="text-center fw-bold"> ${value.value} </td>`;
                     } else {
-                      table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue${value.id}" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                     }
                     statusData = false;
                     break;
@@ -186,7 +206,6 @@ fetch(url)
       }
     });
 
-
     document.getElementById("tableTest").innerHTML = table;
     $(document).ready(function () {
       $("#newTable").DataTable({
@@ -207,27 +226,50 @@ fetch(url)
       });
     });
 
-    let btn = document.getElementsByName('btnIndicator')
+    let btnIndicator = document.getElementsByName("btnIndicator");
 
-    btn.forEach((clickableButton)=>{
+    btnIndicator.forEach((clickableButton) => {
+      clickableButton.addEventListener("click", (eventButton) => {
+        let target = eventButton.target.getAttribute("id");
+        let form1 = document.getElementById("form_1");
+        let form2 = document.getElementById("form_2");
+        try {
+          target = target.split("-");
+          let indicatorId = target[0];
+          let yearId = target[1];
+          if(yearId != undefined){
+            let indicatorInput = document.getElementById("indicator_id");
+            let dataPointInput = document.getElementById("data_point_id");
+  
+            indicatorInput.value = indicatorId;
+            dataPointInput.value = yearId;
+            
+            form2.style.display = 'none'
+            form1.style.display = 'block'
+          }else{
+            let value_id = eventButton.target.getAttribute("id");;
+          let value =eventButton.target.getAttribute("value");
+          form1.style.display = 'none'
+          form2.style.display = 'block'
+          document.getElementById('data_value').value = value_id
+          let setValue = document.getElementById('id_value_form2').value = value
+          }
+        } catch {
+          null
+
+        }
+      });
+    });
+
+    let btnAddIndicator = document.getElementsByName("btnAddIndicator")
+    btnAddIndicator.forEach((clickableButton)=>{
       clickableButton.addEventListener('click', (eventButton)=>{
-        let target = eventButton.target.getAttribute('id')
-        target = target.split('-')
-        console.log(target)
-        let indicatorId = target[0]
-        let yearId = target[1]
-        
+        let indicatorId = eventButton.target.getAttribute('indicator_id')
+        document.getElementById('addNewIndicatorId').value = indicatorId
 
-        document.getElementById('indicator_id').value = indicatorId
-        document.getElementById('data_point_id').value = yearId
-        
-        
       })
     })
 
+
   })
   .catch((err) => console.log(err));
-
-
-
-  

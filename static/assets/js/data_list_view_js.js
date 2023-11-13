@@ -434,7 +434,7 @@ let filterData = () => {
                   });
                 }
               });
-
+              console.log(selectedIndictorId)
               //indicator list HTML
               let indicatorHtmlList =
                 document.getElementsByName("indicator_lists");
@@ -481,12 +481,9 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(
-                  ({ title_ENG, title_AMH, id, for_category_id }) => {
-                    if (
-                      String(for_category_id) === String(selectedCategoryId) &&
-                      selectedIndictorId.includes(String(id))
-                    ) {
+                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
+                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+                      console.log('hello from check')
                       let title_amharic = "";
                       if (!title_AMH === null)
                         title_amharic = " - " + title_AMH;
@@ -495,11 +492,11 @@ let filterData = () => {
                       table += `
                           <tr>
                             <td>
-                              <a>
-                                <h6 class="mb-1">
-                                  <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
-                                </h6>
-                              </a>
+                                <div class="row">
+                                   <div class="col-10">
+                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                   </div>
+                                </div>
                             </td>`;
 
                       for (j of yearTableList) {
@@ -585,7 +582,7 @@ let filterData = () => {
                           <td>
                             <a>
                               <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
                               </h6>
                             </a>
                           </td>`;
