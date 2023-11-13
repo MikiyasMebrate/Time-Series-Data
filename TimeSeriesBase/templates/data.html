@@ -14,7 +14,9 @@
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
   crossorigin="anonymous"
 ></script>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" 
+    integrity="sha384-rRE1BEpK1bZU6r8dQQ2R1CJ4Fv8W4foPz3Lz5O8S11JSmKbSSUn6dvnzyC8nsf86" 
+    crossorigin="anonymous">
 <link
   rel="stylesheet"
   href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"
@@ -98,15 +100,12 @@
           max-width: 750px;
           margin: 0 auto;
       }
-
+      .scrollable {
+        max-height: 200px; /* Set your desired maximum height */
+        overflow: auto;
+       }
       #map {
           height: 500px;
-      }
-
-      .loading {
-          margin-top: 10em;
-          text-align: center;
-          color: gray;
       }
 
       .bar {
@@ -117,36 +116,16 @@
           margin-bottom: 1px;
       }
 
-      .card-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-      }
-
       .card {
           margin: auto;
           /* set margin to auto to center the card horizontally */
-      }
+        }
       #filterColumn {
           border-right: 0.5px solid rgb(165, 161, 161);
           display: flex;
           flex-direction: column;
         }
         
-        #dataColumn {
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-        }  
-        .form-check-input {
-          cursor: pointer;
-      }
-      .column {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Create two columns */
-        gap: 1px; /* Space between grid items */
-        }
-
       .btn.active {
           background-color:rgb(0, 119, 255);; /* Replace with your desired color */
       }
@@ -155,6 +134,7 @@
           display: grid;
           grid-template-columns: repeat(2, 1fr);
         }
+
       .check{
           font-size: 13px; 
           color: rgb(0, 128, 55);
@@ -166,6 +146,7 @@
           opacity: 1; 
           background-color: rgb(255, 255, 255);
       }
+      
   </style>
   </head>
 
@@ -176,7 +157,7 @@
       <h2 class='text-center'>Ethiopia Development Indicator</h2>
       <hr class="divider">
       <div class="row">
-          <div class="col-md-4 col-sm-6 col-lg-4" id="filterColumn">
+          <div class="col-md-4" id="filterColumn">
               <h4 class="ms-1">Indicator Variables</h4>
               <hr class="dropdown-divider">
               <div class="accordion collapsed mt-3" id="accordionExample">
@@ -189,17 +170,17 @@
                                 <strong class="me-auto">Database</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1"></span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2"></span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id='topic_list_filter'>
+                        <div class="accordion-body scrollable" id='topic_list_filter'>
                             <!-- Add more options here -->
                             <p class="text-danger">Please Select Topic
                         </div>
@@ -214,17 +195,17 @@
                                 <strong class="me-auto">Catagory</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1"></span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2"></span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="regionOptions" class="accordion-collapse collapse" aria-labelledby="regionHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id='category_list_filter'>
+                        <div class="accordion-body scrollable" id='category_list_filter'>
                             <p class="text-danger">Please Select Topic
                         </div>
                     </div>
@@ -238,17 +219,17 @@
                                 <strong class="me-auto">Series</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1"></span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2"></span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id="indicator_list_filter">
+                        <div class="accordion-body scrollable" id="indicator_list_filter">
                             <!-- Add more options here -->
                             <p class="text-danger">Please Select Catagory
                         </div>
@@ -264,17 +245,17 @@
                                 <strong class="me-auto">Year</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1"></span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2"></span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="yearOptions" class="accordion-collapse collapse" aria-labelledby="yearHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id='Year_list_filter'>
+                        <div class="accordion-body scrollable " id='Year_list_filter'>
                             <p class="text-danger">Please Select Series
                         </div>
                     </div>
@@ -282,7 +263,7 @@
             </div>
           </div> <!-- end of col-md-4 -->
 
-          <div class="col-md-8 col-sm-6 col-lg-8 pb-5 pt-1" id="dataColumn">
+          <div class="col-md-8 pb-5 pt-1" id="dataColumn">
 
               <!-- Add disabled attribute to the display options buttons before the apply button is clicked -->
               <div id="displayOptions" class="d-flex justify-content-between align-items-end mb-2 flex-row-reverse">
@@ -341,17 +322,15 @@
                   </div>
               </div>
               
-
               <!-- Add this code to move the data display section below the filter selection card -->
-              <div id="dataDisplay" class="data-display container">
-                  <div id="table-container">
+              <div id="dataDisplay" class="data-display w-100">
+                <div id="table-container scrollable-div w-100">
                     <!--Data List Start-->
                     <div class="card" id="main-card" style="display:none;">
-                        <div class="card-body" id="list_table_view">
+                        <div class="card-body table-responsive" id="list_table_view">
     
                         </div>
                      </div>
-              <!--Data List End-->
                   </div>
                   <div id="chart" class="container">
                       <!-- Add chart here -->

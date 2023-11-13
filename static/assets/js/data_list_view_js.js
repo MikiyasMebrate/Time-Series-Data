@@ -655,6 +655,7 @@ let filterData = () => {
                     buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                   });
                 });
+             
               });
               //End Indicator table
             });
