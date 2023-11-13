@@ -289,7 +289,7 @@ function filterData() {
             function generateTable() {
 
               let tableHTML = `
-              <table id="newTable" class="table table-striped table-responsive">
+              <table id="dynamictable" class="table table-striped table-responsive">
                 <thead>
                   <tr>
                     <th class="ps-5 pe-5">Name</th>`;
@@ -382,7 +382,7 @@ function filterData() {
             console.log('indicator lenght', selectedIndictorId.length)
 
             $(document).ready(function () {
-              $("#newTable").DataTable({
+              $("#dynamictable").DataTable({
                 retrieve: true,
                 ordering: false,
                 scrollX: true,
@@ -393,6 +393,10 @@ function filterData() {
                 lengthMenu: [
                   [10, 25, 50, -1],
                   ["10 rows", "25 rows", "50 rows", "Show all"],
+                ],
+                columnDefs: [
+                  { width: "100%" },
+                  { width: "200px", targets: 0 },
                 ],
                 dom: "Bfrtip",
                 buttons: ["pageLength", "excel", "csv", "pdf", "print"],
@@ -448,7 +452,7 @@ $(document).ready(function () {
 
 
     // Hide chart
-    $(".data-display #chart").hide();
+    $(".data-display #display_chart").hide();
     // $(".data-display #map").hide();
 
     // Set table button active
@@ -460,7 +464,7 @@ $(document).ready(function () {
   //make the second button in display-option div display chart when clicked
   $("#displayOptions a:nth-child(2)").click(function () {
     // Show chart
-    $(".data-display #chart").show();
+    $(".data-display #display_chart").show();
 
     // Hide table
     $(".data-display #table-container").hide();
@@ -487,43 +491,544 @@ $(document).ready(function () {
   //   $("#displayOptions a:nth-child(1)").removeClass("active");
   //   $("#displayOptions a:nth-child(2)").removeClass("active");
   // });
+        // Your existing script content
+        document.addEventListener('DOMContentLoaded', function () {
+          changeGraph('bar');
+      });
 
-  // Add sample data for the chart
-  var chartData = [
-    { year: "2018", value: 1000 },
-    { year: "2019", value: 1200 },
-    { year: "2020", value: 1500 },
-    { year: "2021", value: 1800 },
-    { year: "2022", value: 2000 }
-  ];
+      // Add event listeners to navigation links
+      document.getElementById('graphTabs').addEventListener('click', function (event) {
+          const target = event.target;
+          if (target.tagName === 'A' && target.dataset.graphType) {
+              event.preventDefault(); // Prevent default link behavior
+              changeGraph(target.dataset.graphType);
+          }
+      });
+      function changeGraph(graphType) {
+          // Remove existing charts
+          document.querySelectorAll('.tab-pane').forEach(function (el) {
+              el.innerHTML = '';
+          });
 
-  // Create the chart using highcharts library
-  Highcharts.chart('chart', {
-    chart: {
-      type: 'line'
-    },
-    title: {
-      text: 'Sample Chart'
-    },
-    xAxis: {
-      categories: chartData.map(function (data) { return data.year; })
-    },
-    yAxis: {
-      title: {
-        text: 'Value'
+          // Hide play controls by default
+          document.getElementById('play-controls').style.display = 'none';
+
+          // Create the selected chart
+          switch (graphType) {
+              case 'bar':
+                  createBarChart();
+                  break;
+              case 'line':
+                  createLineChart();
+                  break;
+              case 'series':
+                  createSeriesChart();
+                  break;
+              case 'area':
+                  createAreaChart();
+                  // Show play controls for the area chart
+                  document.getElementById('play-controls').style.display = 'block';
+                  break;
+              default:
+                  console.error('Invalid graph type');
+          }
       }
-    },
-    series: [{
-      name: 'Value',
-      data: chartData.map(function (data) { return data.value; })
-    }],
-    exporting: {
-      enabled: true,
-      csv: {
-        dateFormat: '%Y-%m-%d'
+
+      function createBarChart() {
+          // Implement the logic to create a bar chart
+          // Use the existing Highcharts.chart function with appropriate configurations
+          // Example:
+          fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json')
+              .then(response => response.json())
+              .then(data => {
+                  Highcharts.chart('chart1', {
+                      chart: {
+                          zoomType: 'x'
+                      },
+                      title: {
+                          text: 'USD to EUR exchange rate over time',
+                          align: 'left'
+                      },
+                      subtitle: {
+                          text: document.ontouchstart === undefined ?
+                              'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+                          align: 'left'
+                      },
+                      xAxis: {
+                          type: 'datetime'
+                      },
+                      yAxis: {
+                          title: {
+                              text: 'Exchange rate'
+                          }
+                      },
+                      legend: {
+                          enabled: false
+                      },
+                      plotOptions: {
+                          area: {
+                              fillColor: {
+                                  linearGradient: {
+                                      x1: 0,
+                                      y1: 0,
+                                      x2: 0,
+                                      y2: 1
+                                  },
+                                  stops: [
+                                      [0, Highcharts.getOptions().colors[0]],
+                                      [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                  ]
+                              },
+                              marker: {
+                                  radius: 2
+                              },
+                              lineWidth: 1,
+                              states: {
+                                  hover: {
+                                      lineWidth: 1
+                                  }
+                              },
+                              threshold: null
+                          }
+                      },
+                      series: [{
+                          type: 'area',
+                          name: 'USD to EUR',
+                          data: data
+                      }]
+                  });
+              })
+              .catch(error => console.error('Error fetching data:', error));
       }
-    }
-  });
+
+      function createLineChart() {
+          // Implement the logic to create a line chart
+          // Example:
+          // Create the chart
+          Highcharts.chart('new chart', {
+              chart: {
+                  type: 'column'
+              },
+              title: {
+                  text: 'Corn vs wheat estimated production for 2020',
+                  align: 'left'
+              },
+              subtitle: {
+                  text:
+                      'Source: <a target="_blank" ' +
+                      'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
+                  align: 'left'
+              },
+              xAxis: {
+                  categories: ['USA', 'China', 'Brazil', 'EU', 'India', 'Russia'],
+                  crosshair: true,
+                  accessibility: {
+                      description: 'Countries'
+                  }
+              },
+              yAxis: {
+                  min: 0,
+                  title: {
+                      text: '1000 metric tons (MT)'
+                  }
+              },
+              tooltip: {
+                  valueSuffix: ' (1000 MT)'
+              },
+              plotOptions: {
+                  column: {
+                      pointPadding: 0.2,
+                      borderWidth: 0
+                  }
+              },
+              series: [
+                  {
+                      name: 'Corn',
+                      data: [406292, 260000, 107000, 68300, 27500, 14500]
+                  },
+                  {
+                      name: 'Wheat',
+                      data: [51086, 136000, 5500, 141000, 107180, 77000]
+                  }
+              ]
+          });
+
+      }
+
+      function createSeriesChart() {
+          // Implement the logic to create a series chart
+          // Example:
+          // Add sample data for the chart
+          var chartData = [
+              { year: "2018", value: 1000 },
+              { year: "2019", value: 1200 },
+              { year: "2020", value: 1500 },
+              { year: "2021", value: 1800 },
+              { year: "2022", value: 2000 }
+          ];
+
+          // Create the chart using highcharts library
+          Highcharts.chart('container1', {
+              chart: {
+                  type: 'line'
+              },
+              title: {
+                  text: 'Sample Chart'
+              },
+              xAxis: {
+                  categories: chartData.map(function (data) { return data.year; })
+              },
+              yAxis: {
+                  title: {
+                      text: 'Value'
+                  }
+              },
+              series: [{
+                  name: 'Value',
+                  data: chartData.map(function (data) { return data.value; })
+              }],
+              exporting: {
+                  enabled: true,
+                  csv: {
+                      dateFormat: '%Y-%m-%d'
+                  }
+              }
+          });
+
+      }
+
+      function createAreaChart() {
+          // Implement the logic to create an area chart
+          // Example:
+          const btn = document.getElementById('play-pause-button'),
+              input = document.getElementById('play-range'),
+              startYear = 1973,
+              endYear = 2021;
+
+          // General helper functions
+          const arrToAssociative = arr => {
+              const tmp = {};
+              arr.forEach(item => {
+                  tmp[item[0]] = item[1];
+              });
+
+              return tmp;
+          };
+
+          function getSubtitle() {
+              return `<span style='font-size: 60px'>${input.value}</span>`;
+          }
+
+          const formatRevenue = [];
+
+          const chart = Highcharts.chart('container', {
+              chart: {
+                  events: {
+                      // Some annotation labels need to be rotated to make room
+                      load: function () {
+                          const labels = this.annotations[0].labels;
+                          labels
+                              .find(a => a.options.id === 'vinyl-label')
+                              .graphic.attr({
+                                  rotation: -20
+                              });
+                          labels
+                              .find(a => a.options.id === 'cassettes-label')
+                              .graphic.attr({
+                                  rotation: 20
+                              });
+                      }
+                  },
+                  type: 'area',
+                  marginTop: 100,
+                  animation: {
+                      duration: 700,
+                      easing: t => t
+                  }
+              },
+              title: {
+                  text: 'revenue race chart'
+              },
+              subtitle: {
+                  text: getSubtitle(),
+                  floating: true,
+                  align: 'right',
+                  verticalAlign: 'middle',
+                  x: -100,
+                  y: -110
+              },
+              data: {
+                  csv: document.getElementById('csv').innerHTML,
+                  itemDelimiter: '\t',
+                  complete: function (options) {
+                      for (let i = 0; i < options.series.length; i++) {
+                          formatRevenue[i] = arrToAssociative(options.series[i].data);
+                          options.series[i].data = null;
+                      }
+                  }
+              },
+              xAxis: {
+                  allowDecimals: false,
+                  min: startYear,
+                  max: endYear
+              },
+              yAxis: {
+                  reversedStacks: false,
+                  title: {
+                      text: 'Revenue in the U.S.'
+                  },
+                  labels: {
+                      format: '${text} B'
+                  }
+              },
+              tooltip: {
+                  split: true,
+                  headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
+                  pointFormat:
+                      '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+                  crosshairs: true
+              },
+              plotOptions: {
+                  area: {
+                      stacking: 'normal',
+                      pointStart: startYear,
+                      marker: {
+                          enabled: false
+                      }
+                  }
+              },
+              annotations: [
+                  {
+                      labelOptions: {
+                          borderWidth: 0,
+                          backgroundColor: undefined,
+                          verticalAlign: 'middle',
+                          allowOverlap: true,
+                          style: {
+                              pointerEvents: 'none',
+                              opacity: 0,
+                              transition: 'opacity 500ms'
+                          }
+                      },
+                      labels: [
+                          {
+                              text: 'Vinyl',
+                              verticalAlign: 'top',
+                              point: {
+                                  x: 1975,
+                                  xAxis: 0,
+                                  y: 1.45,
+                                  yAxis: 0
+                              },
+                              style: {
+                                  fontSize: '0.8em',
+                                  color: '#000'
+                              },
+                              id: 'vinyl-label'
+                          },
+                          {
+                              text: 'LP-EP',
+                              point: {
+                                  x: 1980,
+                                  xAxis: 0,
+                                  y: 0.2,
+                                  yAxis: 0
+                              },
+                              style: {
+                                  fontSize: '1.4em',
+                                  color: '#ffffff'
+                              },
+                              id: 'lpep-label'
+                          },
+                          {
+                              text: 'Cass',
+                              point: {
+                                  x: 1987,
+                                  xAxis: 0,
+                                  y: 2.6,
+                                  yAxis: 0
+                              },
+                              style: {
+                                  fontSize: '1.5em',
+                                  color: '#ffffff'
+                              },
+                              id: 'cassettes-label'
+                          },
+                          {
+                              text: 'CD',
+                              point: {
+                                  x: 1999,
+                                  xAxis: 0,
+                                  y: 6,
+                                  yAxis: 0
+                              },
+                              style: {
+                                  fontSize: '4em',
+                                  color: '#ffffff'
+                              },
+                              id: 'cd-label'
+                          },
+                          {
+                              text: 'DL',
+                              point: {
+                                  x: 2011,
+                                  xAxis: 0,
+                                  y: 4,
+                                  yAxis: 0
+                              },
+                              style: {
+                                  fontSize: '1.2em',
+                                  color: '#ffffff'
+                              },
+                              id: 'dl-label'
+                          },
+                          {
+                              text: 'Strm',
+                              point: {
+                                  x: 2018,
+                                  xAxis: 0,
+                                  y: 5,
+                                  yAxis: 0
+                              },
+                              style: {
+                                  fontSize: '1.5em',
+                                  color: '#ffffff'
+                              },
+                              id: 'streams-label'
+                          }
+                      ]
+                  }
+              ],
+
+              responsive: {
+                  rules: [
+                      {
+                          condition: {
+                              maxWidth: 500
+                          },
+                          chartOptions: {
+                              title: {
+                                  align: 'left'
+                              },
+                              subtitle: {
+                                  y: -150,
+                                  x: -20
+                              },
+                              yAxis: {
+                                  labels: {
+                                      align: 'left',
+                                      x: 0,
+                                      y: -3
+                                  },
+                                  tickLength: 0,
+                                  title: {
+                                      align: 'high',
+                                      reserveSpace: false,
+                                      rotation: 0,
+                                      textAlign: 'left',
+                                      y: -20
+                                  }
+                              }
+                          }
+                      }
+                  ]
+              }
+          });
+
+          function pause(button) {
+              button.title = 'play';
+              button.className = 'fa fa-play';
+              clearTimeout(chart.sequenceTimer);
+              chart.sequenceTimer = undefined;
+          }
+
+          function update() {
+              chart.update(
+                  {
+                      subtitle: {
+                          text: getSubtitle()
+                      }
+                  },
+                  false,
+                  false,
+                  false
+              );
+
+              const series = chart.series,
+                  labels = chart.annotations[0].labels,
+                  yearIndex = input.value - startYear,
+                  dataLength = series[0].options.data.length;
+
+              // If slider moved back in time
+              if (yearIndex < dataLength - 1) {
+                  for (let i = 0; i < series.length; i++) {
+                      const seriesData = series[i].data.slice(0, yearIndex);
+                      series[i].setData(seriesData, false);
+                  }
+              }
+
+              // If slider moved forward in time
+              if (yearIndex > dataLength - 1) {
+                  const remainingYears = yearIndex - dataLength;
+                  for (let i = 0; i < series.length; i++) {
+                      for (let j = input.value - remainingYears; j < input.value; j++) {
+                          series[i].addPoint([formatRevenue[i][j]], false);
+                      }
+                  }
+              }
+
+              // Add current year
+              for (let i = 0; i < series.length; i++) {
+                  const newY = formatRevenue[i][input.value];
+                  series[i].addPoint([newY], false);
+              }
+
+              labels.forEach(label => {
+                  label
+                      .graphic
+                      .css({
+                          opacity: input.value >= label.options.point.x | 0
+                      });
+              });
+
+              chart.redraw();
+
+              input.value = parseInt(input.value, 10) + 1;
+
+              if (input.value > endYear) {
+                  // Auto-pause
+                  pause(btn);
+              }
+          }
+
+          function play(button) {
+              // Reset slider at the end
+              if (input.value > endYear) {
+                  input.value = startYear;
+              }
+              button.title = 'pause';
+              button.className = 'fa fa-pause';
+              chart.sequenceTimer = setInterval(function () {
+                  update();
+              }, 700);
+          }
+
+          btn.addEventListener('click', function () {
+              if (chart.sequenceTimer) {
+                  pause(this);
+              } else {
+                  play(this);
+              }
+          });
+
+          play(btn);
+
+          // Trigger the update on the range bar click.
+          input.addEventListener('input', update);
+      }
+
+      // Initialize the page with a default chart type
+      changeGraph('bar');
 
   // Add event listener to table button to be active color
   $("#tableButton").click(function () {
@@ -531,7 +1036,7 @@ $(document).ready(function () {
     $(".data-display #table-container").show();
 
     // Hide chart
-    $(".data-display #chart").hide();
+    $(".data-display #display_chart").hide();
     $(".data-display #map").hide();
 
     // Set table button active
@@ -543,7 +1048,7 @@ $(document).ready(function () {
   // Add event listener to chart button to be active color
   $("#chartButton").click(function () {
     // Show chart
-    $(".data-display #chart").show();
+    $(".data-display #display_chart").show();
 
     // Hide table
     $(".data-display #table-container").hide();
@@ -562,7 +1067,7 @@ $(document).ready(function () {
     $(".data-display #map").show();
 
     // Hide table
-    $(".data-display #chart").hide();
+    $(".data-display #display_chart").hide();
     $(".data-display #table-container").hide();
 
     // Set chart button active
