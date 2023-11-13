@@ -1,5 +1,18 @@
 
 let selectedIndictorId = [];
+let updated = false;
+
+// Function to update filter message based on selected values
+function updateFilterMessage(filterId, filterName) {
+  var selectedInputs = $(filterId).find('input:checked');
+  if (selectedInputs.length > 0) {
+    // If there are selected inputs, update the message
+    $(filterId).find('.filter-submenu').html('<p class="text-success">Selected ' + filterName + '</p>');
+  } else {
+    // If no inputs are selected, display the default message
+    $(filterId).find('.filter-submenu').html('<p class="text-danger">Please Select ' + filterName + '</p>');
+  }
+}
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -175,7 +188,9 @@ function filterData() {
               var yearsToShow = parseInt($(this).text(), 10);
               $('input[name="yearListsCheckBox"]').prop('checked', false); // Uncheck all first
               $('input[name="yearListsCheckBox"]:lt(' + yearsToShow + ')').prop('checked', true); // Check the first N checkboxes
-
+                
+              // Trigger change event for year checkboxes
+                $('input[name="yearListsCheckBox"]').trigger('change');
               // Construct or update yearTableList based on checked years
               yearTableList = [];
               $('input[name="yearListsCheckBox"]:checked').each(function () {
@@ -253,154 +268,148 @@ function filterData() {
             );
           });
 
+          // Add event listener to the #button div
+          $('#button').on('click', '#applyButton', function () {
+            // Hide filter selection card
+            $(".card").hide();
 
-          let table = generateTable();
+            // Show data display section
+            $("#dataDisplay").show();
 
-          function generateTable() {
+            // Show table
+            $("#table-container").show();
+            let displayecard = document.getElementById("main-card")
+            displayecard.style.display = "block";
+            document.getElementById("downloadButton").disabled = false;
+            // Hide chart
+            $("#chart").hide();
+            $("#map").hide();
+            let table = generateTable();
 
-            let tableHTML = `
-              <table id="newTable" class="table table-bordered m-0 p-0">
+            function generateTable() {
+
+              let tableHTML = `
+              <table id="newTable" class="table table-striped table-responsive">
                 <thead>
                   <tr>
                     <th class="ps-5 pe-5">Name</th>`;
 
-            for (let i of yearTableList) {
-              tableHTML += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
-            }
-            console.log('selectindicator', selectedIndictorId)
-            tableHTML += `</tr>
+              for (let i of yearTableList) {
+                tableHTML += `<th>${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+              }
+              console.log('selectindicator', selectedIndictorId)
+              tableHTML += `</tr>
                          </thead>
                          <tbody>`;
-            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
-              console.log('Checking for id:', id);
-              console.log('String(id):', String(id), 'Length:', String(id).length);
-              console.log('selectedIndictorId.includes(String(id)):', selectedIndictorId.includes(String(id).trim()), 'Length:', selectedIndictorId.length);
+              let selectIndicator = [];
+              data.indicators.forEach(({ title_ENG, title_AMH, id, for_category_id }) => {
+                console.log('for_category_id:', for_category_id);
+                console.log('selectedCategoryId:', selectedCategoryId);
+                console.log('selectedIndictorId Length:', selectedIndictorId.length);
+                console.log('selectedIndictorId:', selectedIndictorId);
+                console.log('String(id):', String(id));
+                console.log('selectedIndictorId.includes(String(id)):', selectedIndictorId.includes(String(id)));
+                console.log('for_category_id:', for_category_id, typeof for_category_id);
+                console.log('selectedCategoryId:', selectedCategoryId, typeof selectedCategoryId);
+                console.log('id:', id, typeof id);
+                console.log('selectedIndictorId:', selectedIndictorId, typeof selectedIndictorId);
 
-              if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
-                console.log('Condition met.');
-                let title_amharic = title_AMH !== null ? " - " + title_AMH : "";
-                tableHTML += generateTableRow(id, title_ENG, title_amharic);
+                if (String(for_category_id).trim() === String(selectedCategoryId).trim() && selectedIndictorId.includes(String(id).trim())) {
+                  console.log('================ Condition met ======================');
+                  selectIndicator.push({ id, title_ENG, title_AMH });
+                  let title_amharic = title_AMH !== null ? " - " + title_AMH : "";
+                  tableHTML += generateTableRow(id, title_ENG, title_amharic);
 
-                let table_child_list = (parent, title_ENG, space) => {
-                  space += "&nbsp;&nbsp;&nbsp;&nbsp";
-                  for (let i of data.indicators) {
-                    if (String(i.parent_id) === String(parent)) {
-                      tableHTML += generateTableRow(i.id, title_ENG + " " + i.title_ENG, "", space);
-                      table_child_list(i.id, i.title_ENG, space);
+                  let table_child_list = (parent, title_ENG, space) => {
+                    space += "&nbsp;&nbsp;&nbsp;&nbsp";
+                    for (let i of data.indicators) {
+                      if (String(i.parent_id) === String(parent)) {
+                        tableHTML += generateTableRow(i.id, title_ENG + " " + i.title_ENG, "", space);
+                        table_child_list(i.id, i.title_ENG, space);
+                      }
+                    }
+                  };
+
+                  for (let indicator of data.indicators) {
+                    if (String(indicator.parent_id) == String(id)) {
+                      tableHTML += generateTableRow(indicator.id, indicator.title_ENG, "", "  ");
+                      table_child_list(indicator.id, indicator.title_ENG, " ");
                     }
                   }
-                };
 
-                for (let indicator of data.indicators) {
-                  if (String(indicator.parent_id) == String(id)) {
-                    tableHTML += generateTableRow(indicator.id, indicator.title_ENG, "", "  ");
-                    table_child_list(indicator.id, indicator.title_ENG, " ");
-                  }
+                  return null;
+                } else {
+                  console.log('================ Condition not met ===================');
                 }
+              });
 
-                return null;
-              } else {
-                console.log('Condition not met.');
-              }
-            });
-
-            tableHTML += `</tbody>
+              tableHTML += `</tbody>
               </table>`;
 
-            return tableHTML;
-          }
-
-          function generateTableRow(id, title, title_amharic = "", space = "") {
-            console.log("==============================================in the row  ============================")
-            let rowHTML = `
+              return tableHTML;
+            };
+            function generateTableRow(id, title, title_amharic = "", space = "") {
+              console.log("======================in the row  =========================")
+              let rowHTML = `
               <tr>
                 <td>
-                  <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-reset">
                     <h6 class="mb-1">${title} ${title_amharic}</h6>
-                  </a>
                 </td>`;
 
-            for (let j of yearTableList) {
-              let statusData = false;
-              for (let k of data.value) {
-                if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
-                  rowHTML += `<td>${k.value}</td>`;
-                  statusData = false;
-                  break;
-                } else {
-                  statusData = true;
+              for (let j of yearTableList) {
+                let statusData = false;
+                for (let k of data.value) {
+                  if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
+                    rowHTML += `<td>${k.value}</td>`;
+                    statusData = false;
+                    break;
+                  } else {
+                    statusData = true;
+                  }
+                }
+                if (statusData) {
+                  rowHTML += `<td> - </td>`;
                 }
               }
-              if (statusData) {
-                rowHTML += `<td> - </td>`;
-              }
+
+              rowHTML += `</tr>`;
+              return rowHTML;
             }
 
-            rowHTML += `</tr>`;
-            return rowHTML;
-          }
+            let dataListViewTable = document.getElementById("list_table_view");
+            dataListViewTable.innerHTML = table;
 
-          let dataListViewTable = document.getElementById("list_table_view");
-          dataListViewTable.innerHTML = table;
+            console.log('indicator lenght', selectedIndictorId.length)
 
-          console.log('indicator lenght', selectedIndictorId.length)
+            $(document).ready(function () {
+              $("#newTable").DataTable({
+                retrieve: true,
+                ordering: false,
+                scrollX: true,
+                responsive: true,
+                paging: true,
+                searching: true,
+                orderNumber: true,
+                lengthMenu: [
+                  [10, 25, 50, -1],
+                  ["10 rows", "25 rows", "50 rows", "Show all"],
+                ],
+                dom: "Bfrtip",
+                buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+              });
 
-          $(document).ready(function () {
-            $("#newTable").DataTable({
-              retrieve: true,
-              ordering: false,
-              scrollX: true,
-              responsive: true,
-              paging: true,
-              searching: true,
-              orderNumber: true,
-              lengthMenu: [
-                [10, 25, 50, -1],
-                ["10 rows", "25 rows", "50 rows", "Show all"],
-              ],
-              columnDefs: [
-                { width: "100%" },
-                { width: "200px", targets: 0 },
-              ],
-              dom: "Bfrtip",
-              buttons: ["pageLength", "excel", "csv", "pdf", "print"],
             });
           });
 
-          // Function to update the table in the DOM
-          function updateTable() {
-            // Replace the inner HTML with the newly generated table
-            dataListViewTable.innerHTML = table;
 
-            $("#newTable").DataTable({
-              retrieve: true,
-              ordering: false,
-              scrollX: true,
-              responsive: true,
-              paging: true,
-              searching: true,
-              orderNumber: true,
-              lengthMenu: [
-                [10, 25, 50, -1],
-                ["10 rows", "25 rows", "50 rows", "Show all"],
-              ],
-              columnDefs: [
-                { width: "100%" },
-                { width: "200px", targets: 0 },
-              ],
-              dom: "Bfrtip",
-              buttons: ["pageLength", "excel", "csv", "pdf", "print"],
-            });
-          }
+          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
+            $(".card").show();
+            // Hide data display section by default
+            $(".data-display").hide();
+            updateFilterSelection()
+            updated = true;
+          });
 
-          // Example of updating the table when your data changes
-          function onDataChanged() {
-            // Update the table when data changes
-            table = generateTable();
-            updateTable();
-          }
-          //End Indicator table
-          onDataChanged()
         });
       });
 
@@ -435,15 +444,17 @@ $(document).ready(function () {
   $("#displayOptions a:nth-child(1)").click(function () {
     // Show table
     $(".data-display #table-container").show();
+    $(".data-display #main-card").show();
+
 
     // Hide chart
     $(".data-display #chart").hide();
-    $(".data-display #map").hide();
+    // $(".data-display #map").hide();
 
     // Set table button active
     $("#displayOptions a:nth-child(1)").addClass("active");
     $("#displayOptions a:nth-child(2)").removeClass("active");
-    $("#displayOptions a:nth-child(3)").removeClass("active");
+    // $("#displayOptions a:nth-child(3)").removeClass("active");
   });
 
   //make the second button in display-option div display chart when clicked
@@ -453,12 +464,13 @@ $(document).ready(function () {
 
     // Hide table
     $(".data-display #table-container").hide();
-    $(".data-display #map").hide();
+    $(".data-display #main-card").hide();
+    // $(".data-display #map").hide();
 
     // Set chart button active
     $("#displayOptions a:nth-child(2)").addClass("active");
     $("#displayOptions a:nth-child(1)").removeClass("active");
-    $("#displayOptions a:nth-child(3)").removeClass("active");
+    // $("#displayOptions a:nth-child(3)").removeClass("active");
   });
 
   //make the third button in display-option div display map when clicked
@@ -560,23 +572,6 @@ $(document).ready(function () {
   });
 
 
-  // Add event listener to the #button div
-  $('#button').on('click', '#applyButton', function () {
-    // Hide filter selection card
-    $(".card").hide();
-
-    // Show data display section
-    $("#dataDisplay").show();
-
-    // Show table
-    $("#table-container").show();
-    let displayecard = document.getElementById("main-card")
-    displayecard.style.display = "block";
-    document.getElementById("downloadButton").disabled = false;
-    // Hide chart
-    $("#chart").hide();
-    $("#map").hide();
-  });
   $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
     updateFilterSelection();
   });
