@@ -1,6 +1,6 @@
 {%load static%}
 <header>
-  <div class="header__area p-relative header__transparent">
+  <div class="header__area  header__transparent">
       <div class="header__shape p-absolute">
           <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt="">
           
@@ -10,7 +10,7 @@
               <div class="row align-items-center">
                   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6">
                       <div class="logo-3">
-                          <a href="index.html">
+                          <a href="{% url "index" %}">
                               <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt=""><h3>MoPD</h3>
                           </a>
                       </div>
