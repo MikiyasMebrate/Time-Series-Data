@@ -6,85 +6,59 @@
     <!--Navbar Start-->
     {% include 'includes/navbar.html'%}
     <!--Navbar End-->
+    <main>
 
-    <section id="contact" class="contact">
+      <!-- page title area start -->
+     
+      <!-- page title area end -->
 
-      <div class="container" data-aos="fade-up">
+      <!-- contact info area start -->
+      
+      <!-- contact info area end -->
 
-        <header class="section-header">
-          <h3>Get in touch with us</h3>
-          <p></p>
-        </header>
-
-        <div class="row gy-4">
-
-          <div class="col-lg-6">
-
-            <div class="row gy-4">
-              <div class="col-md-6">
-                <div class="info-box">
-                  <i class="bi bi-geo-alt"></i>
-                  <h3>Address</h3>
-                  <p>6killo,Addis Ababa, Ethiopia .</p>
-                </div>
+      <!-- contact area start -->
+      <section class="contact__area">
+          <div class="container-fluid p-0">
+              <div class="row no-gutters">
+                  <div class="col-xl-12">
+                      <div class="contact__map">
+                        
+                          <div class="contact__wrapper d-md-flex justify-content-between wow fadeInUp" data-wow-delay=".3s">
+                              <div class="contact__info mr-100">
+                                  <h3>Get in touch</h3>
+                                  <ul>
+                                      <li>
+                                          <h4>Address</h4>
+                                          <p>24 Parking Plaza, Suite 506 <br> Ardmore, SA 19004</p>
+                                      </li>
+                                      <li>
+                                          <h4>call us</h4>
+                                          <p><a href="tel:(404)-888-123-456">(404) 888 123 456</a></p>
+                                          <p><a href="tel:(204)-888-234-674">(204) 888 234 674</a></p>
+                                      </li>
+                                      <li>
+                                          <h4>Email Address</h4>
+                                          <p><a href="https://wphix.com/cdn-cgi/l/email-protection#2a63444c456a4f524b475a464f04494547"><span class="__cf_email__" data-cfemail="f7be999198b7928f969a879b92d994989a">[email&#160;protected]</span></a></p>
+                                      </li>
+                                  </ul>
+                              </div>
+                              <div class="contact__form">
+                                  <form action="#">
+                                      <input type="text" placeholder="topic">
+                                      <textarea placeholder="Your Message"></textarea>
+                                      <button type="submit" class="z-btn">Send Message</button>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
               </div>
-              <div class="col-md-6">
-                <div class="info-box">
-                  <i class="bi bi-telephone"></i>
-                  <h3>Call Us</h3>
-                  <p>0111403049<br></p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-box">
-                  <i class="bi bi-envelope"></i>
-                  <h3>Email Us</h3>
-                  <p>info@mopd.gov.et</p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-box">
-                  <i class="bi bi-clock"></i>
-                  <h3>Open Hours</h3>
-                  <p>Monday - Friday<br>9:00AM - 05:00PM</p>
-                </div>
-              </div>
-            </div>
-
           </div>
+      </section>
+      <!-- contact area end -->
 
-          <div class="col-lg-6">
-            <form action="" method="post" class="php-email-form">
-              <div class="row gy-4">
-
-                <div class="col-md-12">
-                  <input type="text" name="name" class="form-control" placeholder="Topic" required>
-                </div>
-
-                
-
-                <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required>
-                </div>
-
-                <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
-                </div>
-
-                <div class="col-md-12 text-center">
-                  <button type="submit">Send Message</button>
-                </div>
-
-              </div>
-            </form>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section><!-- End Contact Section -->
+  </main>
+ <!-- End Contact Section -->
     
     {% include 'includes/footer.html'%}
   </body>
