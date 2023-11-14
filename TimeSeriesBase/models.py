@@ -1,5 +1,7 @@
 from django.db import models
 from UserManagement.models import CustomUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Topic(models.Model):
@@ -27,6 +29,13 @@ class Indicator(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
 
+    def create_value(self):
+        for year in DataPoint.objects.all():
+            data_value = DataValue()
+            data_value.for_datapoint = year
+            data_value.for_indicator = self
+            data_value.save()       
+
     def str(self):
         return self.get_full_path()
 
@@ -41,6 +50,9 @@ class Indicator(models.Model):
     def __str__(self):
         return self.title_ENG
 
+@receiver(post_save, sender=Indicator)
+def call_my_function(sender, instance, **kwargs):
+    instance.create_value()
 
 
 data_point_type = [
@@ -122,16 +134,36 @@ class Measurement(models.Model):
         return self.Amount_ENG
     
 class DataValue(models.Model):
-    value = models.CharField(max_length=50)
+    value = models.CharField(max_length=50, blank=True ,null=True)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
     for_source = models.ManyToManyField("Source", blank=True)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
-    
-    def __str__(self) -> str:
-        return self.value
-    
+
+    def calculate_parent_value(self):
+        main_parent = self.for_indicator.parent
+        parent = DataValue.objects.get(for_indicator = main_parent)
+
+        child_lists = parent.objects.filter(parent = 'self')
+        year = self.for_datapoint
+
+        sum = 0
+        for child in child_lists:
+            try: cld =  DataValue.objects.get(for_indicator = child, for_datapoint = year)
+            except: cld = None
+ 
+            if cld != None:
+                try: sum = sum + cld.value
+                except: continue
+        
+        parent.value = sum
+        parent.save()
+            
+        
+@receiver(post_save, sender=DataValue)
+def call_my_function(sender, instance, **kwargs):
+    instance.calculate_parent_value()
     
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)

@@ -231,7 +231,7 @@ fetch(url)
           [10, 25, 50, -1],
           ["10 rows", "25 rows", "50 rows", "Show all"],
         ],
-        columnDefs: [{ width: "100%" }, { width: "200px", targets: 0 }],
+        columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
         dom: "Bfrtip",
         buttons: ["pageLength", "excel", "csv", "pdf", "print"],
       });
