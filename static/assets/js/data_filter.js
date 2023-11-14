@@ -121,7 +121,7 @@ function filterData() {
             '  <label class="form-label pl-1" for="select_all" style="font-size: small;">Select All</label>' +
             '</div>';
             document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
-            
+
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
             updateFilterSelection();
           });          
@@ -311,95 +311,181 @@ function filterData() {
             // Show table
             $("#table-container").show();
             let displayecard = document.getElementById("main-card")
-            displayecard.style.display = "block";
-            document.getElementById("downloadButton").disabled = false;
+            // displayecard.style.display = "block";
+            // document.getElementById("downloadButton").disabled = false;
             // Hide chart
             $("#chart").hide();
             $("#map").hide();
-            let table = generateTable();
 
-            function generateTable() {
-
-              let tableHTML = `
-              <table id="dynamictable" class="table table-striped table-responsive">
-                <thead>
-                  <tr>
-                    <th class="ps-5 pe-5">Name</th>`;
-
-              for (let i of yearTableList) {
-                tableHTML += `<th>${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
-              }
-              console.log('selectindicator', selectedIndictorId)
-              tableHTML += `</tr>
-                         </thead>
-                         <tbody>`;
-              let selectIndicator = [];
-              data.indicators.forEach(({ title_ENG, title_AMH, id, for_category_id }) => {
-                if (String(for_category_id).trim() === String(selectedCategoryId).trim() && selectedIndictorId.includes(String(id).trim())) {
-                  selectIndicator.push({ id, title_ENG, title_AMH });
-                  let title_amharic = title_AMH !== null ? " - " + title_AMH : "";
-                  tableHTML += generateTableRow(id, title_ENG, title_amharic);
-
-                  let table_child_list = (parent, title_ENG, space) => {
-                    space += "&nbsp;&nbsp;&nbsp;&nbsp";
-                    for (let i of data.indicators) {
-                      if (String(i.parent_id) === String(parent)) {
-                        tableHTML += generateTableRow(i.id, title_ENG + " " + i.title_ENG, "", space);
-                        table_child_list(i.id, i.title_ENG, space);
-                      }
-                    }
-                  };
-
-                  for (let indicator of data.indicators) {
-                    if (String(indicator.parent_id) == String(id)) {
-                      tableHTML += generateTableRow(indicator.id, indicator.title_ENG, "", "  ");
-                      table_child_list(indicator.id, indicator.title_ENG, " ");
-                    }
-                  }
-
-                  return null;
-                } else {
-                }
-              });
-
-              tableHTML += `</tbody>
-              </table>`;
-
-              return tableHTML;
-            };
-            function generateTableRow(id, title, title_amharic = "", space = "") {
-              let rowHTML = `
-              <tr>
-                <td>
-                    <h6 class="mb-1">${title} ${title_amharic}</h6>
-                </td>`;
-
-              for (let j of yearTableList) {
-                let statusData = false;
-                for (let k of data.value) {
-                  if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
-                    rowHTML += `<td>${k.value}</td>`;
-                    statusData = false;
-                    break;
-                  } else {
-                    statusData = true;
-                  }
-                }
-                if (statusData) {
-                  rowHTML += `<td> - </td>`;
-                }
-              }
-
-              rowHTML += `</tr>`;
-              return rowHTML;
+            let table = "";
+            table += `
+                  <table id="newTable" class="table table-bordered m-0 p-0">
+                  <thead>
+                    <tr>
+                      <th class="ps-5 pe-5">Name</th>`;
+            for (let i of yearTableList) {
+              table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
             }
 
-            let dataListViewTable = document.getElementById("list_table_view");
-            dataListViewTable.innerHTML = table;
+            table += `</tr>
+                             </thead>
+                        <tbody>
+                  `;
 
-            
+            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
+                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+                  let title_amharic = "";
+                  if (!title_AMH === null)
+                    title_amharic = " - " + title_AMH;
+
+                  //Table Row Start
+                  table += `
+                      <tr>
+                        <td>
+                            <div class="row">
+                               <div class="col-10">
+                                 <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                               </div>
+                            </div>
+                        </td>`;
+
+                  for (j of yearTableList) {
+                    let statusData = false;
+                    for (k of data.value) {
+                      if (
+                        String(j[0]) === String(k.for_datapoint_id) &&
+                        String(id) === String(k.for_indicator_id)
+                      ) {
+                        table += `<td>${k.value}</td>`;
+                        statusData = false;
+                        break;
+                      } else {
+                        statusData = true;
+                      }
+                    }
+                    if (statusData) {
+                      table += `<td> - </td>`;
+                    }
+                  }
+
+                  table += `</tr>`;
+
+                  //Table Row End
+
+                  let table_child_list = (parent, title_ENG, space) => {
+                    space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                    let status = false;
+
+                    for (i of data.indicators) {
+                      if (String(i.parent_id) === String(parent)) {
+                        status = true;
+                        //Table Row Start
+                        table += `
+                      <tr>
+                        <td>
+                          <a>
+                            <h6 class="mb-1">
+                              <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
+                            </h6>
+                          </a>
+                        </td>`;
+
+                        for (j of yearTableList) {
+                          let statusData = false;
+                          for (k of data.value) {
+                            if (
+                              String(j[0]) === String(k.for_datapoint_id) &&
+                              String(i.id) === String(k.for_indicator_id)
+                            ) {
+                              table += `<td>${k.value}</td>`;
+                              statusData = false;
+                              break;
+                            } else {
+                              statusData = true;
+                            }
+                          }
+                          if (statusData) {
+                            table += `<td> - </td>`;
+                          }
+                        }
+
+                        table += `</tr>`;
+
+                        //Table Row End
+
+                        //child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
+                        table_child_list(i.id, i.title_ENG, String(space));
+                      }
+                    }
+                    return status;
+                  };
+
+                  //Child Lists
+                  for (let indicator of data.indicators) {
+                    if (String(indicator.parent_id) == String(id)) {
+                      test = true;
+                      //li.push(`<optgroup label="${title_ENG}">`)
+
+                      //Table Row Start
+                      table += `
+                    <tr>
+                      <td>
+                        <a>
+                          <h6 class="mb-1">
+                            <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                          </h6>
+                        </a>
+                      </td>`;
+
+                      for (j of yearTableList) {
+                        let statusData = false;
+                        for (k of data.value) {
+                          if (
+                            String(j[0]) === String(k.for_datapoint_id) &&
+                            String(indicator.id) ===
+                              String(k.for_indicator_id)
+                          ) {
+                            table += `<td>${k.value}</td>`;
+                            statusData = false;
+                            break;
+                          } else {
+                            statusData = true;
+                          }
+                        }
+                        if (statusData) {
+                          table += `<td> - </td>`;
+                        }
+                      }
+
+                      table += `</tr>`;
+
+                      //Table Row End
+
+                      //li.push(`<option value=${indicator.id}>${indicator.title_ENG} ${indicator.title_AMH} </option>`)
+                      table_child_list(
+                        indicator.id,
+                        indicator.title_ENG,
+                        " "
+                      );
+                      //li.push(child)
+                      // li.push('</optgroup>')
+                    }
+                  }
+                  return null;
+                }
+              }
+            );
+
+            table += `</tbody>
+                  </table>`;
+
+            let dataListViewTable =
+              document.getElementById("list_table_view");
+            dataListViewTable.innerHTML = table;
+            table = "";
+
             $(document).ready(function () {
-              $("#dynamictable").DataTable({
+              $("#newTable").DataTable({
                 retrieve: true,
                 ordering: false,
                 scrollX: true,
@@ -413,12 +499,11 @@ function filterData() {
                 ],
                 columnDefs: [
                   { width: "100%" },
-                  { width: "200px", targets: 0 },
+                  { width: "500px", targets: 0 },
                 ],
                 dom: "Bfrtip",
                 buttons: ["pageLength", "excel", "csv", "pdf", "print"],
               });
-
             });
 
           });
@@ -613,7 +698,7 @@ $(document).ready(function () {
               }
           },
           title: {
-              text: 'Music revenue race chart'
+              text: ' revenue race chart'
           },
           subtitle: {
               text: getSubtitle(),
