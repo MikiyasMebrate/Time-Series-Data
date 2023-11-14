@@ -56,8 +56,12 @@ fetch(url)
               String(year.id) === String(value.for_datapoint_id) &&
               String(id) === String(value.for_indicator_id)
             ) {
-              if (checkParentHasChild) {
-                table += `<td class="text-center fw-bold">  ${value.value} </td>`;
+              if (checkParentHasChild ) {
+                if(value.value != null){
+                  table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                }else{
+                  table += `<td class="text-center fw-bold"> - </td>`;
+                }
               } else {
                 table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
               }
@@ -147,9 +151,20 @@ fetch(url)
                           String(i.id) === String(value.for_indicator_id)
                         ) {
                           if (checkChildOfChildHasChild) {
-                            table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                            if(value.value != null){
+                              table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                            }else{
+                              table += `<td class="text-center fw-bold"> - </td>`;
+                            }
+                            
                           } else {
-                            table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            if(value.value != null){
+                              table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            }else{
+                              table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                            }
+
+                            
                           }
                           statusData = false;
                           break;
@@ -185,9 +200,19 @@ fetch(url)
                     String(indicator.id) === String(value.for_indicator_id)
                   ) {
                     if (checkChildHasChild) {
-                      table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                      if(value.value != null){
+                        table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                      }else{
+                        table += `<td class="text-center fw-bold"> - </td>`;
+                      }
+                      
                     } else {
-                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                      if(value.value != null){
+                        table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`
+                      }else{
+                        table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`
+                      }
+                      ;
                     }
                     statusData = false;
                     break;

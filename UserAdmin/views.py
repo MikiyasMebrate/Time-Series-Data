@@ -169,7 +169,8 @@ def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
     form_update = ValueForm2(request.POST or None)
     sub_indicator_form = SubIndicatorForm(request.POST or None)
-    err  = False
+   
+
     if request.method == 'POST':
         if form.is_valid():
             try:
@@ -185,24 +186,25 @@ def data_list_detail(request, pk):
                 value_obj.for_indicator = indicator_obj
                 value_obj.save()
                 form = ValueForm()
-                err = False
-            except:
-                err = True
+                messages.success(request, 'Successfully Added!')
+            except: 
+                None
         
         if form_update.is_valid():
-            try: 
+            try:  
                 value = form_update.cleaned_data['value2']
                 value_id = request.POST.get('data_value')
                 data_value = DataValue.objects.get(pk = value_id)
                 data_value.value = value
                 data_value.save()
-                form = ValueForm()
-                err = False
+                form_update = ValueForm2()
+                messages.success(request, 'Successfully Added!')
             except:
-                err = True
-        
+                 None
+            
+    
         if sub_indicator_form.is_valid():
-            try:
+            try: 
                 indicator_id = request.POST.get('addNewIndicator')
                 indicator = Indicator.objects.get(pk = indicator_id)
                 new_sub_indicator = Indicator()
@@ -210,15 +212,14 @@ def data_list_detail(request, pk):
                 new_sub_indicator.title_AMH =  sub_indicator_form.cleaned_data['title_AMH']
                 new_sub_indicator.parent =  indicator
                 new_sub_indicator.save()
+    
                 sub_indicator_form = SubIndicatorForm()
-                err = False
-            except:
-                err = True
+                messages.success(request, 'Successfully Added!')
+            except: 
+                None
+        
+
                 
-        if(err):
-            messages.error(request, 'Please Try Again!')
-        else:
-            messages.success(request, 'Successfully Added!')
             
             
     context = {
