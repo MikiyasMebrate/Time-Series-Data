@@ -1,6 +1,6 @@
 from django.db import models
 from UserManagement.models import CustomUser
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -28,13 +28,7 @@ class Indicator(models.Model):
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
-
-    def create_value(self):
-        for year in DataPoint.objects.all():
-            data_value = DataValue()
-            data_value.for_datapoint = year
-            data_value.for_indicator = self
-            data_value.save()       
+      
 
     def str(self):
         return self.get_full_path()
@@ -50,9 +44,8 @@ class Indicator(models.Model):
     def __str__(self):
         return self.title_ENG
 
-@receiver(post_save, sender=Indicator)
-def call_my_function(sender, instance, **kwargs):
-    instance.create_value()
+
+
 
 
 data_point_type = [
@@ -143,27 +136,37 @@ class DataValue(models.Model):
 
     def calculate_parent_value(self):
         main_parent = self.for_indicator.parent
-        parent = DataValue.objects.get(for_indicator = main_parent)
-
-        child_lists = parent.objects.filter(parent = 'self')
-        year = self.for_datapoint
-
+        try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
+        except:parent_data_value = None
+        
+        child_indicators = Indicator.objects.filter(parent = main_parent)
+        print(child_indicators)
         sum = 0
-        for child in child_lists:
-            try: cld =  DataValue.objects.get(for_indicator = child, for_datapoint = year)
-            except: cld = None
- 
-            if cld != None:
-                try: sum = sum + cld.value
-                except: continue
+        for child in child_indicators:
+            try: child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
+            except: child_data_value = 0
+            try: 
+                sum  = sum + int(child_data_value.value)
+            except: None
         
-        parent.value = sum
-        parent.save()
-            
-        
+        print('------->>>>',main_parent)
+        if parent_data_value is None:
+            parent_data = DataValue()
+            parent_data.value = sum
+            parent_data.for_indicator = main_parent
+            parent_data.for_datapoint = self.for_datapoint
+            parent_data.save()
+        else: 
+            parent_data_value.value = sum
+            try: parent_data_value.save()
+            except: None
+
 @receiver(post_save, sender=DataValue)
-def call_my_function(sender, instance, **kwargs):
-    instance.calculate_parent_value()
+def call_my_function(sender, instance, created, **kwargs):
+    if created: 
+        None
+    else:  instance.calculate_parent_value()
+
     
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)
