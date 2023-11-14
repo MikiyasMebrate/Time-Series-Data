@@ -95,13 +95,63 @@
     <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script> {% endcomment %}
 
     <style>
+        
+        #graphButtons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        #graphButtons button {
+            margin: 5px;
+        }
+
+        #play-controls {
+            max-width: 600px;
+            margin: 1em auto;
+        }
+
+        #container {
+            height: 600px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        #csv {
+            display: none;
+        }
+
+        #play-pause-button {
+            margin-left: 10px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            border: 1px solid rgba(2, 117, 255, 1);
+            border-radius: 25px;
+            color: white;
+            background-color: rgba(2, 117, 255, 1);
+            transition: background-color 250ms;
+        }
+
+        #play-pause-button:hover {
+            background-color: rgba(2, 117, 255, 0.5);
+        }
+
+        #play-range {
+            transform: translateY(2.5px);
+            width: calc(100% - 90px);
+            background: #f8f8f8;
+        }
       .highcharts-figure {
           min-width: 320px;
           max-width: 750px;
           margin: 0 auto;
       }
       .scrollable {
-        max-height: 200px; /* Set your desired maximum height */
+        max-height: 300px; /* Set your desired maximum height */
         overflow: auto;
        }
       #map {
@@ -299,7 +349,7 @@
               
               <!-- Move the data display section below the filter selection card -->
               <div class="card-container">
-                  <div class="card mt-3" style="width:300px;  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+                  <div class="card mt-3" id='main_card' style="width:300px;  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
                       <div class="card-body pe-5 ps-5">
                           <div id="filterSelections" class="d-flex flex-column">
                               <div class="filter-option-selection mb-2">
@@ -338,89 +388,103 @@
                   </div>
                   <div id="display_chart" class="container">
                       <!-- Add chart here -->
-                      <div class='card'>
-                        <div class="card-tools">
-                            <ul id="graphTabs" class="nav nav-pills ml-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="#" data-graph-type="bar">Bar</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" data-graph-type="column">Column</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" data-graph-type="cylinder">Cylinder</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" data-graph-type="area">Area</a>
-                                </li>
+
+                      <div class="card" id='chart_display' style="display:none;">
+                        <div class="card-header">
+                          <h3 class="card-title">
+                            <i class="fas fa-chart-pie mr-1"></i>
+                            Sales
+                          </h3>
+                          <div class="card-tools">
+                            <ul class="nav nav-pills ml-auto">
+                              <li class="nav-item">
+                                <a class="nav-link active" href="#bar-chart" data-toggle="tab">Bar</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#series-chart" data-toggle="tab">Series</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#line-chart" data-toggle="tab">Line</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#area-chart" data-toggle="tab">Area</a>
+                              </li>
                             </ul>
+                          </div>
                         </div>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="chart1"></div>
-                            <div class="tab-pane" id="new-chart"></div>
-                            <div class="tab-pane" id="container1"></div>
-                            <div class="tab-pane" id="container"></div>
+                        <div class="card-body">
+                          <div class="tab-content p-0">
+        
+                            <div class="chart tab-pane active" id="bar-chart" style="position: relative; height: 300px;">
+                              <canvas id="bar-chart-canvas" height="300" style="height: 300px;"></canvas>
+                            </div>
+                            <div class="chart tab-pane" id="series-chart" style="position: relative; height: 300px;">
+                              <canvas id="series-chart-canvas" height="300" style="height: 300px;"></canvas>
+                            </div>
+                            <div class="chart tab-pane" id="line-chart" style="position: relative; height: 300px;">
+                                <canvas id="line-chart-canvas" height="300" style="height: 300px;"></canvas>
+                              </div>
+                              <div class="chart tab-pane" id="area-chart" style="position: relative; height: 300px;">
+                                <canvas id="area-chart-canvas" height="300" style="height: 300px;"></canvas>
+                              </div>
+                          </div>
                         </div>
-                
-                        <div id="play-controls" style="display:none;">
-                            <button id="play-pause-button" class="fa fa-play" title="play"></button>
-                            <input id="play-range" type="range" value="1973" min="1973" max="2022" />
-                        </div>
+                      </div>
+                      <pre id="csv" style="display:none">
+                        # Data from RIAA
+                        year	LpEp	Vinyl	Cassette	CD	Downloads	Streams
+                        1973	1.2	0.19	0.076
+                        1974	1.4	0.194	0.087
+                        1975	1.5	0.212	0.099
+                        1976	1.7	0.245	0.146
+                        1977	2.2	0.245	0.25
+                        1978	2.5	0.26	0.45
+                        1979	2.1	0.354	0.581
+                        1980	2.2	0.25	0.705
+                        1981	2.3	0.256	1.1
+                        1982	1.9	0.283	1.4	0
+                        1983	1.7	0.269	1.8	0.017
+                        1984	1.5	0.299	2.4	0.103
+                        1985	1.3	0.281	2.4	0.39
+                        1986	0.983	0.228	2.5	0.93
+                        1987	0.793	0.203	3	1.6
+                        1988	0.532	0.18	3.4	2.1
+                        1989	0.22	0.116	3.3	2.6
+                        1990	0.086	0.094	3.5	3.5
+                        1991	0.029	0.064	3	4.3
+                        1992	0.014	0.066	3.1	5.3
+                        1993	0.011	0.051	2.9	6.5
+                        1994	0.018	0.047	3	8.5
+                        1995	0.025	0.047	2.3	9.4
+                        1996	0.036	0.048	1.9	9.9
+                        1997	0.033	0	1.5	9.9
+                        1998	0.034		1.4	11.4
+                        1999	0.032		1.1	12.8
+                        2000	0.028		0.626	13.2
+                        2001	0.027		0.363	12.9
+                        2002	0.021		0.21	12
+                        2003	0.022		0.108	11.2	0
+                        2004	0.019		0.023	11.4	0.138	0
+                        2005	0.014			10.5	0.921	0.149
+                        2006	0.016			9.4	1.631	0.206
+                        2007	0.023			7.5	2.408	0.234
+                        2008	0.057			5.5	2.612	0.321
+                        2009	0.064			4.3	2.647	0.362
+                        2010	0.089			3.4	2.62	0.461
+                        2011	0.119			3.1	2.876	0.654
+                        2012	0.161			2.5	2.946	1.033
+                        2013	0.211			2.1	2.898	1.454
+                        2014	0.244			1.8	2.5	1.827
+                        2015	0.333			1.4	2.3	2.375
+                        2016	0.355			1.1	1.769	3.818
+                        2017	0.389			1	1.318	5.459
+                        2018	0.419			0.696	0.945	7.255
+                        2019	0.48			0.931	0.775	8.853
+                        2020	0.644			0.483	0.622	10.078
+                        2021	1			0.584	0.538	12.509
+                        </pre>
                     </div>
                 
-                    <pre id="csv" style="display:none">
-                    # Data from RIAA
-                    year	LpEp	Vinyl	Cassette	CD	Downloads	Streams
-                    1973	1.2	0.19	0.076
-                    1974	1.4	0.194	0.087
-                    1975	1.5	0.212	0.099
-                    1976	1.7	0.245	0.146
-                    1977	2.2	0.245	0.25
-                    1978	2.5	0.26	0.45
-                    1979	2.1	0.354	0.581
-                    1980	2.2	0.25	0.705
-                    1981	2.3	0.256	1.1
-                    1982	1.9	0.283	1.4	0
-                    1983	1.7	0.269	1.8	0.017
-                    1984	1.5	0.299	2.4	0.103
-                    1985	1.3	0.281	2.4	0.39
-                    1986	0.983	0.228	2.5	0.93
-                    1987	0.793	0.203	3	1.6
-                    1988	0.532	0.18	3.4	2.1
-                    1989	0.22	0.116	3.3	2.6
-                    1990	0.086	0.094	3.5	3.5
-                    1991	0.029	0.064	3	4.3
-                    1992	0.014	0.066	3.1	5.3
-                    1993	0.011	0.051	2.9	6.5
-                    1994	0.018	0.047	3	8.5
-                    1995	0.025	0.047	2.3	9.4
-                    1996	0.036	0.048	1.9	9.9
-                    1997	0.033	0	1.5	9.9
-                    1998	0.034		1.4	11.4
-                    1999	0.032		1.1	12.8
-                    2000	0.028		0.626	13.2
-                    2001	0.027		0.363	12.9
-                    2002	0.021		0.21	12
-                    2003	0.022		0.108	11.2	0
-                    2004	0.019		0.023	11.4	0.138	0
-                    2005	0.014			10.5	0.921	0.149
-                    2006	0.016			9.4	1.631	0.206
-                    2007	0.023			7.5	2.408	0.234
-                    2008	0.057			5.5	2.612	0.321
-                    2009	0.064			4.3	2.647	0.362
-                    2010	0.089			3.4	2.62	0.461
-                    2011	0.119			3.1	2.876	0.654
-                    2012	0.161			2.5	2.946	1.033
-                    2013	0.211			2.1	2.898	1.454
-                    2014	0.244			1.8	2.5	1.827
-                    2015	0.333			1.4	2.3	2.375
-                    2016	0.355			1.1	1.769	3.818
-                    2017	0.389			1	1.318	5.459
-                    2018	0.419			0.696	0.945	7.255
-                    2019	0.48			0.931	0.775	8.853
-                    2020	0.644			0.483	0.622	10.078
-                    2021	1			0.584	0.538	12.509
-                    </pre>
                   </div>
                   <!-- <figure class="highcharts-figure container">
                       <div id="map"></div>
@@ -457,6 +521,33 @@
 
     <script src="{% static 'assets/js/adminlte.min2167.js' %}"></script>
     <script src="{% static 'assets/js/demo.js' %}"></script>
+
+    <!-- Existing HTML content -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/cylinder.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <script src="https://code.highcharts.com/modules/annotations.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <!-- chart js -->
     <script src="{% static 'assets/plugins/chart.js/Chart.min.js' %}"></script>

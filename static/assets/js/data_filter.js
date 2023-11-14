@@ -49,7 +49,6 @@ function updateFilterSelection() {
 }
 
 function filterData() {
-  console.log('hello')
   $.ajax({
     url: "/user-admin/json/",
     type: "GET",
@@ -66,7 +65,8 @@ function filterData() {
 
       $('input[name="topic_lists"]').on('change', function (event) {
         var selectedTopicId = event.target.value;
-
+        document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+        document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
         // Process categories
         var selectCategory = data.categories.map(function (category) {
           if (String(category.topics[0].id) === String(selectedTopicId)) {
@@ -86,6 +86,8 @@ function filterData() {
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
           var selectedCategoryId = eventCategory.target.value;
+          document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+          document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
 
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
@@ -236,7 +238,7 @@ function filterData() {
             }
 
             // Log the selectedIndictorId array after changes
-            console.log(selectedIndictorId);
+            // console.log(selectedIndictorId);
           });
 
           //indicator list HTML
@@ -271,7 +273,7 @@ function filterData() {
           // Add event listener to the #button div
           $('#button').on('click', '#applyButton', function () {
             // Hide filter selection card
-            $(".card").hide();
+            $("#main_card").hide();
 
             // Show data display section
             $("#dataDisplay").show();
@@ -303,19 +305,18 @@ function filterData() {
                          <tbody>`;
               let selectIndicator = [];
               data.indicators.forEach(({ title_ENG, title_AMH, id, for_category_id }) => {
-                console.log('for_category_id:', for_category_id);
-                console.log('selectedCategoryId:', selectedCategoryId);
-                console.log('selectedIndictorId Length:', selectedIndictorId.length);
-                console.log('selectedIndictorId:', selectedIndictorId);
-                console.log('String(id):', String(id));
-                console.log('selectedIndictorId.includes(String(id)):', selectedIndictorId.includes(String(id)));
-                console.log('for_category_id:', for_category_id, typeof for_category_id);
-                console.log('selectedCategoryId:', selectedCategoryId, typeof selectedCategoryId);
-                console.log('id:', id, typeof id);
-                console.log('selectedIndictorId:', selectedIndictorId, typeof selectedIndictorId);
+                // console.log('for_category_id:', for_category_id);
+                // console.log('selectedCategoryId:', selectedCategoryId);
+                // console.log('selectedIndictorId Length:', selectedIndictorId.length);
+                // console.log('selectedIndictorId:', selectedIndictorId);
+                // console.log('String(id):', String(id));
+                // console.log('selectedIndictorId.includes(String(id)):', selectedIndictorId.includes(String(id)));
+                // console.log('for_category_id:', for_category_id, typeof for_category_id);
+                // console.log('selectedCategoryId:', selectedCategoryId, typeof selectedCategoryId);
+                // console.log('id:', id, typeof id);
+                // console.log('selectedIndictorId:', selectedIndictorId, typeof selectedIndictorId);
 
                 if (String(for_category_id).trim() === String(selectedCategoryId).trim() && selectedIndictorId.includes(String(id).trim())) {
-                  console.log('================ Condition met ======================');
                   selectIndicator.push({ id, title_ENG, title_AMH });
                   let title_amharic = title_AMH !== null ? " - " + title_AMH : "";
                   tableHTML += generateTableRow(id, title_ENG, title_amharic);
@@ -339,7 +340,6 @@ function filterData() {
 
                   return null;
                 } else {
-                  console.log('================ Condition not met ===================');
                 }
               });
 
@@ -349,7 +349,6 @@ function filterData() {
               return tableHTML;
             };
             function generateTableRow(id, title, title_amharic = "", space = "") {
-              console.log("======================in the row  =========================")
               let rowHTML = `
               <tr>
                 <td>
@@ -379,7 +378,6 @@ function filterData() {
             let dataListViewTable = document.getElementById("list_table_view");
             dataListViewTable.innerHTML = table;
 
-            console.log('indicator lenght', selectedIndictorId.length)
 
             $(document).ready(function () {
               $("#dynamictable").DataTable({
@@ -435,7 +433,7 @@ $(document).ready(function () {
     updateFilterSelection();
   });
 
-  $(".card").show();
+  $("#main_card").show();
   // Hide data display section by default
   $(".data-display").hide();
 
@@ -465,7 +463,8 @@ $(document).ready(function () {
   $("#displayOptions a:nth-child(2)").click(function () {
     // Show chart
     $(".data-display #display_chart").show();
-
+    let carddisplay = document.getElementById("chart_display")
+    carddisplay.style.display = "block";
     // Hide table
     $(".data-display #table-container").hide();
     $(".data-display #main-card").hide();
@@ -475,73 +474,14 @@ $(document).ready(function () {
     $("#displayOptions a:nth-child(2)").addClass("active");
     $("#displayOptions a:nth-child(1)").removeClass("active");
     // $("#displayOptions a:nth-child(3)").removeClass("active");
-  });
 
-  //make the third button in display-option div display map when clicked
-  // $("#displayOptions a:nth-child(3)").click(function () {
-  //   // Show map
-  //   $(".data-display #map").show();
-
-  //   // Hide table and chart
-  //   $(".data-display #table-container").hide();
-  //   $(".data-display #chart").hide();
-
-  //   // Set map button active
-  //   $("#displayOptions a:nth-child(3)").addClass("active");
-  //   $("#displayOptions a:nth-child(1)").removeClass("active");
-  //   $("#displayOptions a:nth-child(2)").removeClass("active");
-  // });
-        // Your existing script content
-        document.addEventListener('DOMContentLoaded', function () {
-          changeGraph('bar');
-      });
-
-      // Add event listeners to navigation links
-      document.getElementById('graphTabs').addEventListener('click', function (event) {
-          const target = event.target;
-          if (target.tagName === 'A' && target.dataset.graphType) {
-              event.preventDefault(); // Prevent default link behavior
-              changeGraph(target.dataset.graphType);
-          }
-      });
-      function changeGraph(graphType) {
-          // Remove existing charts
-          document.querySelectorAll('.tab-pane').forEach(function (el) {
-              el.innerHTML = '';
-          });
-
-          // Hide play controls by default
-          document.getElementById('play-controls').style.display = 'none';
-
-          // Create the selected chart
-          switch (graphType) {
-              case 'bar':
-                  createBarChart();
-                  break;
-              case 'line':
-                  createLineChart();
-                  break;
-              case 'series':
-                  createSeriesChart();
-                  break;
-              case 'area':
-                  createAreaChart();
-                  // Show play controls for the area chart
-                  document.getElementById('play-controls').style.display = 'block';
-                  break;
-              default:
-                  console.error('Invalid graph type');
-          }
-      }
-
-      function createBarChart() {
-          // Implement the logic to create a bar chart
+    // Implement the logic to create a bar chart
           // Use the existing Highcharts.chart function with appropriate configurations
           // Example:
           fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json')
               .then(response => response.json())
               .then(data => {
-                  Highcharts.chart('chart1', {
+                  Highcharts.chart('series-chart-canvas', {
                       chart: {
                           zoomType: 'x'
                       },
@@ -599,13 +539,13 @@ $(document).ready(function () {
                   });
               })
               .catch(error => console.error('Error fetching data:', error));
-      }
 
-      function createLineChart() {
+
+
           // Implement the logic to create a line chart
           // Example:
           // Create the chart
-          Highcharts.chart('new chart', {
+          Highcharts.chart('bar-chart-canvas', {
               chart: {
                   type: 'column'
               },
@@ -653,9 +593,8 @@ $(document).ready(function () {
               ]
           });
 
-      }
 
-      function createSeriesChart() {
+
           // Implement the logic to create a series chart
           // Example:
           // Add sample data for the chart
@@ -668,7 +607,7 @@ $(document).ready(function () {
           ];
 
           // Create the chart using highcharts library
-          Highcharts.chart('container1', {
+          Highcharts.chart('line-chart-canvas', {
               chart: {
                   type: 'line'
               },
@@ -695,9 +634,8 @@ $(document).ready(function () {
               }
           });
 
-      }
 
-      function createAreaChart() {
+
           // Implement the logic to create an area chart
           // Example:
           const btn = document.getElementById('play-pause-button'),
@@ -721,7 +659,7 @@ $(document).ready(function () {
 
           const formatRevenue = [];
 
-          const chart = Highcharts.chart('container', {
+          const chart = Highcharts.chart('area-chart-canvas', {
               chart: {
                   events: {
                       // Some annotation labels need to be rotated to make room
@@ -1025,15 +963,29 @@ $(document).ready(function () {
 
           // Trigger the update on the range bar click.
           input.addEventListener('input', update);
-      }
+   
+  });
 
-      // Initialize the page with a default chart type
-      changeGraph('bar');
+  //make the third button in display-option div display map when clicked
+  // $("#displayOptions a:nth-child(3)").click(function () {
+  //   // Show map
+  //   $(".data-display #map").show();
+
+  //   // Hide table and chart
+  //   $(".data-display #table-container").hide();
+  //   $(".data-display #chart").hide();
+
+  //   // Set map button active
+  //   $("#displayOptions a:nth-child(3)").addClass("active");
+  //   $("#displayOptions a:nth-child(1)").removeClass("active");
+  //   $("#displayOptions a:nth-child(2)").removeClass("active");
+  // });
 
   // Add event listener to table button to be active color
   $("#tableButton").click(function () {
     // Show table
     $(".data-display #table-container").show();
+    $(".data-display #chart_displayr").show();
 
     // Hide chart
     $(".data-display #display_chart").hide();
