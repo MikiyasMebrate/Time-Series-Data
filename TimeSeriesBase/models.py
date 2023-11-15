@@ -131,41 +131,43 @@ class DataValue(models.Model):
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
-    for_source = models.ManyToManyField("Source", blank=True)
+    for_source = models.ForeignKey("Source", blank=True, null=True)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
 
     def calculate_parent_value(self):
-        main_parent = self.for_indicator.parent
-        try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
-        except:parent_data_value = None
-        
-        child_indicators = Indicator.objects.filter(parent = main_parent)
-        print(child_indicators)
-        sum = 0
-        for child in child_indicators:
-            try: child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
-            except: child_data_value = 0
-            try: 
-                sum  = sum + int(child_data_value.value)
-            except: None
-        
-        print('------->>>>',main_parent)
-        if parent_data_value is None:
-            parent_data = DataValue()
-            parent_data.value = sum
-            parent_data.for_indicator = main_parent
-            parent_data.for_datapoint = self.for_datapoint
-            parent_data.save()
-        else: 
-            parent_data_value.value = sum
-            try: parent_data_value.save()
-            except: None
-
+        try: 
+            main_parent = self.for_indicator.parent
+            try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
+            except:parent_data_value = None
+            child_indicators = Indicator.objects.filter(parent = main_parent)
+           
+            sum = 0
+            for child in child_indicators:
+                try: 
+                    child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
+                    sum  = sum + int(child_data_value.value)
+                except: 
+                    None
+                
+            if parent_data_value is None:
+                parent_data = DataValue()
+                parent_data.value = sum
+                parent_data.for_indicator = main_parent
+                parent_data.for_datapoint = self.for_datapoint
+                parent_data.save()
+            else: 
+                parent_data_value.value = sum
+                try: parent_data_value.save()
+                except: None
+        except:
+            None
+    
 @receiver(post_save, sender=DataValue)
 def call_my_function(sender, instance, created, **kwargs):
     if created: 
-        None
-    else:  instance.calculate_parent_value()
+        instance.calculate_parent_value()
+    else:  
+        instance.calculate_parent_value()
 
     
 class Source(models.Model):
