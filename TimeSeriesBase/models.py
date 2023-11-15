@@ -131,7 +131,7 @@ class DataValue(models.Model):
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
-    for_source = models.ForeignKey("Source", blank=True, null=True)
+    for_source = models.ForeignKey("Source",on_delete=models.SET_NULL  ,blank=True, null=True,)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
 
     def calculate_parent_value(self):
