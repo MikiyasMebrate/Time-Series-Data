@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
+from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -637,4 +638,10 @@ def month(request):
 #User
 # @login_required
 def users_list(request):
-    return render(request, 'user-admin/users_list.html')
+    
+     item2=CustomUser.objects.all()
+     count2=item2.count()
+     context={
+         'count2':count2
+     }
+     return render(request, 'user-admin/users_list.html',context)
