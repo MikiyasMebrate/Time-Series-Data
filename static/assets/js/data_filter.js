@@ -1,16 +1,3 @@
-
-let selectedIndictorId = [];
-let yearTableList = [];
-let updated = false;
-let catargoryCount = 0; 
-let catargorySelected = 0; 
-let databaseCount = 0;
-let databaseSelected = 0;
-let indicatorcount = 0;
-let indicatorSelected = 0; 
-let yearSelected = 0; 
-// Function to update filter message based on selected values
-
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -44,12 +31,22 @@ function updateFilterSelection() {
   if (!isFilterSelected && applyButtonExists) {
     $('#applyButton').remove();
   }
-  
-  databaseSelected = $('input[name="topic_lists"]:checked').length;
-  catargorySelected = $('input[name="category_lists"]:checked').length;
-  indicatorSelected = $('input[name="indicator_lists"]:checked').length;
-  yearSelected = $('input[name="yearListsCheckBox"]:checked').length;
 }
+
+
+//make datatable
+$(function () {
+  $('#table').DataTable({
+    "paging": true,
+    "lengthChange": false,
+    "searching": false,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
+  });
+});
+
 
 function filterData() {
   $.ajax({
@@ -57,32 +54,22 @@ function filterData() {
     type: "GET",
     dataType: "json",
     success: function (data) {
-          // Update counters here
-    document.getElementById('databaseSelectedBadge').innerHTML = databaseSelected;
-    document.getElementById('categorySelectedBadge').innerHTML = catargorySelected;
-    document.getElementById('seriesSelectedBadge').innerHTML = indicatorSelected;
-    document.getElementById('yearSelectedBadge').innerHTML = yearSelected;
       // Process topics
       var selectTopic = data.topics.map(function (topic) {
-        databaseCount += 1;
-        var topicId = 'topic_list' + topic.id;
         return '<div class="filter-submenu flex-grow-2">' +
-            '  <input type="radio" value="' + topic.id + '" name="topic_lists" id="' + topicId + '">' +
-            '  <label for="' + topicId + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
-            '</div>';
-    }).join('');
-    $('#topic_list_filter').html(selectTopic);
-      document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
+          '  <input type="radio" value="' + topic.id + '" name="topic_lists" id="topic_list' + topic.id + '">' +
+          '  <label for="topic_list' + topic.id + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
+          '</div>';
+      }).join('');
+
+      $('#topic_list_filter').html(selectTopic);
+
       $('input[name="topic_lists"]').on('change', function (event) {
         var selectedTopicId = event.target.value;
-        document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
-        document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
+
         // Process categories
         var selectCategory = data.categories.map(function (category) {
-
           if (String(category.topics[0].id) === String(selectedTopicId)) {
-            catargoryCount += 1;
-            
             return '<div class="filter-submenu">' +
               '  <input type="radio" value="' + category.id + '" name="category_lists" id="category_list' + category.id + '">' +
               '  <label class="form-label" for="category_list' + category.id + '" style="font-size: small;">' + category.name_ENG + ' - ' + category.name_AMH + '</label>' +
@@ -91,22 +78,19 @@ function filterData() {
           return '';
         }).join('');
 
-        $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
+        $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
           updateFilterSelection();
         });
-
+        document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+        document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
         $('#category_list_filter').html(selectCategory);
-        document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
-        
+
         $('input[name="category_lists"]').on('change', function (eventCategory) {
           var selectedCategoryId = eventCategory.target.value;
-          document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
-          document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
 
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
             if (String(indicator.for_category_id) === String(selectedCategoryId)) {
-              indicatorcount += 1;
               var title_amharic = indicator.title_AMH ? ' - ' + indicator.title_AMH : '';
               return '<div class="filter-submenu">' +
                 '  <input type="checkbox" value="' + indicator.id + '" name="indicator_lists" id="indicator_list' + indicator.id + '">' +
@@ -120,13 +104,12 @@ function filterData() {
             '  <input class="form-check" type="checkbox" id="select_all">' +
             '  <label class="form-label pl-1" for="select_all" style="font-size: small;">Select All</label>' +
             '</div>';
-            document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
 
-          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-            updateFilterSelection();
-          });          
-          document.getElementById('seriesAvailableBadge').innerHTML = indicatorcount
-
+            $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
+              updateFilterSelection();
+            });
+            document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+            document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           $('#indicator_list_filter').html(selectAll + selectIndicator);
 
 
@@ -137,11 +120,10 @@ function filterData() {
               $(this).prop('checked', checkedStatus);
             });
           });
-          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
+          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
             updateFilterSelection();
           });
-          //Return Selected Year
-          document.getElementById('yearAvailableBadge').innerHTML = data.year.length
+          let yearTableList = [];
           let yearList = () => {
             //Year list
             let selectYear = data.year.map(
@@ -154,8 +136,7 @@ function filterData() {
                 }
               }
             );
-          // After changing the checkboxes, call updateFilterSelection to update the check mark
-          updateFilterSelection()
+
             var selectYearAll = '<div class="filter-submenu d-flex">' +
               '  <input class="form-check" type="checkbox" id="select_all_year_filter">' +
               '  <label class="form-label pl-1" for="select_all_year_filter" style="font-size: small;"> Select All</label>' +
@@ -218,20 +199,15 @@ function filterData() {
                   yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
                 }
               });
-
-              // After changing the checkboxes, call updateFilterSelection to update the check mark
-              updateFilterSelection();
             });
           };
-          // After changing the checkboxes, call updateFilterSelection to update the check mark
-          updateFilterSelection();
-          
           //Select-all Button for Indicator
           let selectAllIndicator = document.getElementById("select_all");
           let selectedIndictorId = [];
-
           selectAllIndicator.addEventListener("change", () => {
-            let indicatorListCheckAll = document.getElementsByName("indicator_lists");
+       
+            let indicatorListCheckAll =
+              document.getElementsByName("indicator_lists");
 
             if (selectAllIndicator.checked) {
               indicatorListCheckAll.forEach((event) => {
@@ -239,7 +215,7 @@ function filterData() {
                 if (!selectedIndictorId.includes(event.value)) {
                   selectedIndictorId.push(event.value);
                 }
-                // Active apply Button
+                //Active apply Button
                 yearList();
               });
             } else {
@@ -252,15 +228,12 @@ function filterData() {
                 }
               });
             }
-
-            // Log the selectedIndictorId array after changes
-            // console.log(selectedIndictorId);
           });
-
+          
           //indicator list HTML
           let indicatorHtmlList =
             document.getElementsByName("indicator_lists");
-                                                                    
+
           //Display Indicator into Table
 
           //Push selected Indicator
@@ -268,7 +241,6 @@ function filterData() {
             indicatorCheckBox.addEventListener(
               "change",
               (eventIndicator) => {
-
                 if (
                   eventIndicator.target.checked &&
                   !selectedIndictorId.includes(eventIndicator.target.value)
@@ -285,69 +257,59 @@ function filterData() {
               }
             );
           });
-          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-            updateFilterSelection()
-          });
-          console.log('catagory count ',catargoryCount)
-          console.log('topic count ',indicatorcount)
-          console.log('year count ',yearTableList.length)
-
-          // Update counters here
-          document.getElementById('databaseSelectedBadge').innerHTML = databaseSelected;
-          document.getElementById('categorySelectedBadge').innerHTML = catargorySelected;
-          document.getElementById('seriesSelectedBadge').innerHTML = indicatorSelected;
-          document.getElementById('yearSelectedBadge').innerHTML = yearSelected;
-
-
-          // Add event listener to the #button div
+          
+          //Display Data with Apply Button
           $('#button').on('click', '#applyButton', function () {
             // Hide filter selection card
-            $("#main_card").hide();
-            let carddisplay = document.getElementById("chart_display")
-            carddisplay.style.display = "none";
+            $(".card").hide();
+
             // Show data display section
             $("#dataDisplay").show();
 
             // Show table
             $("#table-container").show();
-            let displayecard = document.getElementById("main-card")
-            // displayecard.style.display = "block";
-            // document.getElementById("downloadButton").disabled = false;
+            $("#table_card").show();
+           
             // Hide chart
             $("#chart").hide();
             $("#map").hide();
+            $("#display_chart").hide();
 
             let table = "";
             table += `
-                  <table id="newTable" class="table table-bordered m-0 p-0">
-                  <thead>
-                    <tr>
-                      <th class="ps-5 pe-5">Name</th>`;
+        <table id="newTable" class="table table-bordered m-0 p-0">
+        <thead>
+          <tr>
+            <th class="ps-5 pe-5">Name</th>`;
             for (let i of yearTableList) {
               table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
             }
 
             table += `</tr>
-                             </thead>
-                        <tbody>
-                  `;
+                   </thead>
+              <tbody>
+        `;
 
-            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
-                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+            selectIndicator = data.indicators.map(
+              ({ title_ENG, title_AMH, id, for_category_id }) => {
+                if (
+                  String(for_category_id) === String(selectedCategoryId) &&
+                  selectedIndictorId.includes(String(id))
+                ) {
                   let title_amharic = "";
                   if (!title_AMH === null)
                     title_amharic = " - " + title_AMH;
 
                   //Table Row Start
                   table += `
-                      <tr>
-                        <td>
-                            <div class="row">
-                               <div class="col-10">
-                                 <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
-                               </div>
-                            </div>
-                        </td>`;
+                        <tr>
+                          <td>
+                            <a>
+                              <h6 class="mb-1">
+                                <p style="font-size: small;" class="d-block text-reset">${title_ENG} ${title_amharic}</p>
+                              </h6>
+                            </a>
+                          </td>`;
 
                   for (j of yearTableList) {
                     let statusData = false;
@@ -381,14 +343,14 @@ function filterData() {
                         status = true;
                         //Table Row Start
                         table += `
-                      <tr>
-                        <td>
-                          <a>
-                            <h6 class="mb-1">
-                              <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
-                            </h6>
-                          </a>
-                        </td>`;
+                              <tr>
+                                <td>
+                                  <a>
+                                    <h6 class="mb-1">
+                                      <p style="font-size: small;" class="d-block text-secondary ps-2  fw-normal">${space} ${i.title_ENG} </p>
+                                    </h6>
+                                  </a>
+                                </td>`;
 
                         for (j of yearTableList) {
                           let statusData = false;
@@ -428,14 +390,14 @@ function filterData() {
 
                       //Table Row Start
                       table += `
-                    <tr>
-                      <td>
-                        <a>
-                          <h6 class="mb-1">
-                            <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
-                          </h6>
-                        </a>
-                      </td>`;
+                      <tr>
+                        <td>
+                          <a>
+                            <h6 class="mb-1">
+                              <p style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </p>
+                            </h6>
+                          </a>
+                        </td>`;
 
                       for (j of yearTableList) {
                         let statusData = false;
@@ -443,7 +405,7 @@ function filterData() {
                           if (
                             String(j[0]) === String(k.for_datapoint_id) &&
                             String(indicator.id) ===
-                              String(k.for_indicator_id)
+                            String(k.for_indicator_id)
                           ) {
                             table += `<td>${k.value}</td>`;
                             statusData = false;
@@ -477,10 +439,9 @@ function filterData() {
             );
 
             table += `</tbody>
-                  </table>`;
+        </table>`;
 
-            let dataListViewTable =
-              document.getElementById("list_table_view");
+            let dataListViewTable = document.getElementById("list_table_view");
             dataListViewTable.innerHTML = table;
             table = "";
 
@@ -499,27 +460,19 @@ function filterData() {
                 ],
                 columnDefs: [
                   { width: "100%" },
-                  { width: "500px", targets: 0 },
+                  { width: "250px", targets: 0 },
                 ],
                 dom: "Bfrtip",
                 buttons: ["pageLength", "excel", "csv", "pdf", "print"],
               });
             });
-
           });
-
-          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-            $(".card").show();
-            // Hide data display section by default
-            $(".data-display").hide();
-            updateFilterSelection()
-          });
+          //End Indicator table
 
         });
       });
 
       // ... the rest of your code for setting up years and handling 'Select All' logic ...
-
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error('Error fetching data: ' + textStatus, errorThrown);
@@ -532,13 +485,19 @@ $(document).ready(function () {
   filterData();
 
   // Initialize the filter selection card
-  $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
+  jQuery(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
+    $(".card").show();
+    // Hide data display section by default
+    $(".data-display").hide();
+    
     updateFilterSelection();
   });
 
-  $("#main_card").show();
+  $(".card").show();
   // Hide data display section by default
   $(".data-display").hide();
+
+
 
   //collpase button 
   $("#toggleButton").click(function () {
@@ -549,645 +508,629 @@ $(document).ready(function () {
   $("#displayOptions a:nth-child(1)").click(function () {
     // Show table
     $(".data-display #table-container").show();
-    $(".data-display #main-card").show();
-
+    $("#display_chart").hide();
 
     // Hide chart
-    $(".data-display #display_chart").hide();
-    // $(".data-display #map").hide();
+    $(".data-display #chart").hide();
+    $(".data-display #map").hide();
 
     // Set table button active
     $("#displayOptions a:nth-child(1)").addClass("active");
     $("#displayOptions a:nth-child(2)").removeClass("active");
-    // $("#displayOptions a:nth-child(3)").removeClass("active");
+    $("#displayOptions a:nth-child(3)").removeClass("active");
   });
 
-  //make the second button in display-option div display chart when clicked
-  $("#displayOptions a:nth-child(2)").click(function () {
-    // Show chart
-    $(".data-display #display_chart").show();
-    let carddisplay = document.getElementById("chart_display")
-    carddisplay.style.display = "block";
-    // Hide table
-    $(".data-display #table-container").hide();
-    $(".data-display #main-card").hide();
-    // $(".data-display #map").hide();
+//make the second button in display-option div display chart when clicked
+$("#displayOptions a:nth-child(2)").click(function () {
+  // Show chart
+  $(".data-display #display_chart").show();
+  let carddisplay = document.getElementById("chart_display")
+  carddisplay.style.display = "block";
+  // Hide table
+  $(".data-display #table-container").hide();
+  $(".data-display #main-card").hide();
+  // $(".data-display #map").hide();
 
-    // Set chart button active
-    $("#displayOptions a:nth-child(2)").addClass("active");
-    $("#displayOptions a:nth-child(1)").removeClass("active");
-    // $("#displayOptions a:nth-child(3)").removeClass("active");
+  // Set chart button active
+  $("#displayOptions a:nth-child(2)").addClass("active");
+  $("#displayOptions a:nth-child(1)").removeClass("active");
+  // $("#displayOptions a:nth-child(3)").removeClass("active");
 
-    $(document).ready(function () {
-      draw();
-  });
+  $(document).ready(function () {
+    draw();
+});
 
-    function draw() {
-            
-      (async () => {
+  function draw() {
+          
+    (async () => {
 
-          const data = await fetch(
-              'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
-          ).then(response => response.json());
+        const data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        ).then(response => response.json());
 
-          Highcharts.chart('series-chart-canvas', {
-              chart: {
-                  zoomType: 'x'
-              },
-              title: {
-                  text: 'USD to EUR exchange rate over time',
-                  align: 'left'
-              },
-              subtitle: {
-                  text: document.ontouchstart === undefined ?
-                      'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
-                  align: 'left'
-              },
-              xAxis: {
-                  type: 'datetime'
-              },
-              yAxis: {
-                  title: {
-                      text: 'Exchange rate'
-                  }
-              },
-              legend: {
-                  enabled: false
-              },
-              plotOptions: {
-                  area: {
-                      fillColor: {
-                          linearGradient: {
-                              x1: 0,
-                              y1: 0,
-                              x2: 0,
-                              y2: 1
-                          },
-                          stops: [
-                              [0, Highcharts.getOptions().colors[0]],
-                              [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                          ]
-                      },
-                      marker: {
-                          radius: 2
-                      },
-                      lineWidth: 1,
-                      states: {
-                          hover: {
-                              lineWidth: 1
-                          }
-                      },
-                      threshold: null
-                  }
-              },
+        Highcharts.chart('series-chart-canvas', {
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: 'USD to EUR exchange rate over time',
+                align: 'left'
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+                align: 'left'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: {
+                    text: 'Exchange rate'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
 
-              series: [{
-                  type: 'area',
-                  name: 'USD to EUR',
-                  data: data
-              }]
-          });
-      })();
-
-
-      //second chart 
-      const btn = document.getElementById('play-pause-button'),
-          input = document.getElementById('play-range'),
-          startYear = 1973,
-          endYear = 2021;
-
-      // General helper functions
-      const arrToAssociative = arr => {
-          const tmp = {};
-          arr.forEach(item => {
-              tmp[item[0]] = item[1];
-          });
-
-          return tmp;
-      };
-
-      function getSubtitle() {
-          return `<span style='font-size: 60px'>${input.value}</span>`;
-      }
-
-      const formatRevenue = [];
-
-      const chart = Highcharts.chart('area-chart-canvas', {
-          chart: {
-              events: {
-                  // Some annotation labels need to be rotated to make room
-                  load: function () {
-                      const labels = this.annotations[0].labels;
-                      labels
-                          .find(a => a.options.id === 'vinyl-label')
-                          .graphic.attr({
-                              rotation: -20
-                          });
-                      labels
-                          .find(a => a.options.id === 'cassettes-label')
-                          .graphic.attr({
-                              rotation: 20
-                          });
-                  }
-              },
-              type: 'area',
-              marginTop: 100,
-              animation: {
-                  duration: 700,
-                  easing: t => t
-              }
-          },
-          title: {
-              text: ' revenue race chart'
-          },
-          subtitle: {
-              text: getSubtitle(),
-              floating: true,
-              align: 'right',
-              verticalAlign: 'middle',
-              x: -100,
-              y: -110
-          },
-          data: {
-              csv: document.getElementById('csv').innerHTML,
-              itemDelimiter: '\t',
-              complete: function (options) {
-                  for (let i = 0; i < options.series.length; i++) {
-                      formatRevenue[i] = arrToAssociative(options.series[i].data);
-                      options.series[i].data = null;
-                  }
-              }
-          },
-          xAxis: {
-              allowDecimals: false,
-              min: startYear,
-              max: endYear
-          },
-          yAxis: {
-              reversedStacks: false,
-              title: {
-                  text: 'Revenue in the U.S.'
-              },
-              labels: {
-                  format: '${text} B'
-              }
-          },
-          tooltip: {
-              split: true,
-              headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
-              pointFormat:
-                  '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
-              crosshairs: true
-          },
-          plotOptions: {
-              area: {
-                  stacking: 'normal',
-                  pointStart: startYear,
-                  marker: {
-                      enabled: false
-                  }
-              }
-          },
-          annotations: [
-              {
-                  labelOptions: {
-                      borderWidth: 0,
-                      backgroundColor: undefined,
-                      verticalAlign: 'middle',
-                      allowOverlap: true,
-                      style: {
-                          pointerEvents: 'none',
-                          opacity: 0,
-                          transition: 'opacity 500ms'
-                      }
-                  },
-                  labels: [
-                      {
-                          text: 'Vinyl',
-                          verticalAlign: 'top',
-                          point: {
-                              x: 1975,
-                              xAxis: 0,
-                              y: 1.45,
-                              yAxis: 0
-                          },
-                          style: {
-                              fontSize: '0.8em',
-                              color: '#000'
-                          },
-                          id: 'vinyl-label'
-                      },
-                      {
-                          text: 'LP-EP',
-                          point: {
-                              x: 1980,
-                              xAxis: 0,
-                              y: 0.2,
-                              yAxis: 0
-                          },
-                          style: {
-                              fontSize: '1.4em',
-                              color: '#ffffff'
-                          },
-                          id: 'lpep-label'
-                      },
-                      {
-                          text: 'Cass',
-                          point: {
-                              x: 1987,
-                              xAxis: 0,
-                              y: 2.6,
-                              yAxis: 0
-                          },
-                          style: {
-                              fontSize: '1.5em',
-                              color: '#ffffff'
-                          },
-                          id: 'cassettes-label'
-                      },
-                      {
-                          text: 'CD',
-                          point: {
-                              x: 1999,
-                              xAxis: 0,
-                              y: 6,
-                              yAxis: 0
-                          },
-                          style: {
-                              fontSize: '4em',
-                              color: '#ffffff'
-                          },
-                          id: 'cd-label'
-                      },
-                      {
-                          text: 'DL',
-                          point: {
-                              x: 2011,
-                              xAxis: 0,
-                              y: 4,
-                              yAxis: 0
-                          },
-                          style: {
-                              fontSize: '1.2em',
-                              color: '#ffffff'
-                          },
-                          id: 'dl-label'
-                      },
-                      {
-                          text: 'Strm',
-                          point: {
-                              x: 2018,
-                              xAxis: 0,
-                              y: 5,
-                              yAxis: 0
-                          },
-                          style: {
-                              fontSize: '1.5em',
-                              color: '#ffffff'
-                          },
-                          id: 'streams-label'
-                      }
-                  ]
-              }
-          ],
-
-          responsive: {
-              rules: [
-                  {
-                      condition: {
-                          maxWidth: 500
-                      },
-                      chartOptions: {
-                          title: {
-                              align: 'left'
-                          },
-                          subtitle: {
-                              y: -150,
-                              x: -20
-                          },
-                          yAxis: {
-                              labels: {
-                                  align: 'left',
-                                  x: 0,
-                                  y: -3
-                              },
-                              tickLength: 0,
-                              title: {
-                                  align: 'high',
-                                  reserveSpace: false,
-                                  rotation: 0,
-                                  textAlign: 'left',
-                                  y: -20
-                              }
-                          }
-                      }
-                  }
-              ]
-          }
-      });
-
-      function pause(button) {
-          button.title = 'play';
-          button.className = 'fa fa-play';
-          clearTimeout(chart.sequenceTimer);
-          chart.sequenceTimer = undefined;
-      }
-
-      function update() {
-          chart.update(
-              {
-                  subtitle: {
-                      text: getSubtitle()
-                  }
-              },
-              false,
-              false,
-              false
-          );
-
-          const series = chart.series,
-              labels = chart.annotations[0].labels,
-              yearIndex = input.value - startYear,
-              dataLength = series[0].options.data.length;
-
-          // If slider moved back in time
-          if (yearIndex < dataLength - 1) {
-              for (let i = 0; i < series.length; i++) {
-                  const seriesData = series[i].data.slice(0, yearIndex);
-                  series[i].setData(seriesData, false);
-              }
-          }
-
-          // If slider moved forward in time
-          if (yearIndex > dataLength - 1) {
-              const remainingYears = yearIndex - dataLength;
-              for (let i = 0; i < series.length; i++) {
-                  for (let j = input.value - remainingYears; j < input.value; j++) {
-                      series[i].addPoint([formatRevenue[i][j]], false);
-                  }
-              }
-          }
-
-          // Add current year
-          for (let i = 0; i < series.length; i++) {
-              const newY = formatRevenue[i][input.value];
-              series[i].addPoint([newY], false);
-          }
-
-          labels.forEach(label => {
-              label
-                  .graphic
-                  .css({
-                      opacity: input.value >= label.options.point.x | 0
-                  });
-          });
-
-          chart.redraw();
-
-          input.value = parseInt(input.value, 10) + 1;
-
-          if (input.value > endYear) {
-              // Auto-pause
-              pause(btn);
-          }
-      }
-
-      function play(button) {
-          // Reset slider at the end
-          if (input.value > endYear) {
-              input.value = startYear;
-          }
-          button.title = 'pause';
-          button.className = 'fa fa-pause';
-          chart.sequenceTimer = setInterval(function () {
-              update();
-          }, 700);
-      }
-
-      btn.addEventListener('click', function () {
-          if (chart.sequenceTimer) {
-              pause(this);
-          } else {
-              play(this);
-          }
-      });
-
-      play(btn);
-
-      // Trigger the update on the range bar click.
-      input.addEventListener('input', update);
+            series: [{
+                type: 'area',
+                name: 'USD to EUR',
+                data: data
+            }]
+        });
+    })();
 
 
-      //=========================== third chart ====================================
-      // On chart load, start an interval that adds points to the chart and animate
-      // the pulsating marker.
-      const onChartLoad = function () {
-          const chart = this,
-              series = chart.series[0];
+    //second chart 
+    const btn = document.getElementById('play-pause-button'),
+        input = document.getElementById('play-range'),
+        startYear = 1973,
+        endYear = 2021;
 
-          setInterval(function () {
-              const x = (new Date()).getTime(), // current time
-                  y = Math.random();
+    // General helper functions
+    const arrToAssociative = arr => {
+        const tmp = {};
+        arr.forEach(item => {
+            tmp[item[0]] = item[1];
+        });
 
-              series.addPoint([x, y], true, true);
-          }, 1000);
-      };
+        return tmp;
+    };
 
-      // Create the initial data
-      const data = (function () {
-          const data = [];
-          const time = new Date().getTime();
+    function getSubtitle() {
+        return `<span style='font-size: 60px'>${input.value}</span>`;
+    }
 
-          for (let i = -19; i <= 0; i += 1) {
-              data.push({
-                  x: time + i * 1000,
-                  y: Math.random()
-              });
-          }
-          return data;
-      }());
+    const formatRevenue = [];
 
-      // Plugin to add a pulsating marker on add point
-      Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
-          const point = e.point,
-              series = e.target;
-
-          if (!series.pulse) {
-              series.pulse = series.chart.renderer.circle()
-                  .add(series.markerGroup);
-          }
-
-          setTimeout(() => {
-              series.pulse
-                  .attr({
-                      x: series.xAxis.toPixels(point.x, true),
-                      y: series.yAxis.toPixels(point.y, true),
-                      r: series.options.marker.radius,
-                      opacity: 1,
-                      fill: series.color
-                  })
-                  .animate({
-                      r: 20,
-                      opacity: 0
-                  }, {
-                      duration: 1000
-                  });
-          }, 1);
-      });
-
-
-      Highcharts.chart('line-chart-canvas', {
-          chart: {
-              type: 'spline',
-              events: {
-                  load: onChartLoad
-              }
-          },
-
-          time: {
-              useUTC: false
-          },
-
-          title: {
-              text: 'Live random data'
-          },
-
-          accessibility: {
-              announceNewData: {
-                  enabled: true,
-                  minAnnounceInterval: 15000,
-                  announcementFormatter: function (allSeries, newSeries, newPoint) {
-                      if (newPoint) {
-                          return 'New point added. Value: ' + newPoint.y;
-                      }
-                      return false;
-                  }
-              }
-          },
-
-          xAxis: {
-              type: 'datetime',
-              tickPixelInterval: 150,
-              maxPadding: 0.1
-          },
-
-          yAxis: {
-              title: {
-                  text: 'Value'
-              },
-              plotLines: [
-                  {
-                      value: 0,
-                      width: 1,
-                      color: '#808080'
-                  }
-              ]
-          },
-
-          tooltip: {
-              headerFormat: '<b>{series.name}</b><br/>',
-              pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
-          },
-
-          legend: {
-              enabled: false
-          },
-
-          exporting: {
-              enabled: false
-          },
-
-          series: [
-              {
-                  name: 'Random data',
-                  lineWidth: 2,
-                  color: Highcharts.getOptions().colors[2],
-                  data
-              }
-          ]
-      });
-
-
-      //third chart 
-                // Implement the logic to create a line chart
-    // Example:
-    // Create the chart
-    Highcharts.chart('bar-chart-canvas', {
+    const chart = Highcharts.chart('area-chart-canvas', {
         chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Corn vs wheat estimated production for 2020',
-            align: 'left'
-        },
-        subtitle: {
-            text:
-                'Source: <a target="_blank" ' +
-                'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
-            align: 'left'
-        },
-        xAxis: {
-            categories: ['USA', 'China', 'Brazil', 'EU', 'India', 'Russia'],
-            crosshair: true,
-            accessibility: {
-                description: 'Countries'
+            events: {
+                // Some annotation labels need to be rotated to make room
+                load: function () {
+                    const labels = this.annotations[0].labels;
+                    labels
+                        .find(a => a.options.id === 'vinyl-label')
+                        .graphic.attr({
+                            rotation: -20
+                        });
+                    labels
+                        .find(a => a.options.id === 'cassettes-label')
+                        .graphic.attr({
+                            rotation: 20
+                        });
+                }
+            },
+            type: 'area',
+            marginTop: 100,
+            animation: {
+                duration: 700,
+                easing: t => t
             }
         },
+        title: {
+            text: 'Music revenue race chart'
+        },
+        subtitle: {
+            text: getSubtitle(),
+            floating: true,
+            align: 'right',
+            verticalAlign: 'middle',
+            x: -100,
+            y: -110
+        },
+        data: {
+            csv: document.getElementById('csv').innerHTML,
+            itemDelimiter: '\t',
+            complete: function (options) {
+                for (let i = 0; i < options.series.length; i++) {
+                    formatRevenue[i] = arrToAssociative(options.series[i].data);
+                    options.series[i].data = null;
+                }
+            }
+        },
+        xAxis: {
+            allowDecimals: false,
+            min: startYear,
+            max: endYear
+        },
         yAxis: {
-            min: 0,
+            reversedStacks: false,
             title: {
-                text: '1000 metric tons (MT)'
+                text: 'Revenue in the U.S.'
+            },
+            labels: {
+                format: '${text} B'
             }
         },
         tooltip: {
-            valueSuffix: ' (1000 MT)'
+            split: true,
+            headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
+            pointFormat:
+                '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+            crosshairs: true
         },
         plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
+            area: {
+                stacking: 'normal',
+                pointStart: startYear,
+                marker: {
+                    enabled: false
+                }
             }
         },
+        annotations: [
+            {
+                labelOptions: {
+                    borderWidth: 0,
+                    backgroundColor: undefined,
+                    verticalAlign: 'middle',
+                    allowOverlap: true,
+                    style: {
+                        pointerEvents: 'none',
+                        opacity: 0,
+                        transition: 'opacity 500ms'
+                    }
+                },
+                labels: [
+                    {
+                        text: 'Vinyl',
+                        verticalAlign: 'top',
+                        point: {
+                            x: 1975,
+                            xAxis: 0,
+                            y: 1.45,
+                            yAxis: 0
+                        },
+                        style: {
+                            fontSize: '0.8em',
+                            color: '#000'
+                        },
+                        id: 'vinyl-label'
+                    },
+                    {
+                        text: 'LP-EP',
+                        point: {
+                            x: 1980,
+                            xAxis: 0,
+                            y: 0.2,
+                            yAxis: 0
+                        },
+                        style: {
+                            fontSize: '1.4em',
+                            color: '#ffffff'
+                        },
+                        id: 'lpep-label'
+                    },
+                    {
+                        text: 'Cass',
+                        point: {
+                            x: 1987,
+                            xAxis: 0,
+                            y: 2.6,
+                            yAxis: 0
+                        },
+                        style: {
+                            fontSize: '1.5em',
+                            color: '#ffffff'
+                        },
+                        id: 'cassettes-label'
+                    },
+                    {
+                        text: 'CD',
+                        point: {
+                            x: 1999,
+                            xAxis: 0,
+                            y: 6,
+                            yAxis: 0
+                        },
+                        style: {
+                            fontSize: '4em',
+                            color: '#ffffff'
+                        },
+                        id: 'cd-label'
+                    },
+                    {
+                        text: 'DL',
+                        point: {
+                            x: 2011,
+                            xAxis: 0,
+                            y: 4,
+                            yAxis: 0
+                        },
+                        style: {
+                            fontSize: '1.2em',
+                            color: '#ffffff'
+                        },
+                        id: 'dl-label'
+                    },
+                    {
+                        text: 'Strm',
+                        point: {
+                            x: 2018,
+                            xAxis: 0,
+                            y: 5,
+                            yAxis: 0
+                        },
+                        style: {
+                            fontSize: '1.5em',
+                            color: '#ffffff'
+                        },
+                        id: 'streams-label'
+                    }
+                ]
+            }
+        ],
+
+        responsive: {
+            rules: [
+                {
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        title: {
+                            align: 'left'
+                        },
+                        subtitle: {
+                            y: -150,
+                            x: -20
+                        },
+                        yAxis: {
+                            labels: {
+                                align: 'left',
+                                x: 0,
+                                y: -3
+                            },
+                            tickLength: 0,
+                            title: {
+                                align: 'high',
+                                reserveSpace: false,
+                                rotation: 0,
+                                textAlign: 'left',
+                                y: -20
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    });
+
+    function pause(button) {
+        button.title = 'play';
+        button.className = 'fa fa-play';
+        clearTimeout(chart.sequenceTimer);
+        chart.sequenceTimer = undefined;
+    }
+
+    function update() {
+        chart.update(
+            {
+                subtitle: {
+                    text: getSubtitle()
+                }
+            },
+            false,
+            false,
+            false
+        );
+
+        const series = chart.series,
+            labels = chart.annotations[0].labels,
+            yearIndex = input.value - startYear,
+            dataLength = series[0].options.data.length;
+
+        // If slider moved back in time
+        if (yearIndex < dataLength - 1) {
+            for (let i = 0; i < series.length; i++) {
+                const seriesData = series[i].data.slice(0, yearIndex);
+                series[i].setData(seriesData, false);
+            }
+        }
+
+        // If slider moved forward in time
+        if (yearIndex > dataLength - 1) {
+            const remainingYears = yearIndex - dataLength;
+            for (let i = 0; i < series.length; i++) {
+                for (let j = input.value - remainingYears; j < input.value; j++) {
+                    series[i].addPoint([formatRevenue[i][j]], false);
+                }
+            }
+        }
+
+        // Add current year
+        for (let i = 0; i < series.length; i++) {
+            const newY = formatRevenue[i][input.value];
+            series[i].addPoint([newY], false);
+        }
+
+        labels.forEach(label => {
+            label
+                .graphic
+                .css({
+                    opacity: input.value >= label.options.point.x | 0
+                });
+        });
+
+        chart.redraw();
+
+        input.value = parseInt(input.value, 10) + 1;
+
+        if (input.value > endYear) {
+            // Auto-pause
+            pause(btn);
+        }
+    }
+
+    function play(button) {
+        // Reset slider at the end
+        if (input.value > endYear) {
+            input.value = startYear;
+        }
+        button.title = 'pause';
+        button.className = 'fa fa-pause';
+        chart.sequenceTimer = setInterval(function () {
+            update();
+        }, 700);
+    }
+
+    btn.addEventListener('click', function () {
+        if (chart.sequenceTimer) {
+            pause(this);
+        } else {
+            play(this);
+        }
+    });
+
+    play(btn);
+
+    // Trigger the update on the range bar click.
+    input.addEventListener('input', update);
+
+
+    //=========================== third chart ====================================
+    // On chart load, start an interval that adds points to the chart and animate
+    // the pulsating marker.
+    const onChartLoad = function () {
+        const chart = this,
+            series = chart.series[0];
+
+        setInterval(function () {
+            const x = (new Date()).getTime(), // current time
+                y = Math.random();
+
+            series.addPoint([x, y], true, true);
+        }, 1000);
+    };
+
+    // Create the initial data
+    const data = (function () {
+        const data = [];
+        const time = new Date().getTime();
+
+        for (let i = -19; i <= 0; i += 1) {
+            data.push({
+                x: time + i * 1000,
+                y: Math.random()
+            });
+        }
+        return data;
+    }());
+
+    // Plugin to add a pulsating marker on add point
+    Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
+        const point = e.point,
+            series = e.target;
+
+        if (!series.pulse) {
+            series.pulse = series.chart.renderer.circle()
+                .add(series.markerGroup);
+        }
+
+        setTimeout(() => {
+            series.pulse
+                .attr({
+                    x: series.xAxis.toPixels(point.x, true),
+                    y: series.yAxis.toPixels(point.y, true),
+                    r: series.options.marker.radius,
+                    opacity: 1,
+                    fill: series.color
+                })
+                .animate({
+                    r: 20,
+                    opacity: 0
+                }, {
+                    duration: 1000
+                });
+        }, 1);
+    });
+
+
+    Highcharts.chart('line-chart-canvas', {
+        chart: {
+            type: 'spline',
+            events: {
+                load: onChartLoad
+            }
+        },
+
+        time: {
+            useUTC: false
+        },
+
+        title: {
+            text: 'Live random data'
+        },
+
+        accessibility: {
+            announceNewData: {
+                enabled: true,
+                minAnnounceInterval: 15000,
+                announcementFormatter: function (allSeries, newSeries, newPoint) {
+                    if (newPoint) {
+                        return 'New point added. Value: ' + newPoint.y;
+                    }
+                    return false;
+                }
+            }
+        },
+
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxPadding: 0.1
+        },
+
+        yAxis: {
+            title: {
+                text: 'Value'
+            },
+            plotLines: [
+                {
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }
+            ]
+        },
+
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br/>',
+            pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        exporting: {
+            enabled: false
+        },
+
         series: [
             {
-                name: 'Corn',
-                data: [406292, 260000, 107000, 68300, 27500, 14500]
-            },
-            {
-                name: 'Wheat',
-                data: [51086, 136000, 5500, 141000, 107180, 77000]
+                name: 'Random data',
+                lineWidth: 2,
+                color: Highcharts.getOptions().colors[2],
+                data
             }
         ]
     });
 
-  };
-   
+
+    //third chart 
+              // Implement the logic to create a line chart
+  // Example:
+  // Create the chart
+  Highcharts.chart('bar-chart-canvas', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Corn vs wheat estimated production for 2020',
+          align: 'left'
+      },
+      subtitle: {
+          text:
+              'Source: <a target="_blank" ' +
+              'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
+          align: 'left'
+      },
+      xAxis: {
+          categories: ['USA', 'China', 'Brazil', 'EU', 'India', 'Russia'],
+          crosshair: true,
+          accessibility: {
+              description: 'Countries'
+          }
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: '1000 metric tons (MT)'
+          }
+      },
+      tooltip: {
+          valueSuffix: ' (1000 MT)'
+      },
+      plotOptions: {
+          column: {
+              pointPadding: 0.2,
+              borderWidth: 0
+          }
+      },
+      series: [
+          {
+              name: 'Corn',
+              data: [406292, 260000, 107000, 68300, 27500, 14500]
+          },
+          {
+              name: 'Wheat',
+              data: [51086, 136000, 5500, 141000, 107180, 77000]
+          }
+      ]
   });
 
-  //make the third button in display-option div display map when clicked
-  // $("#displayOptions a:nth-child(3)").click(function () {
-  //   // Show map
-  //   $(".data-display #map").show();
+};
+});
 
-  //   // Hide table and chart
-  //   $(".data-display #table-container").hide();
-  //   $(".data-display #chart").hide();
-
-  //   // Set map button active
-  //   $("#displayOptions a:nth-child(3)").addClass("active");
-  //   $("#displayOptions a:nth-child(1)").removeClass("active");
-  //   $("#displayOptions a:nth-child(2)").removeClass("active");
-  // });
 
   // Add event listener to table button to be active color
   $("#tableButton").click(function () {
     // Show table
     $(".data-display #table-container").show();
-    $(".data-display #chart_displayr").show();
 
     // Hide chart
-    $(".data-display #display_chart").hide();
+    $(".data-display #chart").hide();
     $(".data-display #map").hide();
+    
 
     // Set table button active
     $("#tableButton").addClass("active");
@@ -1198,7 +1141,7 @@ $(document).ready(function () {
   // Add event listener to chart button to be active color
   $("#chartButton").click(function () {
     // Show chart
-    $(".data-display #display_chart").show();
+    $(".data-display #chart").show();
 
     // Hide table
     $(".data-display #table-container").hide();
@@ -1217,7 +1160,7 @@ $(document).ready(function () {
     $(".data-display #map").show();
 
     // Hide table
-    $(".data-display #display_chart").hide();
+    $(".data-display #chart").hide();
     $(".data-display #table-container").hide();
 
     // Set chart button active
@@ -1227,7 +1170,8 @@ $(document).ready(function () {
   });
 
 
+
   $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
     updateFilterSelection();
-  });
-}); 
+});
+});
