@@ -81,7 +81,8 @@ function filterData() {
         $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
           updateFilterSelection();
         });
-        
+        document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+        document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
         $('#category_list_filter').html(selectCategory);
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
@@ -107,7 +108,8 @@ function filterData() {
             $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
               updateFilterSelection();
             });
-            
+            document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+            document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           $('#indicator_list_filter').html(selectAll + selectIndicator);
 
 
@@ -304,7 +306,7 @@ function filterData() {
                           <td>
                             <a>
                               <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-reset">${title_ENG} ${title_amharic}</a>
+                                <p style="font-size: small;" class="d-block text-reset">${title_ENG} ${title_amharic}</p>
                               </h6>
                             </a>
                           </td>`;
@@ -345,7 +347,7 @@ function filterData() {
                                 <td>
                                   <a>
                                     <h6 class="mb-1">
-                                      <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary ps-2  fw-normal">${space} ${i.title_ENG} </a>
+                                      <p style="font-size: small;" class="d-block text-secondary ps-2  fw-normal">${space} ${i.title_ENG} </p>
                                     </h6>
                                   </a>
                                 </td>`;
@@ -392,7 +394,7 @@ function filterData() {
                         <td>
                           <a>
                             <h6 class="mb-1">
-                              <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
+                              <p style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </p>
                             </h6>
                           </a>
                         </td>`;
@@ -458,7 +460,7 @@ function filterData() {
                 ],
                 columnDefs: [
                   { width: "100%" },
-                  { width: "200px", targets: 0 },
+                  { width: "250px", targets: 0 },
                 ],
                 dom: "Bfrtip",
                 buttons: ["pageLength", "excel", "csv", "pdf", "print"],

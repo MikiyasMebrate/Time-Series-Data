@@ -180,7 +180,6 @@
               <h4 class="ms-1">Indicator Variables</h4>
               <hr class="dropdown-divider">
               <div class="accordion collapsed mt-3" id="accordionExample">
-
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="databaseHeader">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -189,47 +188,47 @@
                                 <strong class="me-auto">Database</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1" id="databaseAvailableBadge">0</span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2" id="databaseSelectedBadge">0</span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id='topic_list_filter'>
+                        <div class="accordion-body scrollable" id='topic_list_filter'>
                             <!-- Add more options here -->
-                            <p class="text-danger">Please Select Topic
+                            <p class="text-danger">Please Select Topic</p>
                         </div>
                     </div>
                 </div>
-
+            
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="regionHeader">
+                    <h2 class="accordion-header" id="categoryHeader">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#regionOptions" aria-expanded="false" aria-controls="regionOptions">
+                            data-bs-target="#categoryOptions" aria-expanded="false" aria-controls="categoryOptions">
                             <span class="d-flex align-items-center w-100">
-                                <strong class="me-auto">Catagory</strong>
+                                <strong class="me-auto">Category</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1" id="categoryAvailableBadge">0</span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2" id="categorySelectedBadge">0</span>
                                 </span>
                             </span>
                         </button>
                     </h2>
-                    <div id="regionOptions" class="accordion-collapse collapse" aria-labelledby="regionHeader"
+                    <div id="categoryOptions" class="accordion-collapse collapse" aria-labelledby="categoryHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id='category_list_filter'>
-                            <p class="text-danger">Please Select Catagory
+                        <div class="accordion-body scrollable" id='category_list_filter'>
+                            <p class="text-danger">Please Select Topic</p>
                         </div>
                     </div>
                 </div>
-
+            
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="seriesHeader">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -238,24 +237,22 @@
                                 <strong class="me-auto">Series</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1" id="seriesAvailableBadge">0</span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2" id="seriesSelectedBadge">0</span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id="indicator_list_filter">
-                            <!-- Add more options here -->
-                            <p class="text-danger">Please Select Series
+                        <div class="accordion-body scrollable" id="indicator_list_filter">
+                            <p class="text-danger">Please Select Category</p>
                         </div>
                     </div>
                 </div>
-
-
+            
                 <div class="accordion-item ">
                     <h2 class="accordion-header" id="yearHeader">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -264,18 +261,18 @@
                                 <strong class="me-auto">Year</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
-                                    <span class="badge rounded-pill bg-info ms-1">10</span>
+                                    <span class="badge rounded-pill bg-info ms-1" id="yearAvailableBadge">0</span>
                                     <span class="ps-1 pe-1 bar"></span>
                                     <span class="ms-2">Selected</span>
-                                    <span class="badge rounded-pill bg-info ms-1 me-2">1</span>
+                                    <span class="badge rounded-pill bg-info ms-1 me-2" id="yearSelectedBadge">0</span>
                                 </span>
                             </span>
                         </button>
                     </h2>
                     <div id="yearOptions" class="accordion-collapse collapse" aria-labelledby="yearHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body" id='Year_list_filter'>
-                            <p class="text-danger">Please Select Year
+                        <div class="accordion-body scrollable " id='Year_list_filter'>
+                            <p class="text-danger">Please Select Series</p>
                         </div>
                     </div>
                 </div>
@@ -308,7 +305,7 @@
                                   <span class="filter-option-checkmark" id="boot-icon1" ></span>
                               </div>
                               <div class="filter-option-selection mb-2">
-                                  <span class="filter-option-label">Catagory:</span>
+                                  <span class="filter-option-label">Category:</span>
                                   <span class="filter-option-checkmark " id="boot-icon2"></span>
                               </div>
                               <div class="filter-option-selection mb-2">
