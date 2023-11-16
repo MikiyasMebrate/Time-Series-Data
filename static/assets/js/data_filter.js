@@ -1,3 +1,4 @@
+
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
