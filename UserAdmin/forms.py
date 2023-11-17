@@ -127,12 +127,6 @@ class DataPointForm(forms.ModelForm):
                 'placeholder':'Please Enter Year E.C (Required for Non-Interval) ',
                 'min' : '1900',
             }),
-            # 'year_GC' : forms.DateInput(attrs={
-            #     'class' : 'form-control',
-            #     'type' : 'number',
-            #     'placeholder':'Please Enter Year G.C (Required for Non-Interval)',
-            #     'min' : '1900',
-            # }),
             'year_start_EC' : forms.DateInput(attrs={
                 'class' : 'form-control',
                 'type' : 'number',
@@ -145,18 +139,6 @@ class DataPointForm(forms.ModelForm):
                 'placeholder':'Please Enter Year (Not Required, For Interval Year)',
                 'min' : '1900',
             }),
-            # 'year_start_GC' : forms.DateInput(attrs={
-            #     'class' : 'form-control',
-            #     'type' : 'number',
-            #     'placeholder':'Please Enter Year (Not Required, For Interval Year)',
-            #     'min' : '1900',
-            # }),
-            # 'year_end_GC' : forms.DateInput(attrs={
-            #     'class' : 'form-control',
-            #     'type' : 'number',
-            #     'placeholder':'Please Enter Year (Not Required, For Interval Year)',
-            #     'min' : '1900',
-            # }),
             'is_interval' : forms.CheckboxInput(attrs={
                 'class' : 'form-check'
             })

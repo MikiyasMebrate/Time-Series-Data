@@ -315,7 +315,7 @@ fetch(url)
       btn.addEventListener('click', (eventDelete)=>{
         let indicatorId =  eventDelete.target.getAttribute('indicator_id')
         document.getElementById('forRemoveIndicator').setAttribute('href', `/user-admin/indicator-delete/${indicatorId}`)
-        console.log(indicatorId)
+  
       })
     })
 

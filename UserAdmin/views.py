@@ -6,6 +6,7 @@ from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
 from django.forms.models import model_to_dict
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 # @login_required
@@ -66,7 +67,23 @@ def delete_category(request,pk):
         return redirect('user-admin-category')
   
 
-# @login_required
+#JSON
+def filter_indicator_json(request):
+    topic = list(Topic.objects.all().values())
+    category_data = list(Category.objects.all().values())
+    indicator = list(Indicator.objects.filter(~Q(for_category_id = None )).values())
+    for category in category_data:
+        category_obj = Category.objects.get(id=category['id'])
+        related_topics = list(category_obj.topic.values())
+        category['topics'] = related_topics
+    context = {
+        'topics' : topic,
+        'categories' : category_data,
+        'indicators' : indicator
+    }
+
+    return JsonResponse(context)
+# @login_required  JSON
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -99,7 +116,7 @@ def filter_indicator(request, pk):
     
     
    
-#Data List    
+#Data List    JSON
 # @login_required
 def json(request):
     topic = Topic.objects.all()
