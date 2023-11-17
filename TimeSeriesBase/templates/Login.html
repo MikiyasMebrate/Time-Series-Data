@@ -71,17 +71,20 @@
         }
 
         .form-group:hover .form-control {
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2); /* Add a box-shadow to create a border effect on hover */
             background-color: #ddd;
+            transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Add transitions for box-shadow and background-color */
             animation: none;
         }
-
+        
         .form-control:focus {
-            border-color: #007bff;
-            animation: none;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 0, 0, 0.2); /* Add a box-shadow to create a border effect on focus */
+            background-color: #ddd;
+            transform: translateY(-5px); /* Add a translateY transformation on focus */
+            transition: box-shadow 0.3s ease, background-color 0.3s ease, transform 0.3s ease; /* Add transitions for box-shadow, background-color, and transform */
             outline: none; /* Remove default focus outline */
         }
-
+        
         .btn-primary {
             background-color: #007bff;
             border: none;
@@ -236,7 +239,7 @@
                                 </div>
                                 <!-- Right Column -->
                                 <div class="col-md-6">
-                                    <h2 class="text-center mb-4" style="font-family: 'Roboto', sans-serif; font-size: 24px;">MoPD-DataBank-Login</h2>
+                                    <h2 class="text-center mb-4" style="font-family: 'Roboto', sans-serif; font-size: 24px;">MoPD Time-Series Login</h2>
                                     <form action="https://adminlte.io/themes/v3/index.html" method="post">
                                         <div class="form-group animated-input-group">
                                             <i class="fas fa-envelope input-icon"></i>
