@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DPMEs</title>
     {% include 'user-admin/include/head.html'%}
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
       <style>
         .scrollable {
           max-height: 500px; /* replace 500px with your desired maximum width */
@@ -37,13 +36,19 @@
         <h5 class="modal-title" id="editModalIndicatorLabel">Modal title</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+
+      <form method="post" id="form_indicator_edit">
+        {% csrf_token %}
       <div class="modal-body">
+        <input type="number"  name="indicator_Id" id="id_indicator_id" style="display: none;">
         {{form.as_p}}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
       </div>
+    </form>
+
     </div>
   </div>
 </div>
@@ -218,7 +223,8 @@
 
     
 
-    
+
+</script>
 
     
   </body>
