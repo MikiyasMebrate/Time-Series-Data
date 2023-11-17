@@ -1,4 +1,12 @@
 
+let catargoryCount = 0; 
+let catargorySelected = 0; 
+let databaseCount = 0;
+let databaseSelected = 0;
+let indicatorcount = 0;
+let indicatorSelected = 0; 
+let yearSelected = 0; 
+let isdatatable = 0;
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -32,6 +40,41 @@ function updateFilterSelection() {
   if (!isFilterSelected && applyButtonExists) {
     $('#applyButton').remove();
   }
+    // Store the previous counts
+    const prevCatargoryCount = catargorySelected;
+    const prevDatabaseCount = databaseSelected;
+    const prevIndicatorCount = indicatorSelected;
+    const prevYearCount = yearSelected;
+
+    // Reset counts to zero
+    catargorySelected = 0;
+    databaseSelected = 0;
+    indicatorSelected = 0;
+    yearSelected = 0;
+
+    // Update the counts based on the selected filter submenu items
+    catargorySelected = $('input[name="category_lists"]:checked').length;
+    databaseSelected = $('input[name="topic_lists"]:checked').length;
+    indicatorSelected = $('input[name="indicator_lists"]:checked').length;
+    yearSelected = $('input[name="yearListsCheckBox"]:checked').length;
+
+    // Update the UI or perform any other actions based on the counts
+    // Only update if the length is greater than 0 and the count has changed
+    if (prevCatargoryCount !== catargorySelected && catargorySelected > 0) {
+      document.getElementById('categorySelectedBadge').innerHTML = catargorySelected;
+    }
+
+    if (prevDatabaseCount !== databaseSelected && databaseSelected > 0) {
+      document.getElementById('databaseSelectedBadge').innerHTML = databaseSelected;
+    }
+
+    if (prevIndicatorCount !== indicatorSelected && indicatorSelected > 0) {
+      document.getElementById('seriesSelectedBadge').innerHTML = indicatorSelected;
+    }
+
+    if (prevYearCount !== yearSelected && yearSelected > 0) {
+      document.getElementById('yearSelectedBadge').innerHTML = yearSelected;
+    }
 }
 
 
@@ -57,6 +100,7 @@ function filterData() {
     success: function (data) {
       // Process topics
       var selectTopic = data.topics.map(function (topic) {
+        databaseCount += 1;
         return '<div class="filter-submenu flex-grow-2">' +
           '  <input type="radio" value="' + topic.id + '" name="topic_lists" id="topic_list' + topic.id + '">' +
           '  <label for="topic_list' + topic.id + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
@@ -64,13 +108,14 @@ function filterData() {
       }).join('');
 
       $('#topic_list_filter').html(selectTopic);
-
+      document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
       $('input[name="topic_lists"]').on('change', function (event) {
         var selectedTopicId = event.target.value;
 
         // Process categories
         var selectCategory = data.categories.map(function (category) {
           if (String(category.topics[0].id) === String(selectedTopicId)) {
+            catargoryCount += 1;
             return '<div class="filter-submenu">' +
               '  <input type="radio" value="' + category.id + '" name="category_lists" id="category_list' + category.id + '">' +
               '  <label class="form-label" for="category_list' + category.id + '" style="font-size: small;">' + category.name_ENG + ' - ' + category.name_AMH + '</label>' +
@@ -78,7 +123,8 @@ function filterData() {
           }
           return '';
         }).join('');
-
+        console.log('catagort count', catargoryCount)
+        document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
         $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
           updateFilterSelection();
         });
@@ -88,10 +134,10 @@ function filterData() {
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
           var selectedCategoryId = eventCategory.target.value;
-
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
             if (String(indicator.for_category_id) === String(selectedCategoryId)) {
+              indicatorcount += 1;
               var title_amharic = indicator.title_AMH ? ' - ' + indicator.title_AMH : '';
               return '<div class="filter-submenu">' +
                 '  <input type="checkbox" value="' + indicator.id + '" name="indicator_lists" id="indicator_list' + indicator.id + '">' +
@@ -105,10 +151,11 @@ function filterData() {
             '  <input class="form-check" type="checkbox" id="select_all">' +
             '  <label class="form-label pl-1" for="select_all" style="font-size: small;">Select All</label>' +
             '</div>';
-
+            document.getElementById('seriesAvailableBadge').innerHTML = indicatorcount
             $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
               updateFilterSelection();
             });
+            
             document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
             document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           $('#indicator_list_filter').html(selectAll + selectIndicator);
@@ -121,9 +168,13 @@ function filterData() {
               $(this).prop('checked', checkedStatus);
             });
           });
+
+          document.getElementById('yearAvailableBadge').innerHTML = data.year.length
+
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
             updateFilterSelection();
           });
+
           let yearTableList = [];
           let yearList = () => {
             //Year list
@@ -266,7 +317,6 @@ function filterData() {
 
             // Show data display section
             $("#dataDisplay").show();
-
             // Show table
             $("#table-container").show();
             $("#table_card").show();
@@ -472,7 +522,6 @@ function filterData() {
 
         });
       });
-
       // ... the rest of your code for setting up years and handling 'Select All' logic ...
     },
     error: function (jqXHR, textStatus, errorThrown) {
