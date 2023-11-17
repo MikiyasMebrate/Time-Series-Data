@@ -7,6 +7,7 @@ urlpatterns = [
     #JSON
     path('json/', views.json,name="json"),
     path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),
+    path('json-filter-indicator/', views.filter_indicator_json, name='json_filter_indicator'),
     
     #Category
     path('category/', views.category, name="user-admin-category"),
