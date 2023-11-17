@@ -5,7 +5,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views import generic
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import PasswordChangeView
-from .forms import PasswordChangingForm,UserChangingForm
+from .forms import Login_Form, PasswordChangingForm,UserChangingForm
 from django.urls import reverse_lazy
 from django.contrib.auth import login,authenticate,logout
 # Create your views here.
@@ -16,6 +16,7 @@ def about(request):
     return render(request,"about.html")
 def contact(request):
     return render(request,"contact.html")
+
 
 class MyView(DetailView):
     Model = CustomUser
@@ -61,5 +62,6 @@ def login_view(request):
         'form' : form
     }
     return render(request,"login.html",context)
+
 def data(request):
     return render(request,"data.html")
