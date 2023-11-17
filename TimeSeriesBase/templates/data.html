@@ -28,19 +28,6 @@
 <link rel="stylesheet" href="{% static 'assets/css/d.css' %}">
 <link href="{% static 'assets/image/mopd_logo_green.png' %}" rel="icon">
 
-<link rel="stylesheet" href="{% static 'assets/css/preloader.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/meanmenu.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/jquery.fancybox.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/fontAwesome5Pro.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/elegantFont.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/default.css' %}">
-<link rel="stylesheet" href="{% static 'assets/css/one.css' %}">
-
-
 <!--Icons -->
 <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 <link rel="stylesheet" href="{% static 'assets/css/ionicons.min.css' %} ">
@@ -90,7 +77,17 @@
       href="{% static 'assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css'%}"
     />
 
-
+    <link rel="stylesheet" href="{% static 'assets/css/preloader.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/meanmenu.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/jquery.fancybox.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fontAwesome5Pro.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/elegantFont.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/default.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/one.css' %}">
 
     <style>
       .highcharts-figure {
@@ -166,6 +163,42 @@
           opacity: 1; 
           background-color: rgb(255, 255, 255);
       }
+      #play-controls {
+        max-width: 600px;
+        margin: 1em auto;
+    }
+
+    #container {
+        height: 600px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    #csv {
+        display: none;
+    }
+
+    #play-pause-button {
+        margin-left: 10px;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        border: 1px solid rgba(2, 117, 255, 1);
+        border-radius: 25px;
+        color: white;
+        background-color: rgba(2, 117, 255, 1);
+        transition: background-color 250ms;
+    }
+
+    #play-pause-button:hover {
+        background-color: rgba(2, 117, 255, 0.5);
+    }
+
+    #play-range {
+        transform: translateY(2.5px);
+        width: calc(100% - 90px);
+        background: #f8f8f8;
+    }
   </style>
   </head>
 

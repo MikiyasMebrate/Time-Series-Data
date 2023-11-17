@@ -1,4 +1,12 @@
 
+let catargoryCount = 0; 
+let catargorySelected = 0; 
+let databaseCount = 0;
+let databaseSelected = 0;
+let indicatorcount = 0;
+let indicatorSelected = 0; 
+let yearSelected = 0; 
+let isdatatable = 0;
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -57,6 +65,7 @@ function filterData() {
     success: function (data) {
       // Process topics
       var selectTopic = data.topics.map(function (topic) {
+        databaseCount += 1;
         return '<div class="filter-submenu flex-grow-2">' +
           '  <input type="radio" value="' + topic.id + '" name="topic_lists" id="topic_list' + topic.id + '">' +
           '  <label for="topic_list' + topic.id + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
@@ -64,13 +73,14 @@ function filterData() {
       }).join('');
 
       $('#topic_list_filter').html(selectTopic);
-
+      document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
       $('input[name="topic_lists"]').on('change', function (event) {
         var selectedTopicId = event.target.value;
 
         // Process categories
         var selectCategory = data.categories.map(function (category) {
           if (String(category.topics[0].id) === String(selectedTopicId)) {
+            catargoryCount += 1;
             return '<div class="filter-submenu">' +
               '  <input type="radio" value="' + category.id + '" name="category_lists" id="category_list' + category.id + '">' +
               '  <label class="form-label" for="category_list' + category.id + '" style="font-size: small;">' + category.name_ENG + ' - ' + category.name_AMH + '</label>' +
@@ -88,7 +98,7 @@ function filterData() {
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
           var selectedCategoryId = eventCategory.target.value;
-
+          indicatorcount += 1;
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
             if (String(indicator.for_category_id) === String(selectedCategoryId)) {
