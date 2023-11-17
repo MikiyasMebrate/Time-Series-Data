@@ -168,10 +168,11 @@ let filterIndicator = () => {
 
                     let selectedIndicator = data.indicators.find((indicator) => String(indicator.id) == String(indicatorId))
                     let selectCategory = data.categories.find((cat) => String(cat.id) == String(selectedIndicator.for_category_id))
-                    if (selectedIndicator.title_AmH == null) selectedIndicator.title_AmH = ''
+                    if (selectedIndicator.title_AMH == null) selectedIndicator.title_AmH = ''
                     titleEnglish.value = selectedIndicator.title_ENG
-                    titleAmharic.value = selectedIndicator.title_AmH
+                    titleAmharic.value = selectedIndicator.title_AMH
                     category.value = selectCategory.id
+                    document.getElementById('id_indicator_id').value = indicatorId
 
                   });
                 });
@@ -185,3 +186,30 @@ let filterIndicator = () => {
 };
 
 filterIndicator();
+
+$(document).ready(function(){
+  $("#form_indicator_edit").submit(function(e){
+      e.preventDefault();  // prevent the default form submission
+
+      // Perform AJAX submission
+      $.ajax({
+          type: "POST",
+          url: $(this).attr("action"),
+          data: $(this).serialize(),
+          success: function(response){
+              // Handle the success response
+              console.log(response);
+          },
+          error: function(error){
+              // Handle the error response
+              console.log(error);
+          }
+      });
+  });
+});
+
+
+
+
+
+

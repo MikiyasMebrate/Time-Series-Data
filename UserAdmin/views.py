@@ -310,13 +310,18 @@ def indicator(request):
     
     if request.method == "POST":
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            form = IndicatorForm()
-            messages.success(request, "Indicator has been successfully Added")
+            title_ENG = form.cleaned_data['title_ENG']
+            title_AMH = form.cleaned_data['title_AMH']
+            indicator_id = request.POST.get('indicator_Id')
+
+            
+            indicator_obj = Indicator.objects.get(id = indicator_id)
+            indicator_obj.title_AMH = title_AMH
+            indicator_obj.title_ENG = title_ENG
+            indicator_obj.save()
+            return JsonResponse({'success': True})
         else:
-            messages.error(request, "Value Exist or Please try Again!")
+            return JsonResponse({'success': False, 'errors': form.errors})
     context = {
         'form' : form,
         'indicators' : indicators
