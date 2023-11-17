@@ -60,19 +60,19 @@ function updateFilterSelection() {
 
     // Update the UI or perform any other actions based on the counts
     // Only update if the length is greater than 0 and the count has changed
-    if (prevCatargoryCount !== catargorySelected && catargorySelected > 0) {
+    if (prevCatargoryCount !== catargorySelected || catargorySelected > 0) {
       document.getElementById('categorySelectedBadge').innerHTML = catargorySelected;
     }
 
-    if (prevDatabaseCount !== databaseSelected && databaseSelected > 0) {
+    if (prevDatabaseCount !== databaseSelected || databaseSelected > 0) {
       document.getElementById('databaseSelectedBadge').innerHTML = databaseSelected;
     }
 
-    if (prevIndicatorCount !== indicatorSelected && indicatorSelected > 0) {
+    if (prevIndicatorCount !== indicatorSelected || indicatorSelected > 0) {
       document.getElementById('seriesSelectedBadge').innerHTML = indicatorSelected;
     }
 
-    if (prevYearCount !== yearSelected && yearSelected > 0) {
+    if (prevYearCount !== yearSelected || yearSelected > 0) {
       document.getElementById('yearSelectedBadge').innerHTML = yearSelected;
     }
 }
@@ -317,6 +317,10 @@ function filterData() {
 
             // Show data display section
             $("#dataDisplay").show();
+            console.log('database selected ',databaseSelected)
+            console.log('catagory selected ',catargorySelected)
+            console.log('indiccator selected ',indicatorSelected)
+            console.log('year selected ',yearSelected)
             // Show table
             $("#table-container").show();
             $("#table_card").show();
