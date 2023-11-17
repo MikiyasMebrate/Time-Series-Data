@@ -120,7 +120,7 @@ let filterIndicator = () => {
                       <div class="row">
                          <div class="col-10">
                          <button  type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator"><i class="fas fa-eye"></i></button> 
-                         <button type="button" name="btnEditIndicator" data-bs-toggle="modal" data-bs-target="#editModalIndicator"  indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button> 
+                         <button type="button" name="EditIndicator" id="${id}"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button> 
                          <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator"><i class="fas  fa-trash"></i></button> 
                          </div>
                       </div>
@@ -138,26 +138,41 @@ let filterIndicator = () => {
                 dataListViewTable.innerHTML = table;
                 table = "";
 
+                $(document).ready(function () {
+                  $("#tableIndicator").DataTable({
+                    retrieve: true,
+                    ordering: false,
+                    scrollX: true,
+                    responsive: true,
+                    paging: true,
+                    searching: true,
+                    orderNumber: true,
+                    lengthMenu: [
+                      [10, 25, 50, -1],
+                      ["10 rows", "25 rows", "50 rows", "Show all"],
+                    ],
+                    columnDefs: [{ width: "100%" }],
+                    dom: "Bfrtip",
+                    buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                  });
+                });
 
-
-                let btnEdit = document.getElementsByName("btnEditIndicator");
-                console.log(btnEdit);
-                btnEdit.forEach((editIndicatorBtn) => {
-                  editIndicatorBtn.addEventListener("click", (eventButton) => {
-                    let indicatorId =
-                      eventButton.target.getAttribute("indicator_id");
+                let btnEdit = document.getElementsByName("EditIndicator");
+                btnEdit.forEach((editIndicator) => {
+                  editIndicator.addEventListener("click", () => {
+                    let indicatorId = editIndicator.id 
                     let titleEnglish = document.getElementById("id_title_ENG");
                     let titleAmharic = document.getElementById("id_title_AMH");
                     let category = document.getElementById("id_for_category");
 
-                    const selectedIndicator = data.indicators.find( (indicator) => String(indicator.id) == String(indicatorId));
 
-               
-                    const selectedCategory = data.categories.find( (cat) => String(cat.id) == String(selectedIndicator.for_category_id));
-                    console.log(selectedIndicator);
-                    titleAmharic.value = "hh ";
-                    titleEnglish.value = selectedIndicator.title_ENG;
-                    category.value = String(selectedCategory.id);
+                    let selectedIndicator = data.indicators.find((indicator) => String(indicator.id) == String(indicatorId))
+                    let selectCategory = data.categories.find((cat) => String(cat.id) == String(selectedIndicator.for_category_id))
+                    if (selectedIndicator.title_AmH == null) selectedIndicator.title_AmH = ''
+                    titleEnglish.value = selectedIndicator.title_ENG
+                    titleAmharic.value = selectedIndicator.title_AmH
+                    category.value = selectCategory.id
+
                   });
                 });
               });
