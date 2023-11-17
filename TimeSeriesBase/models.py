@@ -1,5 +1,7 @@
 from django.db import models
 from UserManagement.models import CustomUser
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 
 
 class Topic(models.Model):
@@ -26,6 +28,7 @@ class Indicator(models.Model):
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
+      
 
     def str(self):
         return self.get_full_path()
@@ -43,6 +46,8 @@ class Indicator(models.Model):
 
 
 
+
+
 data_point_type = [
     ('quarterly', 'Quarterly'),
     ('monthly', 'monthly'),
@@ -52,6 +57,7 @@ class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
     for_datapoint = models.ForeignKey("DataPoint",on_delete=models.CASCADE)
     for_indicator = models.ForeignKey("Indicator",on_delete=models.CASCADE)
+    for_measurement = models.ManyToManyField('Measurement', blank=True)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
     
     def __str__(self):
@@ -121,17 +127,48 @@ class Measurement(models.Model):
         return self.Amount_ENG
     
 class DataValue(models.Model):
-    value = models.CharField(max_length=50)
-    for_measurement = models.ManyToManyField(Measurement, blank=True)
+    value = models.CharField(max_length=50, blank=True ,null=True)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
-    for_source = models.ManyToManyField("Source", blank=True)
+    for_source = models.ForeignKey("Source",on_delete=models.SET_NULL  ,blank=True, null=True,)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
+
+    def calculate_parent_value(self):
+        try: 
+            main_parent = self.for_indicator.parent
+            try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
+            except:parent_data_value = None
+            child_indicators = Indicator.objects.filter(parent = main_parent)
+           
+            sum = 0
+            for child in child_indicators:
+                try: 
+                    child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
+                    sum  = sum + int(child_data_value.value)
+                except: 
+                    None
+                
+            if parent_data_value is None:
+                parent_data = DataValue()
+                parent_data.value = sum
+                parent_data.for_indicator = main_parent
+                parent_data.for_datapoint = self.for_datapoint
+                parent_data.save()
+            else: 
+                parent_data_value.value = sum
+                try: parent_data_value.save()
+                except: None
+        except:
+            None
     
-    def __str__(self) -> str:
-        return self.value
-    
+@receiver(post_save, sender=DataValue)
+def call_my_function(sender, instance, created, **kwargs):
+    if created: 
+        instance.calculate_parent_value()
+    else:  
+        instance.calculate_parent_value()
+
     
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)

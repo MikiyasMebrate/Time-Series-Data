@@ -109,12 +109,15 @@
     </div>
     <!--Data Add Modal End-->
 
+    
     {% include 'user-admin/include/navbar.html'%} 
     {% include 'user-admin/include/sidebar.html'%}
 
+    
     <!--Body Start-->
     <div class="content-wrapper">
       <!-- TItle Start-->
+     
       <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
@@ -126,12 +129,15 @@
       </div>
       <!--Title End-->
 
+
+
       <section class="content">
         <div class="container-fluid">
           <div class="row">
             <!--Accordion Start -->
             <div class="col-md-3">
               <div class="accordion" id="accordionExample">
+                
                 <!--Accordion 1 Start-->
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingOne">
@@ -243,7 +249,7 @@
                     <div class="accordion-body p-2">
                       <div class="accordion-body p-2">
                         <ul class="list-unstyled mb-0 filter-list scrollable" id="Year_list_filter">
-                          <p class="text-danger">Please Select Indicator
+                          <p class="text-danger">Please Select Indicator</p>
                         </ul>
                       </div>
                     </div>
@@ -292,7 +298,12 @@
                         <th>2006</th>
                         <th>2007</th>
                         <th>2008</th>
-                        <th >2009</th>
+                        <th>2009</th>
+                        <th>2010</th>
+                        <th>2011</th>
+                        <th>2012</th>
+                        <th>2013</th>
+                        <th >2014</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -318,7 +329,7 @@
           ordering: false,
           scrollX: true,
           paging: true,
-          searching: false,
+          searching: true,
           orderNumber: false,
           lengthMenu: [25, 50, 100],
         })

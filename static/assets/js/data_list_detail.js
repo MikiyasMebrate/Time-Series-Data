@@ -31,11 +31,23 @@ fetch(url)
           }
         }
         table += `
-             <tr>
-             <td class="fw-bold">
-                          ${title_ENG} ${title_amharic}
-                        </td>
+            <tr>
+              <td class="fw-bold">
+                  <div class="row">
+                    <div class="col-9">
+                        ${title_ENG} ${title_amharic}
+                    </div>
+                    <div class="col-1">
+                      <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                    <div class="col-1">
+                      <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                    </div>
+                  </div>
+              </td>
                `;
+               
+               
 
         for (year of data.year) {
           let statusData = false;
@@ -44,8 +56,12 @@ fetch(url)
               String(year.id) === String(value.for_datapoint_id) &&
               String(id) === String(value.for_indicator_id)
             ) {
-              if (checkParentHasChild) {
-                table += `<td class="text-center fw-bold">  ${value.value} </td>`;
+              if (checkParentHasChild ) {
+                if(value.value != null){
+                  table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                }else{
+                  table += `<td class="text-center fw-bold"> - </td>`;
+                }
               } else {
                 table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
               }
@@ -81,9 +97,19 @@ fetch(url)
               //Table Row Start
               table += `
             <tr>
-            <td class="fw-normal">
-                          &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
-                        </td>
+              <td class="fw-normal">   
+                  <div class="row">
+                    <div class="col-9">
+                        &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
+                    </div>
+                    <div class="col-1">
+                        <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+                    </div>
+                    <div class="col-1">
+                      <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                    </div>
+                  </div>
+              </td>
             `;
 
               //Child of Child List
@@ -104,8 +130,18 @@ fetch(url)
                     table += `
                     <tr>
                     <td class="fw-normal">
+                      <div class="row">
+                        <div class="col-9">
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
-                        </td>`;
+                        </div>
+                        <div class="col-1">
+                          <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                        </div>
+                        <div class="col-1">
+                      <button type="button" name="btnDeleteIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                    </div>
+                      </div>
+                    </td>`;
 
                     for (year of data.year) {
                       let statusData = false;
@@ -115,9 +151,20 @@ fetch(url)
                           String(i.id) === String(value.for_indicator_id)
                         ) {
                           if (checkChildOfChildHasChild) {
-                            table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                            if(value.value != null){
+                              table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                            }else{
+                              table += `<td class="text-center fw-bold"> - </td>`;
+                            }
+                            
                           } else {
-                            table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            if(value.value != null){
+                              table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                            }else{
+                              table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                            }
+
+                            
                           }
                           statusData = false;
                           break;
@@ -153,9 +200,19 @@ fetch(url)
                     String(indicator.id) === String(value.for_indicator_id)
                   ) {
                     if (checkChildHasChild) {
-                      table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                      if(value.value != null){
+                        table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                      }else{
+                        table += `<td class="text-center fw-bold"> - </td>`;
+                      }
+                      
                     } else {
-                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                      if(value.value != null){
+                        table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`
+                      }else{
+                        table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`
+                      }
+                      ;
                     }
                     statusData = false;
                     break;
@@ -199,15 +256,15 @@ fetch(url)
           [10, 25, 50, -1],
           ["10 rows", "25 rows", "50 rows", "Show all"],
         ],
-        columnDefs: [{ width: "100%" }, { width: "200px", targets: 0 }],
+        columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
         dom: "Bfrtip",
         buttons: ["pageLength", "excel", "csv", "pdf", "print"],
       });
     });
 
-    let btn = document.getElementsByName("btnIndicator");
+    let btnIndicator = document.getElementsByName("btnIndicator");
 
-    btn.forEach((clickableButton) => {
+    btnIndicator.forEach((clickableButton) => {
       clickableButton.addEventListener("click", (eventButton) => {
         let target = eventButton.target.getAttribute("id");
         let form1 = document.getElementById("form_1");
@@ -239,5 +296,29 @@ fetch(url)
         }
       });
     });
+
+
+    //Add Indicator 
+    let btnAddIndicator = document.getElementsByName("btnAddIndicator")
+    btnAddIndicator.forEach((clickableButton)=>{
+      clickableButton.addEventListener('click', (eventButton)=>{
+        let indicatorId = eventButton.target.getAttribute('indicator_id')
+        document.getElementById('addNewIndicatorId').value = indicatorId
+
+      })
+    })
+
+
+    //Remove Indicator 
+    let btnRemoveIndicator = document.getElementsByName("btnDeleteIndicator")
+    btnRemoveIndicator.forEach((btn)=>{
+      btn.addEventListener('click', (eventDelete)=>{
+        let indicatorId =  eventDelete.target.getAttribute('indicator_id')
+        document.getElementById('forRemoveIndicator').setAttribute('href', `/user-admin/indicator-delete/${indicatorId}`)
+        console.log(indicatorId)
+      })
+    })
+
+
   })
   .catch((err) => console.log(err));

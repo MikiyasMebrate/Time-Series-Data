@@ -23,12 +23,64 @@ let filterData = () => {
       topicHtmlList = document.getElementsByName("topic_lists");
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
+          document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+          document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           displayApplyButton.style.display = "none";
           selectedTopicId = event.target.value;
+          defaultTable = `
+        <table id="example1" class="table table-striped table-responsive">
+              <thead>
+                <tr>
+                  <th class="ps-5 pe-5">Name</th>
+                  <th>2000</th>
+                  <th>2001</th>
+                  <th>2002</th>
+                  <th>2003</th>
+                  <th>2004</th>
+                  <th>2005</th>
+                  <th>2006</th>
+                  <th>2007</th>
+                  <th>2008</th>
+                  <th >2009</th>
+                  <th>2010</th>
+                  <th>2011</th>
+                  <th>2012</th>
+                  <th>2013</th>
+                  <th >2014</th>
+                </tr>
+              </thead>
+            <tbody>
+          </tbody>
+        </table>
+               `;
+
+
+        document.getElementById('list_table_view').innerHTML = defaultTable
+        table = $("#example1")
+        .DataTable({
+          retrieve: true,
+          ordering: false,
+          scrollX: true,
+          paging: true,
+          searching: false,
+          orderNumber: false,
+          lengthMenu: [25, 50, 100],
+        })
+        .buttons()
+        .container()
+        .appendTo("#example1_wrapper .col-md-6:eq(0)");
 
           let selectCategory = data.categories.map(
             ({ name_ENG, name_AMH, id, topics }) => {
-              if (String(topics[0].id) === String(selectedTopicId)) {
+              
+              let tID = null
+              try{
+                tID = topics[0].id
+              }
+              catch{
+                 tID = null
+              }
+              if (String(tID) === String(selectedTopicId)) {
                 return `
                         <li>
                         <div class="flex-grow-2 ">
@@ -53,6 +105,7 @@ let filterData = () => {
 
           categoryHtmlList.forEach((categoryRadio) => {
             categoryRadio.addEventListener("change", (eventCategory) => {
+              document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
               displayApplyButton.style.display = "none";
               let selectedCategoryId = eventCategory.target.value;
               selectIndicator = data.indicators.map(
@@ -392,7 +445,7 @@ let filterData = () => {
                                   String(valueToCheck[0])
                                 ) {
                                   yearTableList.splice(i, 1);
-                                  console.log(yearTableList);
+                                 
                                 }
                               }
                             }
@@ -434,7 +487,7 @@ let filterData = () => {
                   });
                 }
               });
-
+              
               //indicator list HTML
               let indicatorHtmlList =
                 document.getElementsByName("indicator_lists");
@@ -481,12 +534,8 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(
-                  ({ title_ENG, title_AMH, id, for_category_id }) => {
-                    if (
-                      String(for_category_id) === String(selectedCategoryId) &&
-                      selectedIndictorId.includes(String(id))
-                    ) {
+                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
+                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
                       let title_amharic = "";
                       if (!title_AMH === null)
                         title_amharic = " - " + title_AMH;
@@ -495,11 +544,11 @@ let filterData = () => {
                       table += `
                           <tr>
                             <td>
-                              <a>
-                                <h6 class="mb-1">
-                                  <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
-                                </h6>
-                              </a>
+                                <div class="row">
+                                   <div class="col-10">
+                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                   </div>
+                                </div>
                             </td>`;
 
                       for (j of yearTableList) {
@@ -585,7 +634,7 @@ let filterData = () => {
                           <td>
                             <a>
                               <h6 class="mb-1">
-                                <a href="/Admin/data_list_detail.html" style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </a>
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
                               </h6>
                             </a>
                           </td>`;
@@ -658,6 +707,7 @@ let filterData = () => {
                     buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                   });
                 });
+             
               });
               //End Indicator table
             });

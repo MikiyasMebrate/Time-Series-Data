@@ -1,23 +1,141 @@
 {%load static%}
-<header id="header" class="header fixed-top">
-  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-
-    <a href="{% url "index" %}" class="logo d-flex align-items-center" >
-      <img src="{% static 'assets/image/logo.png' %}" alt="">
-      <span style="color: rgb(9, 109, 9);">MOPD</span>
-    </a>
-
-    <nav class="navbar" id="navbar">
-      <ul>
-        <li><a class="nav-link scrollto active" href="{% url "index" %}" style="color: rgb(9, 109, 9);">Home</a></li>
-        <li><a class="nav-link scrollto" href="{% url "about" %}" style="color: rgb(9, 109, 9);">About</a></li>
-        <li><a class="nav-link scrollto" href="{% url "data" %}" style="color: rgb(9, 109, 9);">Data</a></li>
-        <li><a class="nav-link scrollto" href="{% url "contact" %}" style="color: rgb(9, 109, 9);">Contact</a></li>
-        <li><a class="nav-link scrollto" href="{% url "profile" %}" style="color: rgb(9, 109, 9);">myprofile</a></li>
-        <li><a class="getstarted scrollto" href="" style="color: white; background-color: rgb(9, 109, 9);" >logout</a></li>
-      </ul>
-      <i class="bi bi-list mobile-nav-toggle"></i>
-    </nav><!-- .navbar -->
-
+<header>
+  <div class="header__area  header__transparent">
+      <div class="header__shape p-absolute">
+          <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt="">
+          
+      </div>
+      <div id="header__sticky" class="header__bottom header__bottom-2 header__style-4">
+          <div class="">
+              <div class="ps-5 pe-5 row align-items-center">
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6">
+                      <div class="logo-3 ">
+                          <a href="{% url "index" %}">
+                              <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt=""><h3>MoPD</h3>
+                          </a>
+                      </div>
+                  </div>
+                  <div class="col-xl-9 col-lg-9 col-md-6 col-sm-6 col-6">
+                      <div class="header__bottom-right d-flex justify-content-end align-items-center">
+                          <div class="main-menu main-menu-3">
+                              <nav id="mobile-menu">
+                                  <ul>
+                                      <li>
+                                          <a href="{% url "index" %}">Home</a>
+                                          
+                                      </li>
+                                      <li><a href="{% url "about" %}">About</a></li>
+                                      <li>
+                                          <a href="{% url "data" %}">Data</a>
+                                         
+                                      </li>
+                                   
+                              
+                                      <li><a href="{% url "contact" %}">Contact Us</a></li>
+                                      <li>
+                                        <div class="btn-group dropstart p-0 m-0">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M16 9a4 4 0 1 1-8 0a4 4 0 0 1 8 0Zm-2 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0Z"/><path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11s11-4.925 11-11S18.075 1 12 1ZM3 12c0 2.09.713 4.014 1.908 5.542A8.986 8.986 0 0 1 12.065 14a8.984 8.984 0 0 1 7.092 3.458A9 9 0 1 0 3 12Zm9 9a8.963 8.963 0 0 1-5.672-2.012A6.992 6.992 0 0 1 12.065 16a6.991 6.991 0 0 1 5.689 2.92A8.964 8.964 0 0 1 12 21Z"/></g></svg>
+                                            </button>
+                                            <ul class="dropdown-menu p-0 m-0">
+                                                <li class="dropdown-item  text-center p-0 m-0 "> <a class="p-2 m-0"  href="{% url "profile" %}">view profile</a> </li>
+                                                <li class="dropdown-item  text-center p-0 m-0"> <a class="p-2 m-0" href="">logout</a> </li>
+                                              <!-- Dropdown menu links -->
+                                            </ul>
+                                          </div>
+                                          
+                                          <!-- Split dropstart button -->
+                                         
+                                    </li>
+                                  </ul>
+                              </nav>
+                            
+                          </div>
+                         
+                          <div class="sidebar__menu d-lg-none">
+                              <div class="sidebar-toggle-btn sidebar-toggle-btn-3" id="sidebar-toggle">
+                                  <span class="line"></span>
+                                  <span class="line"></span>
+                                  <span class="line"></span>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
   </div>
 </header>
+<!-- header area end -->
+
+<!-- sidebar area start -->
+<section class="sidebar__area">
+  <div class="sidebar__wrapper">
+      <div class="sidebar__close">
+          <button class="sidebar__close-btn" id="sidebar__close-btn">
+              <span><i class="fal fa-times"></i></span>
+              <span>close</span>
+          </button>
+      </div>
+     
+      <div class="sidebar__content">
+          <div class="tab-content" id="sidebar-tab-content">
+              <div class="tab-pane fade show active" id="menu" role="tabpanel" aria-labelledby="menu-tab">
+                  <div class="logo mb-40">
+                     <h4>
+                          menu
+                     </h4>
+                  </div>
+                  <div class="mobile-menu"></div>
+              </div>
+              <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
+                  <div class="sidebar__info">
+                      <div class="logo mb-40">
+                          <a href="index.html">
+                              <img src="assets/img/logo/logo.png" alt="logo">
+                          </a>
+                      </div>
+                      <p>We must explain to you how all seds this mistakens idea off denouncing pleasures and praising pain was born and I will give you a completed accounts of the system and expound.</p>
+                      <a href="contact.html" class="z-btn z-btn-white">contact us</a>
+                      <div class="sidebar__search">
+                          <form action="#">
+                              <input type="text" placeholder="Your Keywords..">
+                              <button type="submit"><i class="fal fa-search"></i></button>
+                          </form>
+                      </div>
+                      <div class="sidebar__contact mt-30">
+                          <ul>
+                              <li>
+                                  <div class="icon">
+                                      <i class="fal fa-map-marker-alt"></i>
+                                  </div>
+                                  <div class="text">
+                                      <span>Ave 14th Street, Mirpur 210, San Franciso, USA 3296.</span>
+                                  </div>
+                              </li>
+                              <li>
+                                  <div class="icon">
+                                      <i class="fal fa-envelope"></i>
+                                  </div>
+                                  <div class="text ">
+                                      <span><a href="https://wphix.com/cdn-cgi/l/email-protection#ed9e989d9d829f99ad97848f8f889fc38e8280"><span class="__cf_email__" data-cfemail="0e7d7b7e7e617c7a4e74676c6c6b7c206d6163">[email&#160;protected]</span></a></span>
+                                  </div>
+                              </li>
+                              <li>
+                                  <div class="icon">
+                                      <i class="fas fa-phone-alt"></i>
+                                  </div>
+                                  <div class="text">
+                                      <span><a href="tel:(+642)-394-396-432">(+642) 394 396 432</a></span>
+                                  </div>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<div class="body-overlay"></div>

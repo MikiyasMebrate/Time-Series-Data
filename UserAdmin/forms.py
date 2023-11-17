@@ -28,9 +28,9 @@ class catagoryForm(forms.ModelForm):
                 'class' : 'form-control'
             }),
               'topic' : forms.SelectMultiple(attrs={
-                'class' : 'select2 form-control',
+                'class' : 'select2 form-select',
                 'multiple': "multiple",
-                'data-placeholder' : "Select a State"
+                'data-placeholder' : "Select a Topic"
             })        
         }
 

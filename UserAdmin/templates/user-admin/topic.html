@@ -36,19 +36,14 @@
               {% csrf_token %}
               <div class="mb-3">
   
-                <label for="id_topic" class="col-form-label">Name English: {% for err in form.title_ENG.errors%}<small
+                <label for="id_title_ENG" class="col-form-label">Name English: {% for err in form.title_ENG.errors%}<small
                     class="text-danger">{{err}}</small> {% endfor %}</label>
                 {{form.title_ENG}}
               </div>
               <div class="mb-3">
-                <label for="id_topic" class="col-form-label">Name Amharic: {% for err in form.title_AMH.errors%}<small
+                <label for="id_title_AMH" class="col-form-label">Name Amharic: {% for err in form.title_AMH.errors%}<small
                     class="text-danger">{{err}}</small> {% endfor %}</label>
                 {{form.title_AMH}}
-              </div>
-              <div class="mb-3">
-                <label for="id_topic" class="col-form-label">Location: {% for err in form.for_location.errors%}<small
-                    class="text-danger">{{err}}</small> {% endfor %}</label>
-                {{form.for_location}}
               </div>
           </div>
           <div class="modal-footer">
@@ -64,7 +59,7 @@
     </div>
     <!--User Registration Modal End-->
     {% include 'user-admin/include/navbar.html'%} 
-    {% include 'user-admin/include/sidebar.html '%}
+    {% include 'user-admin/include/sidebar.html'%}
     <!--Body Start-->
     <div class="content-wrapper">
       {% if messages %}
