@@ -7,6 +7,8 @@ let indicatorcount = 0;
 let indicatorSelected = 0; 
 let yearSelected = 0; 
 let isdatatable = 0;
+let yearcount = 0;
+
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -40,6 +42,23 @@ function updateFilterSelection() {
   if (!isFilterSelected && applyButtonExists) {
     $('#applyButton').remove();
   }
+
+    // Reset counts to zero
+    indicatorcount = 0;
+    yearcount = 0;
+  
+    // Update the counts based on the selected filter submenu items
+    indicatorcount = $('input[name="indicator_lists"]:checked').length;
+    yearcount = $('input[name="yearListsCheckBox"]:checked').length;
+  
+    // Update the UI or perform any other actions based on the counts
+    // Only update if the length is greater than 0 and the count has changed
+    if ($('input[name="category_lists"]:checked').length == 0) {
+      document.getElementById('seriesAvailableBadge').innerHTML = 0;
+      document.getElementById('yearAvailableBadge').innerHTML = 0;
+    }
+
+  
     // Store the previous counts
     const prevCatargoryCount = catargorySelected;
     const prevDatabaseCount = databaseSelected;
@@ -99,6 +118,7 @@ function filterData() {
     dataType: "json",
     success: function (data) {
       // Process topics
+      databaseCount = 0;
       var selectTopic = data.topics.map(function (topic) {
         databaseCount += 1;
         return '<div class="filter-submenu flex-grow-2">' +
@@ -113,6 +133,7 @@ function filterData() {
         var selectedTopicId = event.target.value;
 
         // Process categories
+        catargoryCount = 0;
         var selectCategory = data.categories.map(function (category) {
           if (String(category.topics[0].id) === String(selectedTopicId)) {
             catargoryCount += 1;
@@ -123,7 +144,6 @@ function filterData() {
           }
           return '';
         }).join('');
-        console.log('catagort count', catargoryCount)
         document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
         $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
           updateFilterSelection();
@@ -151,7 +171,11 @@ function filterData() {
             '  <input class="form-check" type="checkbox" id="select_all">' +
             '  <label class="form-label pl-1" for="select_all" style="font-size: small;">Select All</label>' +
             '</div>';
+            if($('input[name="category_lists"]:checked').length > 0){
             document.getElementById('seriesAvailableBadge').innerHTML = indicatorcount
+            }else{
+              document.getElementById('seriesAvailableBadge').innerHTML = 0;
+            }
             $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
               updateFilterSelection();
             });
@@ -168,12 +192,16 @@ function filterData() {
               $(this).prop('checked', checkedStatus);
             });
           });
-
-          document.getElementById('yearAvailableBadge').innerHTML = data.year.length
-
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
             updateFilterSelection();
+            console.log(catargorySelected)
+            if(indicatorSelected > 0){
+              document.getElementById('yearAvailableBadge').innerHTML = data.year.length;
+            }else{
+              document.getElementById('yearAvailableBadge').innerHTML = 0;
+            }
           });
+
 
           let yearTableList = [];
           let yearList = () => {
@@ -317,10 +345,6 @@ function filterData() {
 
             // Show data display section
             $("#dataDisplay").show();
-            console.log('database selected ',databaseSelected)
-            console.log('catagory selected ',catargorySelected)
-            console.log('indiccator selected ',indicatorSelected)
-            console.log('year selected ',yearSelected)
             // Show table
             $("#table-container").show();
             $("#table_card").show();
@@ -1047,7 +1071,7 @@ $("#displayOptions a:nth-child(2)").click(function () {
         }, 1);
     });
 
-
+ //third chart moving line chart
     Highcharts.chart('line-chart-canvas', {
         chart: {
             type: 'spline',
@@ -1120,7 +1144,7 @@ $("#displayOptions a:nth-child(2)").click(function () {
     });
 
 
-    //third chart 
+    //fourth chart 
               // Implement the logic to create a line chart
   // Example:
   // Create the chart
