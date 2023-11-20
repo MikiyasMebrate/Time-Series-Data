@@ -78,6 +78,7 @@ class DataPoint(models.Model):
     months = models.ManyToManyField('Month', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    is_deleted =models.BooleanField(default=True)
     
     
     class Meta:
