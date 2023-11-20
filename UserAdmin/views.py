@@ -322,7 +322,7 @@ def indicator(request):
     context = {
         'form' : form,
         'indicator' : indicator_list,
-        
+
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -349,14 +349,15 @@ def indicator_list(request, pk):
     context = {
         'indicators' : indicator_list,
         'category' : category,
-        'form' : form
+        'form' : form,
     }
     return render(request, 'user-admin/indicators.html', context)
 
 def indicator_detail(request, pk):
     indicator = Indicator.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
-    form = IndicatorForm(request.POST or None)
+    form = IndicatorForm(request.POST or None, prefix='form')
+    indicator_form = SubIndicatorForm(request.POST or None, prefix='indicator_form')
     if request.method == "POST":
         if form.is_valid():
             title_ENG = form.cleaned_data['title_ENG']
@@ -369,13 +370,25 @@ def indicator_detail(request, pk):
             indicator_obj.title_ENG = title_ENG
             indicator_obj.save()
             messages.success(request, 'Successfully Updated')
+
+        if indicator_form.is_valid():
+            indicator_id = request.POST.get('addNewIndicator')
+            indicator = Indicator.objects.get(pk = indicator_id)
+
+            new_indicator = Indicator()
+            new_indicator.title_ENG = indicator_form.cleaned_data['title_ENG']
+            new_indicator.title_AMH = indicator_form.cleaned_data['title_AMH']
+            new_indicator.parent = indicator
+            new_indicator.save()
+            messages.success(request, 'Successfully Added!')
         else:
             messages.error(request, 'Please Try again! ')
 
     context = {
         'indicators' : indicator_list,
         'category' : category,
-        'form' : form
+        'form' : form,
+        'indicator_form' : indicator_form
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -397,9 +410,7 @@ def delete_indicator(request,pk):
     messages.success(request, "Successfully Removed!")
     return HttpResponseRedirect(previous_page)
 
-  
-   
-    
+       
 
 def measurement(request):
     return render(request, 'user-admin/measurement.html')

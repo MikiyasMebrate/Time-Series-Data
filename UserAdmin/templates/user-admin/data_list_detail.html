@@ -34,8 +34,8 @@
         <form name="formAddIndicator" method="post" id="formAddIndicator">
           {% csrf_token %}
           <div class="modal-body">
-            <input type="number" name="addNewIndicator" id="addNewIndicatorId" style="display: none;">
-            {{sub_indicator_form.as_p}}
+            <input type="number" name="addNewIndicator" id="addNewIndicatorId" style="display: block;">
+            {{sub_indicator_form}}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

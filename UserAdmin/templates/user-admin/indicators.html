@@ -35,11 +35,26 @@
                 {% csrf_token %}
               <div class="modal-body">
                 <input type="number"  name="indicator_Id" id="id_indicator_id" style="display: none;">
-                {{form.as_p}}
+                <div class="mt-2">
+                  {{form.title_ENG.label}}
+                {{form.title_ENG}}
+                </div>
+                
+                <div class="mt-2">
+                  {{form.title_AMH.label}}
+                {{form.title_AMH}}
+                </div>
+
+                <div class="mt-2" id="id_category_option">
+                  {{form.for_category.label}}
+                {{form.for_category}}
+                </div>
+
+                
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="submit" form="form_indicator_edit" class="btn btn-primary">Save changes</button>
               </div>
             </form>
         
@@ -69,6 +84,31 @@
             </div>
           </div>
         </div>
+
+          <!-- Add Sub Indicator  -->
+  <div class="modal fade" id="addIndicatorModal" tabindex="-1" aria-labelledby="addIndicatorModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addIndicatorModalLabel">Add New Sub-Indicator</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form name="formAddIndicator" method="post" id="formAddIndicator" >
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="number" name="addNewIndicator" id="addNewIndicatorId" style="display: none;">
+          {{indicator_form.as_p}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" form="formAddIndicator" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
     <!--Body Start-->
     <div class="content-wrapper">
