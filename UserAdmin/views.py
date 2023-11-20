@@ -7,6 +7,7 @@ from TimeSeriesBase.models import *
 from .forms import *
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 # @login_required
@@ -67,7 +68,23 @@ def delete_category(request,pk):
         return redirect('user-admin-category')
   
 
-# @login_required
+#JSON
+def filter_indicator_json(request):
+    topic = list(Topic.objects.all().values())
+    category_data = list(Category.objects.all().values())
+    indicator = list(Indicator.objects.filter(~Q(for_category_id = None )).values())
+    for category in category_data:
+        category_obj = Category.objects.get(id=category['id'])
+        related_topics = list(category_obj.topic.values())
+        category['topics'] = related_topics
+    context = {
+        'topics' : topic,
+        'categories' : category_data,
+        'indicators' : indicator
+    }
+
+    return JsonResponse(context)
+# @login_required  JSON
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -100,7 +117,7 @@ def filter_indicator(request, pk):
     
     
    
-#Data List    
+#Data List    JSON
 # @login_required
 def json(request):
     topic = Topic.objects.all()
@@ -294,13 +311,18 @@ def indicator(request):
     
     if request.method == "POST":
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            form = IndicatorForm()
-            messages.success(request, "Indicator has been successfully Added")
+            title_ENG = form.cleaned_data['title_ENG']
+            title_AMH = form.cleaned_data['title_AMH']
+            indicator_id = request.POST.get('indicator_Id')
+
+            
+            indicator_obj = Indicator.objects.get(id = indicator_id)
+            indicator_obj.title_AMH = title_AMH
+            indicator_obj.title_ENG = title_ENG
+            indicator_obj.save()
+            return JsonResponse({'success': True})
         else:
-            messages.error(request, "Value Exist or Please try Again!")
+            return JsonResponse({'success': False, 'errors': form.errors})
     context = {
         'form' : form,
         'indicators' : indicators
