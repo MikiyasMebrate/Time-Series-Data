@@ -592,3 +592,6 @@ def users_list(request):
          'count2':count2
      }
      return render(request, 'user-admin/users_list.html',context)
+ 
+def recyclebin(request):
+     return render(request, 'user-admin/recyclebin.html')

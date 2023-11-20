@@ -45,5 +45,7 @@ urlpatterns = [
     path('topic/', views.topic, name="user-admin-topic"),
     path('topic/<int:pk>', views.topic_detail, name="user-topic-detail"),
     path('topic-delete/<int:pk>', views.delete_topic, name='user-topic-delete'),
+    
+    path('recyclebin/', views.recyclebin, name="user-admin-recyclebin"),
     path('users/', views.users_list, name="user-admin-user-list")
 ]
