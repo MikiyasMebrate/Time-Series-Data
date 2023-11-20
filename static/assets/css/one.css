@@ -1408,7 +1408,7 @@ p {
 }
 
 .mean-container .mean-nav ul li a.mean-expand:hover {
-  background: #ffffff;
+  background:black;
   color: #1f1841;
 }
 
@@ -1417,7 +1417,7 @@ p {
 }
 
 .mean-container .mean-nav ul li a.mean-expand.mean-clicked {
-  background: #ffffff;
+  background: black;
   color: #1f1841;
 }
 
