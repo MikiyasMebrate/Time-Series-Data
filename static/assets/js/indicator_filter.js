@@ -11,6 +11,8 @@ let filterIndicator = () => {
           let titleEnglish = document.getElementById("id_title_ENG");
           let titleAmharic = document.getElementById("id_title_AMH");
           let category = document.getElementById("id_for_category");
+          let category_div = document.getElementById("id_category_option");
+          category_div.style.display = "block";
 
           let selectedIndicator = data.indicators.find(
             (indicator) => String(indicator.id) == String(indicatorId)
@@ -29,14 +31,17 @@ let filterIndicator = () => {
 
       //remove Indicator
       let btnDelete = document.getElementsByName("btnDeleteIndicator");
-      btnDelete.forEach((deleteIndicator)=>{
-        deleteIndicator.addEventListener('click', ()=>{
-          console.log(deleteIndicator.id)
-          let approveAnchor = document.getElementById('forRemoveIndicator')
-          approveAnchor.setAttribute('href', `/user-admin/indicator-delete/${deleteIndicator.id}`)
-          console.log(approveAnchor)
-        })
-      })
+      btnDelete.forEach((deleteIndicator) => {
+        deleteIndicator.addEventListener("click", () => {
+          console.log(deleteIndicator.id);
+          let approveAnchor = document.getElementById("forRemoveIndicator");
+          approveAnchor.setAttribute(
+            "href",
+            `/user-admin/indicator-delete/${deleteIndicator.id}`
+          );
+          console.log(approveAnchor);
+        });
+      });
 
       selectTopic = data.topics.map(
         ({ title_ENG, title_AMH, id }) =>
@@ -154,8 +159,8 @@ fetch(url)
     </thead> 
     <tbody>`;
 
-    data.indicators.map(({ title_ENG, title_AMH, id, for_category }) => {
-      if (for_category != null) {
+    data.indicators.map(({ title_ENG, title_AMH, id, for_category, is_deleted}) => {
+      if (for_category != null && is_deleted == false) {
         let title_amharic = "";
         if (!title_AMH === null) title_amharic = " - " + title_AMH;
         //Table Row Start
@@ -171,9 +176,13 @@ fetch(url)
                         ${title_ENG} 
               </td>
               <td> 
-                      <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
-                      <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Indicator"><i class="fas fa-pen"></i></button> 
-                      <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button> 
+                <button type="button" name="btnAddIndicator" id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+
+
+                <button type="button" name="EditSubIndicator" id="${id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button> 
+
+
+                <button type="button" name="btnDeleteSubIndicator" id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button> 
               </td>
             </tr>`;
         //Table Row End
@@ -183,12 +192,12 @@ fetch(url)
             let checkChildHasChild = false;
 
             for (check of data.indicators) {
-              if (String(check.parent_id) === String(indicator.id)) {
+              if (String(check.parent_id) === String(indicator.id) && check.is_deleted == false) {
                 checkChildHasChild = true;
               }
             }
 
-            if (String(indicator.parent_id) == String(id)) {
+            if (String(indicator.parent_id) == String(id)&& indicator.is_deleted == false) {
               test = true;
               //Table Row Start
               table += `
@@ -197,9 +206,13 @@ fetch(url)
                         &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
               </td>
               <td> 
-              <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
-              <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Indicator"><i class="fas fa-pen"></i></button> 
-              <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button> 
+              <button type="button" name="btnAddIndicator" id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+
+
+              <button type="button" name="EditSubIndicator" id="${indicator.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button> 
+
+
+              <button type="button" name="btnDeleteSubIndicator" id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button> 
               </td>
             `;
 
@@ -209,10 +222,10 @@ fetch(url)
                 let status = false;
 
                 for (i of data.indicators) {
-                  if (String(i.parent_id) === String(parent)) {
+                  if (String(i.parent_id) === String(parent) && i.is_deleted == false) {
                     let checkChildOfChildHasChild = false;
                     for (check of data.indicators) {
-                      if (String(check.parent_id) === String(i.id)) {
+                      if (String(check.parent_id) === String(i.id) && check.is_deleted == false) {
                         checkChildOfChildHasChild = true;
                       }
                     }
@@ -224,9 +237,11 @@ fetch(url)
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
                     </td>
                     <td > 
-                    <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
-                    <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#editModalIndicator"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Indicator"><i class="fas fa-pen"></i></button> 
-                    <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button> 
+                    <button type="button" name="btnAddIndicator" id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
+
+                    <button type="button" name="EditSubIndicator" id="${i.id}" data-bs-toggle="modal"  data-bs-target="#editModalIndicator"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Indicator"><i class="fas fa-pen"></i></button> 
+
+                    <button type="button" name="btnDeleteSubIndicator" id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button> 
                     </td>
                     </tr>`;
 
@@ -272,59 +287,52 @@ fetch(url)
       });
     });
 
-    let btnIndicator = document.getElementsByName("btnIndicator");
+    //Edit Sub-Indicator
+    let btnSubIndicatorEdit = document.getElementsByName("EditSubIndicator");
+    btnSubIndicatorEdit.forEach((editIndicator) => {
+      editIndicator.addEventListener("click", () => {
+        let indicatorId = editIndicator.id;
+        let titleEnglish = document.getElementById("id_title_ENG");
+        let titleAmharic = document.getElementById("id_title_AMH");
+        let category = document.getElementById("id_category_option");
+        category.style.display = "none";
 
-    btnIndicator.forEach((clickableButton) => {
-      clickableButton.addEventListener("click", (eventButton) => {
-        let target = eventButton.target.getAttribute("id");
-        let form1 = document.getElementById("form_1");
-        let form2 = document.getElementById("form_2");
-        try {
-          target = target.split("-");
-          let indicatorId = target[0];
-          let yearId = target[1];
-          if (yearId != undefined) {
-            let indicatorInput = document.getElementById("indicator_id");
-            let dataPointInput = document.getElementById("data_point_id");
+        let selectedIndicator = data.indicators.find(
+          (indicator) => String(indicator.id) == String(indicatorId)
+        );
 
-            indicatorInput.value = indicatorId;
-            dataPointInput.value = yearId;
-
-            form2.style.display = "none";
-            form1.style.display = "block";
-          } else {
-            let value_id = eventButton.target.getAttribute("id");
-            let value = eventButton.target.getAttribute("value");
-            form1.style.display = "none";
-            form2.style.display = "block";
-            document.getElementById("data_value").value = value_id;
-            let setValue = (document.getElementById("id_value_form2").value =
-              value);
-          }
-        } catch {
-          null;
-        }
+        if (selectedIndicator.title_AMH == null)
+          selectedIndicator.title_AmH = "";
+        titleEnglish.value = selectedIndicator.title_ENG;
+        titleAmharic.value = selectedIndicator.title_AMH;
+        document.getElementById("id_indicator_id").value = indicatorId;
       });
     });
 
-    //Add Indicator
-    let btnAddIndicator = document.getElementsByName("btnAddIndicator");
-    btnAddIndicator.forEach((clickableButton) => {
-      clickableButton.addEventListener("click", (eventButton) => {
-        let indicatorId = eventButton.target.getAttribute("indicator_id");
-        document.getElementById("addNewIndicatorId").value = indicatorId;
+    //remove Indicator
+    let btnDeleteSubIndicator = document.getElementsByName("btnDeleteSubIndicator");
+    btnDeleteSubIndicator.forEach((deleteIndicator) => {
+      deleteIndicator.addEventListener("click", () => {
+        console.log(deleteIndicator.id);
+        let approveAnchor = document.getElementById("forRemoveIndicator");
+        approveAnchor.setAttribute(
+          "href",
+          `/user-admin/indicator-delete/${deleteIndicator.id}`
+        );
+        console.log(approveAnchor);
       });
     });
 
-    //Remove Indicator
-    let btnRemoveIndicator = document.getElementsByName("btnDeleteIndicator");
-    btnRemoveIndicator.forEach((btn) => {
-      btn.addEventListener("click", (eventDelete) => {
-        let indicatorId = eventDelete.target.getAttribute("indicator_id");
-        document
-          .getElementById("forRemoveIndicator")
-          .setAttribute("href", `/user-admin/indicator-delete/${indicatorId}`);
-      });
-    });
+    //Add Indicator 
+    let btnAddIndicator = document.getElementsByName("btnAddIndicator")
+    btnAddIndicator.forEach((clickableButton)=>{
+      clickableButton.addEventListener('click', (eventButton)=>{
+        let indicatorId = clickableButton.id
+        document.getElementById('addNewIndicatorId').value = indicatorId
+
+      })
+    })
+
+
   })
   .catch((err) => console.log(err));
