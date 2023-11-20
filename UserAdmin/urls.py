@@ -20,10 +20,9 @@ urlpatterns = [
    
    #Indicators
     path('indicators/', views.indicator, name="user-admin-indicators"),
-    path('indicator-sub/<int:pk>', views.indicator_sub_lists, name="user-admin-indicator-sub"),
-    path('indicators-detail/<int:pk>', views.indicator_detail, name="user-admin-indicators-detail"),
+    path('indicators-list/<int:pk>', views.indicator_list, name="user-admin-indicators-list"),
     path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
-    path('indicator-sub-add/<int:pk>/<int:mainParent>', views.indicator_detail_add, name='user-admin-sub-indicator-add'),
+    path('indicator-detail/<int:pk>', views.indicator_detail, name='user-admin-indicator-detail'),
     
     #Location
     path('location/', views.location, name="user-admin-location"),
