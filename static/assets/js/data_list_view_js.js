@@ -109,8 +109,8 @@ let filterData = () => {
               displayApplyButton.style.display = "none";
               let selectedCategoryId = eventCategory.target.value;
               selectIndicator = data.indicators.map(
-                ({ title_ENG, title_AMH, id, for_category_id }) => {
-                  if (String(for_category_id) === String(selectedCategoryId)) {
+                ({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+                  if (String(for_category_id) === String(selectedCategoryId) && is_deleted == false) {
                     let title_amharic = "";
 
                     if (!title_AMH == null) {
@@ -534,8 +534,8 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
-                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted == false) {
                       let title_amharic = "";
                       if (!title_AMH === null)
                         title_amharic = " - " + title_AMH;
@@ -579,7 +579,7 @@ let filterData = () => {
                         let status = false;
 
                         for (i of data.indicators) {
-                          if (String(i.parent_id) === String(parent)) {
+                          if (String(i.parent_id) === String(parent) && i.is_deleted == false) {
                             status = true;
                             //Table Row Start
                             table += `
@@ -624,7 +624,7 @@ let filterData = () => {
 
                       //Child Lists
                       for (let indicator of data.indicators) {
-                        if (String(indicator.parent_id) == String(id)) {
+                        if (String(indicator.parent_id) == String(id) && indicator.is_deleted == false) {
                           test = true;
                           //li.push(`<optgroup label="${title_ENG}">`)
 
