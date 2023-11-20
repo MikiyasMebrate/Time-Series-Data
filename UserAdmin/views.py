@@ -585,7 +585,6 @@ def month(request):
 
 #User
 def users_list(request):
-    
      item2=CustomUser.objects.all()
      count2=item2.count()
      context={
