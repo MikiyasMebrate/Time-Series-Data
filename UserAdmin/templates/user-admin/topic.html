@@ -103,7 +103,7 @@
                       <th>Name Amharic</th>
                       <th>Location</th>
                       <th>Created Date</th>
-                      <th>Action</th>
+                      <th class='text-center'>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -118,8 +118,12 @@
                       </td>
                       <td>{{ topic.created|date:'F d, Y' }}</td>
                       <td>
-                        <div class="d-flex justify-content-around text-center">
+                        <div class="d-flex justify-content-center text-center space-between">
                           <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                          <button type="button" class="btn  m-0 p-0 text-center" data-bs-toggle="modal" data-bs-target="#deleteDataPoint{{data_point.pk}}"
+                          data-bs-whatever="@mdo" >
+                        <i class="fas ms-3  text-danger fa-trash"></i>
+                        </button>
                         </div>
                       </td>
                     </tr>

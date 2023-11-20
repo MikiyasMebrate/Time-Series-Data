@@ -55,14 +55,19 @@ def catagory_detail(request, pk):
     }  
     return render(request, 'user-admin/catagories_detail.html', context)
 
-def delete_category(request,pk):
-    catagorys = Category.objects.get(pk=pk)
-    if catagorys.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-category')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-category')
+def delete_category(request, pk):
+    category = Category.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    category.is_deleted = True
+    category.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
+
   
 
 #JSON
