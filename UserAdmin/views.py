@@ -55,14 +55,19 @@ def catagory_detail(request, pk):
     }  
     return render(request, 'user-admin/catagories_detail.html', context)
 
-def delete_category(request,pk):
-    catagorys = Category.objects.get(pk=pk)
-    if catagorys.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-category')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-category')
+def delete_category(request, pk):
+    category = Category.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    category.is_deleted = True
+    category.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
+
   
 
 #JSON
@@ -284,11 +289,16 @@ def location_detail(request, pk):
 
 def delete_location(request,pk):
     location = Location.objects.get(pk=pk)
-    if location.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-location')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    category.is_deleted = True
+    category.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
         
 
 #Indicator 
@@ -440,12 +450,16 @@ def source_detail(request, pk):
 
 def delete_source(request,pk):
     source = Source.objects.get(pk=pk)
-    if source.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-source')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-source')
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    source.is_deleted = True
+    source.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
 
 #topic
 def topic(request):
@@ -489,12 +503,16 @@ def topic_detail(request, pk):
 
 def delete_topic(request,pk):
     topic = Topic.objects.get(pk=pk)
-    if topic.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-topic')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-topic')
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    topic.is_deleted = True
+    topic.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
  
  
 #Data Point 
@@ -564,13 +582,18 @@ def data_point_detail(request, pk):
     
     return render(request, 'user-admin/data_point_detail.html', context )
 
-def data_point_delate(request, pk):
+def delete_data_point(request, pk):
     data_point = DataPoint.objects.get(pk=pk)
-    if data_point.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-data-point')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    data_point.is_deleted = True
+    data_point.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
     
 
 

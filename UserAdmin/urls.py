@@ -32,7 +32,7 @@ urlpatterns = [
    #Data-Point
     path('data-point/', views.data_point, name="user-admin-data-point"),
     path('data-point-detail/<int:pk>', views.data_point_detail, name="user-admin-data-point-detail"),
-    path('data-point-delete/<int:pk>', views.data_point_delate, name="user-admin-data-point-delete"),
+    path('data-point-delete/<int:pk>', views.delete_data_point, name="user-admin-data-point-delete"),
     
    #Month
    path('month/', views.month, name="user-admin-month"),

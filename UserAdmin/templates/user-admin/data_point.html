@@ -13,29 +13,26 @@
 
 <body class="hold-transition sidebar-mini layout-fixed">
         <!--Delete month Modal Start-->
-        {% for data_point in data_points%}
-        <div class="modal fade " id="deleteDataPoint{{data_point.pk}}" tabindex="-1" aria-labelledby="deleteDataPointLabel"
-          aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal fade" id="removeDatapointModal" tabindex="-1" aria-labelledby="removeDatapointModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="deleteDataPointLabel">
-                  Deletion Form
-                </h5>
+                <h5 class="modal-title" id="removeDatapointModalLabel">Remove Indicator</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body">
-                <h2>Are you sure you want to delete {% if data_point.is_interval%}  {{data_point.year_start_EC }} - {{data_point.year_end_EC }}   {% else %} {{data_point.year_EC }} {% endif %}/ {% if data_point.is_interval%}  {{data_point.year_start_GC }} - {{data_point.year_end_GC }}   {% else %} {{data_point.year_GC }} {% endif %}  ? </h2>      
-              </div>
-        
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a  href="{% url 'user-admin-data-point-delete' data_point.pk %}" type="submit" class="btn btn-primary">Yes</a>
-              </div>
+              <form name="removeDatapoint" method="post">
+                {% csrf_token %}
+                <div class="modal-body text-center fs-4"> 
+                  <p> Are you sure you want to remove? </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a href="#" id="forRemoveDatapoint" class="btn btn-danger">Yes</a>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-        {% endfor %}
         <!--Delete month Modal End-->
   
   <!--Add Year Modal Start-->
@@ -154,10 +151,11 @@
                         <a href="{% url 'user-admin-data-point-detail' data_point.pk %}"><i class="fas text-primary fa-pen"></i></a>
                         <button
                         type="button"
+                        id={{data_point.id}}
+                        name='deleteDataPoint'
                         class="btn  m-0 p-0 text-center"
                         data-bs-toggle="modal"
-                        data-bs-target="#deleteDataPoint{{data_point.pk}}"
-                        data-bs-whatever="@mdo"
+                        data-bs-target="#removeDatapointModal"
                       >
                       <i class="fas ms-3  text-danger fa-trash"></i>
                       </button>
@@ -178,7 +176,16 @@
 
   {% include 'user-admin/include/footer.html'%}
   <aside class="control-sidebar control-sidebar-dark"></aside>
-
+  <script>
+    //remove Indicator
+    let btnDelete = document.getElementsByName("deleteDataPoint");
+    btnDelete.forEach((delete_datapoint)=>{
+      delete_datapoint.addEventListener('click', ()=>{
+        let approveAnchor = document.getElementById('forRemoveDatapoint')
+        approveAnchor.setAttribute('href', `/user-admin/data-point-delete/${delete_datapoint.id}`)
+      })
+    })
+</script>
   {% include 'user-admin/include/footer_js.html'%}
 </body>
 

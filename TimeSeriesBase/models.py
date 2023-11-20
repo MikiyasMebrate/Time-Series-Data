@@ -10,6 +10,7 @@ class Topic(models.Model):
     user = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title_ENG
@@ -18,6 +19,7 @@ class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
     name_AMH = models.CharField(max_length=50)
     topic = models.ManyToManyField(Topic)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name_ENG
@@ -76,6 +78,7 @@ class DataPoint(models.Model):
     months = models.ManyToManyField('Month', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    is_deleted =models.BooleanField(default=True)
     
     
     class Meta:

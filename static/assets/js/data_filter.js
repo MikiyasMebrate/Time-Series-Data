@@ -156,7 +156,7 @@ function filterData() {
           var selectedCategoryId = eventCategory.target.value;
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
-            if (String(indicator.for_category_id) === String(selectedCategoryId)) {
+            if (String(indicator.for_category_id) === String(selectedCategoryId) ) {
               indicatorcount += 1;
               var title_amharic = indicator.title_AMH ? ' - ' + indicator.title_AMH : '';
               return '<div class="filter-submenu">' +
