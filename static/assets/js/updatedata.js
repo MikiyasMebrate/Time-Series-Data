@@ -1,96 +1,102 @@
+// Function to update category information
+let updateCategory = () => {
+    // Fetch category data from the server
+    fetch("/user-admin/json-filter-indicator/")
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // Get all elements with the name "EditCategory"
+            let btnEditCategory = document.getElementsByName("EditCategory");
 
-    let updateCategory = () => {
-        fetch("/user-admin/json-filter-indicator/")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
+            // Add click event listener to each "EditCategory" button
+            btnEditCategory.forEach((editCategory) => {
+                editCategory.addEventListener("click", () => {
+                    // Extract category ID from the button's ID attribute
+                    let categoryId = editCategory.id;
 
-                let btnEditCategory = document.getElementsByName("EditCategory");
+                    // Select relevant form elements using jQuery
+                    let nameEnglish = $("#form_catagory_edit #id_name_ENG");
+                    let nameAmharic = $("#form_catagory_edit #id_name_AMH");
+                    let topic = $("#id_topic");
 
-                btnEditCategory.forEach((editCategory) => {
-                    editCategory.addEventListener("click", () => {
-                        let categoryId = editCategory.id;
-                        let nameEnglish = $("#form_catagory_edit #id_name_ENG");
-                        let nameAmharic = $("#form_catagory_edit #id_name_AMH");
-                        let topic = $("#id_topic");
+                    // Find the selected category in the fetched data
+                    let selectedCategory = data.categories.find(
+                        (cat) => String(cat.id) === String(categoryId)
+                    );
 
-                        let selectedCategory = data.categories.find(
-                            (cat) => String(cat.id) === String(categoryId)
-                        );
+                    // Check if all necessary elements and data are available
+                    if (nameEnglish && nameAmharic && topic && selectedCategory && selectedCategory.topics.length > 0) {
+                        // Populate form fields with selected category data
+                        nameEnglish.val(selectedCategory.name_ENG);
+                        nameAmharic.val(selectedCategory.name_AMH);
+                        topic.val(selectedCategory.topics[0].title_AMH)
 
-                        if (nameEnglish && nameAmharic && topic && selectedCategory && selectedCategory.topics.length > 0) {
-                            nameEnglish.val(selectedCategory.name_ENG);
-                            nameAmharic.val(selectedCategory.name_AMH);
-                            topic.val(selectedCategory.topics[0].title_AMH)
-
-
-                            console.log("categoryId:", categoryId);
-                            console.log("nameEnglish.value:", nameEnglish.val());
-                            console.log("nameAmharic.value:", nameAmharic.val());
-                            console.log("topic.value:", selectedCategory.topics[0].title_AMH);
-
-                            $("#id_catagory_id").val(categoryId);
-                        } else {
-                            console.error("Error: Could not find elements or selected category.");
-                        }
-                    });
+                        // Set the category ID in a hidden field for form submission
+                        $("#id_catagory_id").val(categoryId);
+                    } else {
+                        console.error("Error: Could not find elements or selected category.");
+                    }
                 });
-            })
-            .catch((error) => {
-                console.error("Fetch error:", error);
             });
-    };
+        })
+        .catch((error) => {
+            console.error("Fetch error:", error);
+        });
+};
 
-    let updatetopic = () => {
-        fetch("/user-admin/json-filter-topic/")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log("Fetched data:", data);
-    
-                let btnEdittopic = document.getElementsByName("Edittopic");
-    
-                btnEdittopic.forEach((edittopic) => {
-                    edittopic.addEventListener("click", () => {
-                        let topicId = edittopic.id;
-                        let nameEnglish = $("#form_topic_edit #id_title_ENG");
-                        let nameAmharic = $("#form_topic_edit #id_title_AMH");
+// Function to update topic information
+let updatetopic = () => {
+    // Fetch topic data from the server
+    fetch("/user-admin/json-filter-topic/")
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // Get all elements with the name "Edittopic"
+            let btnEdittopic = document.getElementsByName("Edittopic");
 
-                            console.log("nameEnglish.value:", nameEnglish.val());
-                            console.log("nameAmharic.value:", nameAmharic.val());
-                        let selectedtopic = data.topics.find(
-                            (cat) => String(cat.id) === String(topicId)
-                        );
+            // Add click event listener to each "Edittopic" button
+            btnEdittopic.forEach((edittopic) => {
+                edittopic.addEventListener("click", () => {
+                    // Extract topic ID from the button's ID attribute
+                    let topicId = edittopic.id;
 
-                        if (nameEnglish && nameAmharic  && selectedtopic) {
-                            nameEnglish.val(selectedtopic.title_ENG);
-                            nameAmharic.val(selectedtopic.title_AMH);
+                    // Select relevant form elements using jQuery
+                    let nameEnglish = $("#form_topic_edit #id_title_ENG");
+                    let nameAmharic = $("#form_topic_edit #id_title_AMH");
 
+                    // Find the selected topic in the fetched data
+                    let selectedtopic = data.topics.find(
+                        (cat) => String(cat.id) === String(topicId)
+                    );
 
-                            console.log("categoryId:", topicId);
-                            console.log("nameEnglish.value:", nameEnglish.val());
-                            console.log("nameAmharic.value:", nameAmharic.val());
+                    // Check if all necessary elements and data are available
+                    if (nameEnglish && nameAmharic  && selectedtopic) {
+                        // Populate form fields with selected topic data
+                        nameEnglish.val(selectedtopic.title_ENG);
+                        nameAmharic.val(selectedtopic.title_AMH);
 
-                            $("#id_topic_id").val(topicId);
-                        } else {
-                            console.error("Error: Could not find elements or selected topic.");
-                        }
-                    });
+                        // Set the topic ID in a hidden field for form submission
+                        $("#id_topic_id").val(topicId);
+                    } else {
+                        console.error("Error: Could not find elements or selected topic.");
+                    }
                 });
-            })
-            .catch((error) => {
-                console.error("Fetch error:", error);
             });
-    };
-    
+        })
+        .catch((error) => {
+            console.error("Fetch error:", error);
+        });
+};
+
+// Execute the update functions when the document is ready
 $(document).ready(function () {
     console.log('document is ready');
     updatetopic();

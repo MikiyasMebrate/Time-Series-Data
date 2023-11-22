@@ -507,7 +507,8 @@ def topic(request):
     }
     return render(request, 'user-admin/topic.html',context=context)
 
-def json_filter_indicator(request):
+#JSON
+def json_filter_topic(request):
     topics = Topic.objects.all()
     
     # Creating a list of dictionaries representing each topic
