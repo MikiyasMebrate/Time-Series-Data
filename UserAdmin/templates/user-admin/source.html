@@ -125,6 +125,7 @@
                   </thead>
                   <tbody>
                     {% for source in sources%}
+                    {% if source.is_deleted == False  %}
                     <tr>
                       <td> {{source.title_ENG }}</td>
                       <td> {{source.title_AMH }}</td>
@@ -139,6 +140,8 @@
                         </div>
                       </td>
                     </tr>
+                    {% endif %}
+
                     {% endfor %}
                   </tbody>
                 </table>

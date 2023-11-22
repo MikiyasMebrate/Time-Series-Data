@@ -68,7 +68,23 @@ def delete_category(request, pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
 
-  
+# views.py
+from django.http import JsonResponse
+
+def update_category(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
+
+    if request.method == 'POST':
+        form = catagoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        form = catagoryForm(instance=category)
+        return render(request, 'categories.html', {'form': form, 'category': category})
+
 
 #JSON
 def filter_indicator_json(request):
@@ -146,7 +162,7 @@ def json(request):
     }
     return(JsonResponse(context))
 
- 
+    
 
 #Data List
 def data_list(request):
@@ -234,9 +250,7 @@ def data_list_detail(request, pk):
                 None
         
 
-                
-            
-            
+                       
     context = {
         'form' : form,
         'form_update' : form_update,
@@ -481,6 +495,25 @@ def topic(request):
         'topics' : topics
     }
     return render(request, 'user-admin/topic.html',context=context)
+
+def json_filter_indicator(request):
+    topics = Topic.objects.all()
+    
+    # Creating a list of dictionaries representing each topic
+    topics_data = []
+    for topic in topics:
+        topics_data.append({
+            'id': topic.id,
+            'title_ENG': topic.title_ENG,
+            'title_AMH': topic.title_AMH,
+            'user': topic.user.username if topic.user else None,
+            'updated': topic.updated.isoformat(),
+            'created': topic.created.isoformat(),
+            'is_deleted': topic.is_deleted,
+        })
+
+    # Returning the list as JSON
+    return JsonResponse({'topics': topics_data})
 
 def topic_detail(request, pk):
     topic = Topic.objects.get(pk=pk)

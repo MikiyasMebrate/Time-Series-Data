@@ -142,6 +142,7 @@
                 </thead>
                 <tbody>
                   {% for data_point in data_points%}
+                  {% if data_point.is_deletd == False %}
                   <tr>
                     <td> {% if data_point.is_interval%}  {{data_point.year_start_EC }} - {{data_point.year_end_EC }}   {% else %} {{data_point.year_EC }} {% endif %} </td>
                     <td> {% if data_point.is_interval%}  {{data_point.year_start_GC }} - {{data_point.year_end_GC }}   {% else %} {{data_point.year_GC }} {% endif %}</td>
@@ -162,6 +163,8 @@
                       </div>
                     </td>
                   </tr>
+                  {% endif %}
+                  
                   {% endfor %}
                 </tbody>
               </table>

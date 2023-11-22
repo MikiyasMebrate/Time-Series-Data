@@ -14,6 +14,7 @@ class Topic(models.Model):
 
     def __str__(self):
         return self.title_ENG
+    
 
 class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
@@ -183,6 +184,7 @@ class Source(models.Model):
     title_AMH = models.CharField(max_length=50)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=True)
     
     def __str__(self):
         return self.title_ENG

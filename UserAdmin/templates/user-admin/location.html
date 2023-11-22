@@ -72,6 +72,27 @@
     </div>
   </div>
     <!--Delete Location Modal End-->
+    <!-- Remove location -->   
+           <div class="modal fade" id="removelocationModal" tabindex="-1" aria-labelledby="removelocationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="removelocationModalLabel">Remove Indicator</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form name="removelocation" method="post">
+                  {% csrf_token %}
+                  <div class="modal-body text-center fs-4"> 
+                    <p> Are you sure you want to remove? </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="#" id="forRemovelocation" class="btn btn-danger">Yes</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+        </div>
 
   {% include 'user-admin/include/navbar.html'%}
   {% include 'user-admin/include/sidebar.html'%}
@@ -125,10 +146,11 @@
                         <a href="{% url 'user-location-detail' location.pk %}"><i class="fas text-primary fa-pen"></i></a>
                         <button
                         type="button"
-                        id="deleteLocation"
+                        id={{location.id}}
+                        name="deleteLocation"
                         class="btn  m-0 p-0 text-center"
                         data-bs-toggle="modal"
-                        data-bs-target="#deleteLocation{{location.pk}}"
+                        data-bs-target="#removelocationModal"
                         data-bs-whatever="@mdo"
                       >
                       <i class="fas ms-3  text-danger fa-trash"></i>
@@ -155,8 +177,15 @@
 </body>
 
 <script>
-
-
+    //remove Indicator
+    let btnDelete = document.getElementsByName("deleteLocation");
+    btnDelete.forEach((deletelocation)=>{
+      deletelocation.addEventListener('click', ()=>{
+        let approveAnchor = document.getElementById('forRemovelocation')
+        console.log(deletelocation.id)
+        approveAnchor.setAttribute('href', `/user-admin/category-delete/${deletelocation.id}`)
+      })
+    })
 
   $(function(){
     $("[id='deleteLocation']").each(function(){

@@ -135,7 +135,7 @@ function filterData() {
         // Process categories
         catargoryCount = 0;
         var selectCategory = data.categories.map(function (category) {
-          if (String(category.topics[0].id) === String(selectedTopicId)) {
+          if (String(category.topics[0].id) === String(selectedTopicId) && category.is_deleted === false) {
             catargoryCount += 1;
             return '<div class="filter-submenu">' +
               '  <input type="radio" value="' + category.id + '" name="category_lists" id="category_list' + category.id + '">' +
@@ -156,7 +156,7 @@ function filterData() {
           var selectedCategoryId = eventCategory.target.value;
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
-            if (String(indicator.for_category_id) === String(selectedCategoryId) ) {
+            if (String(indicator.for_category_id) === String(selectedCategoryId) && indicator.is_deleted == false) {
               indicatorcount += 1;
               var title_amharic = indicator.title_AMH ? ' - ' + indicator.title_AMH : '';
               return '<div class="filter-submenu">' +
@@ -192,9 +192,9 @@ function filterData() {
               $(this).prop('checked', checkedStatus);
             });
           });
+
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function() {
             updateFilterSelection();
-            console.log(catargorySelected)
             if(indicatorSelected > 0){
               document.getElementById('yearAvailableBadge').innerHTML = data.year.length;
             }else{
@@ -356,39 +356,35 @@ function filterData() {
 
             let table = "";
             table += `
-        <table id="newTable" class="table table-bordered m-0 p-0">
-        <thead>
-          <tr>
-            <th class="ps-5 pe-5">Name</th>`;
+                  <table id="newTable" class="table table-bordered m-0 p-0">
+                  <thead>
+                    <tr>
+                      <th class="ps-5 pe-5">Name</th>`;
             for (let i of yearTableList) {
               table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
             }
 
             table += `</tr>
-                   </thead>
-              <tbody>
-        `;
+                             </thead>
+                        <tbody>
+                  `;
 
-            selectIndicator = data.indicators.map(
-              ({ title_ENG, title_AMH, id, for_category_id }) => {
-                if (
-                  String(for_category_id) === String(selectedCategoryId) &&
-                  selectedIndictorId.includes(String(id))
-                ) {
+            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted === false) {
                   let title_amharic = "";
                   if (!title_AMH === null)
                     title_amharic = " - " + title_AMH;
 
                   //Table Row Start
                   table += `
-                        <tr>
-                          <td>
-                            <a>
-                              <h6 class="mb-1">
-                                <p style="font-size: small;" class="d-block text-reset">${title_ENG} ${title_amharic}</p>
-                              </h6>
-                            </a>
-                          </td>`;
+                      <tr>
+                        <td>
+                            <div class="row">
+                               <div class="col-10">
+                                 <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                               </div>
+                            </div>
+                        </td>`;
 
                   for (j of yearTableList) {
                     let statusData = false;
@@ -418,18 +414,18 @@ function filterData() {
                     let status = false;
 
                     for (i of data.indicators) {
-                      if (String(i.parent_id) === String(parent)) {
+                      if (String(i.parent_id) === String(parent) && i.is_deleted == false) {
                         status = true;
                         //Table Row Start
                         table += `
-                              <tr>
-                                <td>
-                                  <a>
-                                    <h6 class="mb-1">
-                                      <p style="font-size: small;" class="d-block text-secondary ps-2  fw-normal">${space} ${i.title_ENG} </p>
-                                    </h6>
-                                  </a>
-                                </td>`;
+                      <tr>
+                        <td>
+                          <a>
+                            <h6 class="mb-1">
+                              <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
+                            </h6>
+                          </a>
+                        </td>`;
 
                         for (j of yearTableList) {
                           let statusData = false;
@@ -463,20 +459,20 @@ function filterData() {
 
                   //Child Lists
                   for (let indicator of data.indicators) {
-                    if (String(indicator.parent_id) == String(id)) {
+                    if (String(indicator.parent_id) == String(id) && indicator.is_deleted == false) {
                       test = true;
                       //li.push(`<optgroup label="${title_ENG}">`)
 
                       //Table Row Start
                       table += `
-                      <tr>
-                        <td>
-                          <a>
-                            <h6 class="mb-1">
-                              <p style="font-size: small;" class="d-block text-secondary  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG} </p>
-                            </h6>
-                          </a>
-                        </td>`;
+                    <tr>
+                      <td>
+                        <a>
+                          <h6 class="mb-1">
+                            <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                          </h6>
+                        </a>
+                      </td>`;
 
                       for (j of yearTableList) {
                         let statusData = false;
@@ -484,7 +480,7 @@ function filterData() {
                           if (
                             String(j[0]) === String(k.for_datapoint_id) &&
                             String(indicator.id) ===
-                            String(k.for_indicator_id)
+                              String(k.for_indicator_id)
                           ) {
                             table += `<td>${k.value}</td>`;
                             statusData = false;
@@ -518,9 +514,10 @@ function filterData() {
             );
 
             table += `</tbody>
-        </table>`;
+                  </table>`;
 
-            let dataListViewTable = document.getElementById("list_table_view");
+            let dataListViewTable =
+              document.getElementById("list_table_view");
             dataListViewTable.innerHTML = table;
             table = "";
 
