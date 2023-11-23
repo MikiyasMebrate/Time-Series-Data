@@ -118,6 +118,14 @@ let updatetopic = () => {
 // Execute the update functions when the document is ready
 $(document).ready(function () {
     console.log('document is ready');
-    updatetopic();
-    updateCategory();
+    let parentContainer = document.querySelector("#example");
+        //Call After table paginator is Changed
+        parentContainer.addEventListener("click", (event) => {
+            ////Check Table is Changed
+            if (event.target.classList.contains("paginate_button")) {
+              //Edit Indicator re-initializing
+              updatetopic();
+              updateCategory();
+            }
+        });
 });
