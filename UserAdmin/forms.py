@@ -60,6 +60,24 @@ class SubIndicatorForm(forms.Form):
     title_AMH_add = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class' : 'form-control'
     }))
+
+
+class SubIndicatorFormDetail(forms.ModelForm):
+    class Meta:
+        model = Indicator
+        fields =  ('title_ENG', 'title_AMH')
+        
+        widgets = {
+            'title_ENG' : forms.TextInput(attrs={
+                'class' : 'form-control'
+            }),
+            'title_AMH' : forms.TextInput(attrs={
+                'class' : 'form-control'
+            }),
+        }
+
+
+
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic

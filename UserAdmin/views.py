@@ -222,7 +222,7 @@ def data_list(request):
 def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
     form_update = ValueForm2(request.POST or None)
-    sub_indicator_form = SubIndicatorForm(request.POST or None)
+    sub_indicator_form = SubIndicatorFormDetail(request.POST or None)
    
 
     if request.method == 'POST':

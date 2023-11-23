@@ -297,9 +297,9 @@ fetch(url)
       });
     });
 
-
     //Add Indicator 
-    let btnAddIndicator = document.getElementsByName("btnAddIndicator")
+    let addIndicator = () =>{
+      let btnAddIndicator = document.getElementsByName("btnAddIndicator")
     btnAddIndicator.forEach((clickableButton)=>{
       clickableButton.addEventListener('click', (eventButton)=>{
         let indicatorId = eventButton.target.getAttribute('indicator_id')
@@ -307,9 +307,10 @@ fetch(url)
 
       })
     })
-
-
-    //Remove Indicator 
+    }
+    
+    let removeIndicator = () =>{
+       //Remove Indicator 
     let btnRemoveIndicator = document.getElementsByName("btnDeleteIndicator")
     btnRemoveIndicator.forEach((btn)=>{
       btn.addEventListener('click', (eventDelete)=>{
@@ -318,6 +319,21 @@ fetch(url)
   
       })
     })
+    }
+
+
+   
+    addIndicator()
+    removeIndicator()
+
+    let parentContainer = document.querySelector("#list_table_view");
+    parentContainer.addEventListener("click", () => {
+      addIndicator()
+      removeIndicator()
+  });
+
+
+
 
 
   })
