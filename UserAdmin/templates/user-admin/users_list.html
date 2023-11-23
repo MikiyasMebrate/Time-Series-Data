@@ -10,80 +10,143 @@
 
   <body class="hold-transition sidebar-mini layout-fixed">
     <!--User Registration Modal Start-->
-    <div
-      class="modal fade"
-      id="userRegistration"
-      tabindex="-1"
-      aria-labelledby="userRegistrationLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="userRegistrationLabel">
-              New User Registration
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+     <!--Data Add Modal Start-->
+    <div class="modal fade" id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel" aria-hidden="true">
+       <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-primary text-white">
+                  <h5 class="modal-title" id="userRegistrationLabel">
+                      New User Registration
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form method="post" id="update-user-form" action="{% url 'user-admin-user-list' %}">
+
+                  {% csrf_token %}
+                  <div class="modal-body">
+                      <div class="mb-3">
+                          <label for="{{ form.username.id_for_label }}" class="col-form-label">Username:</label>
+                          <input type="text" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" value="{{ user.username }}" />
+                      </div>
+                      <div class="row">
+                          <div class="col mb-3">
+                              <label for="{{ form.first_name.id_for_label }}" class="col-form-label">First Name:</label>
+                              <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" value="{{ user.first_name }}" />
+                          </div>
+                          <div class="col mb-3">
+                              <label for="{{ form.last_name.id_for_label }}" class="col-form-label">Last Name:</label>
+                              <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" value="{{ user.last_name }}" />
+                          </div>
+                      </div>
+                      <div class="mb-3">
+                          <label for="{{ form.email.id_for_label }}" class="col-form-label">Email:</label>
+                          <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ user.email }}" />
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Add User</button>
+                  </div>
+
+                  {% if form.errors %}
+                       <ul class="errorlist">
+                        {% for field, errors in form.errors.items %}
+                      {% for error in errors %}
+                       <li>{{ field }}: {{ error }}</li>
+                     {% endfor %}
+                     {% endfor %}
+                     </ul>
+                      {% endif %}
+                    </form>
+              </div>
+              
           </div>
+      </div>
+  </div>
+  <!--Data Add Modal End-->
+
+ <!-- Edit User Modal Start -->
+{% for user in users %}
+<div class="modal fade" id="editUserModal{{ user.id }}" tabindex="-1" aria-labelledby="editUserModalLabel{{ user.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="editUserModalLabel{{ user.id }}">
+          Edit User: {{ user.username }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="update-user-form" action="{% url 'user-admin-user-list' %}">
+          {% csrf_token %}
           <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="id_username" class="col-form-label"
-                  >Username:</label
-                >
-                <input type="text" class="form-control" id="id_username" />
+            <div class="mb-3">
+              <label for="{{ form.username.id_for_label }}" class="col-form-label">Username:</label>
+              <input type="text" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" value="{{ user.username }}" />
+            </div>
+            <div class="row">
+              <div class="col mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="col-form-label">First Name:</label>
+                <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" value="{{ user.first_name }}" />
               </div>
-              <div class="row">
-                <div class="col mb-3">
-                  <label for="id_first_name" class="col-form-label"
-                    >First Name:</label
-                  >
-                  <input type="text" class="form-control" id="id_first_name" />
-                </div>
-                <div class="col mb-3">
-                  <label for="id_last_name" class="col-form-label"
-                    >Last Name:</label
-                  >
-                  <input type="text" class="form-control" id="id_last_name" />
-                </div>
+              <div class="col mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="col-form-label">Last Name:</label>
+                <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" value="{{ user.last_name }}" />
               </div>
-              <div class="mb-3">
-                <label for="id_email" class="col-form-label">Email:</label>
-                <input type="email" class="form-control" id="id_email" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password1" class="col-form-label"
-                  >Password:</label
-                >
-                <input type="password" class="form-control" id="id_password1" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password2" class="col-form-label"
-                  >Confirm Password:</label
-                >
-                <input type="password" class="form-control" id="id_password2" />
-              </div>
-            </form>
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="col-form-label">Email:</label>
+              <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ user.email }}" />
+            </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-primary">Save User</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update User</button>
           </div>
-        </div>
+          {% if form.errors %}
+          <ul class="errorlist">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </form>
       </div>
     </div>
-    <!--User Registration Modal End-->
+  </div>
+</div>
+{% endfor %}
+<!-- Edit User Modal End -->
+
+ <!-- Delete User Modal Start -->
+{% for user in users %}
+<div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteUserModalLabel{{ user.id }}">
+          Delete User: {{ user.username }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the user '{{ user.username }}'? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="post" action="{% url 'delete_user' user_id=user.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Delete User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+<!-- Delete User Modal End -->
 
     {% include 'user-admin/include/navbar.html'%}
     {% include 'user-admin/include/sidebar.html'%}
@@ -101,6 +164,12 @@
       </div>
       <!--Title End-->
 
+      {% if action_result %}
+      <div class="alert alert-success" role="alert">
+        {{ action_result }}
+      </div>
+    {% endif %}
+
       <section class="content">
         <div class="container-fluid">
           <!--Card Start-->
@@ -108,7 +177,7 @@
             <div class="col-lg-4 col-6">
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3>150</h3>
+                  <h3>{{ total_users_count }}</h3>
                   <p>Total Users</p>
                 </div>
                 <div class="icon">
@@ -120,7 +189,7 @@
             <div class="col-lg-4 col-6">
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3>150</h3>
+                  <h3>{{ active_users_count }}</h3>
                   <p>Active Users</p>
                 </div>
                 <div class="icon">
@@ -132,7 +201,7 @@
             <div class="col-lg-4 col-6">
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3>150</h3>
+                  <h3>{{ inactive_users_count }}</h3>
                   <p>Inactive User</p>
                 </div>
                 <div class="icon">
@@ -173,61 +242,45 @@
                       <th>Action</th>
                     </tr>
                   </thead>
+                  
                   <tbody>
+                    {% for user in users %}
                     <tr>
-                      <td>MikiyasMebrate</td>
-                      <td>mikiyasmebrate@gmail.com</td>
-                      <td>11-04-25</td>
+                      <td>{{ user.username }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>{{ user.date_joined|date:"m-d-y" }}</td>
                       <td>
-                        <span class="badge bg-success badge-lg">New</span>
-                      </td>
-                      <td>
-                        <div class="d-flex justify-content-around text-center">
-                          <a href="#"
-                            ><i class="fas text-primary fa-pen"></i
-                          ></a>
-                          <a href="#"
-                            ><i class="fas text-danger fa-trash"></i
-                          ></a>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>MikiyasMebrate</td>
-                      <td>mikiyasmebrate@gmail.com</td>
-                      <td>11-04-25</td>
-                      <td>
+                        {% if user.is_active %}
                         <span class="badge bg-success badge-lg">Active</span>
-                      </td>
-                      <td>
-                        <div class="d-flex justify-content-around text-center">
-                          <a href="#"
-                            ><i class="fas text-primary fa-pen"></i
-                          ></a>
-                          <a href="#"
-                            ><i class="fas text-danger fa-trash"></i
-                          ></a>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>KaleabHegie</td>
-                      <td>KaleabHegie@gmail.com</td>
-                      <td>11-04-25</td>
-                      <td>
+                        {% else %}
                         <span class="badge bg-danger badge-lg">Inactive</span>
+                        {% endif %}
                       </td>
                       <td>
                         <div class="d-flex justify-content-around text-center">
-                          <a href="#"
-                            ><i class="fas text-primary fa-pen"></i
-                          ></a>
-                          <a href="#"
-                            ><i class="fas text-danger fa-trash"></i
-                          ></a>
+                          <!-- Edit User Modal Trigger Button -->
+                          <button
+                            type="button"
+                            class="btn btn-primary btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editUserModal{{ user.id }}"
+                          >
+                            <i class="fas fa-pen"></i> Edit
+                          </button>
+
+                          <!-- Delete User Modal Trigger Button -->
+                          <button
+                            type="button"
+                            class="btn btn-danger btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteUserModal{{ user.id }}"
+                          >
+                            <i class="fas fa-trash"></i> Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>

@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('TimeSeriesBase.urls')),
     path('user-admin/', include('UserAdmin.urls')),
+    path('user-management/', include('UserManagement.urls')),
 ]
