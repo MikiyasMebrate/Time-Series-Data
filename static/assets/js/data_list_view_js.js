@@ -3,15 +3,22 @@ let filterData = () => {
     .then((response) => response.json())
     .then((data) => {
       selectTopic = data.topics.map(
-        ({ title_ENG, title_AMH, id }) =>
-          `
-                  <li>
-                  <div class="flex-grow-2">
-                     <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                      <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                    </div>
-                </li>
-                  `
+        ({ title_ENG, title_AMH, id, is_deleted }) =>{
+          if(is_deleted){
+            return(null)
+          }else{
+            return(
+              `
+              <li>
+              <div class="flex-grow-2">
+                 <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                  <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                </div>
+            </li>
+              `
+            )
+          }
+        }
       );
 
       //apply Button
@@ -71,7 +78,7 @@ let filterData = () => {
         .appendTo("#example1_wrapper .col-md-6:eq(0)");
 
           let selectCategory = data.categories.map(
-            ({ name_ENG, name_AMH, id, topics }) => {
+            ({ name_ENG, name_AMH, id, topics, is_deleted }) => {
               
               let tID = null
               try{
@@ -81,7 +88,10 @@ let filterData = () => {
                  tID = null
               }
               if (String(tID) === String(selectedTopicId)) {
-                return `
+                if(is_deleted){
+                  return null
+                }else{
+                  return( `
                         <li>
                         <div class="flex-grow-2 ">
                            <div class="row ">
@@ -93,7 +103,8 @@ let filterData = () => {
                              </div>
                           </div>
                       </li>
-                        `;
+                        `);
+                }
               }
             }
           );
