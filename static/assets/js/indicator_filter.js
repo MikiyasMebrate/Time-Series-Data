@@ -55,25 +55,27 @@ $(document).ready(function () {
 
         //Call After table paginator is Changed
         parentContainer.addEventListener("click", (event) => {
-          ////Check Table is Changed
-          if (event.target.classList.contains("paginate_button")) {
             //Edit Indicator re-initializing
             editIndicatorModal();
             //Remove Indicator re-initializing
             removeIndicatorModal();
-          }
+
         });
 
         selectTopic = data.topics.map(
-          ({ title_ENG, title_AMH, id }) =>
-            `
-                      <li>
-                      <div class="flex-grow-2">
-                         <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                          <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                        </div>
-                    </li>
-                      `
+          ({ title_ENG, title_AMH, id, is_deleted }) =>{
+            if(!is_deleted){
+              return             `
+              <li>
+              <div class="flex-grow-2">
+                 <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                  <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                </div>
+            </li>
+              `
+            }
+          }
+
         );
         //apply Button
         let displayApplyButton = document.getElementById("apply_button");
@@ -89,7 +91,7 @@ $(document).ready(function () {
             selectedTopicId = event.target.value;
 
             let selectCategory = data.categories.map(
-              ({ name_ENG, name_AMH, id, topics }) => {
+              ({ name_ENG, name_AMH, id, topics, is_deleted}) => {
                 let tID = null;
                 try {
                   tID = topics[0].id;
@@ -97,19 +99,21 @@ $(document).ready(function () {
                   tID = null;
                 }
                 if (String(tID) === String(selectedTopicId)) {
-                  return `
-                          <li>
-                          <div class="flex-grow-2 ">
-                             <div class="row ">
-                                <div class="col-1"> 
-                                     <input  type="radio" value=${id} name="category_lists" id="category_list${id}">
-                                </div>
-                                <div class="col-11">
-                                   <label class="form-label" for="category_list${id}" style="font-size: small;">${name_ENG} - ${name_AMH}</label></div>
-                               </div>
-                            </div>
-                        </li>
-                          `;
+                  if(!is_deleted){
+                    return `
+                    <li>
+                    <div class="flex-grow-2 ">
+                       <div class="row ">
+                          <div class="col-1"> 
+                               <input  type="radio" value=${id} name="category_lists" id="category_list${id}">
+                          </div>
+                          <div class="col-11">
+                             <label class="form-label" for="category_list${id}" style="font-size: small;">${name_ENG} - ${name_AMH}</label></div>
+                         </div>
+                      </div>
+                  </li>
+                    `;
+                  }
                 }
               }
             );
