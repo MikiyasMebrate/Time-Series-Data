@@ -136,6 +136,26 @@
   </div>
 
 
+    <!-- Modal Edit Measurement  -->
+    <div class="modal fade" id="editMeasurement" tabindex="-1" aria-labelledby="editMeasurementLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editMeasurementLabel">Edit Measurement</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
 
   {% include 'user-admin/include/navbar.html'%}
   {% include 'user-admin/include/sidebar.html'%}
@@ -170,13 +190,14 @@
             <!--Add Data End-->
 
             <div class="col-4 p-0 m-0">
+
               <!--Measurement Start-->
               <div class="mt-2 mb-2 text-start">
-                <select class="form-select">
-                  <option selected>Measurement </option>
-                  <option>In Billions</option>
-                  <option>In Millions</option>
-                </select>
+                <div>
+                  <p class="h4">ETB - In Billions <button class="ms-4 btn btn-sm btn-primary" data-bs-toggle="modal"  data-bs-target="#editMeasurement"
+                    data-bs-whatever="@mdo" >Edit</button> 
+                  </p> 
+                </div>
               </div>
               <!--Measurement End-->
             </div>

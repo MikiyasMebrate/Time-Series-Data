@@ -32,6 +32,7 @@ class Indicator(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
+    measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
       
 
     def str(self):
@@ -111,9 +112,8 @@ class Month(models.Model):
     
 class Measurement(models.Model):
     Amount_ENG = models.CharField(max_length=50)
-    Amount_AMH = models.CharField(max_length=50)
+    Amount_AMH = models.CharField(max_length=50, null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
-    Measure = models.CharField(max_length=50, null=True)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     
