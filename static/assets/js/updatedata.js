@@ -10,7 +10,7 @@ let updateCategory = () => {
         })
         .then((data) => {
             // Get all elements with the name "EditCategory"
-            let btnEditCategory = document.getElementsByName("EditCategory");
+            let btnEditCategory = document.querySelectorAll("[name='EditCategory']");
 
             // Add click event listener to each "EditCategory" button
             btnEditCategory.forEach((editCategory) => {
@@ -34,7 +34,7 @@ let updateCategory = () => {
                         nameEnglish.val(selectedCategory.name_ENG);
                         nameAmharic.val(selectedCategory.name_AMH);
 
-                       // Clear existing options
+                        // Clear existing options
                         $("#id_topic").empty();
 
                         // Append new options
@@ -51,8 +51,6 @@ let updateCategory = () => {
                         let selectedOptions = $("#id_topic option:selected").map(function () {
                             return { id: this.value, text: $(this).text() };
                         }).get();
-                        console.log('Selected topics:', selectedOptions);
-
 
                         // Set the category ID in a hidden field for form submission
                         $("#id_catagory_id").val(categoryId);
@@ -67,8 +65,12 @@ let updateCategory = () => {
         });
 };
 
+// Call the function when the document is ready
+document.addEventListener("DOMContentLoaded", updateCategory);
+
+
 // Function to update topic information
-let updatetopic = () => {
+let updateTopic = () => {
     // Fetch topic data from the server
     fetch("/user-admin/json-filter-topic/")
         .then((response) => {
@@ -88,19 +90,19 @@ let updatetopic = () => {
                     let topicId = edittopic.id;
 
                     // Select relevant form elements using jQuery
-                    let nameEnglish = $("#form_topic_edit #id_title_ENG");
-                    let nameAmharic = $("#form_topic_edit #id_title_AMH");
+                    let titleEnglish = $("#form_topic_edit #id_title_ENG");
+                    let titleAmharic = $("#form_topic_edit #id_title_AMH");
 
                     // Find the selected topic in the fetched data
-                    let selectedtopic = data.topics.find(
-                        (cat) => String(cat.id) === String(topicId)
+                    let selectedTopic = data.topics.find(
+                        (topic) => String(topic.id) === String(topicId)
                     );
 
                     // Check if all necessary elements and data are available
-                    if (nameEnglish && nameAmharic  && selectedtopic) {
+                    if (titleEnglish && titleAmharic && selectedTopic) {
                         // Populate form fields with selected topic data
-                        nameEnglish.val(selectedtopic.title_ENG);
-                        nameAmharic.val(selectedtopic.title_AMH);
+                        titleEnglish.val(selectedTopic.title_ENG);
+                        titleAmharic.val(selectedTopic.title_AMH);
 
                         // Set the topic ID in a hidden field for form submission
                         $("#id_topic_id").val(topicId);
@@ -114,18 +116,15 @@ let updatetopic = () => {
             console.error("Fetch error:", error);
         });
 };
+// Call the function when the document is ready
+document.addEventListener("DOMContentLoaded", updateTopic);
 
-// Execute the update functions when the document is ready
-$(document).ready(function () {
-    console.log('document is ready');
-    let parentContainer = document.querySelector("#example");
-        //Call After table paginator is Changed
-        parentContainer.addEventListener("click", (event) => {
-            ////Check Table is Changed
-            if (event.target.classList.contains("paginate_button")) {
-              //Edit Indicator re-initializing
-              updatetopic();
-              updateCategory();
-            }
-        });
-});
+let parentContainer = document.querySelector("#table-contain");
+//Call After table paginator is Changed
+    parentContainer.addEventListener("click", (event) => {
+    console.log('hello')
+    //Check Table is Changed
+        updateTopic();
+        updateCategory();
+    });
+

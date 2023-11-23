@@ -14,21 +14,61 @@ from TimeSeriesBase import models
 
 def index(request):
     return render(request, 'user-admin/index.html')
+def indicator_list(request, pk):
+    category = Category.objects.get(pk = pk)
+    indicator_list = Indicator.objects.filter(for_category = category)
+    form = IndicatorForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            title_ENG = form.cleaned_data['title_ENG']
+            title_AMH = form.cleaned_data['title_AMH']
+            indicator_id = request.POST.get('indicator_Id')
 
+            
+            indicator_obj = Indicator.objects.get(id = indicator_id)
+            indicator_obj.title_AMH = title_AMH
+            indicator_obj.title_ENG = title_ENG
+            indicator_obj.save()
+            messages.success(request, 'Successfully Updated')
+        else:
+            messages.error(request, 'Please Try again! ')
+
+    context = {
+        'indicators' : indicator_list,
+        'category' : category,
+        'form' : form,
+    }
+    return render(request, 'user-admin/indicators.html', context)
+    
 #Category
-def category(request):
+def category(request, category_id=None):
     catagory = Category.objects.all()
     
-    form = catagoryForm(request.POST or None)
     if request.method == 'POST':
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            form= catagoryForm()
-            messages.success(request, "catagory has been successfully Added!")
+        if 'catagory_Id' in request.POST:
+            # Editing an existing category
+            category_instance = get_object_or_404(Category, id=request.POST['catagory_Id'])
+            form = catagoryForm(request.POST, instance=category_instance)
         else:
-            messages.error(request, "Value Exist or Please Try again!")
+            # Adding a new category
+            form = catagoryForm(request.POST)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category has been successfully added/updated!")
+            return redirect('user-admin-category')
+
+        messages.error(request, "Value exists or please try again!")
+
+    else:
+        # GET request or form is not valid, display the form
+        if category_id:
+            # Editing an existing category, populate the form with existing data
+            category_instance = get_object_or_404(Category, id=category_id)
+            form = catagoryForm(instance=category_instance)
+        else:
+            # Adding a new category
+            form = catagoryForm()
             
     context = {
         'form' : form,
@@ -67,23 +107,6 @@ def delete_category(request, pk):
     
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
-
-# views.py
-from django.http import JsonResponse
-
-def update_category(request, category_id):
-    category = get_object_or_404(Category, pk=category_id)
-
-    if request.method == 'POST':
-        form = catagoryForm(request.POST, instance=category)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    else:
-        form = catagoryForm(instance=category)
-        return render(request, 'categories.html', {'form': form, 'category': category})
 
 
 #JSON
@@ -488,18 +511,20 @@ def delete_source(request,pk):
 
 def topic(request, topic_id=None):
     topics = Topic.objects.all()
-    
-    # Initialize form without data
-    form = TopicForm()
 
     # If topic_id is provided, it's an update operation
     if topic_id:
         topic_instance = get_object_or_404(Topic, pk=topic_id)
-        form = TopicForm(instance=topic_instance)
+    else:
+        # If it's not an update operation, check if the topic_id is present in the POST data
+        topic_instance = None
+        if 'topic_Id' in request.POST:
+            topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
+
+    # Initialize form with or without data
+    form = TopicForm(request.POST or None, instance=topic_instance)
 
     if request.method == 'POST':
-        form = TopicForm(request.POST, instance=topic_instance if topic_id else None)
-
         if form.is_valid():
             obj = form.save()
             messages.success(request, "Topic has been successfully added/updated!")
@@ -511,6 +536,7 @@ def topic(request, topic_id=None):
 
     context = {'form': form, 'topics': topics, 'topic_id': topic_id}
     return render(request, 'user-admin/topic.html', context=context)
+
 
 #JSON
 def json_filter_topic(request):
