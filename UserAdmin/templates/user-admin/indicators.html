@@ -87,20 +87,19 @@
           </div>
         </div>
 
-          <!-- Add Sub Indicator  -->
-  <div class="modal fade" id="addIndicatorModal" tabindex="-1" aria-labelledby="addIndicatorModalLabel"
+          <!-- Add New Indicator  -->
+  <div class="modal fade" id="addNewIndicatorModal" tabindex="-1" aria-labelledby="addNewIndicatorModalLabel"
   aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addIndicatorModalLabel">Add New Sub-Indicator</h5>
+        <h5 class="modal-title" id="addNewIndicatorModalLabel">Add New Indicator</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form name="formAddIndicator" method="post" id="formAddIndicator" >
         {% csrf_token %}
         <div class="modal-body">
-          <input type="number" name="addNewIndicator" id="addNewIndicatorId" style="display: none;">
-          {{indicator_form.as_p}}
+          {{add_indicator.as_p}}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -208,7 +207,7 @@
                   type="button"
                   class="btn btn-primary mb-2"
                   data-bs-toggle="modal"
-                  data-bs-target="#newDataAdd"
+                  data-bs-target="#addNewIndicatorModal"
                   data-bs-whatever="@mdo"
                 >
                   + Add New Indicator
