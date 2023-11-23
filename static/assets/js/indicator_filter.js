@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
   let filterIndicator = () => {
     fetch("/user-admin/json-filter-indicator/")
@@ -21,9 +20,11 @@ $(document).ready(function () {
                 (indicator) => String(indicator.id) == String(indicatorId)
               );
               let selectCategory = data.categories.find(
-                (cat) => String(cat.id) == String(selectedIndicator.for_category_id)
+                (cat) =>
+                  String(cat.id) == String(selectedIndicator.for_category_id)
               );
-              if (selectedIndicator.title_AMH == null) selectedIndicator.title_AmH = "";
+              if (selectedIndicator.title_AMH == null)
+                selectedIndicator.title_AmH = "";
               titleEnglish.value = selectedIndicator.title_ENG;
               titleAmharic.value = selectedIndicator.title_AMH;
               category.value = selectCategory.id;
@@ -32,9 +33,8 @@ $(document).ready(function () {
           });
         };
 
-
         //Remove Indicators Function
-        let removeIndicatorModal = () =>{
+        let removeIndicatorModal = () => {
           let btnDelete = document.getElementsByName("btnDeleteIndicator");
           btnDelete.forEach((deleteIndicator) => {
             deleteIndicator.addEventListener("click", () => {
@@ -47,26 +47,22 @@ $(document).ready(function () {
               console.log(approveAnchor);
             });
           });
-        }
+        };
 
         //Call for First Time
-        editIndicatorModal()
-        removeIndicatorModal()
-
+        editIndicatorModal();
+        removeIndicatorModal();
 
         //Call After table paginator is Changed
         parentContainer.addEventListener("click", (event) => {
           ////Check Table is Changed
           if (event.target.classList.contains("paginate_button")) {
-            //Edit Indicator re-initializing 
-            editIndicatorModal()
-            //Remove Indicator re-initializing 
-            removeIndicatorModal()
+            //Edit Indicator re-initializing
+            editIndicatorModal();
+            //Remove Indicator re-initializing
+            removeIndicatorModal();
           }
         });
-
-
-       
 
         selectTopic = data.topics.map(
           ({ title_ENG, title_AMH, id }) =>
