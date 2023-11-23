@@ -340,26 +340,17 @@ def delete_location(request,pk):
 
 #Indicator 
 def indicator(request):
-    form = IndicatorForm(request.POST or None)
-    indicator_list = Indicator.objects.all()
-    if request.method == "POST":
-        if form.is_valid():
-            title_ENG = form.cleaned_data['title_ENG']
-            title_AMH = form.cleaned_data['title_AMH']
-            indicator_id = request.POST.get('indicator_Id')
-
-            
-            indicator_obj = Indicator.objects.get(id = indicator_id)
-            indicator_obj.title_AMH = title_AMH
-            indicator_obj.title_ENG = title_ENG
-            indicator_obj.save()
-            return JsonResponse({'success': True})
+    add_indicator = IndicatorForm(request.POST or None)
+    
+    if request.method == 'POST':
+        if add_indicator.is_valid():
+            add_indicator.save()
+            messages.success(request, 'Successfully Added!')
         else:
-            return JsonResponse({'success': False, 'errors': form.errors})
+            messages.error(request, 'Please Try Again!')
+    
     context = {
-        'form' : form,
-        'indicator' : indicator_list,
-
+        'add_indicator' : add_indicator,
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -393,41 +384,45 @@ def indicator_list(request, pk):
 def indicator_detail(request, pk):
     indicator = Indicator.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
-    form = IndicatorForm(request.POST or None, prefix='form')
-    indicator_form = SubIndicatorForm(request.POST or None, prefix='indicator_form')
-    if request.method == "POST":
-        if form.is_valid():
-            title_ENG = form.cleaned_data['title_ENG']
-            title_AMH = form.cleaned_data['title_AMH']
+    editIndicator = IndicatorForm(request.POST or None)
+    addIndicator  = SubIndicatorForm(request.POST or None)
+
+    if request.method == 'POST':
+        if editIndicator.is_valid():
             indicator_id = request.POST.get('indicator_Id')
-
-            
-            indicator_obj = Indicator.objects.get(id = indicator_id)
-            indicator_obj.title_AMH = title_AMH
-            indicator_obj.title_ENG = title_ENG
-            indicator_obj.save()
-            messages.success(request, 'Successfully Updated')
-
-        if indicator_form.is_valid():
-            indicator_id = request.POST.get('addNewIndicator')
-            indicator = Indicator.objects.get(pk = indicator_id)
-
-            new_indicator = Indicator()
-            new_indicator.title_ENG = indicator_form.cleaned_data['title_ENG']
-            new_indicator.title_AMH = indicator_form.cleaned_data['title_AMH']
-            new_indicator.parent = indicator
-            new_indicator.save()
-            messages.success(request, 'Successfully Added!')
-        else:
-            messages.error(request, 'Please Try again! ')
-
+            indicator_title_AMH = editIndicator.cleaned_data['title_AMH']
+            indicator_title_ENG = editIndicator.cleaned_data['title_ENG']
+            try:
+                indicator_obj  = Indicator.objects.get(pk = indicator_id)
+                indicator_obj.title_AMH = indicator_title_AMH
+                indicator_obj.title_ENG = indicator_title_ENG
+                indicator_obj.save()
+                messages.success(request, 'Successfully Updated!')
+            except:
+                messages.error(request, 'Please Try Again!')
+        elif addIndicator.is_valid():
+            parent_id = request.POST.get('addNewIndicator')
+            indicator_title_AMH = addIndicator.cleaned_data['title_AMH_add']
+            indicator_title_ENG = addIndicator.cleaned_data['title_ENG_add']
+            try:
+                parent_obj = Indicator.objects.get(pk = parent_id)
+                new_indicator = Indicator()
+                new_indicator.title_AMH = indicator_title_AMH
+                new_indicator.title_ENG = indicator_title_ENG
+                new_indicator.parent = parent_obj
+                new_indicator.save()
+                messages.success(request, 'Successfully Added!')
+            except:
+                messages.error(request, 'Please Try Again!')
     context = {
         'indicators' : indicator_list,
         'category' : category,
-        'form' : form,
-        'indicator_form' : indicator_form
+        'editIndicator' : editIndicator,
+        'indicator' : indicator,
+        'addIndicator' : addIndicator
     }
-    return render(request, 'user-admin/indicators.html', context)
+    return render(request, 'user-admin/location_detail.html', context)
+
 
 def delete_indicator(request,pk):
     
@@ -452,8 +447,9 @@ def delete_indicator(request,pk):
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
 
-def profile(request):
-    return render(request, 'user-admin/profile.html')
+# @login_required
+# def profile(request):
+#     return render(request, 'user-admin/profile.html')
 
 
 #Source
@@ -683,13 +679,16 @@ def month(request):
 
 
 #User
-def users_list(request):
-     item2=CustomUser.objects.all()
-     count2=item2.count()
-     context={
-         'count2':count2
-     }
-     return render(request, 'user-admin/users_list.html',context)
+# @login_required
+# def users_list(request):
+#     return render(request, 'user-admin/users_list.html')
+# def users_list(request):
+#      item2=CustomUser.objects.all()
+#      count2=item2.count()
+#      context={
+#          'count2':count2
+#      }
+#      return render(request, 'user-admin/users_list.html',context)
  
 def recyclebin(request):
      return render(request, 'user-admin/recyclebin.html')

@@ -53,7 +53,7 @@ $(document).ready(function () {
         editIndicatorModal();
         removeIndicatorModal();
 
-        //Call After table paginator is Changed
+        //Call After table is Changed
         parentContainer.addEventListener("click", (event) => {
             //Edit Indicator re-initializing
             editIndicatorModal();
