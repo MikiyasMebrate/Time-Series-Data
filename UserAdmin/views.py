@@ -430,8 +430,8 @@ def measurement(request):
     return render(request, 'user-admin/measurement.html')
 
 # @login_required
-def profile(request):
-    return render(request, 'user-admin/profile.html')
+# def profile(request):
+#     return render(request, 'user-admin/profile.html')
 
 
 #Source
@@ -659,5 +659,15 @@ def month(request):
 
 #User
 # @login_required
-def users_list(request):
-    return render(request, 'user-admin/users_list.html')
+# def users_list(request):
+#     return render(request, 'user-admin/users_list.html')
+# def users_list(request):
+#      item2=CustomUser.objects.all()
+#      count2=item2.count()
+#      context={
+#          'count2':count2
+#      }
+#      return render(request, 'user-admin/users_list.html',context)
+ 
+def recyclebin(request):
+     return render(request, 'user-admin/recyclebin.html')
