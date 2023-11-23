@@ -3,15 +3,22 @@ let filterData = () => {
     .then((response) => response.json())
     .then((data) => {
       selectTopic = data.topics.map(
-        ({ title_ENG, title_AMH, id }) =>
-          `
-                  <li>
-                  <div class="flex-grow-2">
-                     <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                      <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                    </div>
-                </li>
-                  `
+        ({ title_ENG, title_AMH, id, is_deleted }) =>{
+          if(is_deleted){
+            return(null)
+          }else{
+            return(
+              `
+              <li>
+              <div class="flex-grow-2">
+                 <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                  <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                </div>
+            </li>
+              `
+            )
+          }
+        }
       );
 
       //apply Button
@@ -71,7 +78,7 @@ let filterData = () => {
         .appendTo("#example1_wrapper .col-md-6:eq(0)");
 
           let selectCategory = data.categories.map(
-            ({ name_ENG, name_AMH, id, topics }) => {
+            ({ name_ENG, name_AMH, id, topics, is_deleted }) => {
               
               let tID = null
               try{
@@ -81,7 +88,10 @@ let filterData = () => {
                  tID = null
               }
               if (String(tID) === String(selectedTopicId)) {
-                return `
+                if(is_deleted){
+                  return null
+                }else{
+                  return( `
                         <li>
                         <div class="flex-grow-2 ">
                            <div class="row ">
@@ -93,7 +103,8 @@ let filterData = () => {
                              </div>
                           </div>
                       </li>
-                        `;
+                        `);
+                }
               }
             }
           );
@@ -109,8 +120,8 @@ let filterData = () => {
               displayApplyButton.style.display = "none";
               let selectedCategoryId = eventCategory.target.value;
               selectIndicator = data.indicators.map(
-                ({ title_ENG, title_AMH, id, for_category_id }) => {
-                  if (String(for_category_id) === String(selectedCategoryId)) {
+                ({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+                  if (String(for_category_id) === String(selectedCategoryId) && is_deleted == false) {
                     let title_amharic = "";
 
                     if (!title_AMH == null) {
@@ -534,8 +545,8 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id }) => {
-                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id))) {
+                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted == false) {
                       let title_amharic = "";
                       if (!title_AMH === null)
                         title_amharic = " - " + title_AMH;
@@ -579,7 +590,7 @@ let filterData = () => {
                         let status = false;
 
                         for (i of data.indicators) {
-                          if (String(i.parent_id) === String(parent)) {
+                          if (String(i.parent_id) === String(parent) && i.is_deleted == false) {
                             status = true;
                             //Table Row Start
                             table += `
@@ -624,7 +635,7 @@ let filterData = () => {
 
                       //Child Lists
                       for (let indicator of data.indicators) {
-                        if (String(indicator.parent_id) == String(id)) {
+                        if (String(indicator.parent_id) == String(id) && indicator.is_deleted == false) {
                           test = true;
                           //li.push(`<optgroup label="${title_ENG}">`)
 

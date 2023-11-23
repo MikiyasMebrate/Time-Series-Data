@@ -56,7 +56,26 @@
       </div>
     </div>
     <!--User Registration Modal End-->
-
+    <div class="modal fade" id="removeSourceModal" tabindex="-1" aria-labelledby="removeSourceModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="removeSourceModalLabel">Remove Indicator</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form name="removeSource" method="post">
+            {% csrf_token %}
+            <div class="modal-body text-center fs-4"> 
+              <p> Are you sure you want to remove? </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              <a href="#" id="forRemoveSource" class="btn btn-danger">Yes</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     {% include 'user-admin/include/navbar.html'%}
     {% include 'user-admin/include/sidebar.html'%}
     <!--Body Start-->
@@ -101,21 +120,28 @@
                       <th>Name English</th>
                       <th>Name Amharic</th>
                       <th>Created Date</th>
-                      <th>Action</th>
+                      <th class='text-center'>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for source in sources%}
+                    {% if source.is_deleted == False  %}
                     <tr>
                       <td> {{source.title_ENG }}</td>
                       <td> {{source.title_AMH }}</td>
                       <td> {{source.created | date:'F d, Y' }}</td>
                       <td>
-                        <div class="d-flex justify-content-around text-center">
+                        <div class="d-flex justify-content-center text-center">
                           <a href="{% url 'user-source-detail' source.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                          <button type="button" id={{source.id}}  name='deleteSource'class="btn  m-0 p-0 text-center" data-bs-toggle="modal" data-bs-target="#removeSourceModal"
+                          data-bs-whatever="@mdo" >
+                        <i class="fas ms-3  text-danger fa-trash"></i>
+                        </button>
                         </div>
                       </td>
                     </tr>
+                    {% endif %}
+
                     {% endfor %}
                   </tbody>
                 </table>
@@ -129,6 +155,17 @@
     <!--Body End-->
     {% include 'user-admin/include/footer.html'%}
     {% include 'user-admin/include/footer_js.html' %}
+    <script>
+      //remove Indicator
+      let btnDelete = document.getElementsByName("deleteSource");
+      btnDelete.forEach((deletSource)=>{
+        deletSource.addEventListener('click', ()=>{
+          let approveAnchor = document.getElementById('forRemoveSource')
+          console.log(deletSource.id)
+          approveAnchor.setAttribute('href', `/user-admin/source-delete/${deletSource.id}`)
+        })
+      })
+</script>
   </body>
 </html>
 

@@ -10,14 +10,17 @@ class Topic(models.Model):
     user = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title_ENG
+    
 
 class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
     name_AMH = models.CharField(max_length=50)
     topic = models.ManyToManyField(Topic)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name_ENG
@@ -28,6 +31,7 @@ class Indicator(models.Model):
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
+    is_deleted = models.BooleanField(default = False)
       
 
     def str(self):
@@ -75,6 +79,7 @@ class DataPoint(models.Model):
     months = models.ManyToManyField('Month', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    is_deleted =models.BooleanField(default=True)
     
     
     class Meta:
@@ -133,19 +138,23 @@ class DataValue(models.Model):
     for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
     for_source = models.ForeignKey("Source",on_delete=models.SET_NULL  ,blank=True, null=True,)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
+    is_deleted = models.BooleanField(default = False)
 
     def calculate_parent_value(self):
         try: 
             main_parent = self.for_indicator.parent
             try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
             except:parent_data_value = None
-            child_indicators = Indicator.objects.filter(parent = main_parent)
+            child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
            
             sum = 0
             for child in child_indicators:
                 try: 
                     child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
-                    sum  = sum + int(child_data_value.value)
+                    if(child_data_value.is_deleted == False):
+                        sum  = sum + int(child_data_value.value)
+                    else:
+                        None
                 except: 
                     None
                 
@@ -175,6 +184,7 @@ class Source(models.Model):
     title_AMH = models.CharField(max_length=50)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=True)
     
     def __str__(self):
         return self.title_ENG

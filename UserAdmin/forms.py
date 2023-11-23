@@ -30,7 +30,8 @@ class catagoryForm(forms.ModelForm):
               'topic' : forms.SelectMultiple(attrs={
                 'class' : 'select2 form-select',
                 'multiple': "multiple",
-                'data-placeholder' : "Select a Topic"
+                'data-placeholder' : "Select a Topic",
+                'id': 'id_topic'
             })        
         }
 
@@ -69,7 +70,7 @@ class SubIndicatorForm(forms.ModelForm):
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = '__all__'
+        fields = ('title_ENG', 'title_AMH')
 
         widgets = {
             'title_ENG': forms.TextInput(attrs={
@@ -77,11 +78,6 @@ class TopicForm(forms.ModelForm):
             }),
             'title_AMH': forms.TextInput(attrs={
                 'class': 'form-control'
-            }),
-            'for_location': forms.SelectMultiple(attrs={
-                'class' : 'select2 form-control',
-                'multiple': "multiple",
-                'data-placeholder' : "Select a State"
             })
         }
 

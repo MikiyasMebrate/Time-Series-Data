@@ -5,17 +5,17 @@ from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
+from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-# Create your views here.
-# @login_required
+from TimeSeriesBase import models
+
+
 def index(request):
     return render(request, 'user-admin/index.html')
 
 #Category
-
-# @login_required
 def category(request):
     catagory = Category.objects.all()
     
@@ -36,7 +36,6 @@ def category(request):
     }
     return render(request, 'user-admin/categories.html',context=context)
 
-# @login_required
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
@@ -56,16 +55,36 @@ def catagory_detail(request, pk):
     }  
     return render(request, 'user-admin/catagories_detail.html', context)
 
-# @login_required
-def delete_category(request,pk):
-    catagorys = Category.objects.get(pk=pk)
-    if catagorys.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-category')
+def delete_category(request, pk):
+    category = Category.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    category.is_deleted = True
+    category.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
+
+# views.py
+from django.http import JsonResponse
+
+def update_category(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
+
+    if request.method == 'POST':
+        form = catagoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
     else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-category')
-  
+        form = catagoryForm(instance=category)
+        return render(request, 'categories.html', {'form': form, 'category': category})
+
 
 #JSON
 def filter_indicator_json(request):
@@ -83,7 +102,7 @@ def filter_indicator_json(request):
     }
 
     return JsonResponse(context)
-# @login_required  JSON
+
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -113,11 +132,7 @@ def filter_indicator(request, pk):
     }
     
     return JsonResponse(context)
-    
-    
-   
-#Data List    JSON
-# @login_required
+      
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
@@ -147,9 +162,9 @@ def json(request):
     }
     return(JsonResponse(context))
 
- 
+    
 
-# @login_required
+#Data List
 def data_list(request):
     form = dataListForm(request.POST or None)
     if request.method == 'POST':
@@ -181,7 +196,6 @@ def data_list(request):
     }
     return render(request, 'user-admin/data_list_view.html', context)
 
-# @login_required
 def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
     form_update = ValueForm2(request.POST or None)
@@ -236,9 +250,7 @@ def data_list_detail(request, pk):
                 None
         
 
-                
-            
-            
+                       
     context = {
         'form' : form,
         'form_update' : form_update,
@@ -249,8 +261,6 @@ def data_list_detail(request, pk):
 
 
 #Location
-# @login_required
-
 def location(request):
     
     location = Location.objects.all()
@@ -272,7 +282,6 @@ def location(request):
     }
     return render(request, 'user-admin/location.html', context)
 
-# @login_required
 def location_detail(request, pk):
     location = Location.objects.get(pk=pk)
     form = LocationForm(request.POST or None, instance=location)
@@ -292,22 +301,24 @@ def location_detail(request, pk):
     }  
     return render(request, 'user-admin/location_detail.html', context)
 
-# @login_required
 def delete_location(request,pk):
     location = Location.objects.get(pk=pk)
-    if location.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-location')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    category.is_deleted = True
+    category.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
         
 
 #Indicator 
-# @login_required
 def indicator(request):
-    indicators = Indicator.objects.filter(parent = None)
     form = IndicatorForm(request.POST or None)
-    
+    indicator_list = Indicator.objects.all()
     if request.method == "POST":
         if form.is_valid():
             title_ENG = form.cleaned_data['title_ENG']
@@ -324,145 +335,106 @@ def indicator(request):
             return JsonResponse({'success': False, 'errors': form.errors})
     context = {
         'form' : form,
-        'indicators' : indicators
+        'indicator' : indicator_list,
+
     }
     return render(request, 'user-admin/indicators.html', context)
 
-# @login_required
-def get_indicator_children_recursive(indicator):
-    children = []
-    for child in Indicator.objects.filter(parent=indicator):
-        child_data = {
-            'pk': child.pk,
-            'title_ENG': child.title_ENG,
-            'title_AMH': child.title_AMH,
-            'created_at': child.created_at,
-            'edit_url': reverse('user-admin-indicators-detail', args=[child.pk]),
-        }
-        grandchildren = get_indicator_children_recursive(child)
-        if grandchildren:
-            child_data['children'] = grandchildren
-        children.append(child_data)
-    return children
 
-# @login_required
-def indicator_sub_lists(request, pk):
-    single_indicator = get_object_or_404(Indicator, pk=pk)
-    sub_indicators = Indicator.objects.filter(parent=single_indicator)
-    indicators = Indicator.objects.filter(parent=None)
-    indicator_list_all = Indicator.objects.all()
-
+def indicator_list(request, pk):
+    category = Category.objects.get(pk = pk)
+    indicator_list = Indicator.objects.filter(for_category = category)
+    form = IndicatorForm(request.POST or None)
     if request.method == "POST":
-        form = IndicatorForm(request.POST)
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.parent = single_indicator
-            obj.save()
-            form.save_m2m()
-            form = IndicatorForm()
-            messages.success(request, "Indicator has been successfully added")
-        else:
-            messages.error(request, "Value Exist or Please try again!")
-    else:
-        form = IndicatorForm()
+            title_ENG = form.cleaned_data['title_ENG']
+            title_AMH = form.cleaned_data['title_AMH']
+            indicator_id = request.POST.get('indicator_Id')
 
-    immediate_children = get_indicator_children_recursive(single_indicator)
+            
+            indicator_obj = Indicator.objects.get(id = indicator_id)
+            indicator_obj.title_AMH = title_AMH
+            indicator_obj.title_ENG = title_ENG
+            indicator_obj.save()
+            messages.success(request, 'Successfully Updated')
+        else:
+            messages.error(request, 'Please Try again! ')
+
     context = {
-        'form': form,
-        'subIndicator': immediate_children,
-        'indicators': indicators,
-        'parent_indicator_pk': pk,
-        'indicator_list_all': indicator_list_all,
-        'single_indicator': single_indicator,
+        'indicators' : indicator_list,
+        'category' : category,
+        'form' : form,
     }
     return render(request, 'user-admin/indicators.html', context)
 
-# @login_required
 def indicator_detail(request, pk):
-    single_indicator = Indicator.objects.get(pk=pk)
-    sub_indicators = Indicator.objects.filter(parent__pk=pk)
-    indicator_list_all = Indicator.objects.all()
-    form_add = SubIndicatorForm(request.POST or None, prefix='form_add')
-    form = IndicatorForm(request.POST or None, instance=single_indicator, prefix='form')
-    
-    if request.method == 'POST':
+    indicator = Indicator.objects.get(pk = pk)
+    indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
+    form = IndicatorForm(request.POST or None, prefix='form')
+    indicator_form = SubIndicatorForm(request.POST or None, prefix='indicator_form')
+    if request.method == "POST":
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            form = IndicatorForm(request.POST or None, instance=single_indicator)
-            messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-indicators')
-        elif form_add.is_valid():
-            obj = form_add.save(commit=False)
-            obj.parent = single_indicator
-            obj.save()
-            form_add.save_m2m()
-            form = IndicatorForm(request.POST or None, instance=single_indicator)
-            form_add = SubIndicatorForm()
-            messages.success(request, 'Successfully Added') 
-            return redirect(request.path_info)
-        else:
-            messages.error(request, 'Value Exist or Please Try Again!')
-    context = {      
-        'form' : form,
-        'form_add' : form_add,
-        'subIndicator' : sub_indicators,
-        'indicator_list_all': indicator_list_all,
-        'single_indicator' : single_indicator,
-    }
-    return render(request, 'user-admin/indicator_detail.html', context)
+            title_ENG = form.cleaned_data['title_ENG']
+            title_AMH = form.cleaned_data['title_AMH']
+            indicator_id = request.POST.get('indicator_Id')
 
-# @login_required
-def indicator_detail_add(request, pk, mainParent ):
-    indicator = Indicator.objects.get(pk=pk)
-    form_add = SubIndicatorForm(request.POST or None)
-
-    if request.method == 'POST':
-        if form_add.is_valid():
-            obj = form_add.save(commit=False)
-            obj.parent = indicator
-            obj.save()
-            form_add.save_m2m()
-            form_add = SubIndicatorForm()
-            messages.success(request, 'Successfully Added') 
-            redirect_url = reverse('user-admin-indicator-sub', kwargs={'pk': mainParent})
-            return redirect(redirect_url)
-      
-        else:
-            messages.error(request, 'Value Exist or Please Try Again!')
             
-    
-    context = {
-        'form' : form_add,
-    }
-    return render(request, 'user-admin/sub_indicator_add.html', context)
+            indicator_obj = Indicator.objects.get(id = indicator_id)
+            indicator_obj.title_AMH = title_AMH
+            indicator_obj.title_ENG = title_ENG
+            indicator_obj.save()
+            messages.success(request, 'Successfully Updated')
 
-# @login_required
+        if indicator_form.is_valid():
+            indicator_id = request.POST.get('addNewIndicator')
+            indicator = Indicator.objects.get(pk = indicator_id)
+
+            new_indicator = Indicator()
+            new_indicator.title_ENG = indicator_form.cleaned_data['title_ENG']
+            new_indicator.title_AMH = indicator_form.cleaned_data['title_AMH']
+            new_indicator.parent = indicator
+            new_indicator.save()
+            messages.success(request, 'Successfully Added!')
+        else:
+            messages.error(request, 'Please Try again! ')
+
+    context = {
+        'indicators' : indicator_list,
+        'category' : category,
+        'form' : form,
+        'indicator_form' : indicator_form
+    }
+    return render(request, 'user-admin/indicators.html', context)
+
 def delete_indicator(request,pk):
+    
     indicator = Indicator.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
-    
-    if indicator.delete():
-        messages.success(request, "Successfully Removed!")
-        return HttpResponseRedirect(previous_page)
-    else:
-        messages.error(request, "Please Try again later!")
-  
-   
-    
-    
-# @login_required
+    indicator.is_deleted = True
+    indicator.save()
+
+    years = DataPoint.objects.all()
+    for year in  years:
+        try: 
+           deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
+           deleted_indicator.is_deleted = True
+           deleted_indicator.save()
+        except:
+            None
+    messages.success(request, "Successfully Removed!")
+    return HttpResponseRedirect(previous_page)
+
+       
+
 def measurement(request):
     return render(request, 'user-admin/measurement.html')
 
 # @login_required
-# def profile(request):
-#     return render(request, 'user-admin/profile.html')
+def profile(request):
+    return render(request, 'user-admin/profile.html')
 
 
 #Source
-# @login_required
 def source(request):
     sources = Source.objects.all()
 
@@ -482,7 +454,6 @@ def source(request):
     }
     return render(request, 'user-admin/source.html',context=context)
 
-# @login_required
 def source_detail(request, pk):
     source = Source.objects.get(pk=pk)
     
@@ -503,39 +474,65 @@ def source_detail(request, pk):
     }  
     return render(request, 'user-admin/source_detail.html', context)
 
-# @login_required
 def delete_source(request,pk):
     source = Source.objects.get(pk=pk)
-    if source.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-source')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-source')
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    source.is_deleted = True
+    source.save()
 
-#topic
-# @login_required
-def topic(request):
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
+
+def topic(request, topic_id=None):
     topics = Topic.objects.all()
+    
+    # Initialize form without data
+    form = TopicForm()
 
-    form = TopicForm(request.POST or None)
+    # If topic_id is provided, it's an update operation
+    if topic_id:
+        topic_instance = get_object_or_404(Topic, pk=topic_id)
+        form = TopicForm(instance=topic_instance)
+
     if request.method == 'POST':
+        form = TopicForm(request.POST, instance=topic_instance if topic_id else None)
+
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            form= TopicForm()
-            messages.success(request, "Topic has been successfully Added!")
+            obj = form.save()
+            messages.success(request, "Topic has been successfully added/updated!")
+
+            # Redirect to the same page if it's a new topic, otherwise, redirect with the topic_id
+            return redirect('user-admin-topic') if not topic_id else redirect('user-admin-topic-update', topic_id=obj.id)
         else:
-            messages.error(request, "Value Exist or Please Try again!")
+            messages.error(request, "Value exists or please try again!")
 
-    context = {
-        'form' : form,
-        'topics' : topics
-    }
-    return render(request, 'user-admin/topic.html',context=context)
+    context = {'form': form, 'topics': topics, 'topic_id': topic_id}
+    return render(request, 'user-admin/topic.html', context=context)
 
-# @login_required
+#JSON
+def json_filter_topic(request):
+    topics = Topic.objects.all()
+    
+    # Creating a list of dictionaries representing each topic
+    topics_data = []
+    for topic in topics:
+        topics_data.append({
+            'id': topic.id,
+            'title_ENG': topic.title_ENG,
+            'title_AMH': topic.title_AMH,
+            'user': topic.user.username if topic.user else None,
+            'updated': topic.updated.isoformat(),
+            'created': topic.created.isoformat(),
+            'is_deleted': topic.is_deleted,
+        })
+
+    # Returning the list as JSON
+    return JsonResponse({'topics': topics_data})
+
 def topic_detail(request, pk):
     topic = Topic.objects.get(pk=pk)
     form = TopicForm(request.POST or None, instance=topic)
@@ -555,19 +552,21 @@ def topic_detail(request, pk):
     }  
     return render(request, 'user-admin/topic_detail.html', context)
 
-# @login_required
 def delete_topic(request,pk):
     topic = Topic.objects.get(pk=pk)
-    if topic.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-topic')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
-        return redirect('user-admin-topic')
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    topic.is_deleted = True
+    topic.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
  
  
 #Data Point 
-# @login_required
 def data_point(request):
     data_points = DataPoint.objects.all()
     form = DataPointForm(request.POST or None)
@@ -600,7 +599,6 @@ def data_point(request):
     }
     return render(request, 'user-admin/data_point.html', context)     
        
-# @login_required
 def data_point_detail(request, pk):
     data_point = DataPoint.objects.get(pk = pk) 
     form = DataPointForm(request.POST or None, instance=data_point)
@@ -635,19 +633,22 @@ def data_point_detail(request, pk):
     
     return render(request, 'user-admin/data_point_detail.html', context )
 
-# @login_required
-def data_point_delate(request, pk):
+def delete_data_point(request, pk):
     data_point = DataPoint.objects.get(pk=pk)
-    if data_point.delete():
-        messages.success(request, "Successfully Deleted!")
-        return redirect('user-admin-data-point')
-    else:
-        messages.error(request, "Value Exist or Please Try again!")
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    data_point.is_deleted = True
+    data_point.save()
+
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
     
 
 
 #Month
-# @login_required
 def month(request):
     months = Month.objects.all()
     context = {
@@ -658,5 +659,5 @@ def month(request):
 
 #User
 # @login_required
-# def users_list(request):
-#     return render(request, 'user-admin/users_list.html')
+def users_list(request):
+    return render(request, 'user-admin/users_list.html')

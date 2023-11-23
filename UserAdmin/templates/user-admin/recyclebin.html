@@ -1,0 +1,275 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DPMEs</title>
+
+    {% include 'user-admin/include/head.html'%}
+  </head>
+
+  <body class="hold-transition sidebar-mini layout-fixed">
+  
+    {% include 'user-admin/include/navbar.html'%} 
+    {% include 'user-admin/include/sidebar.html'%}
+    <!--Body Start-->
+    <div class="content-wrapper">
+      {% if messages %}
+      {% include 'user-admin/include/messages.html'%}
+      {% endif %}
+      <section class="content">
+<div class="container">
+    <section class="content">
+        <div class="container-fluid">
+          <!--Card Start-->
+         
+          <!--Card End-->
+        </div>
+      </section>
+    </div>
+
+      <div class="card">
+        <hr>
+        <ul class="nav nav-pills ps-5 pt-3 pb-3">
+          <li class="nav-item active">
+            <a
+              class="nav-link active"
+              href="#activity"
+              data-toggle="tab"
+              ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Topic</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#settings" data-toggle="tab"
+              ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Indicators</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#changePassword" data-toggle="tab"
+              ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a
+            >
+          </li>
+        </ul>
+        <hr>
+        <div class="card-body">
+          <div class="tab-content">
+            <!--History Detail Start-->
+            <div class="active tab-pane" id="activity">
+              <!--topic table starts-->
+              <div class="content-header">
+                <div class="container-fluid">
+                  <div class="row mb-2">
+                    <div class="col-sm-6">
+                      <h1 class="m-0">Topics Lists</h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--Title End-->
+        
+              <section class="content">
+                <div class="container-fluid">
+                  <!--Add Topic Button Start-->
+                  <div class="text-end">
+                   
+                  </div>
+                  <!--Add Topic Button End-->
+                  <!--Topic Table List Start-->
+                  <div class="row justify-content-center">
+                    <div class="col-md-12">
+                      <div class="table-responsive border p-3 shadow">
+                        <table id="example" class="table table-striped table-hover table-sm">
+                          <thead>
+                            <tr>
+                              <th>Name English</th>
+                              <th>Name Amharic</th>
+                              <th>Location</th>
+                              <th>Created Date</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for topic in topics %}
+                            <tr>
+                              <td>{{ topic.title_ENG }}</td>
+                              <td>{{ topic.title_AMH }}</td>
+                              <td>
+                                {% for location in topic.for_location.all %}
+                                  {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                              </td>
+                              <td>{{ topic.created|date:'F d, Y' }}</td>
+                              <td>
+                                <div class="d-flex justify-content-around text-center">
+                                  <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                                </div>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Topic Table List End-->
+                </div>
+              </section>
+              <!--topic end-->
+            </div>
+            <!--History Detail End-->
+
+            <!--Setting Detail Start-->
+            <div class="tab-pane" id="settings">
+                <div class="content-header">
+                    <div class="container-fluid">
+                      <div class="row mb-2">
+                        <div class="col-sm-6">
+                          <h1 class="m-0">indicators Lists</h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Title End-->
+            
+                  <section class="content">
+                    <div class="container-fluid">
+                      <!--Add Topic Button Start-->
+                      <div class="text-end">
+                       
+                      </div>
+                      <!--Add Topic Button End-->
+                      <!--Topic Table List Start-->
+                      <div class="row justify-content-center">
+                        <div class="col-md-12">
+                          <div class="table-responsive border p-3 shadow">
+                            <table id="example" class="table table-striped table-hover table-sm">
+                              <thead>
+                                <tr>
+                                  <th>Name English</th>
+                                  <th>Name Amharic</th>
+                                  <th>Location</th>
+                                  <th>Created Date</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for topic in topics %}
+                                <tr>
+                                  <td>{{ topic.title_ENG }}</td>
+                                  <td>{{ topic.title_AMH }}</td>
+                                  <td>
+                                    {% for location in topic.for_location.all %}
+                                      {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                  </td>
+                                  <td>{{ topic.created|date:'F d, Y' }}</td>
+                                  <td>
+                                    <div class="d-flex justify-content-around text-center">
+                                      <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Topic Table List End-->
+                    </div>
+                  </section>
+            </div>
+            <!--History Detail End-->
+
+            <!--Change Password Detail Start-->
+            <div class="tab-pane" id="changePassword">
+                <div class="content-header">
+                    <div class="container-fluid">
+                      <div class="row mb-2">
+                        <div class="col-sm-6">
+                          <h1 class="m-0">Categories Lists</h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Title End-->
+            
+                  <section class="content">
+                    <div class="container-fluid">
+                      <!--Add Topic Button Start-->
+                      <div class="text-end">
+                      
+                      </div>
+                      <!--Add Topic Button End-->
+                      <!--Topic Table List Start-->
+                      <div class="row justify-content-center">
+                        <div class="col-md-12">
+                          <div class="table-responsive border p-3 shadow">
+                            <table id="example" class="table table-striped table-hover table-sm">
+                              <thead>
+                                <tr>
+                                  <th>Name English</th>
+                                  <th>Name Amharic</th>
+                                  <th>Location</th>
+                                  <th>Created Date</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for topic in topics %}
+                                <tr>
+                                  <td>{{ topic.title_ENG }}</td>
+                                  <td>{{ topic.title_AMH }}</td>
+                                  <td>
+                                    {% for location in topic.for_location.all %}
+                                      {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                  </td>
+                                  <td>{{ topic.created|date:'F d, Y' }}</td>
+                                  <td>
+                                    <div class="d-flex justify-content-around text-center">
+                                      <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Topic Table List End-->
+                    </div>
+                  </section>
+            </div>
+            <!--Change Password Detail End-->
+          </div>
+        </div>
+      </div>
+      {%include 'includes/footer_js.html'%}
+
+
+</body>
+</html>
+
+      </section>
+
+      <!-- topic Start-->
+    
+
+       <!--topic End-->
+
+      <!--indictors Start-->
+     
+      <!--indictors End-->
+
+      <!--Categories Start-->
+   
+      <!--Categories End-->
+    </div>
+    <!--Body End-->
+    {% include 'user-admin/include/footer.html'%} 
+    {% include 'user-admin/include/footer_js.html'%}
+  </body>
+</html>

@@ -1,4 +1,8 @@
 {% load static %}
+<link
+href="  https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+rel="stylesheet"
+/>
 <!--Side NavBar Start-->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a href="index3.html" class="brand-link">
@@ -113,6 +117,7 @@
                 <p>Topic</p>
               </a>
             </li>
+           
           </ul>
         </li>
         {% comment %} <li class="nav-item">
@@ -121,6 +126,13 @@
             <p>Profile</p>
           </a>
         </li> {% endcomment %}
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'user-admin-recyclebin'%}" class="nav-link {% if request.path == '/user-admin/source/' %}active{% endif %}">
+            <span id="boot-icon" class="nav-icon fas fa-trash" style="font-size:25px"></span>
+            <p>Trash (Recyclebin)</p>
+          </a>
+        </li>
       </ul>
     </nav>
   </div>

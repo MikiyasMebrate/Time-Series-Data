@@ -19,14 +19,14 @@ fetch(url)
     </thead> 
     <tbody>`;
 
-    data.indicators.map(({ title_ENG, title_AMH, id, for_category }) => {
-      if (for_category != null) {
+    data.indicators.map(({ title_ENG, title_AMH, id, for_category, is_deleted}) => {
+      if (for_category != null && is_deleted == false) {
         let title_amharic = "";
         if (!title_AMH === null) title_amharic = " - " + title_AMH;
         //Table Row Start
         let checkParentHasChild = false;
         for (check of data.indicators) {
-          if (String(check.parent_id) === String(id)) {
+          if (String(check.parent_id) === String(id) && check.is_deleted == false) {
             checkParentHasChild = true;
           }
         }
@@ -87,12 +87,12 @@ fetch(url)
             let checkChildHasChild = false;
 
             for (check of data.indicators) {
-              if (String(check.parent_id) === String(indicator.id)) {
+              if (String(check.parent_id) === String(indicator.id) && check.is_deleted == false) {
                 checkChildHasChild = true;
               }
             }
 
-            if (String(indicator.parent_id) == String(id)) {
+            if (String(indicator.parent_id) == String(id) && indicator.is_deleted == false) {
               test = true;
               //Table Row Start
               table += `
@@ -118,10 +118,10 @@ fetch(url)
                 let status = false;
 
                 for (i of data.indicators) {
-                  if (String(i.parent_id) === String(parent)) {
+                  if (String(i.parent_id) === String(parent) && i.is_deleted == false) {
                     let checkChildOfChildHasChild = false;
                     for (check of data.indicators) {
-                      if (String(check.parent_id) === String(i.id)) {
+                      if (String(check.parent_id) === String(i.id) && check.is_deleted == false) {
                         checkChildOfChildHasChild = true;
                       }
                     }
@@ -197,7 +197,7 @@ fetch(url)
                 for (value of data.value) {
                   if (
                     String(year.id) === String(value.for_datapoint_id) &&
-                    String(indicator.id) === String(value.for_indicator_id)
+                    String(indicator.id) === String(value.for_indicator_id) && indicator.is_deleted == false
                   ) {
                     if (checkChildHasChild) {
                       if(value.value != null){

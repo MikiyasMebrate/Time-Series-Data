@@ -8,6 +8,7 @@ urlpatterns = [
     path('json/', views.json,name="json"),
     path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),
     path('json-filter-indicator/', views.filter_indicator_json, name='json_filter_indicator'),
+    path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),
     
     #Category
     path('category/', views.category, name="user-admin-category"),
@@ -20,10 +21,9 @@ urlpatterns = [
    
    #Indicators
     path('indicators/', views.indicator, name="user-admin-indicators"),
-    path('indicator-sub/<int:pk>', views.indicator_sub_lists, name="user-admin-indicator-sub"),
-    path('indicators-detail/<int:pk>', views.indicator_detail, name="user-admin-indicators-detail"),
+    path('indicators-list/<int:pk>', views.indicator_list, name="user-admin-indicators-list"),
     path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
-    path('indicator-sub-add/<int:pk>/<int:mainParent>', views.indicator_detail_add, name='user-admin-sub-indicator-add'),
+    path('indicator-detail/<int:pk>', views.indicator_detail, name='user-admin-indicator-detail'),
     
     #Location
     path('location/', views.location, name="user-admin-location"),
@@ -33,7 +33,7 @@ urlpatterns = [
    #Data-Point
     path('data-point/', views.data_point, name="user-admin-data-point"),
     path('data-point-detail/<int:pk>', views.data_point_detail, name="user-admin-data-point-detail"),
-    path('data-point-delete/<int:pk>', views.data_point_delate, name="user-admin-data-point-delete"),
+    path('data-point-delete/<int:pk>', views.delete_data_point, name="user-admin-data-point-delete"),
     
    #Month
    path('month/', views.month, name="user-admin-month"),

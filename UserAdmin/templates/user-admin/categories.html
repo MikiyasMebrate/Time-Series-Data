@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DPMEs</title>
-
+    <link>
     {% include 'user-admin/include/head.html' %}
   </head>
 
@@ -31,6 +31,7 @@
               aria-label="Close"
             ></button>
           </div>
+
           <div class="modal-body">
             <form method='POST'>
               {% csrf_token %}
@@ -64,7 +65,53 @@
       </div>
     </div>
     <!--User Registration Modal End-->
+    
+             <!-- Edit Catagory -->
+             <div class="modal fade" id="editModalcatagory" tabindex="-1" aria-labelledby="editModalcatagoryLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editModalcatagoryLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+            
+                  <form method="post" id="form_catagory_edit">
+                    {% csrf_token %}
+                  <div class="modal-body">
+                    <input type="number"  name="catagory_Id" id="id_catagory_id" style="display: none;">
+                    {{form.as_p}}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </form>
+            
+                </div>
+              </div>
+            </div>
 
+           <!-- Remove Indicator -->   
+          <div class="modal fade" id="removeCatagoryModal" tabindex="-1" aria-labelledby="removeCatagoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="removeCatagoryModalLabel">Remove Indicator</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form name="removeCatagory" method="post">
+                  {% csrf_token %}
+                  <div class="modal-body text-center fs-4"> 
+                    <p> Are you sure you want to remove? </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="#" id="forRemoveCatagory" class="btn btn-danger">Yes</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+        </div>
     {% include 'user-admin/include/navbar.html'%}
 
     {% include 'user-admin/include/sidebar.html'%}
@@ -101,6 +148,7 @@
             </button>
           </div>
           <!--Add Topic Button End-->
+
           <!--Topic Table List Start-->
           <div class="row justify-content-center">
             <div class="col-md-12">
@@ -111,11 +159,12 @@
                       <th>Name English</th>
                       <th>Name Amharic</th>
                       <th>topic</th>
-                      <th>Action</th>
+                      <th class='text-center'>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for catagory in catagorys%}
+                    {% if catagory.is_deleted == False %}
                     <tr>
                       <td> {{catagory.name_ENG }}</td>
                       <td> {{catagory.name_AMH }}</td>
@@ -126,11 +175,17 @@
                       </td>
                       
                       <td>
-                        <div class="d-flex justify-content-around text-center">
-                          <a href="{% url 'user-catagory-detail' catagory.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                        <div class="d-flex justify-content-center text-center">
+                          <button type="button" name="EditCategory" id="{{catagory.id}}"  data-bs-toggle="modal" data-bs-target="#editModalcatagory"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit catagory "><i class="fas fa-pen"></i></button> 
+                          <button id={{catagory.id}}  name ='catgorydelete' type="button" class="btn  m-0 p-0 text-center" data-bs-toggle="modal" data-bs-target="#removeCatagoryModal"
+                          data-bs-whatever="@mdo" >
+                        <i class="fas ms-3  text-danger fa-trash"></i>
+                        </button>
                         </div>
                       </td>
                     </tr>
+                    {% endif %}
+
                     {% endfor %}
                   </tbody>
                 </table>
@@ -159,4 +214,16 @@
     {% include 'user-admin/include/footer_js.html'%}
 
   </body>
+  <script src="{% static 'assets/js/updatedata.js' %}"></script>
+  <script>
+          //remove Indicator
+          let btnDelete = document.getElementsByName("catgorydelete");
+          btnDelete.forEach((deleteCatagory)=>{
+            deleteCatagory.addEventListener('click', ()=>{
+              let approveAnchor = document.getElementById('forRemoveCatagory')
+              console.log(deleteCatagory.id)
+              approveAnchor.setAttribute('href', `/user-admin/category-delete/${deleteCatagory.id}`)
+            })
+          })
+  </script>
 </html>
