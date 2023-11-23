@@ -21,7 +21,7 @@ let updateCategory = () => {
                     // Select relevant form elements using jQuery
                     let nameEnglish = $("#form_catagory_edit #id_name_ENG");
                     let nameAmharic = $("#form_catagory_edit #id_name_AMH");
-                    let topic = $("#id_topic");
+                    let topic = $("#form_catagory_edit #id_topic");
 
                     // Find the selected category in the fetched data
                     let selectedCategory = data.categories.find(
@@ -33,7 +33,26 @@ let updateCategory = () => {
                         // Populate form fields with selected category data
                         nameEnglish.val(selectedCategory.name_ENG);
                         nameAmharic.val(selectedCategory.name_AMH);
-                        topic.val(selectedCategory.topics[0].title_AMH)
+
+                       // Clear existing options
+                        $("#id_topic").empty();
+
+                        // Append new options
+                        selectedCategory.topics.forEach((selectedTopic) => {
+                            let option = new Option(selectedTopic.title_AMH, selectedTopic.id, true, true);
+                            $("#id_topic").append(option);
+                        });
+
+                        // Manually update the hidden input value to trigger Select2 refresh
+                        $("#id_topic").val(selectedCategory.topics.map(topic => topic.id));
+                        $("#id_topic").trigger("change");
+
+                        // Log the selected values with both text and ID
+                        let selectedOptions = $("#id_topic option:selected").map(function () {
+                            return { id: this.value, text: $(this).text() };
+                        }).get();
+                        console.log('Selected topics:', selectedOptions);
+
 
                         // Set the category ID in a hidden field for form submission
                         $("#id_catagory_id").val(categoryId);

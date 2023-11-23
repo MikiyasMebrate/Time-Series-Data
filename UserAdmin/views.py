@@ -486,26 +486,31 @@ def delete_source(request,pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
 
-#topic
-def topic(request):
+def topic(request, topic_id=None):
     topics = Topic.objects.all()
+    
+    # Initialize form without data
+    form = TopicForm()
 
-    form = TopicForm(request.POST or None)
+    # If topic_id is provided, it's an update operation
+    if topic_id:
+        topic_instance = get_object_or_404(Topic, pk=topic_id)
+        form = TopicForm(instance=topic_instance)
+
     if request.method == 'POST':
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            form= TopicForm()
-            messages.success(request, "Topic has been successfully Added!")
-        else:
-            messages.error(request, "Value Exist or Please Try again!")
+        form = TopicForm(request.POST, instance=topic_instance if topic_id else None)
 
-    context = {
-        'form' : form,
-        'topics' : topics
-    }
-    return render(request, 'user-admin/topic.html',context=context)
+        if form.is_valid():
+            obj = form.save()
+            messages.success(request, "Topic has been successfully added/updated!")
+
+            # Redirect to the same page if it's a new topic, otherwise, redirect with the topic_id
+            return redirect('user-admin-topic') if not topic_id else redirect('user-admin-topic-update', topic_id=obj.id)
+        else:
+            messages.error(request, "Value exists or please try again!")
+
+    context = {'form': form, 'topics': topics, 'topic_id': topic_id}
+    return render(request, 'user-admin/topic.html', context=context)
 
 #JSON
 def json_filter_topic(request):

@@ -30,7 +30,8 @@ class catagoryForm(forms.ModelForm):
               'topic' : forms.SelectMultiple(attrs={
                 'class' : 'select2 form-select',
                 'multiple': "multiple",
-                'data-placeholder' : "Select a Topic"
+                'data-placeholder' : "Select a Topic",
+                'id': 'id_topic'
             })        
         }
 
