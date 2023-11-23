@@ -99,7 +99,28 @@
       <form name="formAddIndicator" method="post" id="formAddIndicator" >
         {% csrf_token %}
         <div class="modal-body">
-          {{add_indicator.as_p}}
+          <div class="mt-2 fw-bold">
+            <label for="">Topic</label>
+          <select name="" id="topic_option" class="form-select"></select>
+          </div>
+
+
+          <div class="mt-2 fw-bold">
+            {{add_indicator.for_category.label}}
+          {{add_indicator.for_category}}
+          </div>
+          
+          <div class="mt-2 fw-bold">
+            {{add_indicator.title_ENG.label}}
+          {{add_indicator.title_ENG}}
+          </div>
+
+          <div class="mt-2 fw-bold">
+            {{add_indicator.title_AMH.label}}
+          {{add_indicator.title_AMH}}
+          </div>
+              
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
