@@ -6,17 +6,21 @@ $(document).ready(function () {
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
-      //Edit Measurement
+ 
       let currentIndicator = data.indicators.find(
         (indicator) => String(indicator.id) == String(pathID)
       );
 
+
+      //Edit Measurement
       let currentMeasurement = data.measurements.find(
         (measure) => String(measure.id) == String(currentIndicator.measurement)
       );
       console.log(currentMeasurement);
 
+      
       let measurementOptions = "";
+      
       //Child Measurement
       let measurementChild = (parent) => {
         let status = false;
@@ -55,6 +59,9 @@ $(document).ready(function () {
         `</select>`;
       let measurementHtml = document.getElementById("measurementOptionId");
       measurementHtml.innerHTML = measurementOptions;
+
+
+
       document.getElementById("measurement_option_id_select").value =
         currentMeasurement.id;
 

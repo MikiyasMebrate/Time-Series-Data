@@ -11,6 +11,7 @@ urlpatterns = [
     path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),
     path('json-filter-catagory/', views.filter_catagory_json, name='json_filter_catagory'),
     path('json-filter-source/', views.json_filter_source, name='json_filter_source'),
+    path('json-filter-measurement/', views.json_measurement, name='json_measurement'),
     
     #Category
     path('category/', views.category, name="user-admin-category"),

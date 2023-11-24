@@ -103,21 +103,20 @@ class SourceForm(forms.ModelForm):
                 })
         }
 
-class MeasurmentForm(forms.ModelForm):
-    model = DataPoint
-    fields = '__all__'
+class MeasurementForm(forms.ModelForm):
+    class Meta:
 
-    widgets = {
-            'Amount_ENG': forms.TextInput(attrs={
-                'class': 'form-control'
-            }),
-            'Amount_AMH': forms.TextInput(attrs={
-                'class': 'form-control'
-            }),
-            'Measure': forms.TextInput(attrs={
-                'class': 'form-control'
-            })
-    }
+        model = Measurement
+        fields = ('Amount_ENG', 'Amount_AMH' )
+    
+        widgets = {
+                'Amount_ENG': forms.TextInput(attrs={
+                    'class': 'form-control'
+                }),
+                'Amount_AMH': forms.TextInput(attrs={
+                    'class': 'form-control'
+                })
+        }
 
 class DataPointForm(forms.ModelForm):
     class Meta:
@@ -197,7 +196,3 @@ class ValueForm2(forms.Form):
     }))
 
 
-class MeasurementForm(forms.Form):
-    measurement_form = forms.CharField(widget=forms.Select(attrs={
-        'class' : 'form-control'
-    }))

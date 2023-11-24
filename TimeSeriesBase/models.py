@@ -113,6 +113,7 @@ class Measurement(models.Model):
     Amount_ENG = models.CharField(max_length=50)
     Amount_AMH = models.CharField(max_length=50, null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
+    is_deleted = models.BooleanField(default = False)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     

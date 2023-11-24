@@ -211,6 +211,15 @@ def filter_catagory_json(request):
 
     return JsonResponse(context)
 
+def json_measurement(request):
+    measurements = list(Measurement.objects.all().values())
+    context = {
+        'measurements' : measurements
+    }
+    return JsonResponse(context)
+
+
+
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
@@ -415,28 +424,41 @@ def indicator(request):
 
 
 def indicator_list(request, pk):
+    add_indicator = IndicatorForm()
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
     form = IndicatorForm(request.POST or None)
     if request.method == "POST":
-        if form.is_valid():
-            title_ENG = form.cleaned_data['title_ENG']
-            title_AMH = form.cleaned_data['title_AMH']
-            indicator_id = request.POST.get('indicator_Id')
+        if 'form_indicator_edit' in request.POST:
+            form = IndicatorForm(request.POST)
+            if form.is_valid():
+                title_ENG = form.cleaned_data['title_ENG']
+                title_AMH = form.cleaned_data['title_AMH']
+                indicator_id = request.POST.get('indicator_Id')
+    
+                indicator_obj = Indicator.objects.get(id = indicator_id)
+                indicator_obj.title_AMH = title_AMH
+                indicator_obj.title_ENG = title_ENG
+                indicator_obj.save()
+                form = IndicatorForm()
+                messages.success(request, 'Successfully Updated')
+            else:
+                messages.error(request, 'Please Try Again')
 
-            
-            indicator_obj = Indicator.objects.get(id = indicator_id)
-            indicator_obj.title_AMH = title_AMH
-            indicator_obj.title_ENG = title_ENG
-            indicator_obj.save()
-            messages.success(request, 'Successfully Updated')
-        else:
-            messages.error(request, 'Please Try again! ')
+        if 'formAddIndicator' in request.POST:
+            add_indicator = IndicatorForm(request.POST)
+            if add_indicator.is_valid():
+                add_indicator.save()
+                add_indicator = IndicatorForm()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request, 'Please Try again! ')
 
     context = {
         'indicators' : indicator_list,
         'category' : category,
         'form' : form,
+        'add_indicator' : add_indicator,
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -503,11 +525,26 @@ def delete_indicator(request,pk):
        
 
 def measurement(request):
-    return render(request, 'user-admin/measurement.html')
-
-# @login_required
-# def profile(request):
-#     return render(request, 'user-admin/profile.html')
+    addMeasurementForm = MeasurementForm()
+    if request.method == 'POST':
+        if 'formAddMeasurement' in request.POST:
+            addMeasurementForm = MeasurementForm(request.POST)
+            if addMeasurementForm.is_valid():
+                try:
+                   new_measurement = addMeasurementForm.save(commit=False)
+                   parent_id = request.POST.get('addNewMeasurement')
+                   parent = Measurement.objects.get(pk = parent_id)
+                   new_measurement.parent = parent
+                   new_measurement.save()
+                   addMeasurementForm = MeasurementForm()
+                   messages.success(request, 'Successfully New measurement Added!')
+                except:
+                    messages.error(request, 'Please Try Again!')
+                
+    context = {
+        'addMeasurementForm' : addMeasurementForm
+    }
+    return render(request, 'user-admin/measurement.html', context)
 
 
 #Source
