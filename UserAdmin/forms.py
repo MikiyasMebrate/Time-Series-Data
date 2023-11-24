@@ -18,22 +18,18 @@ class LocationForm(forms.ModelForm):
 class catagoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields =  ('name_ENG', 'name_AMH','topic')
-        
+        fields = ('name_ENG', 'name_AMH', 'topic')
+
         widgets = {
-            'name_ENG' : forms.TextInput(attrs={
-                'class' : 'form-control'
-            }),
-            'name_AMH' : forms.TextInput(attrs={
-                'class' : 'form-control'
-            }),
-              'topic' : forms.SelectMultiple(attrs={
-                'class' : 'select2 form-select',
-                'multiple': "multiple",
-                'data-placeholder' : "Select a Topic",
-                'id': 'id_topic'
-            })        
+            'name_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'name_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            'topic': forms.Select(attrs={'class': 'form-select'}),
         }
+
+    def init(self, *args, **kwargs):
+        super(catagoryForm, self).init(*args, **kwargs)
+        # Override the queryset for the topic field
+        self.fields['topic'].queryset = Topic.objects.filter(is_deleted=False)
 
 class IndicatorForm(forms.ModelForm):
     class Meta:
@@ -47,11 +43,13 @@ class IndicatorForm(forms.ModelForm):
             'title_AMH' : forms.TextInput(attrs={
                 'class' : 'form-control'
             }),
-            'for_category' : forms.Select(attrs={
-                'class' : 'form-select',
-                'data-placeholder' : "Select Categories"
-            })
+            'for_category': forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Category"}),
         }
+    def init(self, *args, **kwargs):
+        super(IndicatorForm, self).init(*args, **kwargs)
+        # Override the queryset for the topic field
+        self.fields['for_category'].queryset = Category.objects.filter(is_deleted=False)
+
 
 class SubIndicatorForm(forms.Form):
     title_ENG_add = forms.CharField(widget=forms.TextInput(attrs={
@@ -60,7 +58,6 @@ class SubIndicatorForm(forms.Form):
     title_AMH_add = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class' : 'form-control'
     }))
-
 
 class SubIndicatorFormDetail(forms.ModelForm):
     class Meta:
@@ -95,7 +92,7 @@ class TopicForm(forms.ModelForm):
 class SourceForm(forms.ModelForm):
     class Meta:
         model = Source
-        fields = '__all__'
+        fields = ('title_ENG', 'title_AMH')
 
         widgets = {
                 'title_ENG': forms.TextInput(attrs={
@@ -152,7 +149,6 @@ class DataPointForm(forms.ModelForm):
         }
         
 
-
 class dataListForm(forms.Form):
     topic = forms.ModelChoiceField(queryset=Topic.objects.all(),required=True,widget=forms.Select(attrs={
         'class' : 'form-control'
@@ -181,7 +177,9 @@ class dataListForm(forms.Form):
     source = forms.ModelChoiceField(required=False,queryset=Source.objects.all(),widget=forms.Select(attrs={
         'class' : 'form-select mt-2'
     }))
-                                     
+
+
+#Value
 class ValueForm(forms.ModelForm):
     class Meta:
         model = DataValue
@@ -195,5 +193,11 @@ class ValueForm(forms.ModelForm):
 
 class ValueForm2(forms.Form):
     value2 = forms.CharField(required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+
+
+class MeasurementForm(forms.Form):
+    measurement_form = forms.CharField(widget=forms.Select(attrs={
         'class' : 'form-control'
     }))

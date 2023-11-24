@@ -57,8 +57,11 @@ def category(request, category_id=None):
             form.save()
             messages.success(request, "Category has been successfully added/updated!")
             return redirect('user-admin-category')
+        else:
+            # Print form errors as plain text
+            print(str(form.errors))
 
-        messages.error(request, "Value exists or please try again!")
+            messages.error(request, "Value exists or please try again!")
 
     else:
         # GET request or form is not valid, display the form
@@ -71,10 +74,10 @@ def category(request, category_id=None):
             form = catagoryForm()
             
     context = {
-        'form' : form,
-        'catagorys' : catagory
+        'form': form,
+        'catagorys': catagory
     }
-    return render(request, 'user-admin/categories.html',context=context)
+    return render(request, 'user-admin/categories.html', context=context)
 
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
@@ -109,15 +112,12 @@ def delete_category(request, pk):
     return HttpResponseRedirect(previous_page)
 
 
+
 #JSON
 def filter_indicator_json(request):
     topic = list(Topic.objects.all().values())
     category_data = list(Category.objects.all().values())
     indicator = list(Indicator.objects.filter(~Q(for_category_id = None )).values())
-    for category in category_data:
-        category_obj = Category.objects.get(id=category['id'])
-        related_topics = list(category_obj.topic.values())
-        category['topics'] = related_topics
     context = {
         'topics' : topic,
         'categories' : category_data,
@@ -157,7 +157,60 @@ def filter_indicator(request, pk):
     }
     
     return JsonResponse(context)
-      
+
+def json_filter_source(request):
+    sources = Source.objects.all()
+
+    # Creating a list of dictionaries representing each source
+    sources_data = []
+    for source in sources:
+        sources_data.append({
+            'id': source.id,
+            'title_ENG': source.title_ENG,
+            'title_AMH': source.title_AMH,
+            'updated': source.updated.isoformat(),
+            'created': source.created.isoformat(),
+            'is_deleted': source.is_deleted,
+        })
+
+    # Returning the list as JSON
+    return JsonResponse({'sources': sources_data}) 
+
+def json_filter_topic(request):
+    topics = Topic.objects.all()
+    topics_data = []
+    for topic in topics:
+        topics_data.append({
+            'id': topic.id,
+            'title_ENG': topic.title_ENG,
+            'title_AMH': topic.title_AMH,
+            'user': topic.user.username if topic.user else None,
+            'updated': topic.updated.isoformat(),
+            'created': topic.created.isoformat(),
+            'is_deleted': topic.is_deleted,
+        })
+
+    # Returning the list as JSON
+    return JsonResponse({'topics': topics_data})
+
+def filter_catagory_json(request):
+    category_data = list(Category.objects.all().values())
+    
+    for category in category_data:
+        try:
+            category_obj = Category.objects.get(id=category['id'])
+            related_topic = category_obj.topic
+            category['topic'] = {'id': related_topic.id, 'title_ENG': related_topic.title_ENG, 'title_AMH': related_topic.title_AMH} if related_topic else {}
+        except Category.DoesNotExist:
+            category['topic'] = {}  # Set topic to an empty dictionary if the category has no related topic
+
+
+    context = {
+        'categories': category_data,
+    }
+
+    return JsonResponse(context)
+
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
@@ -171,11 +224,6 @@ def json(request):
     year = list(year.values())
     values = list(value.values())
 
-    # Retrieve the many-to-many related objects for each category
-    for category in category_data:
-        category_obj = Category.objects.get(id=category['id'])
-        related_topics = list(category_obj.topic.values())
-        category['topics'] = related_topics
         
         
     context = {
@@ -226,7 +274,8 @@ def data_list_detail(request, pk):
     form_update = ValueForm2(request.POST or None)
     sub_indicator_form = SubIndicatorFormDetail(request.POST or None)
     indicator = Indicator.objects.get(pk = pk)
-    print(indicator.measurement.parent)
+    measurement_form = MeasurementForm(request.POST or None)
+
     if request.method == 'POST':
         if form.is_valid():
             try:
@@ -258,7 +307,6 @@ def data_list_detail(request, pk):
             except:
                  None
             
-    
         if sub_indicator_form.is_valid():
             try: 
                 indicator_id = request.POST.get('addNewIndicator')
@@ -274,7 +322,15 @@ def data_list_detail(request, pk):
             except: 
                 None
         
-
+        if measurement_form.is_valid():
+            try:
+                measurement_id = measurement_form.cleaned_data['measurement_form']
+                measurement = Measurement.objects.get(pk = measurement_id)
+                indicator.measurement = measurement
+                indicator.save()
+                messages.success(request, 'Successfully measurement Updated!')
+            except:
+                None
                        
     context = {
         'form' : form,
@@ -426,7 +482,6 @@ def indicator_detail(request, pk):
     }
     return render(request, 'user-admin/location_detail.html', context)
 
-
 def delete_indicator(request,pk):
     
     indicator = Indicator.objects.get(pk=pk)
@@ -456,24 +511,44 @@ def measurement(request):
 
 
 #Source
-def source(request):
+
+def source(request, source_id=None):
     sources = Source.objects.all()
 
-    form = SourceForm(request.POST or None)
     if request.method == 'POST':
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.save()
-            form = SourceForm()
-            messages.success(request, "Source has been successfully Added!")
+        if 'source_id' in request.POST:
+            # Editing an existing source
+            source_instance = get_object_or_404(Source, id=request.POST['source_id'])
+            form = SourceForm(request.POST, instance=source_instance)
         else:
-            messages.error(request, "Value Exist or Please Try again!")
-            
+            # Adding a new source
+            form = SourceForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Source has been successfully added/updated!")
+            return redirect('user-admin-source')
+        else:
+            # Print form errors as plain text
+            print(str(form.errors))
+
+            messages.error(request, "Value exists or please try again!")
+
+    else:
+        # GET request or form is not valid, display the form
+        if source_id:
+            # Editing an existing source, populate the form with existing data
+            source_instance = get_object_or_404(Source, id=source_id)
+            form = SourceForm(instance=source_instance)
+        else:
+            # Adding a new source
+            form = SourceForm()
+
     context = {
-        'form' : form,
-        'sources' : sources
+        'form': form,
+        'sources': sources
     }
-    return render(request, 'user-admin/source.html',context=context)
+    return render(request, 'user-admin/source.html', context=context)
 
 def source_detail(request, pk):
     source = Source.objects.get(pk=pk)
@@ -535,7 +610,6 @@ def topic(request, topic_id=None):
 
     context = {'form': form, 'topics': topics, 'topic_id': topic_id}
     return render(request, 'user-admin/topic.html', context=context)
-
 
 #JSON
 def json_filter_topic(request):

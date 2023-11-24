@@ -76,6 +76,31 @@
         </div>
       </div>
     </div>
+          <!-- Edit Source -->
+            <div class="modal fade" id="editModalSource" tabindex="-1" aria-labelledby="editModalSourceLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editModalSourceLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+            
+                  <form method="post" id="form_Source_edit">
+                    {% csrf_token %}
+                  <div class="modal-body">
+                    <input type="number"  name="Source_Id" id="id_Source_id" style="display: none;">
+                    {{form.as_p}}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </form>
+            
+                </div>
+              </div>
+          </div>
+
     {% include 'user-admin/include/navbar.html'%}
     {% include 'user-admin/include/sidebar.html'%}
     <!--Body Start-->
@@ -132,7 +157,7 @@
                       <td> {{source.created | date:'F d, Y' }}</td>
                       <td>
                         <div class="d-flex justify-content-center text-center">
-                          <a href="{% url 'user-source-detail' source.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                          <button type="button" name="EditSource" id="{{source.id}}"  data-bs-toggle="modal" data-bs-target="#editModalSource"   class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit source "><i class="fas fa-pen"></i></button> 
                           <button type="button" id={{source.id}}  name='deleteSource'class="btn  m-0 p-0 text-center" data-bs-toggle="modal" data-bs-target="#removeSourceModal"
                           data-bs-whatever="@mdo" >
                         <i class="fas ms-3  text-danger fa-trash"></i>
@@ -155,6 +180,7 @@
     <!--Body End-->
     {% include 'user-admin/include/footer.html'%}
     {% include 'user-admin/include/footer_js.html' %}
+    <script src="{% static 'assets/js/updatedata.js' %}"></script>
     <script>
       //remove Indicator
       let btnDelete = document.getElementsByName("deleteSource");

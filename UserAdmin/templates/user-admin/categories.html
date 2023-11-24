@@ -33,24 +33,9 @@
           </div>
 
           <div class="modal-body">
-            <form method='POST'>
+            <form method='POST' name='addcatagory'>
               {% csrf_token %}
-              <div class="mb-3">
-  
-                <label for="id_catagories" class="col-form-label">Name English: {% for err in form.name_ENG.errors%}<small
-                    class="text-danger">{{err}}</small> {% endfor %}</label>
-                {{form.name_ENG}}
-              </div>
-              <div class="mb-3">
-                <label for="id_catagories" class="col-form-label">Name Amharic: {% for err in form.name_AMH.errors%}<small
-                    class="text-danger">{{err}}</small> {% endfor %}</label>
-                {{form.name_AMH}}
-              </div>
-             
-              <div class="mb-3">
-                <label for="id_catagores" class="col-form-label">Topic:<small class="text-danger"></small></label>
-                <div class="d-grid">{{form.topic}}</div>
-              </div>
+              {{form.as_p}}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -169,9 +154,9 @@
                       <td> {{catagory.name_ENG }}</td>
                       <td> {{catagory.name_AMH }}</td>
                       <td> 
-                        {% for catagory1 in catagory.topic.all %}
-                          {{ catagory1.title_ENG }} {% if not forloop.last %}, {% endif %}
-                        {% endfor %} 
+                        {% if catagory.topic %}
+                          {{ catagory.topic.title_ENG }} / {{ catagory.topic.title_AMH }} 
+                        {% endif %}
                       </td>
                       
                       <td>
@@ -215,15 +200,4 @@
 
   </body>
   <script src="{% static 'assets/js/updatedata.js' %}"></script>
-  <script>
-          //remove Indicator
-          let btnDelete = document.getElementsByName("catgorydelete");
-          btnDelete.forEach((deleteCatagory)=>{
-            deleteCatagory.addEventListener('click', ()=>{
-              let approveAnchor = document.getElementById('forRemoveCatagory')
-              console.log(deleteCatagory.id)
-              approveAnchor.setAttribute('href', `/user-admin/category-delete/${deleteCatagory.id}`)
-            })
-          })
-  </script>
 </html>

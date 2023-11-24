@@ -23,14 +23,8 @@ $(document).ready(function () {
          console.log(selectedTopic)
 
          let categoryOption = data.categories.map(
-          ({ name_ENG, name_AMH, id, topics, is_deleted}) => {
-            let tID = null;
-            try {
-              tID = topics[0].id;
-            } catch {
-              tID = null;
-            }
-            if (String(tID) === String(selectedTopic)) {
+          ({ name_ENG, name_AMH, id, topic_id, is_deleted}) => {
+            if (String(topic_id) === String(selectedTopic)) {
               if(!is_deleted){
                 return (
                   `<option value="${id}">${name_ENG} - ${name_AMH}</option>`
@@ -137,14 +131,8 @@ $(document).ready(function () {
             selectedTopicId = event.target.value;
 
             let selectCategory = data.categories.map(
-              ({ name_ENG, name_AMH, id, topics, is_deleted}) => {
-                let tID = null;
-                try {
-                  tID = topics[0].id;
-                } catch {
-                  tID = null;
-                }
-                if (String(tID) === String(selectedTopicId)) {
+              ({ name_ENG, name_AMH, id, topic_id, is_deleted}) => {
+                if (String(topic_id) === String(selectedTopicId)) {
                   if(!is_deleted){
                     return `
                     <li>

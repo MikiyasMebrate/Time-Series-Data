@@ -9,6 +9,8 @@ urlpatterns = [
     path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),
     path('json-filter-indicator/', views.filter_indicator_json, name='json_filter_indicator'),
     path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),
+    path('json-filter-catagory/', views.filter_catagory_json, name='json_filter_catagory'),
+    path('json-filter-source/', views.json_filter_source, name='json_filter_source'),
     
     #Category
     path('category/', views.category, name="user-admin-category"),
