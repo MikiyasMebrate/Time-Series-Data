@@ -145,7 +145,20 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            ...
+            <select name="" id="" class="form-select">
+              <optgroup label="Currency">
+                <optgroup label="ETB">
+                  <option value="">In Thousand</option>
+                  <option value="">In Millions</option>
+                  <option value="">In Billions</option>
+                </optgroup>
+                <optgroup label="USD">
+                  <option value="">In Thousand</option>
+                  <option value="">In Millions</option>
+                  <option value="">In Billions</option>
+                </optgroup>
+              </optgroup>
+            </select>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -194,7 +207,7 @@
               <!--Measurement Start-->
               <div class="mt-2 mb-2 text-start">
                 <div>
-                  <p class="h4">ETB - In Billions <button class="ms-4 btn btn-sm btn-primary" data-bs-toggle="modal"  data-bs-target="#editMeasurement"
+                  <p class="h4">{{indicator.measurement.parent.Amount_ENG}} - {{indicator.measurement.Amount_ENG}} <button class="ms-4 btn btn-sm btn-primary" data-bs-toggle="modal"  data-bs-target="#editMeasurement"
                     data-bs-whatever="@mdo" >Edit</button> 
                   </p> 
                 </div>

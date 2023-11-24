@@ -129,7 +129,7 @@ class Measurement(models.Model):
         return ' -> '.join(full_path[::-1])
 
     def __str__(self):
-        return self.Amount_ENG
+        return self.get_full_path()
     
 class DataValue(models.Model):
     value = models.CharField(max_length=50, blank=True ,null=True)

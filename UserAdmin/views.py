@@ -134,6 +134,7 @@ def filter_indicator(request, pk):
     year = list(DataPoint.objects.all().values())
     value = list(DataValue.objects.all().values())
     indicator_point = list(Indicator_Point.objects.all().values())
+    measurements = list(Measurement.objects.all().values())
 
     # @login_required
     def child_list(parent, space):
@@ -151,7 +152,8 @@ def filter_indicator(request, pk):
         'indicators' :  returned_json,
         'indicator_point': indicator_point,
         'year' : year,
-        'value' : value
+        'value' : value,
+        'measurements' : measurements
     }
     
     return JsonResponse(context)
@@ -223,8 +225,8 @@ def data_list_detail(request, pk):
     form = ValueForm(request.POST or None)
     form_update = ValueForm2(request.POST or None)
     sub_indicator_form = SubIndicatorFormDetail(request.POST or None)
-   
-
+    indicator = Indicator.objects.get(pk = pk)
+    print(indicator.measurement.parent)
     if request.method == 'POST':
         if form.is_valid():
             try:
@@ -277,7 +279,8 @@ def data_list_detail(request, pk):
     context = {
         'form' : form,
         'form_update' : form_update,
-        'sub_indicator_form' : sub_indicator_form
+        'sub_indicator_form' : sub_indicator_form,
+        'indicator' : indicator
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 
