@@ -6,25 +6,27 @@ $(document).ready(function () {
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
-      //Edit Measurement
+ 
       let currentIndicator = data.indicators.find(
         (indicator) => String(indicator.id) == String(pathID)
       );
 
+
+      //Edit Measurement
       let currentMeasurement = data.measurements.find(
         (measure) => String(measure.id) == String(currentIndicator.measurement)
       );
-      console.log(currentMeasurement);
-
+      
       let measurementOptions = "";
+      
       //Child Measurement
       let measurementChild = (parent) => {
         let status = false;
 
         for (measure of data.measurements) {
-          if (String(measure.parent_id) === String(parent.id)) {
+          if (String(measure.parent_id) === String(parent.id) && !measure.is_deleted) {
             for (check of data.measurements) {
-              if (String(measure.id) === String(check.parent_id)) {
+              if (String(measure.id) === String(check.parent_id) && !measure.is_deleted ) {
                 status = true;
               }
             }
@@ -42,7 +44,7 @@ $(document).ready(function () {
 
       //Parent Measurement
       for (measure of data.measurements) {
-        if (!measure.parent_id) {
+        if (!measure.parent_id && !measure.is_deleted) {
           measurementOptions += `<optgroup label="${measure.Amount_ENG}">`;
           measurementChild(measure);
           measurementOptions += ` </optgroup>`;
@@ -55,8 +57,16 @@ $(document).ready(function () {
         `</select>`;
       let measurementHtml = document.getElementById("measurementOptionId");
       measurementHtml.innerHTML = measurementOptions;
-      document.getElementById("measurement_option_id_select").value =
+
+      try{
+        document.getElementById("measurement_option_id_select").value =
         currentMeasurement.id;
+      }
+
+        catch{
+          null
+        }
+
 
       let table = "";
       table += `

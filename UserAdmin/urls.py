@@ -11,6 +11,7 @@ urlpatterns = [
     path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),
     path('json-filter-catagory/', views.filter_catagory_json, name='json_filter_catagory'),
     path('json-filter-source/', views.json_filter_source, name='json_filter_source'),
+    path('json-filter-measurement/', views.json_measurement, name='json_measurement'),
     
     #Category
     path('category/', views.category, name="user-admin-category"),
@@ -40,6 +41,7 @@ urlpatterns = [
    #Month
    path('month/', views.month, name="user-admin-month"),
     
+    #Measurement
     path('measurement/', views.measurement, name="user-admin-measurement"),
     # path('profile/', views.profile, name="user-admin-profile"),
 
@@ -52,8 +54,7 @@ urlpatterns = [
     path('topic/', views.topic, name="user-admin-topic"),
     path('topic/<int:pk>', views.topic_detail, name="user-topic-detail"),
     path('topic-delete/<int:pk>', views.delete_topic, name='user-topic-delete'),
-    # path('users/', views.users_list, name="user-admin-user-list")
+
     
     path('recyclebin/', views.recyclebin, name="user-admin-recyclebin"),
-    # path('users/', views.users_list, name="user-admin-user-list")
 ]

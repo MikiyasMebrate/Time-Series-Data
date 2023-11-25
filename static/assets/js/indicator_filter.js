@@ -25,7 +25,9 @@ $(document).ready(function () {
          let categoryOption = data.categories.map(
           ({ name_ENG, name_AMH, id, topic_id, is_deleted}) => {
             if (String(topic_id) === String(selectedTopic)) {
+              
               if(!is_deleted){
+                console.log('hello')
                 return (
                   `<option value="${id}">${name_ENG} - ${name_AMH}</option>`
                 )
@@ -38,7 +40,8 @@ $(document).ready(function () {
           }
         );
 
-        document.getElementById('id_for_category').innerHTML = `<option value="" selected="">---------</option>` + categoryOption
+        document.getElementById('for_category_add').innerHTML = `<option value="" selected="">---------</option>` + categoryOption
+        categoryOption = ''
         })
         
 

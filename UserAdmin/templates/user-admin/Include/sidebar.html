@@ -56,7 +56,9 @@ rel="stylesheet"
         {% if request.path == '/user-admin/indicators/' %}active menu-open{% endif %}
         {% if request.path == '/user-admin/measurement/' %}active menu-open{% endif %}
         {% if request.path == '/user-admin/source/' %}active menu-open{% endif %}
-        {% if request.path == '/user-admin/location/' %}active menu-open{% endif %}
+   
+
+        
         
         ">
           <a href="#" class="nav-link 
@@ -66,7 +68,7 @@ rel="stylesheet"
           {% if request.path == '/user-admin/indicators/' %}active{% endif %}
           {% if request.path == '/user-admin/measurement/' %}active{% endif %}
           {% if request.path == '/user-admin/source/' %}active{% endif %}
-          {% if request.path == '/user-admin/location/' %}active{% endif %}
+
           ">
             <i class="nav-icon fas fa-database"></i>
             <p>
@@ -82,9 +84,9 @@ rel="stylesheet"
               </a>
             </li>
             <li class="nav-item">
-              <a href="{% url 'user-admin-location'%}" class="nav-link {% if request.path == '/user-admin/location/' %}active{% endif %}">
+              <a href="{% url 'user-admin-topic'%}" class="nav-link {% if request.path == '/user-admin/topic/' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Location</p>
+                <p>Topic</p>
               </a>
             </li>
             <li class="nav-item">
@@ -110,25 +112,12 @@ rel="stylesheet"
                 <i class="far fa-circle nav-icon"></i>
                 <p>Sources</p>
               </a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'user-admin-topic'%}" class="nav-link {% if request.path == '/user-admin/topic/' %}active{% endif %}">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Topic</p>
-              </a>
-            </li>
-           
+            </li>           
           </ul>
         </li>
-        {% comment %} <li class="nav-item">
-          <a href="{% url 'user-admin-profile'%}" class="nav-link">
-            <i class="nav-icon fas fa-user"></i>
-            <p>Profile</p>
-          </a>
-        </li> {% endcomment %}
         </li>
         <li class="nav-item">
-          <a href="{% url 'user-admin-recyclebin'%}" class="nav-link {% if request.path == '/user-admin/source/' %}active{% endif %}">
+          <a href="{% url 'user-admin-recyclebin'%}" class="nav-link {% if request.path == '/user-admin/recyclebin/' %}active{% endif %}">
             <span id="boot-icon" class="nav-icon fas fa-trash" style="font-size:25px"></span>
             <p>Trash (Recyclebin)</p>
           </a>

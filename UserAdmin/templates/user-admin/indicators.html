@@ -56,7 +56,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="form_indicator_edit" class="btn btn-primary">Save changes</button>
+                <button type="submit" name="form_indicator_edit" class="btn btn-primary">Save changes</button>
               </div>
             </form>
         
@@ -107,7 +107,7 @@
 
           <div class="mt-2 fw-bold">
             {{add_indicator.for_category.label}}
-          {{add_indicator.for_category}}
+          <select name="for_category" class="form-select" id="for_category_add"></select>
           </div>
           
           <div class="mt-2 fw-bold">
@@ -124,7 +124,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" form="formAddIndicator" class="btn btn-primary">Save changes</button>
+          <button type="submit" name="formAddIndicator" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>
