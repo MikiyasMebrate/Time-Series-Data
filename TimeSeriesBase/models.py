@@ -19,6 +19,7 @@ class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
     name_AMH = models.CharField(max_length=50)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):

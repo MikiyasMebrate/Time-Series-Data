@@ -7,6 +7,16 @@
     <title>DPMEs</title>
 
     {% include 'user-admin/include/head.html'%}
+
+    <style>
+      #deletdSourceTable {
+        width: 100%;
+      }
+      .table-responsive {
+        overflow-x: auto;
+      }
+    </style>
+    
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
@@ -18,44 +28,34 @@
       {% if messages %}
       {% include 'user-admin/include/messages.html'%}
       {% endif %}
-      <section class="content">
-<div class="container">
-    <section class="content">
-        <div class="container-fluid">
-          <!--Card Start-->
-         
-          <!--Card End-->
-        </div>
-      </section>
-    </div>
+  <section class="content pt-2">
+    <div class="container-fluid">
 
       <div class="card">
-        <hr>
         <ul class="nav nav-pills ps-5 pt-3 pb-3">
           <li class="nav-item active">
-            <a
-              class="nav-link active"
-              href="#activity"
-              data-toggle="tab"
-              ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Topic</a
-            >
+            <a class="nav-link active" href="#deletedtopics" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Topics</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#settings" data-toggle="tab"
-              ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Indicators</a
-            >
+            <a class="nav-link" href="#deletedIndicator" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Indicators</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#changePassword" data-toggle="tab"
-              ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a
-            >
+            <a class="nav-link" href="#deletedcatagory" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#deleteMeasurments" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Measurments</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#deleteSource" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
           </li>
         </ul>
         <hr>
+
         <div class="card-body">
+
           <div class="tab-content">
-            <!--History Detail Start-->
-            <div class="active tab-pane" id="activity">
+            <!--Deletd topics-->
+            <div class="active tab-pane" id="deletedtopics">
               <!--topic table starts-->
               <div class="content-header">
                 <div class="container-fluid">
@@ -70,39 +70,28 @@
         
               <section class="content">
                 <div class="container-fluid">
-                  <!--Add Topic Button Start-->
-                  <div class="text-end">
-                   
-                  </div>
-                  <!--Add Topic Button End-->
                   <!--Topic Table List Start-->
                   <div class="row justify-content-center">
                     <div class="col-md-12">
                       <div class="table-responsive border p-3 shadow">
-                        <table id="example" class="table table-striped table-hover table-sm">
+                        <table id="example" class="table table-striped table-hover table-sm"  style="width: 100%;">
                           <thead>
                             <tr>
                               <th>Name English</th>
                               <th>Name Amharic</th>
-                              <th>Location</th>
                               <th>Created Date</th>
                               <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {% for topic in topics %}
+                            {% for topic in recycled_topics %}
                             <tr>
                               <td>{{ topic.title_ENG }}</td>
                               <td>{{ topic.title_AMH }}</td>
-                              <td>
-                                {% for location in topic.for_location.all %}
-                                  {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                              </td>
                               <td>{{ topic.created|date:'F d, Y' }}</td>
                               <td>
                                 <div class="d-flex justify-content-around text-center">
-                                  <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                                  <a href="#"><i class="fas text-primary fa-pen"></i></a>
                                 </div>
                               </td>
                             </tr>
@@ -117,10 +106,10 @@
               </section>
               <!--topic end-->
             </div>
-            <!--History Detail End-->
+            <!--Deletd topics End-->
 
-            <!--Setting Detail Start-->
-            <div class="tab-pane" id="settings">
+            <!--Deletd Indicator-->
+            <div class="tab-pane" id="deletedIndicator">
                 <div class="content-header">
                     <div class="container-fluid">
                       <div class="row mb-2">
@@ -143,30 +132,26 @@
                       <div class="row justify-content-center">
                         <div class="col-md-12">
                           <div class="table-responsive border p-3 shadow">
-                            <table id="example" class="table table-striped table-hover table-sm">
-                              <thead>
+                            <table id="deletedIndicatorTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
+                              <thead  style="width: 100%;">
                                 <tr>
                                   <th>Name English</th>
                                   <th>Name Amharic</th>
-                                  <th>Location</th>
+                                  <th>Catagory</th>
                                   <th>Created Date</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {% for topic in topics %}
+                                {% for indicator in recycled_indicators %}
                                 <tr>
-                                  <td>{{ topic.title_ENG }}</td>
-                                  <td>{{ topic.title_AMH }}</td>
-                                  <td>
-                                    {% for location in topic.for_location.all %}
-                                      {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                  </td>
-                                  <td>{{ topic.created|date:'F d, Y' }}</td>
+                                  <td>{{ indicator.title_ENG }}</td>
+                                  <td>{{ indicator.title_AMH }}</td>
+                                  <td>{{ indicator.for_category }}</td>
+                                  <td>{{ indicator.created_at|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
                                     </div>
                                   </td>
                                 </tr>
@@ -180,10 +165,10 @@
                     </div>
                   </section>
             </div>
-            <!--History Detail End-->
+            <!--Deletd Indicator End-->
 
-            <!--Change Password Detail Start-->
-            <div class="tab-pane" id="changePassword">
+            <!--Deletd catagory-->
+            <div class="tab-pane" id="deletedcatagory">
                 <div class="content-header">
                     <div class="container-fluid">
                       <div class="row mb-2">
@@ -202,34 +187,31 @@
                       
                       </div>
                       <!--Add Topic Button End-->
+
                       <!--Topic Table List Start-->
                       <div class="row justify-content-center">
                         <div class="col-md-12">
                           <div class="table-responsive border p-3 shadow">
-                            <table id="example" class="table table-striped table-hover table-sm">
-                              <thead>
+                            <table id="deletedcatagoryTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
+                              <thead  style="width: 100%;">
                                 <tr>
                                   <th>Name English</th>
                                   <th>Name Amharic</th>
-                                  <th>Location</th>
+                                  <th>Topic</th>
                                   <th>Created Date</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {% for topic in topics %}
+                                {% for catagory in recycled_categories %}
                                 <tr>
-                                  <td>{{ topic.title_ENG }}</td>
-                                  <td>{{ topic.title_AMH }}</td>
-                                  <td>
-                                    {% for location in topic.for_location.all %}
-                                      {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                  </td>
-                                  <td>{{ topic.created|date:'F d, Y' }}</td>
+                                  <td>{{ catagory.name_ENG }}</td>
+                                  <td>{{ catagory.name_AMH }}</td>
+                                  <td>{{ catagory.topic }}</td>
+                                  <td>{{ catagory.created_at|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <a href="{% url 'user-topic-detail' topic.pk %}"><i class="fas text-primary fa-pen"></i></a>
+                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
                                     </div>
                                   </td>
                                 </tr>
@@ -243,33 +225,179 @@
                     </div>
                   </section>
             </div>
-            <!--Change Password Detail End-->
+            
+            <!--deleted Measurments-->
+            <div class="tab-pane" id="deleteMeasurments">
+                <div class="content-header">
+                    <div class="container-fluid">
+                      <div class="row mb-2">
+                        <div class="col-sm-6">
+                          <h1 class="m-0">Measurments Lists</h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Title End-->
+            
+                  <section class="content">
+                    <div class="container-fluid">
+                      <!--Add Topic Button Start-->
+                      <div class="text-end">
+                      
+                      </div>
+                      <!--Add Topic Button End-->
+
+                      <!--Topic Table List Start-->
+                      <div class="row justify-content-center">
+                        <div class="col-md-12">
+                          <div class="table-responsive border p-3 shadow">
+                            <table id="deleteMeasurmentsTable" class="table table-striped table-hover table-sm" style="width: 100%;">
+                              <thead  style="width: 100%;">
+                                <tr>
+                                  <th>Name English</th>
+                                  <th>Name Amharic</th>
+                                  <th>Created Date</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for measurement in recycled_measurements %}
+                                <tr>
+                                  <td>{{ measurement.Amount_ENG }}</td>
+                                  <td>{{ measurement.Amount_AMH }}</td>
+                                  <td>{{ measurement.created|date:'F d, Y' }}</td>
+                                  <td>
+                                    <div class="d-flex justify-content-around text-center">
+                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Topic Table List End-->
+                    </div>
+                  </section>
+            </div>
+
+            <!--deleted deleteSource-->
+          
+            <div class="tab-pane" id="deleteSource">
+              <div class="content-header">
+                  <div class="container-fluid">
+                    <div class="row mb-2">
+                      <div class="col-sm-6">
+                        <h1 class="m-0">Source Lists</h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Title End-->
+          
+                <section class="content">
+                  <div class="container-fluid">
+                    <!--Add Topic Button Start-->
+                    <div class="text-end">
+                    
+                    </div>
+                    <!--Add Topic Button End-->
+
+                    <!--Topic Table List Start-->
+                    <div class="row justify-content-center">
+                      <div class="col-md-12">
+                        <div class="table-responsive border p-3 shadow">
+                          <table id="deletdSourceTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
+                            <thead >
+                              <tr>
+                                <th>Name English</th>
+                                <th>Name Amharic</th>
+                                <th>Created Date</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for source in recycled_sources %}
+                              <tr>
+                                <td>{{ source.title_ENG }}</td>
+                                <td>{{ source.title_AMH }}</td>
+                                <td>{{ source.created|date:'F d, Y' }}</td>
+                                <td>
+                                  <div class="d-flex justify-content-around text-center">
+                                    <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                  </div>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <!--Topic Table List End-->
+                  </div>
+                </section>
+           </div>
           </div>
+
         </div>
+        
       </div>
+
       {%include 'includes/footer_js.html'%}
-
-
-</body>
-</html>
-
-      </section>
-
-      <!-- topic Start-->
     
+          </section>
+        </div>
+        <!--Body End-->
+        {% include 'user-admin/include/footer.html'%} 
+        {% include 'user-admin/include/footer_js.html'%}
+        
+        <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
 
-       <!--topic End-->
+        <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+        <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+        <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+        <script>
+          $(document).ready(function () {
+          $("#deletedIndicatorTable").DataTable({
+              "responsive": true, "lengthChange": false, "autoWidth": false,
+              "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+          });
 
-      <!--indictors Start-->
-     
-      <!--indictors End-->
+          $(document).ready(function () {
+          $("#deletedcatagoryTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)')
+          });
 
-      <!--Categories Start-->
-   
-      <!--Categories End-->
-    </div>
-    <!--Body End-->
-    {% include 'user-admin/include/footer.html'%} 
-    {% include 'user-admin/include/footer_js.html'%}
+        $(document).ready(function () {
+        $("#deleteMeasurmentsTable").DataTable({
+          "responsive": true, "lengthChange": false, "autoWidth": false,
+          "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+        
+        $(document).ready(function () {
+        $("#deletdSourceTable").DataTable({
+          "responsive": true, "lengthChange": false, "autoWidth": false,
+          "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+        </script>
+
   </body>
 </html>

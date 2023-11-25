@@ -837,4 +837,20 @@ def month(request):
 
 
 def recyclebin(request):
-     return render(request, 'user-admin/recyclebin.html')
+    recycled_categories = Category.objects.filter(is_deleted=True)
+    recycled_indicators = Indicator.objects.filter(is_deleted=True)
+    recycled_topics = Topic.objects.filter(is_deleted=True)
+    recycled_measurements = Measurement.objects.filter(is_deleted=True)
+    recycled_sources = Source.objects.filter(is_deleted=True)
+
+    context = {
+        'recycled_categories': recycled_categories,
+        'recycled_indicators': recycled_indicators,
+        'recycled_topics': recycled_topics,
+        'recycled_measurements': recycled_measurements,
+        'recycled_sources': recycled_sources,
+        # Add other recycled models as needed
+    }
+
+    return render(request, 'user-admin/recyclebin.html', context)
+
