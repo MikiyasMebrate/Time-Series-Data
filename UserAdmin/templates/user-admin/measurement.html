@@ -35,28 +35,12 @@
               <form method="post" id="form_indicator_edit">
                 {% csrf_token %}
               <div class="modal-body">
-                <input type="number"  name="indicator_Id" id="id_indicator_id" style="display: none;">
-                <div class="mt-2">
-                  {{editIndicator.title_ENG.label}}
-                  
-                {{editIndicator.title_ENG}}
-                </div>
-                
-                <div class="mt-2">
-                  {{editIndicator.title_AMH.label}}
-                {{editIndicator.title_AMH}}
-                </div>
-
-                <div class="mt-2" id="id_category_option">
-                  {{editIndicator.for_category.label}}
-                {{editIndicator.for_category}}
-                </div>
-
-                
+                <input type="number"  name="id_measurement" id="id_measurement_id" style="display: none;">
+                {{ editMeasurementForm.as_p }}                
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="form_indicator_edit" class="btn btn-primary">Save changes</button>
+                <button type="submit" name="form_measurement_edit" class="btn btn-primary">Save changes</button>
               </div>
             </form>
         
