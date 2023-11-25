@@ -88,7 +88,7 @@
                   <form method="post" id="form_Source_edit">
                     {% csrf_token %}
                   <div class="modal-body">
-                    <input type="number"  name="Source_Id" id="id_Source_id" style="display: none;">
+                    <input type="number" name="source_id" id="id_source_id" style="display: none;">
                     {{form.as_p}}
                   </div>
                   <div class="modal-footer">
@@ -181,17 +181,6 @@
     {% include 'user-admin/include/footer.html'%}
     {% include 'user-admin/include/footer_js.html' %}
     <script src="{% static 'assets/js/updatedata.js' %}"></script>
-    <script>
-      //remove Indicator
-      let btnDelete = document.getElementsByName("deleteSource");
-      btnDelete.forEach((deletSource)=>{
-        deletSource.addEventListener('click', ()=>{
-          let approveAnchor = document.getElementById('forRemoveSource')
-          console.log(deletSource.id)
-          approveAnchor.setAttribute('href', `/user-admin/source-delete/${deletSource.id}`)
-        })
-      })
-</script>
   </body>
 </html>
 

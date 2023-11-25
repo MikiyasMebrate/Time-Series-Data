@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
-from django.http import JsonResponse,HttpResponseRedirect
+from django.http import Http404, JsonResponse,HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
@@ -45,30 +45,44 @@ def category(request, category_id=None):
     catagory = Category.objects.all()
     
     if request.method == 'POST':
-        if 'catagory_Id' in request.POST:
-            # Editing an existing category
-            category_instance = get_object_or_404(Category, id=request.POST['catagory_Id'])
-            form = catagoryForm(request.POST, instance=category_instance)
+        catagory_id_str = request.POST.get('catagory_Id', '')
+        if catagory_id_str.isdigit():
+            try:
+                category_instance = get_object_or_404(Category, id=int(catagory_id_str))
+                form = catagoryForm(request.POST, instance=category_instance)
+            except Http404 as e:
+                # Print more information about the exception
+                print(f"Http404 Exception: {e}")
+                messages.error(request, "Invalid category ID provided.")
+                return redirect('user-admin-category')
         else:
-            # Adding a new category
+            # Adding a new category, set category_id to None
+            category_instance = None
             form = catagoryForm(request.POST)
-        
+
         if form.is_valid():
             form.save()
-            messages.success(request, "Category has been successfully added/updated!")
+            if category_instance:
+                messages.success(request, "Category has been successfully updated!")
+            else:
+                messages.success(request, "Category has been successfully added!")
             return redirect('user-admin-category')
         else:
             # Print form errors as plain text
             print(str(form.errors))
-
             messages.error(request, "Value exists or please try again!")
 
     else:
         # GET request or form is not valid, display the form
         if category_id:
-            # Editing an existing category, populate the form with existing data
-            category_instance = get_object_or_404(Category, id=category_id)
-            form = catagoryForm(instance=category_instance)
+            try:
+                category_instance = get_object_or_404(Category, id=category_id)
+                form = catagoryForm(instance=category_instance)
+            except Http404 as e:
+                # Print more information about the exception
+                print(f"Http404 Exception: {e}")
+                messages.error(request, "Invalid category ID provided.")
+                return redirect('user-admin-category')
         else:
             # Adding a new category
             form = catagoryForm()
@@ -78,6 +92,7 @@ def category(request, category_id=None):
         'catagorys': catagory
     }
     return render(request, 'user-admin/categories.html', context=context)
+
 
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
@@ -511,7 +526,6 @@ def measurement(request):
 
 
 #Source
-
 def source(request, source_id=None):
     sources = Source.objects.all()
 
@@ -526,12 +540,14 @@ def source(request, source_id=None):
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Source has been successfully added/updated!")
+            if 'source_id' in request.POST:
+                messages.success(request, "Source has been successfully updated!")
+            else:
+                messages.success(request, "Source has been successfully added!")
             return redirect('user-admin-source')
         else:
             # Print form errors as plain text
             print(str(form.errors))
-
             messages.error(request, "Value exists or please try again!")
 
     else:
@@ -549,6 +565,8 @@ def source(request, source_id=None):
         'sources': sources
     }
     return render(request, 'user-admin/source.html', context=context)
+
+
 
 def source_detail(request, pk):
     source = Source.objects.get(pk=pk)
@@ -590,27 +608,31 @@ def topic(request, topic_id=None):
     if topic_id:
         topic_instance = get_object_or_404(Topic, pk=topic_id)
     else:
-        # If it's not an update operation, check if the topic_id is present in the POST data
+        # If it's not an update operation, check if the topic_Id is present in the POST data
         topic_instance = None
-        if 'topic_Id' in request.POST:
-            topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
+        topic_id_from_post = request.POST.get('topic_Id')
+        if topic_id_from_post:
+            topic_instance = get_object_or_404(Topic, id=topic_id_from_post)
 
     # Initialize form with or without data
     form = TopicForm(request.POST or None, instance=topic_instance)
 
     if request.method == 'POST':
         if form.is_valid():
-            obj = form.save()
-            messages.success(request, "Topic has been successfully added/updated!")
+            obj = form.save(commit=False)
+            is_new_topic = obj.pk is None
+            obj.save()
+
+            success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
+            messages.success(request, success_message)
 
             # Redirect to the same page if it's a new topic, otherwise, redirect with the topic_id
-            return redirect('user-admin-topic') if not topic_id else redirect('user-admin-topic-update', topic_id=obj.id)
+            return redirect('user-admin-topic')
         else:
             messages.error(request, "Value exists or please try again!")
 
     context = {'form': form, 'topics': topics, 'topic_id': topic_id}
     return render(request, 'user-admin/topic.html', context=context)
-
 #JSON
 def json_filter_topic(request):
     topics = Topic.objects.all()
@@ -622,7 +644,6 @@ def json_filter_topic(request):
             'id': topic.id,
             'title_ENG': topic.title_ENG,
             'title_AMH': topic.title_AMH,
-            'user': topic.user.username if topic.user else None,
             'updated': topic.updated.isoformat(),
             'created': topic.created.isoformat(),
             'is_deleted': topic.is_deleted,

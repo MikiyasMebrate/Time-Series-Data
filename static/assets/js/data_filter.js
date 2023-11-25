@@ -139,7 +139,7 @@ function filterData() {
         // Process categories
         catargoryCount = 0;
         var selectCategory = data.categories.map(function (category) {
-          if (String(category.topics[0].id) === String(selectedTopicId) && category.is_deleted === false) {
+          if (String(category.topic_id) === String(selectedTopicId) && category.is_deleted === false) {
             catargoryCount += 1;
             return '<div class="filter-submenu">' +
               '  <input type="radio" value="' + category.id + '" name="category_lists" id="category_list' + category.id + '">' +

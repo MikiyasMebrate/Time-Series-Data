@@ -189,15 +189,5 @@
     {% include 'user-admin/include/footer.html'%} 
     {% include 'user-admin/include/footer_js.html'%}
     <script src="{% static 'assets/js/updatedata.js' %}"></script>
-    <script>
-      //remove Indicator
-      let btnDelete = document.getElementsByName("topicDelete");
-      btnDelete.forEach((deleteTopic)=>{
-        deleteTopic.addEventListener('click', ()=>{
-          let approveAnchor = document.getElementById('forRemoveTopic')
-          approveAnchor.setAttribute('href', `/user-admin/topic-delete/${deleteTopic.id}`)
-        })
-      })
-</script>
   </body>
 </html>
