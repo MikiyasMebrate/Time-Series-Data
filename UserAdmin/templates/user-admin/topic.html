@@ -146,7 +146,6 @@
                     <tr>
                       <th>Name English</th>
                       <th>Name Amharic</th>
-                      <th>Location</th>
                       <th>Created Date</th>
                       <th class='text-center'>Action</th>
                     </tr>
@@ -157,11 +156,6 @@
                     <tr>
                       <td>{{ topic.title_ENG }}</td>
                       <td>{{ topic.title_AMH }}</td>
-                      <td>
-                        {% for location in topic.for_location.all %}
-                          {{ location.name_ENG }} {% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                      </td>
                       <td>{{ topic.created|date:'F d, Y' }}</td>
                       <td>
                         <div class="d-flex justify-content-center text-center space-between">

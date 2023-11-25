@@ -26,8 +26,8 @@ class catagoryForm(forms.ModelForm):
             'topic': forms.Select(attrs={'class': 'form-select'}),
         }
 
-    def init(self, *args, **kwargs):
-        super(catagoryForm, self).init(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(catagoryForm, self).__init__(*args, **kwargs)
         # Override the queryset for the topic field
         self.fields['topic'].queryset = Topic.objects.filter(is_deleted=False)
 
