@@ -552,6 +552,7 @@ def delete_indicator(request,pk):
 
 def measurement(request):
     addMeasurementForm = MeasurementForm()
+    editMeasurementForm = MeasurementForm()
     if request.method == 'POST':
         if 'formAddMeasurement' in request.POST:
             addMeasurementForm = MeasurementForm(request.POST)
@@ -566,9 +567,23 @@ def measurement(request):
                    messages.success(request, 'Successfully New measurement Added!')
                 except:
                     messages.error(request, 'Please Try Again!')
+        if 'form_measurement_edit' in request.POST:
+            editMeasurementForm = MeasurementForm(request.POST)
+            if editMeasurementForm.is_valid():
+                measurement_id = request.POST.get('id_measurement')
+                measurement_obj = Measurement.objects.get(pk = measurement_id)
+                measurement_obj.Amount_AMH = editMeasurementForm.cleaned_data['Amount_AMH']
+                measurement_obj.Amount_ENG = editMeasurementForm.cleaned_data['Amount_ENG']
+                measurement_obj.save()
+                editMeasurementForm = MeasurementForm()
+                messages.success(request, 'Successfully Updated')
+            else:
+                messages.error(request, 'Please Try Again!')
+
                 
     context = {
-        'addMeasurementForm' : addMeasurementForm
+        'addMeasurementForm' : addMeasurementForm,
+        'editMeasurementForm' : editMeasurementForm
     }
     return render(request, 'user-admin/measurement.html', context)
 

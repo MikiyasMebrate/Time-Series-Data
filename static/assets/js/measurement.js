@@ -9,7 +9,8 @@ $(document).ready(function () {
       <table id="newTable" class="table table-bordered m-0 p-0" style="width:100%">
       <thead>
         <tr>
-          <th class="ps-5 pe-5">Title</th>
+          <th class="ps-5 pe-5">Title English</th>
+          <th class="ps-5 pe-5">Title Amharic</th>
           <th class="ps-5 pe-5">Action</th>
         </tr>
   
@@ -28,16 +29,22 @@ $(document).ready(function () {
                 status = true;
               }
             }
+            if(!measure.Amount_AMH) {
+              measure.Amount_AMH = ' - '
+            }
             if (status == true) {
               table += `
                 <tr>
                   <td class="fw-bold">
                   &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${measure.Amount_ENG}
                   </td>
+                  <td class="fw-bold">
+                  &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${measure.Amount_AMH}
+                  </td>
                   <td>
                     <button type="button" name="btnAddMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
     
-                    <button type="button" name="EditSubIndicator" id="${measure.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
+                    <button type="button" name="editMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
     
                     <button type="button" name="btnDeleteMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
                   </td>
@@ -49,10 +56,13 @@ $(document).ready(function () {
                   <td class="">
                   &nbsp;&nbsp;&nbsp;&nbsp;  ${space} ${measure.Amount_ENG}
                   </td>
+                  <td class="">
+                  &nbsp;&nbsp;&nbsp;&nbsp;  ${space} ${measure.Amount_AMH}
+                  </td>
                   <td>
                     <button type="button" name="btnAddMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
     
-                    <button type="button" name="EditSubIndicator" id="${measure.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
+                    <button type="button" name="editMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
     
                     <button type="button" name="btnDeleteMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
                   </td>
@@ -65,15 +75,21 @@ $(document).ready(function () {
       //Parent Measurement
       for (measurement of data.measurements) {
         if (measurement.parent_id == null && !measurement.is_deleted) {
+          if(!measurement.Amount_AMH) {
+            measurement.Amount_AMH = ' - '
+          }
           table += `
               <tr>
                 <td class="fw-bold">
                           ${measurement.Amount_ENG}
                 </td>
+                <td class="fw-bold">
+                          ${measurement.Amount_AMH}
+                </td>
                 <td>
                   <button type="button" name="btnAddMeasurement" id="${measurement.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
   
-                  <button type="button" name="EditSubIndicator" id="${measurement.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
+                  <button type="button" name="editMeasurement" id="${measurement.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
   
                   <button type="button" name="btnDeleteMeasurement" id="${measurement.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
                 </td>
@@ -108,9 +124,9 @@ $(document).ready(function () {
 
       let parentContainer = document.querySelector("#tableTest");
 
-      let titleEnglish = document.getElementById("id_title_ENG");
-      let titleAmharic = document.getElementById("id_title_AMH");
-      let category = document.getElementById("id_category_option");
+      let titleEnglish = document.getElementById("id_Amount_ENG");
+      let titleAmharic = document.getElementById("id_Amount_AMH");
+
 
       //Add Indicator Function
       let addSubMeasurement = () => {
@@ -126,25 +142,26 @@ $(document).ready(function () {
 
 
       //Edit Indicator Function
-      let editSubIndicator = () => {
-        let btnSubIndicatorEdit =
-          document.getElementsByName("EditSubIndicator");
-        btnSubIndicatorEdit.forEach((editIndicator) => {
-          editIndicator.addEventListener("click", () => {
-            let indicatorId = editIndicator.id;
-            category.style.display = "none";
+      let editMeasurement = () => {
+        let btnMeasurement =
+          document.getElementsByName("editMeasurement");
+        btnMeasurement.forEach((editMeasure) => {
+          editMeasure.addEventListener("click", () => {
+            let measurementId = editMeasure.id;
+            console.log(measurementId)
 
-            let selectedIndicator = data.indicators.find(
-              (indicator) => String(indicator.id) == String(indicatorId)
+
+            let selectedMeasurement = data.measurements.find(
+              (measurement) => String(measurement.id) == String(measurementId)
             );
 
-            if (selectedIndicator.title_AMH == null) {
-              selectedIndicator.title_AMH = "";
+            if (selectedMeasurement.title_AMH == null) {
+              selectedMeasurement.title_AMH = "";
             }
 
-            titleEnglish.value = selectedIndicator.title_ENG;
-            titleAmharic.value = selectedIndicator.title_AMH;
-            document.getElementById("id_indicator_id").value = indicatorId;
+            titleEnglish.value = selectedMeasurement.Amount_ENG;
+            titleAmharic.value = selectedMeasurement.Amount_AMH;
+            document.getElementById("id_measurement_id").value = measurementId;
           });
         });
       };
@@ -166,12 +183,12 @@ $(document).ready(function () {
       };
 
       //Before any changes
-      editSubIndicator();
+      editMeasurement();
       removeSubIndicator();
       addSubMeasurement();
       //Call After table is Changed
       parentContainer.addEventListener("click", () => {
-        editSubIndicator();
+        editMeasurement();
         removeSubIndicator();
         addSubMeasurement();
       });

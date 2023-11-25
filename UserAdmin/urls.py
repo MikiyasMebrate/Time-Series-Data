@@ -43,7 +43,8 @@ urlpatterns = [
     
     #Measurement
     path('measurement/', views.measurement, name="user-admin-measurement"),
-    # path('profile/', views.profile, name="user-admin-profile"),
+    path('measurement-delete/<int:pk>', views.delete_measurement, name="user-admin-delete-measurement"),
+
 
     #source
     path('source/', views.source, name="user-admin-source"),

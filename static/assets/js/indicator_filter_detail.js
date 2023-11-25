@@ -11,7 +11,8 @@ $(document).ready(function () {
     <table id="newTable" class="table table-bordered m-0 p-0" style="width:100%">
     <thead>
       <tr>
-        <th class="ps-5 pe-5">Title</th>
+        <th class="ps-5 pe-5">Title English</th>
+        <th class="ps-5 pe-5">Title Amharic</th>
         <th class="ps-5 pe-5">Action</th>
       </tr>
 
@@ -30,10 +31,17 @@ $(document).ready(function () {
                 checkParentHasChild = true;
               }
             }
+
+            if(!title_AMH) {
+              title_AMH = ' - '
+            }
             table += `
             <tr>
               <td class="fw-bold">
                         ${title_ENG}
+              </td>
+              <td class="fw-bold">
+              ${title_AMH}
               </td>
               <td>
                 <button type="button" name="btnAddIndicator" id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
@@ -63,12 +71,18 @@ $(document).ready(function () {
                   indicator.is_deleted == false
                 ) {
                   test = true;
+                  if(!indicator.title_AMH) {
+                    indicator.title_AMH = ' - '
+                  }
                   //Table Row Start
                   table += `
             <tr>
               <td class="fw-normal">
                         &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
               </td>
+              <td class="fw-normal">
+              &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_AMH}
+             </td>
               <td>
               <button type="button" name="btnAddIndicator" id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
 
@@ -98,11 +112,18 @@ $(document).ready(function () {
                           }
                         }
                         status = true;
+                        if(!i.title_AMH) {
+                          i.title_AMH = ' - '
+                        }
+                        
                         //Table Row Start
                         table += `
                     <tr>
                     <td class="fw-normal">
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
+                    </td>
+                    <td class="fw-normal">
+                          &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_AMH}
                     </td>
                     <td >
                     <button type="button" name="btnAddIndicator" id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
