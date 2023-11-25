@@ -41,16 +41,20 @@ urlpatterns = [
    #Month
    path('month/', views.month, name="user-admin-month"),
     
+    #Measurement
     path('measurement/', views.measurement, name="user-admin-measurement"),
-    # path('profile/', views.profile, name="user-admin-profile"),
+    path('measurement-delete/<int:pk>', views.delete_measurement, name="user-admin-delete-measurement"),
+
+    #Source
     path('source/', views.source, name="user-admin-source"),
     path('source/<int:pk>', views.source_detail, name="user-source-detail"),
     path('source-delete/<int:pk>', views.delete_source, name='user-source-delete'),
+
+    #Topic
     path('topic/', views.topic, name="user-admin-topic"),
     path('topic/<int:pk>', views.topic_detail, name="user-topic-detail"),
     path('topic-delete/<int:pk>', views.delete_topic, name='user-topic-delete'),
-    # path('users/', views.users_list, name="user-admin-user-list")
+
     
     path('recyclebin/', views.recyclebin, name="user-admin-recyclebin"),
-    # path('users/', views.users_list, name="user-admin-user-list")
 ]

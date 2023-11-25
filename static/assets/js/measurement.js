@@ -22,7 +22,7 @@ $(document).ready(function () {
         let status = false;
         space += String("&nbsp;&nbsp;&nbsp;&nbsp");
         for (measure of data.measurements) {
-          if (String(measure.parent_id) === String(parent.id)) {
+          if (String(measure.parent_id) === String(parent.id) && !measure.is_deleted) {
             for (check of data.measurements) {
               if (String(measure.id) === String(check.parent_id)) {
                 status = true;
@@ -39,7 +39,7 @@ $(document).ready(function () {
     
                     <button type="button" name="EditSubIndicator" id="${measure.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
     
-                    <button type="button" name="btnDeleteSubIndicator" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
+                    <button type="button" name="btnDeleteMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
                   </td>
                 </tr>`;
               measurementChild(measure, space);
@@ -54,7 +54,7 @@ $(document).ready(function () {
     
                     <button type="button" name="EditSubIndicator" id="${measure.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
     
-                    <button type="button" name="btnDeleteSubIndicator" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
+                    <button type="button" name="btnDeleteMeasurement" id="${measure.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
                   </td>
                 </tr>`;
             }
@@ -64,7 +64,7 @@ $(document).ready(function () {
 
       //Parent Measurement
       for (measurement of data.measurements) {
-        if (measurement.parent_id == null) {
+        if (measurement.parent_id == null && !measurement.is_deleted) {
           table += `
               <tr>
                 <td class="fw-bold">
@@ -75,7 +75,7 @@ $(document).ready(function () {
   
                   <button type="button" name="EditSubIndicator" id="${measurement.id}" data-bs-toggle="modal"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button>
   
-                  <button type="button" name="btnDeleteSubIndicator" id="${measurement.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
+                  <button type="button" name="btnDeleteMeasurement" id="${measurement.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash"></i></button>
                 </td>
               </tr>`;
               measurementChild(measurement, " ");
@@ -123,6 +123,8 @@ $(document).ready(function () {
           });
         });
       };
+
+
       //Edit Indicator Function
       let editSubIndicator = () => {
         let btnSubIndicatorEdit =
@@ -149,16 +151,15 @@ $(document).ready(function () {
 
       //Delete Indicator Function
       let removeSubIndicator = () => {
-        let btnDeleteSubIndicator = document.getElementsByName(
-          "btnDeleteSubIndicator"
+        let btnDeleteMeasurement = document.getElementsByName(
+          "btnDeleteMeasurement"
         );
-        btnDeleteSubIndicator.forEach((deleteIndicator) => {
-          deleteIndicator.addEventListener("click", () => {
-            console.log(deleteIndicator.id);
-            let approveAnchor = document.getElementById("forRemoveIndicator");
+        btnDeleteMeasurement.forEach((deleteMeasurement) => {
+          deleteMeasurement.addEventListener("click", () => {
+            let approveAnchor = document.getElementById("forRemoveMeasurement");
             approveAnchor.setAttribute(
               "href",
-              `/user-admin/indicator-delete/${deleteIndicator.id}`
+              `/user-admin/measurement-delete/${deleteMeasurement.id}`
             );
           });
         });

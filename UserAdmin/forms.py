@@ -118,6 +118,11 @@ class MeasurementForm(forms.ModelForm):
                 })
         }
 
+class MeasurementSelectForm(forms.Form):
+    measurement_form = forms.CharField(widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
+
 class DataPointForm(forms.ModelForm):
     class Meta:
         model = DataPoint

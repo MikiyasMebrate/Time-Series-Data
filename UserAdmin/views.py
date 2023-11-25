@@ -279,67 +279,78 @@ def data_list(request):
     return render(request, 'user-admin/data_list_view.html', context)
 
 def data_list_detail(request, pk):
-    form = ValueForm(request.POST or None)
-    form_update = ValueForm2(request.POST or None)
-    sub_indicator_form = SubIndicatorFormDetail(request.POST or None)
+    form = ValueForm()
+    form_update = ValueForm2()
+    sub_indicator_form = SubIndicatorFormDetail()
     indicator = Indicator.objects.get(pk = pk)
-    measurement_form = MeasurementForm(request.POST or None)
+    measurement_form = MeasurementSelectForm()
 
     if request.method == 'POST':
-        if form.is_valid():
-            try:
-                indicator_id = request.POST.get('indicator') 
-                data_point_id = request.POST.get('data_point')
-                value = form.cleaned_data['value']
-                indicator_obj = Indicator.objects.get(pk = indicator_id)
-                data_point_obj = DataPoint.objects.get(pk = data_point_id)
-            
-                value_obj = DataValue()
-                value_obj.value = value
-                value_obj.for_datapoint = data_point_obj
-                value_obj.for_indicator = indicator_obj
-                value_obj.save()
-                form = ValueForm()
-                messages.success(request, 'Successfully Added!')
-            except: 
-                None
+        if 'addValueIndicator' in request.POST:
+            form = ValueForm(request.POST)
+            if form.is_valid():
+                try:
+                    indicator_id = request.POST.get('indicator') 
+                    data_point_id = request.POST.get('data_point')
+                    value = form.cleaned_data['value']
+                    indicator_obj = Indicator.objects.get(pk = indicator_id)
+                    data_point_obj = DataPoint.objects.get(pk = data_point_id)
+                
+                    value_obj = DataValue()
+                    value_obj.value = value
+                    value_obj.for_datapoint = data_point_obj
+                    value_obj.for_indicator = indicator_obj
+                    value_obj.save()
+                    form = ValueForm()
+                    messages.success(request, 'Successfully Added!')
+                except: 
+                    messages.error(request, 'Please Try Again To Edit Indicator!')
         
-        if form_update.is_valid():
-            try:  
-                value = form_update.cleaned_data['value2']
-                value_id = request.POST.get('data_value')
-                data_value = DataValue.objects.get(pk = value_id)
-                data_value.value = value
-                data_value.save()
-                form_update = ValueForm2()
-                messages.success(request, 'Successfully Added!')
-            except:
-                 None
-            
-        if sub_indicator_form.is_valid():
-            try: 
-                indicator_id = request.POST.get('addNewIndicator')
-                indicator = Indicator.objects.get(pk = indicator_id)
-                new_sub_indicator = Indicator()
-                new_sub_indicator.title_ENG = sub_indicator_form.cleaned_data['title_ENG']
-                new_sub_indicator.title_AMH =  sub_indicator_form.cleaned_data['title_AMH']
-                new_sub_indicator.parent =  indicator
-                new_sub_indicator.save()
-    
-                sub_indicator_form = SubIndicatorForm()
-                messages.success(request, 'Successfully Added!')
-            except: 
-                None
+        if 'editFormIndicatorValue' in request.POST:
+            form_update = ValueForm2(request.POST)
+            if form_update.is_valid():
+                try:  
+                    value = form_update.cleaned_data['value2']
+                    value_id = request.POST.get('data_value')
+                    data_value = DataValue.objects.get(pk = value_id)
+                    data_value.value = value
+                    data_value.save()
+                    form_update = ValueForm2()
+                    messages.success(request, 'Successfully Added!')
+                except:
+                    messages.error(request, 'Please Try Again To Update Indicator!')
         
-        if measurement_form.is_valid():
-            try:
-                measurement_id = measurement_form.cleaned_data['measurement_form']
-                measurement = Measurement.objects.get(pk = measurement_id)
-                indicator.measurement = measurement
-                indicator.save()
-                messages.success(request, 'Successfully measurement Updated!')
-            except:
-                None
+        if 'formAddIndicator' in request.POST:
+            sub_indicator_form = SubIndicatorFormDetail(request.POST)
+            if sub_indicator_form.is_valid():
+                try: 
+                    indicator_id = request.POST.get('addNewIndicator')
+                    indicator = Indicator.objects.get(pk = indicator_id)
+                    new_sub_indicator = Indicator()
+                    new_sub_indicator.title_ENG = sub_indicator_form.cleaned_data['title_ENG']
+                    new_sub_indicator.title_AMH =  sub_indicator_form.cleaned_data['title_AMH']
+                    new_sub_indicator.parent =  indicator
+                    new_sub_indicator.save()
+        
+                    sub_indicator_form = SubIndicatorForm()
+                    messages.success(request, 'Successfully Added!')
+                except: 
+                    messages.error(request, 'Please Try Again To Add New Sub-Indicator!')
+        
+        if 'measurementFormId' in request.POST:
+            measurement_form = MeasurementSelectForm(request.POST)
+            if measurement_form.is_valid():
+                try:
+                    measurement_id = measurement_form.cleaned_data['measurement_form']
+                    print(measurement_id)
+                    measurement = Measurement.objects.get(pk = measurement_id)
+                    indicator.measurement = measurement
+                    indicator.save()
+                    messages.success(request, 'Successfully measurement Updated!')
+                except:
+                    messages.error(request, 'Please Try Again!')
+            else:
+                messages.error(request, 'Please Try Again not valid!')
                        
     context = {
         'form' : form,
@@ -545,6 +556,18 @@ def measurement(request):
         'addMeasurementForm' : addMeasurementForm
     }
     return render(request, 'user-admin/measurement.html', context)
+
+def delete_measurement(request, pk):
+    try:
+        measurement = Measurement.objects.get(pk = pk)
+        previous_page = request.META.get('HTTP_REFERER')
+        measurement.is_deleted = True
+        measurement.save()
+    
+        messages.success(request, "Successfully Removed")
+        return HttpResponseRedirect(previous_page)
+    except: 
+        messages.error(request, 'Please Try Again!')
 
 
 #Source
@@ -792,17 +815,5 @@ def month(request):
     return render(request, 'user-admin/month.html', context )
 
 
-#User
-# @login_required
-# def users_list(request):
-#     return render(request, 'user-admin/users_list.html')
-# def users_list(request):
-#      item2=CustomUser.objects.all()
-#      count2=item2.count()
-#      context={
-#          'count2':count2
-#      }
-#      return render(request, 'user-admin/users_list.html',context)
- 
 def recyclebin(request):
      return render(request, 'user-admin/recyclebin.html')
