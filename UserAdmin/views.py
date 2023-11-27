@@ -530,6 +530,7 @@ def indicator_detail(request, pk):
     }
     return render(request, 'user-admin/location_detail.html', context)
 
+
 def delete_indicator(request,pk):
     
     indicator = Indicator.objects.get(pk=pk)
@@ -868,4 +869,5 @@ def recyclebin(request):
     }
 
     return render(request, 'user-admin/recyclebin.html', context)
+
 

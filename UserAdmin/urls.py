@@ -58,4 +58,5 @@ urlpatterns = [
 
     
     path('recyclebin/', views.recyclebin, name="user-admin-recyclebin"),
+    
 ]
