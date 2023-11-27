@@ -10,10 +10,14 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from TimeSeriesBase import models
+from UserManagement.decorators import *
 
-
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def index(request):
     return render(request, 'user-admin/index.html')
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
@@ -41,6 +45,8 @@ def indicator_list(request, pk):
     return render(request, 'user-admin/indicators.html', context)
     
 #Category
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def category(request, category_id=None):
     catagory = Category.objects.all()
     
@@ -94,6 +100,8 @@ def category(request, category_id=None):
     return render(request, 'user-admin/categories.html', context=context)
 
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
@@ -113,6 +121,8 @@ def catagory_detail(request, pk):
     }  
     return render(request, 'user-admin/catagories_detail.html', context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def delete_category(request, pk):
     category = Category.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -129,6 +139,8 @@ def delete_category(request, pk):
 
 
 #JSON
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def filter_indicator_json(request):
     topic = list(Topic.objects.all().values())
     category_data = list(Category.objects.all().values())
@@ -141,6 +153,8 @@ def filter_indicator_json(request):
 
     return JsonResponse(context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -152,6 +166,8 @@ def filter_indicator(request, pk):
     measurements = list(Measurement.objects.all().values())
 
     # @login_required
+    @login_required(login_url='login')
+    @allowed_users(allowed_roles=['admins'])
     def child_list(parent, space):
         space = space + "   "
         for i in indicators:
@@ -173,6 +189,8 @@ def filter_indicator(request, pk):
     
     return JsonResponse(context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def json_filter_source(request):
     sources = Source.objects.all()
 
@@ -191,6 +209,8 @@ def json_filter_source(request):
     # Returning the list as JSON
     return JsonResponse({'sources': sources_data}) 
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def json_filter_topic(request):
     topics = Topic.objects.all()
     topics_data = []
@@ -208,6 +228,8 @@ def json_filter_topic(request):
     # Returning the list as JSON
     return JsonResponse({'topics': topics_data})
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def filter_catagory_json(request):
     category_data = list(Category.objects.all().values())
     
@@ -226,6 +248,8 @@ def filter_catagory_json(request):
 
     return JsonResponse(context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def json_measurement(request):
     measurements = list(Measurement.objects.all().values())
     context = {
@@ -235,6 +259,8 @@ def json_measurement(request):
 
 
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
@@ -262,6 +288,8 @@ def json(request):
     
 
 #Data List
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def data_list(request):
     form = dataListForm(request.POST or None)
     if request.method == 'POST':
@@ -293,6 +321,8 @@ def data_list(request):
     }
     return render(request, 'user-admin/data_list_view.html', context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def data_list_detail(request, pk):
     form = ValueForm()
     form_update = ValueForm2()
@@ -378,6 +408,8 @@ def data_list_detail(request, pk):
 
 
 #Location
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def location(request):
     
     location = Location.objects.all()
@@ -399,6 +431,8 @@ def location(request):
     }
     return render(request, 'user-admin/location.html', context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def location_detail(request, pk):
     location = Location.objects.get(pk=pk)
     form = LocationForm(request.POST or None, instance=location)
@@ -418,6 +452,8 @@ def location_detail(request, pk):
     }  
     return render(request, 'user-admin/location_detail.html', context)
 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def delete_location(request,pk):
     location = Location.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -433,6 +469,8 @@ def delete_location(request,pk):
         
 
 #Indicator 
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['admins'])
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
     
@@ -449,6 +487,7 @@ def indicator(request):
     return render(request, 'user-admin/indicators.html', context)
 
 
+@login_required(login_url='login')
 def indicator_list(request, pk):
     add_indicator = IndicatorForm()
     category = Category.objects.get(pk = pk)
@@ -488,6 +527,7 @@ def indicator_list(request, pk):
     }
     return render(request, 'user-admin/indicators.html', context)
 
+@login_required(login_url='login')
 def indicator_detail(request, pk):
     indicator = Indicator.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
@@ -530,6 +570,7 @@ def indicator_detail(request, pk):
     }
     return render(request, 'user-admin/location_detail.html', context)
 
+@login_required(login_url='login')
 def delete_indicator(request,pk):
     
     indicator = Indicator.objects.get(pk=pk)
@@ -550,6 +591,7 @@ def delete_indicator(request,pk):
 
        
 
+@login_required(login_url='login')
 def measurement(request):
     addMeasurementForm = MeasurementForm()
     editMeasurementForm = MeasurementForm()
@@ -587,6 +629,7 @@ def measurement(request):
     }
     return render(request, 'user-admin/measurement.html', context)
 
+@login_required(login_url='login')
 def delete_measurement(request, pk):
     try:
         measurement = Measurement.objects.get(pk = pk)
@@ -601,6 +644,7 @@ def delete_measurement(request, pk):
 
 
 #Source
+@login_required(login_url='login')
 def source(request, source_id=None):
     sources = Source.objects.all()
 
@@ -643,6 +687,7 @@ def source(request, source_id=None):
 
 
 
+@login_required(login_url='login')
 def source_detail(request, pk):
     source = Source.objects.get(pk=pk)
     
@@ -663,6 +708,7 @@ def source_detail(request, pk):
     }  
     return render(request, 'user-admin/source_detail.html', context)
 
+@login_required(login_url='login')
 def delete_source(request,pk):
     source = Source.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -676,6 +722,7 @@ def delete_source(request,pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
 
+@login_required(login_url='login')
 def topic(request, topic_id=None):
     topics = Topic.objects.all()
 
@@ -709,6 +756,7 @@ def topic(request, topic_id=None):
     context = {'form': form, 'topics': topics, 'topic_id': topic_id}
     return render(request, 'user-admin/topic.html', context=context)
 #JSON
+@login_required(login_url='login')
 def json_filter_topic(request):
     topics = Topic.objects.all()
     
@@ -727,6 +775,7 @@ def json_filter_topic(request):
     # Returning the list as JSON
     return JsonResponse({'topics': topics_data})
 
+@login_required(login_url='login')
 def topic_detail(request, pk):
     topic = Topic.objects.get(pk=pk)
     form = TopicForm(request.POST or None, instance=topic)
@@ -746,6 +795,7 @@ def topic_detail(request, pk):
     }  
     return render(request, 'user-admin/topic_detail.html', context)
 
+@login_required(login_url='login')
 def delete_topic(request,pk):
     topic = Topic.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -761,6 +811,7 @@ def delete_topic(request,pk):
  
  
 #Data Point 
+@login_required(login_url='login')
 def data_point(request):
     data_points = DataPoint.objects.all()
     form = DataPointForm(request.POST or None)
@@ -793,6 +844,7 @@ def data_point(request):
     }
     return render(request, 'user-admin/data_point.html', context)     
        
+@login_required(login_url='login')
 def data_point_detail(request, pk):
     data_point = DataPoint.objects.get(pk = pk) 
     form = DataPointForm(request.POST or None, instance=data_point)
@@ -827,6 +879,7 @@ def data_point_detail(request, pk):
     
     return render(request, 'user-admin/data_point_detail.html', context )
 
+@login_required(login_url='login')
 def delete_data_point(request, pk):
     data_point = DataPoint.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -843,6 +896,7 @@ def delete_data_point(request, pk):
 
 
 #Month
+@login_required(login_url='login')
 def month(request):
     months = Month.objects.all()
     context = {
@@ -851,6 +905,7 @@ def month(request):
     return render(request, 'user-admin/month.html', context )
 
 
+@login_required(login_url='login')
 def recyclebin(request):
     recycled_categories = Category.objects.filter(is_deleted=True)
     recycled_indicators = Indicator.objects.filter(is_deleted=True)
