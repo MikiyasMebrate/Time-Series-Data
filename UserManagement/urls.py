@@ -1,6 +1,7 @@
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import update_user, user_registration_view,users_list,edit_user,delete_user
+# from .views import user_registration_view,users_list,login_view,delete_user
+# update_user,edit_user,delete_user
 from . import urls
 
 from django import views
@@ -15,7 +16,8 @@ urlpatterns = [
     
     path('users/<int:user_id>/edit/', views.edit_user, name='edit_user'),
     path('users/<int:user_id>/delete/', views.delete_user, name='delete_user'),
-
+     
+   
 
    #path('user-registration/', views.user_registration, name='user-registration'),
    #path('users_list/', views.users_list, name='users_list'),
