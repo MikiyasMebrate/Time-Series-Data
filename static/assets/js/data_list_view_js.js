@@ -3,20 +3,18 @@ let filterData = () => {
     .then((response) => response.json())
     .then((data) => {
       selectTopic = data.topics.map(
-        ({ title_ENG, title_AMH, id, is_deleted }) =>{
-          if(is_deleted){
-            return(null)
-          }else{
-            return(
-              `
+        ({ title_ENG, title_AMH, id, is_deleted }) => {
+          if (is_deleted) {
+            return null;
+          } else {
+            return `
               <li>
               <div class="flex-grow-2">
                  <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
                   <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
                 </div>
             </li>
-              `
-            )
+              `;
           }
         }
       );
@@ -30,8 +28,10 @@ let filterData = () => {
       topicHtmlList = document.getElementsByName("topic_lists");
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
-          document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
-          document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
+          document.getElementById("indicator_list_filter").innerHTML =
+            ' <p class="text-danger">Please Select Category</p>';
+          document.getElementById("Year_list_filter").innerHTML =
+            ' <p class="text-danger">Please Select Indicator</p>';
           displayApplyButton.style.display = "none";
           selectedTopicId = event.target.value;
           defaultTable = `
@@ -61,29 +61,28 @@ let filterData = () => {
         </table>
                `;
 
-
-        document.getElementById('list_table_view').innerHTML = defaultTable
-        table = $("#example1")
-        .DataTable({
-          retrieve: true,
-          ordering: false,
-          scrollX: true,
-          paging: true,
-          searching: false,
-          orderNumber: false,
-          lengthMenu: [25, 50, 100],
-        })
-        .buttons()
-        .container()
-        .appendTo("#example1_wrapper .col-md-6:eq(0)");
+          document.getElementById("list_table_view").innerHTML = defaultTable;
+          table = $("#example1")
+            .DataTable({
+              retrieve: true,
+              ordering: false,
+              scrollX: true,
+              paging: true,
+              searching: false,
+              orderNumber: false,
+              lengthMenu: [25, 50, 100],
+            })
+            .buttons()
+            .container()
+            .appendTo("#example1_wrapper .col-md-6:eq(0)");
 
           let selectCategory = data.categories.map(
             ({ name_ENG, name_AMH, id, topic_id, is_deleted }) => {
               if (String(topic_id) === String(selectedTopicId)) {
-                if(is_deleted){
-                  return null
-                }else{
-                  return( `
+                if (is_deleted) {
+                  return null;
+                } else {
+                  return `
                         <li>
                         <div class="flex-grow-2 ">
                            <div class="row ">
@@ -95,25 +94,36 @@ let filterData = () => {
                              </div>
                           </div>
                       </li>
-                        `);
+                        `;
                 }
               }
             }
           );
 
           categoryHtml = document.getElementById("category_list_filter");
-          categoryHtml.innerHTML = selectCategory.join("");
+
+          if (selectCategory.join("") == "") {
+            categoryHtml.innerHTML =
+              '<p class="text-danger">Please select Another Category</p>';
+          } else {
+            categoryHtml.innerHTML = selectCategory.join("");
+          }
 
           categoryHtmlList = document.getElementsByName("category_lists");
 
           categoryHtmlList.forEach((categoryRadio) => {
             categoryRadio.addEventListener("change", (eventCategory) => {
-              document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
+              document.getElementById("Year_list_filter").innerHTML =
+                ' <p class="text-danger">Please Select Category</p>';
               displayApplyButton.style.display = "none";
+
               let selectedCategoryId = eventCategory.target.value;
               selectIndicator = data.indicators.map(
                 ({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
-                  if (String(for_category_id) === String(selectedCategoryId) && is_deleted == false) {
+                  if (
+                    String(for_category_id) === String(selectedCategoryId) &&
+                    is_deleted == false
+                  ) {
                     let title_amharic = "";
 
                     if (!title_AMH == null) {
@@ -157,7 +167,13 @@ let filterData = () => {
               let indicatorHtml = document.getElementById(
                 "indicator_list_filter"
               );
-              indicatorHtml.innerHTML = selectAll + selectIndicator.join("");
+
+              if (selectIndicator.join("") == "") {
+                indicatorHtml.innerHTML =
+                  '<p class="text-danger">Please select Another Category</p>';
+              } else {
+                indicatorHtml.innerHTML = selectAll + selectIndicator.join("");
+              }
 
               //Return Selected Year
               let yearTableList = [];
@@ -448,7 +464,6 @@ let filterData = () => {
                                   String(valueToCheck[0])
                                 ) {
                                   yearTableList.splice(i, 1);
-                                 
                                 }
                               }
                             }
@@ -490,7 +505,7 @@ let filterData = () => {
                   });
                 }
               });
-              
+
               //indicator list HTML
               let indicatorHtmlList =
                 document.getElementsByName("indicator_lists");
@@ -520,6 +535,7 @@ let filterData = () => {
                 );
               });
 
+
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
                 let table = "";
@@ -537,8 +553,19 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
-                    if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted == false) {
+                selectIndicator = data.indicators.map(
+                  ({
+                    title_ENG,
+                    title_AMH,
+                    id,
+                    for_category_id,
+                    is_deleted,
+                  }) => {
+                    if (
+                      String(for_category_id) === String(selectedCategoryId) &&
+                      selectedIndictorId.includes(String(id)) &&
+                      is_deleted == false
+                    ) {
                       let title_amharic = "";
                       if (!title_AMH === null)
                         title_amharic = " - " + title_AMH;
@@ -582,7 +609,10 @@ let filterData = () => {
                         let status = false;
 
                         for (i of data.indicators) {
-                          if (String(i.parent_id) === String(parent) && i.is_deleted == false) {
+                          if (
+                            String(i.parent_id) === String(parent) &&
+                            i.is_deleted == false
+                          ) {
                             status = true;
                             //Table Row Start
                             table += `
@@ -617,8 +647,6 @@ let filterData = () => {
                             table += `</tr>`;
 
                             //Table Row End
-
-                            //child.push(`<option value=${i.id}> ${space} ${i.title_ENG} ${i.title_AMH} </option>`)
                             table_child_list(i.id, i.title_ENG, String(space));
                           }
                         }
@@ -627,7 +655,10 @@ let filterData = () => {
 
                       //Child Lists
                       for (let indicator of data.indicators) {
-                        if (String(indicator.parent_id) == String(id) && indicator.is_deleted == false) {
+                        if (
+                          String(indicator.parent_id) == String(id) &&
+                          indicator.is_deleted == false
+                        ) {
                           test = true;
                           //li.push(`<optgroup label="${title_ENG}">`)
 
@@ -710,9 +741,10 @@ let filterData = () => {
                     buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                   });
                 });
-             
               });
               //End Indicator table
+
+
             });
           });
         });

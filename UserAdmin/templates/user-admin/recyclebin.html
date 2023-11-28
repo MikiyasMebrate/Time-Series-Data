@@ -105,7 +105,7 @@
                     <div class="container-fluid">
                       <div class="row mb-2">
                         <div class="col-sm-6">
-                          <h1 class="m-0">indicators Lists</h1>
+                          <h1 class="m-0">Deleted Indicators Lists</h1>
                         </div>
                       </div>
                     </div>
@@ -180,7 +180,7 @@
             
             
                             <div class="d-grid" id="filter_apply_button">
-                              <a href="" id="apply_button" style="display: none;" class="btn btn-primary m-2">Apply</a>
+                              <button id="apply_button" style="display: none;" class="btn btn-primary m-2">Apply</button>
                             </div>
                           </div>
                         </div>
@@ -203,27 +203,6 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {% if indicators %}
-                                  {% for indicator in indicators%}
-                                  {% if indicator.is_deleted == False %}
-                                  <tr>
-                                    <td>{{indicator.title_ENG}}</td>
-                                    {% if indicator.title_AMH %}
-                                    <td>{{indicator.title_AMH}}</td>
-                                    {% else %}
-                                    <td class="text-center">  - </td>
-                                    {% endif %}
-                                    <td>{{indicator.created_at | date:'F d, Y' }}</td>
-                                    <td>
-                                      <div class="col-10">
-                                        <a href="{% url 'user-admin-indicator-detail' indicator.id  %}" name="btnAddIndicator"   class="btn btn-outline-primary border-0  pt-1 pb-1"><i class="fas fa-eye"></i></a> 
-                                        <button type="button" name="EditIndicator" id="{{indicator.id}}"  data-bs-toggle="modal" data-bs-target="#editModalIndicator"   data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="edit-button btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit indicator "><i class="fas fa-pen"></i></button> 
-                                        <button type="button" name="btnDeleteIndicator" id="{{indicator.id}}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas  fa-trash"></i></button>
-                                    </td>
-                                  </tr>
-                                  {% endif %}
-                                  {% endfor %}
-                                  {% endif %}
                                 </tbody>
                               </table>
                             </div>
