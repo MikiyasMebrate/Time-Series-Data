@@ -18,23 +18,23 @@ from import_export.widgets import ForeignKeyWidget  # For foreignkey
 
 @login_required(login_url='login')
 def index(request):
-    class BookResourceWithStoreInstance(resources.ModelResource):
-        user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
-        class Meta:
-            model = Book
-            store_instance = True
+    # class BookResourceWithStoreInstance(resources.ModelResource):
+    #     user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
+    #     class Meta:
+    #         model = Book
+    #         store_instance = True
 
-    rows = [
-        ( 'Lord ', 'Lord ', 'hp'),
-        ('Lord ', 'Lord ', 'hp'),
-        ('Lord ', 'Lord ', 'hp'),
-    ]
-    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
-    resource = BookResourceWithStoreInstance()
-    result = resource.import_data(dataset)
+    # rows = [
+    #     ( 'Lord ', 'Lord ', 'hp'),
+    #     ('Lord ', 'Lord ', 'hp'),
+    #     ('Lord ', 'Lord ', 'hp'),
+    # ]
+    # dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
+    # resource = BookResourceWithStoreInstance()
+    # result = resource.import_data(dataset)
 
-    for row_result in result:
-        print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
+    # for row_result in result:
+    #     print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
         
     return render(request, 'user-admin/index.html')
 @login_required(login_url='login')
