@@ -254,8 +254,6 @@ $(document).ready(function () {
             categoryHtml.innerHTML = selectCategory.join("");
             categoryHtmlList = document.getElementsByName("category_lists");
 
-
-
             categoryHtmlList.forEach((radioCategory) => {
               radioCategory.addEventListener("change", () => {
                 displayApplyButton.style.display = "block";
@@ -278,38 +276,196 @@ $(document).ready(function () {
               </thead> 
               <tbody>`;
 
-                  data.indicators.map(
-                    ({
-                      title_ENG,
-                      title_AMH,
-                      id,
-                      for_category_id,
-                      is_deleted,
-                    }) => {
-                      if (for_category_id != null && String(for_category_id) == String(radioCategory.value)) {
-                       
-                        let title_amharic = "";
-                        if (!title_AMH === null)
-                          title_amharic = " - " + title_AMH;
+                  let tableDeletedIndicatorChild = (parentIndicator, space) => {
+                    space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                    for (let childIndicator of data.indicators) {
+                      if (
+                        String(childIndicator.parent_id) ==
+                        String(parentIndicator.id)
+                      ) {
+                        test = true;
+
                         //Table Row Start
+                        table += `
+                                    <tr>
+                                      <td class="fw-normal">   
+                                          <div class="row">
+                                <div class="col-9">
+                                 ${space}  ${childIndicator.title_ENG} ${childIndicator.is_deleted}
+                                </div>
+                                <div class="col-1">
+                              
+                            </div> 
+                                      </td>
+                                    `;
+                        //Child List
                         let checkParentHasChild = false;
                         for (check of data.indicators) {
                           if (
-                            String(check.parent_id) === String(id) &&
+                            String(check.parent_id) ===
+                              String(parentIndicator.id) &&
                             check.is_deleted == false
                           ) {
                             checkParentHasChild = true;
                           }
                         }
+                        for (year of data.year) {
+                          let statusData = false;
+                          for (value of data.value) {
+                            if (
+                              String(year.id) ===
+                                String(value.for_datapoint_id) &&
+                              String(childIndicator.id) ===
+                                String(value.for_indicator_id)
+                            ) {
+                              if (checkParentHasChild) {
+                                if (value.value != null) {
+                                  table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                } else {
+                                  table += `<td class="text-center fw-bold"> - </td>`;
+                                }
+                              } else {
+                                if (value.value != null) {
+                                  table += ` <td class="text-center">${value.value}</td>`;
+                                } else {
+                                  table += ` <td class="text-center"> - </td>`;
+                                }
+                              }
+                              statusData = false;
+                              break;
+                            } else {
+                              statusData = true;
+                            }
+                          }
+                          if (statusData) {
+                            if (checkParentHasChild) {
+                              table += `<td class="text-center fw-bold"> - </td>`;
+                            } else {
+                              table += ` <td class="text-center"> - </td>`;
+                            }
+                          }
+                        }
+                        tableDeletedIndicatorChild(
+                          childIndicator,
+                          String(space)
+                        );
+                      }
+                    }
+                  };
 
+                  let checkTableDeletedIndicatorChild = (parentIndicator) => {
+                    for (let childIndicator of data.indicators) {
+                      if (
+                        String(childIndicator.parent_id) ==
+                          String(parentIndicator.id) &&
+                        childIndicator.is_deleted
+                      ) {
+
+                        //Add Parent Indicator 
+
+                        
+                        test = true;
+
+                        //Table Row Start
                         table += `
-            <tr>
-              <td class="fw-bold">
-                  <div class="row">
-                        ${title_ENG} ${title_amharic} -->  ${is_deleted}
-                  </div>
-              </td>
-               `;
+                              <tr>
+                                <td class="fw-bold">  
+                                <div class="row">
+                                <div class="col-9">
+                                ${childIndicator.title_ENG} ${childIndicator.is_deleted}
+                                </div>
+                                <div class="col-1">
+                              <button type="button" name="btnDeleteIndicator" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">Restore</button> 
+                            </div> 
+                                </td>
+                              `;
+                        //Child List
+                        let checkParentHasChild = false;
+                        for (check of data.indicators) {
+                          if (
+                            String(check.parent_id) ===
+                              String(parentIndicator.id) &&
+                            check.is_deleted == false
+                          ) {
+                            checkParentHasChild = true;
+                          }
+                        }
+                        for (year of data.year) {
+                          let statusData = false;
+                          for (value of data.value) {
+                            if (
+                              String(year.id) ===
+                                String(value.for_datapoint_id) &&
+                              String(childIndicator.id) ===
+                                String(value.for_indicator_id)
+                            ) {
+                              if (checkParentHasChild) {
+                                if (value.value != null) {
+                                  table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                } else {
+                                  table += `<td class="text-center fw-bold"> - </td>`;
+                                }
+                              } else {
+                                if (value.value != null) {
+                                  table += ` <td class="text-center">${value.value}</td>`;
+                                } else {
+                                  table += ` <td class="text-center"> - </td>`;
+                                }
+                              }
+                              statusData = false;
+                              break;
+                            } else {
+                              statusData = true;
+                            }
+                          }
+                          if (statusData) {
+                            if (checkParentHasChild) {
+                              table += `<td class="text-center fw-bold"> - </td>`;
+                            } else {
+                              table += ` <td class="text-center"> - </td>`;
+                            }
+                          }
+                        }
+                        tableDeletedIndicatorChild(childIndicator, " ");
+                      } else if (
+                        String(childIndicator.parent_id) ==
+                        String(parentIndicator.id)
+                      ) {
+                        tableDeletedIndicatorChild(childIndicator, " ");
+                      }
+                    }
+                  };
+
+                  //Main Loop
+                  for (parentIndicator of data.indicators) {
+                    if (
+                      String(parentIndicator.for_category_id) ==
+                      String(radioCategory.value)
+                    ) {
+                      if (parentIndicator.is_deleted) {
+                        let checkParentHasChild = false;
+                        for (check of data.indicators) {
+                          if (
+                            String(check.parent_id) ===
+                              String(parentIndicator.id) &&
+                            check.is_deleted == false
+                          ) {
+                            checkParentHasChild = true;
+                          }
+                        }
+                        table += `
+                                 <tr>
+
+                                 <td class="fw-bold">  
+                                 <div class="row">
+                                 <div class="col-9">
+                                 ${parentIndicator.title_ENG} ${parentIndicator.title_AMH} --> ${parentIndicator.is_deleted}
+                                 </div>
+                                 <div class="col-1">
+                               <button type="button" name="btnDeleteIndicator" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">Restore</button> 
+                             </div> 
+                                 </td>
+                                    `;
 
                         for (year of data.year) {
                           let statusData = false;
@@ -317,7 +473,8 @@ $(document).ready(function () {
                             if (
                               String(year.id) ===
                                 String(value.for_datapoint_id) &&
-                              String(id) === String(value.for_indicator_id)
+                              String(parentIndicator.id) ===
+                                String(value.for_indicator_id)
                             ) {
                               if (checkParentHasChild) {
                                 if (value.value != null) {
@@ -344,167 +501,16 @@ $(document).ready(function () {
                           }
                         }
                         table += `</tr>`;
-                        //Table Row End
-                        if (checkParentHasChild) {
-                          for (let indicator of data.indicators) {
-                            let checkChildHasChild = false;
-
-                            for (check of data.indicators) {
-                              if (
-                                String(check.parent_id) ===
-                                  String(indicator.id) &&
-                                check.is_deleted == false
-                              ) {
-                                checkChildHasChild = true;
-                              }
-                            }
-
-                            if (
-                              String(indicator.parent_id) == String(id) &&
-                              indicator.is_deleted == false
-                            ) {
-                              test = true;
-                              //Table Row Start
-                              table += `
-                  <tr>
-                    <td class="fw-normal">   
-                        <div class="row">
-                              &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG} --> ${indicator.is_deleted}
-                        </div>
-                    </td>
-                  `;
-
-                              //Child of Child List
-                              let table_child_list = (parent, space) => {
-                                space += String("&nbsp;&nbsp;&nbsp;&nbsp");
-                                let status = false;
-
-                                for (i of data.indicators) {
-                                  if (
-                                    String(i.parent_id) === String(parent) &&
-                                    i.is_deleted == false
-                                  ) {
-                                    let checkChildOfChildHasChild = false;
-                                    for (check of data.indicators) {
-                                      if (
-                                        String(check.parent_id) ===
-                                          String(i.id) &&
-                                        check.is_deleted == false
-                                      ) {
-                                        checkChildOfChildHasChild = true;
-                                      }
-                                    }
-                                    status = true;
-                                    //Table Row Start
-                                    table += `
-                    <tr>
-                    <td class="fw-normal">
-                      <div class="row">
-                          &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG} --> ${i.is_deleted}
-                      </div>
-                    </td>`;
-
-                                    for (year of data.year) {
-                                      let statusData = false;
-                                      for (value of data.value) {
-                                        if (
-                                          String(year.id) ===
-                                            String(value.for_datapoint_id) &&
-                                          String(i.id) ===
-                                            String(value.for_indicator_id)
-                                        ) {
-                                          if (checkChildOfChildHasChild) {
-                                            if (value.value != null) {
-                                              table += `<td class="text-center fw-bold"> ${value.value} </td>`;
-                                            } else {
-                                              table += `<td class="text-center fw-bold"> - </td>`;
-                                            }
-                                          } else {
-                                            if (value.value != null) {
-                                              table += ` <td class="text-center">${value.value}</td>`;
-                                            } else {
-                                              table += ` <td class="text-center"> - </td>`;
-                                            }
-                                          }
-                                          statusData = false;
-                                          break;
-                                        } else {
-                                          statusData = true;
-                                        }
-                                      }
-                                      if (statusData) {
-                                        if (checkChildOfChildHasChild) {
-                                          table += `<td class="text-center fw-bold"> - </td>`;
-                                        } else {
-                                          table += ` <td class="text-center"> - </td>`;
-                                        }
-                                      }
-                                    }
-
-                                    table += `</tr>`;
-
-                                    //Table Row End
-
-                                    table_child_list(i.id, String(space));
-                                  }
-                                }
-                              };
-
-                              //Child List
-                              for (year of data.year) {
-                                let statusData = false;
-                                for (value of data.value) {
-                                  if (
-                                    String(year.id) ===
-                                      String(value.for_datapoint_id) &&
-                                    String(indicator.id) ===
-                                      String(value.for_indicator_id) &&
-                                    indicator.is_deleted == false
-                                  ) {
-                                    if (checkChildHasChild) {
-                                      if (value.value != null) {
-                                        table += `<td class="text-center fw-bold"> ${value.value} </td>`;
-                                      } else {
-                                        table += `<td class="text-center fw-bold"> - </td>`;
-                                      }
-                                    } else {
-                                      if (value.value != null) {
-                                        table += ` <td class="text-center">${value.value}</td>`;
-                                      } else {
-                                        table += ` <td class="text-center"> - </td>`;
-                                      }
-                                    }
-                                    statusData = false;
-                                    break;
-                                  } else {
-                                    statusData = true;
-                                  }
-                                }
-                                if (statusData) {
-                                  if (checkChildHasChild) {
-                                    table += `<td class="text-center fw-bold"> - </td>`;
-                                  } else {
-                                    table += ` <td class="text-center"> - </td>`;
-                                  }
-                                }
-                              }
-
-                              table += `</tr>`;
-
-                              //Table Row End
-
-                              if (checkChildHasChild) {
-                                table_child_list(indicator.id, " ");
-                              }
-                            }
-                          }
-                        }
+                        tableDeletedIndicatorChild(parentIndicator, " ");
+                      } else {
+                        checkTableDeletedIndicatorChild(parentIndicator);
                       }
                     }
-                  );
+                  }
 
-                  console.log(table);
                   tableHtmlIndicator.innerHTML = table;
+
+                  //tableHtmlIndicator.innerHTML = table;
                   $(document).ready(function () {
                     $("#newTable").DataTable({
                       retrieve: true,

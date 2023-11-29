@@ -11,9 +11,31 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from TimeSeriesBase import models
 from UserManagement.decorators import *
+import tablib
+from import_export import resources
+from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget  # For foreignkey
 
 @login_required(login_url='login')
 def index(request):
+    class BookResourceWithStoreInstance(resources.ModelResource):
+        user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
+        class Meta:
+            model = Book
+            store_instance = True
+
+    rows = [
+        ( 'Lord ', 'Lord ', 'hp'),
+        ('Lord ', 'Lord ', 'hp'),
+        ('Lord ', 'Lord ', 'hp'),
+    ]
+    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
+    resource = BookResourceWithStoreInstance()
+    result = resource.import_data(dataset)
+
+    for row_result in result:
+        print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
+        
     return render(request, 'user-admin/index.html')
 @login_required(login_url='login')
 def indicator_list(request, pk):
@@ -558,6 +580,8 @@ def delete_indicator(request,pk):
     
     indicator = Indicator.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
+
+
     #Parent Indicator 
     indicator.is_deleted = True
     indicator.save()
@@ -585,14 +609,14 @@ def delete_indicator(request,pk):
 
 
     #Parent Related Values 
-    #years = DataPoint.objects.all()
-    # for year in  years:
-    #     try: 
-    #        deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
-    #        deleted_indicator.is_deleted = True
-    #        deleted_indicator.save()
-    #     except:
-    #         None
+    years = DataPoint.objects.all()
+    for year in  years:
+        try: 
+           deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
+           deleted_indicator.is_deleted = True
+           deleted_indicator.save()
+        except:
+            None
     messages.success(request, "Successfully Removed!")
     return HttpResponseRedirect(previous_page)
 
@@ -931,4 +955,27 @@ def recyclebin(request):
 
     return render(request, 'user-admin/recyclebin.html', context)
 
+def restore_item(request, item_type, item_id):
+    model_mapping = {
+        'topic': Topic,
+        'indicator': Indicator,
+        'catagory': Category,
+        'measurement': Measurement,
+        'source': Source,
+    }
 
+    model = model_mapping.get(item_type)
+    print('mode', model)
+    if not model:  
+        messages.error(request,'Failed to restore item')
+        return redirect('user-admin-recyclebin')  # Change to the actual view name for recycled items
+
+
+    item = get_object_or_404(model, pk=item_id)
+    item.is_deleted = False
+    item.save()
+
+    messages.success(request,'Successfully restored')
+
+    # Redirect to the view where the recycled items are displayed
+    return redirect('user-admin-recyclebin') 
