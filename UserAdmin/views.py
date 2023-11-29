@@ -18,23 +18,23 @@ from import_export.widgets import ForeignKeyWidget  # For foreignkey
 
 @login_required(login_url='login')
 def index(request):
-    class BookResourceWithStoreInstance(resources.ModelResource):
-        user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
-        class Meta:
-            model = Book
-            store_instance = True
+    # class BookResourceWithStoreInstance(resources.ModelResource):
+    #     user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
+    #     class Meta:
+    #         model = Book
+    #         store_instance = True
 
-    rows = [
-        ( 'Lord ', 'Lord ', 'hp'),
-        ('Lord ', 'Lord ', 'hp'),
-        ('Lord ', 'Lord ', 'hp'),
-    ]
-    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
-    resource = BookResourceWithStoreInstance()
-    result = resource.import_data(dataset)
+    # rows = [
+    #     ( 'Lord ', 'Lord ', 'hp'),
+    #     ('Lord ', 'Lord ', 'hp'),
+    #     ('Lord ', 'Lord ', 'hp'),
+    # ]
+    # dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
+    # resource = BookResourceWithStoreInstance()
+    # result = resource.import_data(dataset)
 
-    for row_result in result:
-        print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
+    # for row_result in result:
+    #     print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
         
     return render(request, 'user-admin/index.html')
 @login_required(login_url='login')
@@ -937,30 +937,83 @@ def month(request):
 
 
 @login_required(login_url='login')
-def recyclebin(request):
-    recycled_categories = Category.objects.filter(is_deleted=True)
-    recycled_indicators = Indicator.objects.filter(is_deleted=True)
-    recycled_topics = Topic.objects.filter(is_deleted=True)
-    recycled_measurements = Measurement.objects.filter(is_deleted=True)
-    recycled_sources = Source.objects.filter(is_deleted=True)
+def trash_topic(request):
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        print(f"Received topic_id: {topic_id}")  # Add this line for debugging
+        if topic_id:
+            topic = get_object_or_404(Topic, pk=topic_id)
+            topic.is_deleted = False
+            topic.save()
+            messages.success(request, 'Topic restored successfully.')
+            return redirect('trash-topic')
+        else:
+            messages.error(request, 'Failed to restore topic.')
+            print("Failed to restore topic. Missing topic ID.")  # Add this line for debugging
 
+    recycled_topics = Topic.objects.filter(is_deleted=True)
+    
+    context = {
+        'recycled_topics': recycled_topics,
+    }
+    return render(request, 'user-admin/trash_Topic.html', context)
+
+
+@login_required(login_url='login')
+def trash_indicator(request):
+    return render(request, 'user-admin/trash_Indicator.html')
+
+@login_required(login_url='login')
+def trash_category(request):
+    if request.method == 'POST':
+        catagory_Id = request.POST.get('catagory_Id')
+        print(f"Received source_Id: {catagory_Id}")  # Add this line for debugging
+        if catagory_Id:
+            category = get_object_or_404(Source, pk=catagory_Id)
+            category.is_deleted = False
+            category.save()
+            messages.success(request, 'Source restored successfully.')
+            return redirect('trash-source')
+        else:
+            messages.error(request, 'Failed to restore Source.')
+            print("Failed to restore Source. Missing Source ID.")  # Add this line for debugging
+
+    recycled_categories = Category.objects.filter(is_deleted=True)
     context = {
         'recycled_categories': recycled_categories,
-        'recycled_indicators': recycled_indicators,
-        'recycled_topics': recycled_topics,
-        'recycled_measurements': recycled_measurements,
-        'recycled_sources': recycled_sources,
-        # Add other recycled models as needed
     }
+    return render(request, 'user-admin/trash_Source.html', context)
 
-    return render(request, 'user-admin/recyclebin.html', context)
 
+@login_required(login_url='login')
+def trash_source(request):
+    if request.method == 'POST':
+        source_id = request.POST.get('source_id')
+        print(f"Received source_Id: {source_id}")  # Add this line for debugging
+        if source_id:
+            source = get_object_or_404(Source, pk=source_id)
+            source.is_deleted = False
+            source.save()
+            messages.success(request, 'Source restored successfully.')
+            return redirect('trash-source')
+        else:
+            messages.error(request, 'Failed to restore Source.')
+            print("Failed to restore Source. Missing Source ID.")  # Add this line for debugging
+
+    recycled_sources = Source.objects.filter(is_deleted=True)
+    context = {
+        'recycled_sources': recycled_sources,
+    }
+    return render(request, 'user-admin/trash_Source.html', context)
+
+
+@login_required(login_url='login')
 def restore_item(request, item_type, item_id):
+    previous_page = request.META.get('HTTP_REFERER')
     model_mapping = {
         'topic': Topic,
         'indicator': Indicator,
         'catagory': Category,
-        'measurement': Measurement,
         'source': Source,
     }
 
@@ -968,7 +1021,7 @@ def restore_item(request, item_type, item_id):
     print('mode', model)
     if not model:  
         messages.error(request,'Failed to restore item')
-        return redirect('user-admin-recyclebin')  # Change to the actual view name for recycled items
+        return HttpResponseRedirect(previous_page) # Change to the actual view name for recycled items
 
 
     item = get_object_or_404(model, pk=item_id)
@@ -978,4 +1031,47 @@ def restore_item(request, item_type, item_id):
     messages.success(request,'Successfully restored')
 
     # Redirect to the view where the recycled items are displayed
-    return redirect('user-admin-recyclebin') 
+    return HttpResponseRedirect(previous_page)
+
+
+def restore_indicator(request, pk):
+    indicator = Indicator.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+
+    #Parent Indicator 
+    indicator.is_deleted = False
+    indicator.save()
+
+    indicator_list = Indicator.objects.all()
+
+
+    #Check Child of Child 
+    def check_child(parent_obj):
+        for indicator_obj in indicator_list:
+            if indicator_obj.parent == parent_obj:
+                indicator_obj.is_deleted = False
+                indicator_obj.save()
+                check_child(indicator_obj)
+    
+
+    for indicator_obj in indicator_list:
+        if indicator_obj.parent == indicator:
+            indicator_obj.is_deleted = False
+            indicator_obj.save()
+            check_child(indicator_obj)
+
+
+    #Parent Related Values 
+    years = DataPoint.objects.all()
+    for year in  years:
+        try: 
+           deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
+           deleted_indicator.is_deleted = False
+           deleted_indicator.save()
+        except:
+            None
+
+
+
+    messages.success(request, "Successfully Restored!")
+    return HttpResponseRedirect(previous_page)
