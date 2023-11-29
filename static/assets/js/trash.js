@@ -291,7 +291,7 @@ $(document).ready(function () {
                                       <td class="fw-normal">   
                                           <div class="row">
                                 <div class="col-9">
-                                &nbsp;&nbsp;&nbsp;&nbsp;  ${space}  ${childIndicator.title_ENG} ${childIndicator.is_deleted}
+                                 ${space}  ${childIndicator.title_ENG} ${childIndicator.is_deleted}
                                 </div>
                                 <div class="col-1">
                               
