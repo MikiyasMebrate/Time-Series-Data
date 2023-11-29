@@ -1,10 +1,11 @@
 from django import forms
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
+
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name','last_name']   
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_active','photo']     
 
     widgets = {
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),

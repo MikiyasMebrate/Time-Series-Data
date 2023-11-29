@@ -45,6 +45,15 @@
                           <label for="{{ form.email.id_for_label }}" class="col-form-label">Email:</label>
                           <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ user.email }}" />
                       </div>
+  
+                      {% comment %} updated {% endcomment %}
+                      <div class="mb-3">
+                        <label for="{{ form.photo.id_for_label }}" class="col-form-label">Profile Picture:</label>
+                        <input type="file" class="form-control" id="{{ form.photo.id_for_label }}" name="{{ form.photo.name }}" accept="image/*" />
+                    </div>
+                    
+
+
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -94,7 +103,9 @@
                   <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                       <div class="text-center">
+
                         <img class="profile-user-img img-fluid img-circle" src="{% static 'assets/img/user4-128x128.jpg' %}" alt="User profile picture" />
+                      
                       </div>
                       <h3 class="profile-username text-center">
                         {{user.username}}

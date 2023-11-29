@@ -12,33 +12,45 @@ from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm
 from .decorators import unauthenticated_user
+
+
 #Session
 def users_list(request):
-    users = CustomUser.objects.all()
-    form = CustomUserCreationForm(request.POST or None)
+    # Use get_or_create to retrieve the group or create it if it doesn't exist
+    group, created = Group.objects.get_or_create(name='otherusers')
+
     if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_staff = True
             user.save()
-            group=Group.objects.get(name='otherusers')
+
+            # Add the user to the group
             user.groups.add(group)
+
             messages.success(request, 'Your Account has been Successfully Created! Please Login')
-            return redirect('user-admin-user-list')   
+            return redirect('user-admin-user-list')
+
+    # If it's a GET request or the form is not valid, render the form and user list
+    form = CustomUserCreationForm()
     total_users_count = CustomUser.objects.count()
     active_users_count = CustomUser.objects.filter(is_active=True).count()
     inactive_users_count = total_users_count - active_users_count
     users = CustomUser.objects.all()
+
     context = {
-        'form' : form,
-        'users':users,
+        'form': form,
+        'users': users,
         'total_users_count': total_users_count,
         'active_users_count': active_users_count,
-        'inactive_users_count': inactive_users_count, 
+        'inactive_users_count': inactive_users_count,
     }
 
     return render(request, 'user-admin/users_list.html', context)
         
+
+
 def logout_view(request):
     logout(request)
     return redirect('login')
@@ -98,20 +110,36 @@ def user_registration_view(request):
 def update_user(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
     if request.method == 'POST':
-        form = CustomUserForm(request.POST, instance=user)
+        form = CustomUserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()         
     else:
         form = CustomUserForm(instance=user)
     return render(request, 'user-admin/profile.html', {'form': form, 'user': user})
 
-def delete_user(request, user_id):
+
+
+def activate_deactivate_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     previous_page = request.META.get('HTTP_REFERER')
+    
     if request.method == 'POST':
-        user.delete()
-        messages.success(request, "Successfully Deleted!")
+        user.is_active = not user.is_active  # Toggle the is_active status
+        user.save()
+        messages.success(request, f"User '{user.username}' has been {'activated' if user.is_active else 'deactivated'}!")
         return HttpResponseRedirect(previous_page)
+
+    return render(request, 'user-admin/users_list.html', {'user': user})
+
+
+
+# def delete_user(request, user_id):
+#     user = get_object_or_404(CustomUser, id=user_id)
+#     previous_page = request.META.get('HTTP_REFERER')
+#     if request.method == 'POST':
+#         user.delete()
+#         messages.success(request, "Successfully Deleted!")
+#         return HttpResponseRedirect(previous_page)
     
     
    
