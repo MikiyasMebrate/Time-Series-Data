@@ -924,4 +924,27 @@ def recyclebin(request):
 
     return render(request, 'user-admin/recyclebin.html', context)
 
+def restore_item(request, item_type, item_id):
+    model_mapping = {
+        'topic': Topic,
+        'indicator': Indicator,
+        'catagory': Category,
+        'measurement': Measurement,
+        'source': Source,
+    }
 
+    model = model_mapping.get(item_type)
+    print('mode', model)
+    if not model:  
+        messages.error(request,'Failed to restore item')
+        return redirect('user-admin-recyclebin')  # Change to the actual view name for recycled items
+
+
+    item = get_object_or_404(model, pk=item_id)
+    item.is_deleted = False
+    item.save()
+
+    messages.success(request,'Successfully restored')
+
+    # Redirect to the view where the recycled items are displayed
+    return redirect('user-admin-recyclebin') 
