@@ -21,11 +21,13 @@ admin.site.register(models.Source)
 
 
 class BookResource(resources.ModelResource):
-    user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username'))
+    user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username'))  #Allow u to reference model
     class Meta:
         model = models.Book
         fields = ('title_ENG', 'title_AMH', 'user__username' )
         export_order = ('title_ENG', 'title_AMH',)
+
+
 
 class BookAdmin(ImportExportModelAdmin):
     resource_classes = [BookResource]

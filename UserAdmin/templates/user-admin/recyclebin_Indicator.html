@@ -11,36 +11,17 @@
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
-<!-- Restore trash modal -->
-<div class="modal fade" id="restoreModaltrash" tabindex="-1" aria-labelledby="restoreModaltrashLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="restoreModaltrashLabel">Restore Topic</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form name="restoretrash" method="post" action="{% url 'restore_item' 'topic' 0 %}" id="form_trash_restore">
-        {% csrf_token %}
-        <div class="modal-body text-center fs-4">
-          <p>Are you sure you want to restore this topic?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-danger" id="confirmRestore">Yes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-
+  
     {% include 'user-admin/include/navbar.html'%} 
     {% include 'user-admin/include/sidebar.html'%}
     <!--Body Start-->
     <div class="content-wrapper">
+      {% if messages %}
+      {% include 'user-admin/include/messages.html'%}
+      {% endif %}
   <section class="content pt-2">
     <div class="container-fluid">
+
       <div class="card">
         <ul class="nav nav-pills ps-5 pt-3 pb-3">
           <li class="nav-item active">
@@ -53,6 +34,9 @@
             <a class="nav-link" href="#deletedcatagory" data-toggle="tab"  onclick="initDataTable('deletedcatagoryTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="#deleteMeasurments" data-toggle="tab"  onclick="initDataTable('deleteMeasurmentsTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Measurments</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#deleteSource" data-toggle="tab"  onclick="initDataTable('deletdSourceTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
           </li>
         </ul>
@@ -61,42 +45,6 @@
         <div class="card-body">
 
           <div class="tab-content">
-            <!-- In each tab template -->
-            {% if messages %}
-              {% for message in messages %}
-                {% if message.tags == 'success' and '#' in message.message %}
-                  {% with tab_name=message.message|slice:"1:" %}
-                    {% if tab_name == 'deletedtopics' %}
-                      <!-- Display success message for Topics tab -->
-                      <div class="alert alert-success" role="alert">
-                        {{ message }}
-                      </div>
-                    {% elif tab_name == 'deletedIndicator' %}
-                      <!-- Display success message for Indicators tab -->
-                      <div class="alert alert-success" role="alert">
-                        {{ message }}
-                      </div>
-                    {% elif tab_name == 'deletedcatagory' %}
-                      <!-- Display success message for Categories tab -->
-                      <div class="alert alert-success" role="alert">
-                        {{ message }}
-                      </div>
-                    {% elif tab_name == 'deleteMeasurments' %}
-                      <!-- Display success message for Measurements tab -->
-                      <div class="alert alert-success" role="alert">
-                        {{ message }}
-                      </div>
-                    {% elif tab_name == 'deleteSource' %}
-                      <!-- Display success message for Sources tab -->
-                      <div class="alert alert-success" role="alert">
-                        {{ message }}
-                      </div>
-                    {% endif %}
-                  {% endwith %}
-                {% endif %}
-              {% endfor %}
-            {% endif %}
-
             <!--Deletd topics-->
             <div class="active tab-pane" id="deletedtopics">
               <!--topic table starts-->
@@ -134,7 +82,8 @@
                               <td>{{ topic.created|date:'F d, Y' }}</td>
                               <td>
                                 <div class="d-flex justify-content-around text-center">
-                                  <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                  <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                </div>
                               </td>
                             </tr>
                           {% endfor %}
@@ -319,7 +268,7 @@
                                   <td>{{ catagory.created_at|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
                                     </div>
                                   </td>
                                 </tr>
@@ -333,7 +282,63 @@
                     </div>
                   </section>
             </div>
+            
+            <!--deleted Measurments-->
+            <div class="tab-pane" id="deleteMeasurments">
+                <div class="content-header">
+                    <div class="container-fluid">
+                      <div class="row mb-2">
+                        <div class="col-sm-6">
+                          <h1 class="m-0">Measurments Lists</h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Title End-->
+            
+                  <section class="content">
+                    <div class="container-fluid">
+                      <!--Add Topic Button Start-->
+                      <div class="text-end">
+                      
+                      </div>
+                      <!--Add Topic Button End-->
 
+                      <!--Topic Table List Start-->
+                      <div class="row justify-content-center">
+                        <div class="col-md-12">
+                          <div class="table-responsive border p-3 shadow">
+                            <table id="deleteMeasurmentsTable" class="table table-striped table-hover table-sm" style="width: 100%;">
+                              <thead  style="width: 100%;">
+                                <tr>
+                                  <th>Name English</th>
+                                  <th>Name Amharic</th>
+                                  <th>Created Date</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for measurement in recycled_measurements %}
+                                <tr>
+                                  <td>{{ measurement.Amount_ENG }}</td>
+                                  <td>{{ measurement.Amount_AMH }}</td>
+                                  <td>{{ measurement.created|date:'F d, Y' }}</td>
+                                  <td>
+                                    <div class="d-flex justify-content-around text-center">
+                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Topic Table List End-->
+                    </div>
+                  </section>
+            </div>
 
             <!--deleted deleteSource-->
           
@@ -378,7 +383,7 @@
                                 <td>{{ source.created|date:'F d, Y' }}</td>
                                 <td>
                                   <div class="d-flex justify-content-around text-center">
-                                    <button type="button" name="trashRestore" id="{{source.id}}" data-item-type="source" data-item-id="{{source.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                    <a href="#"><i class="fas text-primary fa-pen"></i></a>
                                   </div>
                                 </td>
                               </tr>
@@ -414,35 +419,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
-        <script>
-          document.addEventListener('DOMContentLoaded', function () {
-            var restoreModal = new bootstrap.Modal(document.getElementById('restoreModaltrash'));
-    var confirmRestoreButton = document.getElementById('confirmRestore');
-    
-    document.querySelectorAll('[data-bs-target="#restoreModaltrash"]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        var itemType = this.getAttribute('data-item-type');
-        var itemId = this.getAttribute('data-item-id');
-        
-        if (itemType && itemId) {
-          document.forms['restoretrash'].action = '{% url 'restore_item' 'default_type' 0 %}'.replace('default_type', itemType || 'default').replace('0', itemId);
 
-          restoreModal.show();
-        }
-      });
-    });
-
-    confirmRestoreButton.addEventListener('click', function () {
-      document.forms['restoretrash'].submit();
-    });
-
-    restoreModal._element.addEventListener('hidden.bs.modal', function () {
-      document.forms['restoretrash'].reset();
-    });
-          });
-        </script>
-        
-        
-        
   </body>
 </html>
