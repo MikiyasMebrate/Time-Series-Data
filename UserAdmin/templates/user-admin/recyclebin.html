@@ -137,7 +137,7 @@
                               <td>{{ topic.created|date:'F d, Y' }}</td>
                               <td>
                                 <div class="d-flex justify-content-around text-center">
-                                  <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                  {% comment %} <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                               </td>
                             </tr>
                           {% endfor %}
@@ -343,7 +343,7 @@
                                   <td>{{ catagory.created_at|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                      {% comment %} <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                                     </div>
                                   </td>
                                 </tr>
@@ -400,7 +400,7 @@
                                   <td>{{ measurement.created|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <button type="button" name="trashRestore" data-item-type="measurement" data-item-id="{{measurement.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                      {% comment %} <button type="button" name="trashRestore" data-item-type="measurement" data-item-id="{{measurement.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                                     </div>
                                   </td>
                                 </tr>
@@ -458,7 +458,7 @@
                                 <td>{{ source.created|date:'F d, Y' }}</td>
                                 <td>
                                   <div class="d-flex justify-content-around text-center">
-                                    <button type="button" name="trashRestore" id="{{source.id}}" data-item-type="source" data-item-id="{{source.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button>
+                                    {% comment %} <button type="button" name="trashRestore" id="{{source.id}}" data-item-type="source" data-item-id="{{source.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                                   </div>
                                 </td>
                               </tr>
