@@ -937,30 +937,43 @@ def month(request):
 
 
 @login_required(login_url='login')
-def recyclebin(request):
-    recycled_categories = Category.objects.filter(is_deleted=True)
-    recycled_indicators = Indicator.objects.filter(is_deleted=True)
+def trash_topic(request):
     recycled_topics = Topic.objects.filter(is_deleted=True)
-    recycled_measurements = Measurement.objects.filter(is_deleted=True)
-    recycled_sources = Source.objects.filter(is_deleted=True)
+    
+    context = {
+        'recycled_topics': recycled_topics,
+    }
+    return render(request, 'user-admin/trash_Topic.html', context)
 
+@login_required(login_url='login')
+def trash_indicator(request):
+    return render(request, 'user-admin/trash_Indicator.html')
+
+@login_required(login_url='login')
+def trash_category(request):
+    recycled_categories = Category.objects.filter(is_deleted=True)
     context = {
         'recycled_categories': recycled_categories,
-        'recycled_indicators': recycled_indicators,
-        'recycled_topics': recycled_topics,
-        'recycled_measurements': recycled_measurements,
-        'recycled_sources': recycled_sources,
-        # Add other recycled models as needed
     }
+    
+    return render(request, 'user-admin/trash_Category.html', context)
 
-    return render(request, 'user-admin/recyclebin.html', context)
+@login_required(login_url='login')
+def trash_source(request):
+    recycled_sources = Source.objects.filter(is_deleted=True)
+    context = {
+        'recycled_sources': recycled_sources,
+    }
+    return render(request, 'user-admin/trash_Source.html', context)
 
+
+@login_required(login_url='login')
 def restore_item(request, item_type, item_id):
+    previous_page = request.META.get('HTTP_REFERER')
     model_mapping = {
         'topic': Topic,
         'indicator': Indicator,
         'catagory': Category,
-        'measurement': Measurement,
         'source': Source,
     }
 
@@ -968,7 +981,7 @@ def restore_item(request, item_type, item_id):
     print('mode', model)
     if not model:  
         messages.error(request,'Failed to restore item')
-        return redirect('user-admin-recyclebin')  # Change to the actual view name for recycled items
+        return HttpResponseRedirect(previous_page) # Change to the actual view name for recycled items
 
 
     item = get_object_or_404(model, pk=item_id)
@@ -978,4 +991,4 @@ def restore_item(request, item_type, item_id):
     messages.success(request,'Successfully restored')
 
     # Redirect to the view where the recycled items are displayed
-    return redirect('user-admin-recyclebin') 
+    return HttpResponseRedirect(previous_page)
