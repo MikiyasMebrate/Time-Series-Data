@@ -11,13 +11,33 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from TimeSeriesBase import models
 from UserManagement.decorators import *
+import tablib
+from import_export import resources
+from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget  # For foreignkey
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def index(request):
+    class BookResourceWithStoreInstance(resources.ModelResource):
+        user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
+        class Meta:
+            model = Book
+            store_instance = True
+
+    rows = [
+        ( 'Lord ', 'Lord ', 'hp'),
+        ('Lord ', 'Lord ', 'hp'),
+        ('Lord ', 'Lord ', 'hp'),
+    ]
+    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
+    resource = BookResourceWithStoreInstance()
+    result = resource.import_data(dataset)
+
+    for row_result in result:
+        print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
+        
     return render(request, 'user-admin/index.html')
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
@@ -46,7 +66,6 @@ def indicator_list(request, pk):
     
 #Category
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def category(request, category_id=None):
     catagory = Category.objects.all()
     
@@ -101,7 +120,6 @@ def category(request, category_id=None):
 
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
@@ -122,7 +140,6 @@ def catagory_detail(request, pk):
     return render(request, 'user-admin/catagories_detail.html', context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def delete_category(request, pk):
     category = Category.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -140,7 +157,6 @@ def delete_category(request, pk):
 
 #JSON
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def filter_indicator_json(request):
     topic = list(Topic.objects.all().values())
     category_data = list(Category.objects.all().values())
@@ -154,7 +170,6 @@ def filter_indicator_json(request):
     return JsonResponse(context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -165,9 +180,6 @@ def filter_indicator(request, pk):
     indicator_point = list(Indicator_Point.objects.all().values())
     measurements = list(Measurement.objects.all().values())
 
-    # @login_required
-    @login_required(login_url='login')
-    @allowed_users(allowed_roles=['admins'])
     def child_list(parent, space):
         space = space + "   "
         for i in indicators:
@@ -190,7 +202,6 @@ def filter_indicator(request, pk):
     return JsonResponse(context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def json_filter_source(request):
     sources = Source.objects.all()
 
@@ -210,7 +221,6 @@ def json_filter_source(request):
     return JsonResponse({'sources': sources_data}) 
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def json_filter_topic(request):
     topics = Topic.objects.all()
     topics_data = []
@@ -229,7 +239,6 @@ def json_filter_topic(request):
     return JsonResponse({'topics': topics_data})
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def filter_catagory_json(request):
     category_data = list(Category.objects.all().values())
     
@@ -249,7 +258,6 @@ def filter_catagory_json(request):
     return JsonResponse(context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def json_measurement(request):
     measurements = list(Measurement.objects.all().values())
     context = {
@@ -260,7 +268,6 @@ def json_measurement(request):
 
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
@@ -289,7 +296,6 @@ def json(request):
 
 #Data List
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def data_list(request):
     form = dataListForm(request.POST or None)
     if request.method == 'POST':
@@ -322,7 +328,6 @@ def data_list(request):
     return render(request, 'user-admin/data_list_view.html', context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def data_list_detail(request, pk):
     form = ValueForm()
     form_update = ValueForm2()
@@ -348,6 +353,7 @@ def data_list_detail(request, pk):
                     value_obj.save()
                     form = ValueForm()
                     messages.success(request, 'Successfully Added!')
+                    return redirect(request.path)
                 except: 
                     messages.error(request, 'Please Try Again To Edit Indicator!')
         
@@ -362,6 +368,7 @@ def data_list_detail(request, pk):
                     data_value.save()
                     form_update = ValueForm2()
                     messages.success(request, 'Successfully Added!')
+                    return redirect(request.path)
                 except:
                     messages.error(request, 'Please Try Again To Update Indicator!')
         
@@ -379,6 +386,7 @@ def data_list_detail(request, pk):
         
                     sub_indicator_form = SubIndicatorForm()
                     messages.success(request, 'Successfully Added!')
+                    return redirect(request.path)
                 except: 
                     messages.error(request, 'Please Try Again To Add New Sub-Indicator!')
         
@@ -392,6 +400,7 @@ def data_list_detail(request, pk):
                     indicator.measurement = measurement
                     indicator.save()
                     messages.success(request, 'Successfully measurement Updated!')
+                    return redirect(request.path)
                 except:
                     messages.error(request, 'Please Try Again!')
             else:
@@ -409,7 +418,6 @@ def data_list_detail(request, pk):
 
 #Location
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def location(request):
     
     location = Location.objects.all()
@@ -432,7 +440,6 @@ def location(request):
     return render(request, 'user-admin/location.html', context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def location_detail(request, pk):
     location = Location.objects.get(pk=pk)
     form = LocationForm(request.POST or None, instance=location)
@@ -453,7 +460,6 @@ def location_detail(request, pk):
     return render(request, 'user-admin/location_detail.html', context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def delete_location(request,pk):
     location = Location.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -470,7 +476,6 @@ def delete_location(request,pk):
 
 #Indicator 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admins'])
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
     
@@ -575,9 +580,35 @@ def delete_indicator(request,pk):
     
     indicator = Indicator.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
+
+
+    #Parent Indicator 
     indicator.is_deleted = True
     indicator.save()
 
+    
+    indicator_list = Indicator.objects.all()
+
+
+    #Check Child of Child 
+    def check_child(parent_obj):
+        for indicator_obj in indicator_list:
+            if indicator_obj.parent == parent_obj:
+                indicator_obj.is_deleted = True
+                indicator_obj.save()
+                check_child(indicator_obj)
+
+
+
+
+    for indicator_obj in indicator_list:
+        if indicator_obj.parent == indicator:
+            indicator_obj.is_deleted = True
+            indicator_obj.save()
+            check_child(indicator_obj)
+
+
+    #Parent Related Values 
     years = DataPoint.objects.all()
     for year in  years:
         try: 
@@ -924,3 +955,27 @@ def recyclebin(request):
 
     return render(request, 'user-admin/recyclebin.html', context)
 
+def restore_item(request, item_type, item_id):
+    model_mapping = {
+        'topic': Topic,
+        'indicator': Indicator,
+        'catagory': Category,
+        'measurement': Measurement,
+        'source': Source,
+    }
+
+    model = model_mapping.get(item_type)
+    print('mode', model)
+    if not model:  
+        messages.error(request,'Failed to restore item')
+        return redirect('user-admin-recyclebin')  # Change to the actual view name for recycled items
+
+
+    item = get_object_or_404(model, pk=item_id)
+    item.is_deleted = False
+    item.save()
+
+    messages.success(request,'Successfully restored')
+
+    # Redirect to the view where the recycled items are displayed
+    return redirect('user-admin-recyclebin') 

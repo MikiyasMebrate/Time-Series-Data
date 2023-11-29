@@ -58,4 +58,6 @@ urlpatterns = [
 
     
     path('recyclebin/', views.recyclebin, name="user-admin-recyclebin"),
+    path('restore_item/<str:item_type>/<int:item_id>/', views.restore_item, name='restore_item'),
 ]
+    

@@ -171,10 +171,14 @@ function filterData() {
             return '';
           }).join('');
 
+          var selectAll = '';
+          if (selectIndicator.trim() !== '') {
           var selectAll = '<div class="filter-submenu d-flex">' +
             '  <input class="form-check" type="checkbox" id="select_all">' +
             '  <label class="form-label pl-1" for="select_all" style="font-size: small;">Select All</label>' +
             '</div>';
+          }
+
           if ($('input[name="category_lists"]:checked').length > 0) {
             document.getElementById('seriesAvailableBadge').innerHTML = indicatorcount
           } else {
@@ -188,7 +192,7 @@ function filterData() {
           document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           $('#indicator_list_filter').html(selectAll + selectIndicator);
 
-
+          if (selectIndicator.trim() !== ''){
           // Attach event handler for 'Select All' for indicators
           $('#select_all').change(function () {
             var checkedStatus = this.checked;
@@ -196,7 +200,7 @@ function filterData() {
               $(this).prop('checked', checkedStatus);
             });
           });
-
+        }
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
             updateFilterSelection();
             if (indicatorSelected > 0) {
@@ -220,12 +224,12 @@ function filterData() {
                 }
               }
             );
-
+            if (selectIndicator.trim() !== '') {
             var selectYearAll = '<div class="filter-submenu d-flex">' +
               '  <input class="form-check" type="checkbox" id="select_all_year_filter">' +
               '  <label class="form-label pl-1" for="select_all_year_filter" style="font-size: small;"> Select All</label>' +
               '</div>';
-
+            }
             var viewRecentYear = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
               '<div class="filter-submenu mb-2">' +
               '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
@@ -385,7 +389,7 @@ function filterData() {
                         <td>
                             <div class="row">
                                <div class="col-10">
-                                 <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                 <a  style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
                                </div>
                             </div>
                         </td>`;

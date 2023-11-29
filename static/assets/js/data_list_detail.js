@@ -319,6 +319,9 @@ $(document).ready(function () {
       );
 
       document.getElementById("tableTest").innerHTML = table;
+
+
+      
       $(document).ready(function () {
         $("#newTable").DataTable({
           retrieve: true,

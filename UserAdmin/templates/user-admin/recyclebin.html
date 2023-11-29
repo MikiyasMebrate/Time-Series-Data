@@ -5,48 +5,58 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DPMEs</title>
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
     {% include 'user-admin/include/head.html'%}
-
-    <style>
-      #deletdSourceTable {
-        width: 100%;
-      }
-      .table-responsive {
-        overflow-x: auto;
-      }
-    </style>
     
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
-  
+<!-- Restore trash modal -->
+<div class="modal fade" id="restoreModaltrash" tabindex="-1" aria-labelledby="restoreModaltrashLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="restoreModaltrashLabel">Restore Topic</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form name="restoretrash" method="post" action="{% url 'restore_item' 'topic' 0 %}" id="form_trash_restore">
+        {% csrf_token %}
+        <div class="modal-body text-center fs-4">
+          <p>Are you sure you want to restore this topic?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger" id="confirmRestore">Yes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
     {% include 'user-admin/include/navbar.html'%} 
     {% include 'user-admin/include/sidebar.html'%}
     <!--Body Start-->
     <div class="content-wrapper">
-      {% if messages %}
-      {% include 'user-admin/include/messages.html'%}
-      {% endif %}
   <section class="content pt-2">
     <div class="container-fluid">
-
       <div class="card">
         <ul class="nav nav-pills ps-5 pt-3 pb-3">
           <li class="nav-item active">
-            <a class="nav-link active" href="#deletedtopics" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Topics</a>
+            <a class="nav-link active" href="#deletedtopics" data-toggle="tab"  onclick="initDataTable('deletedTopicsTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Topics</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#deletedIndicator" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Indicators</a>
+            <a class="nav-link" href="#deletedIndicator" data-toggle="tab"  onclick="initDataTable('deletedIndicatorTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Indicators</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#deletedcatagory" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a>
+            <a class="nav-link" href="#deletedcatagory" data-toggle="tab"  onclick="initDataTable('deletedcatagoryTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#deleteMeasurments" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Measurments</a>
+            <a class="nav-link" href="#deleteMeasurments" data-toggle="tab"  onclick="initDataTable('deleteMeasurmentsTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Measurments</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#deleteSource" data-toggle="tab"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
+            <a class="nav-link" href="#deleteSource" data-toggle="tab"  onclick="initDataTable('deletdSourceTable')"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
           </li>
         </ul>
         <hr>
@@ -54,6 +64,42 @@
         <div class="card-body">
 
           <div class="tab-content">
+            <!-- In each tab template -->
+            {% if messages %}
+              {% for message in messages %}
+                {% if message.tags == 'success' and '#' in message.message %}
+                  {% with tab_name=message.message|slice:"1:" %}
+                    {% if tab_name == 'deletedtopics' %}
+                      <!-- Display success message for Topics tab -->
+                      <div class="alert alert-success" role="alert">
+                        {{ message }}
+                      </div>
+                    {% elif tab_name == 'deletedIndicator' %}
+                      <!-- Display success message for Indicators tab -->
+                      <div class="alert alert-success" role="alert">
+                        {{ message }}
+                      </div>
+                    {% elif tab_name == 'deletedcatagory' %}
+                      <!-- Display success message for Categories tab -->
+                      <div class="alert alert-success" role="alert">
+                        {{ message }}
+                      </div>
+                    {% elif tab_name == 'deleteMeasurments' %}
+                      <!-- Display success message for Measurements tab -->
+                      <div class="alert alert-success" role="alert">
+                        {{ message }}
+                      </div>
+                    {% elif tab_name == 'deleteSource' %}
+                      <!-- Display success message for Sources tab -->
+                      <div class="alert alert-success" role="alert">
+                        {{ message }}
+                      </div>
+                    {% endif %}
+                  {% endwith %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
             <!--Deletd topics-->
             <div class="active tab-pane" id="deletedtopics">
               <!--topic table starts-->
@@ -74,7 +120,7 @@
                   <div class="row justify-content-center">
                     <div class="col-md-12">
                       <div class="table-responsive border p-3 shadow">
-                        <table id="example" class="table table-striped table-hover table-sm"  style="width: 100%;">
+                        <table id="deletedTopicsTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
                           <thead>
                             <tr>
                               <th>Name English</th>
@@ -91,8 +137,7 @@
                               <td>{{ topic.created|date:'F d, Y' }}</td>
                               <td>
                                 <div class="d-flex justify-content-around text-center">
-                                  <a href="#"><i class="fas text-primary fa-pen"></i></a>
-                                </div>
+                                  {% comment %} <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                               </td>
                             </tr>
                           {% endfor %}
@@ -114,7 +159,7 @@
                     <div class="container-fluid">
                       <div class="row mb-2">
                         <div class="col-sm-6">
-                          <h1 class="m-0">indicators Lists</h1>
+                          <h1 class="m-0">Deleted Indicators Lists</h1>
                         </div>
                       </div>
                     </div>
@@ -123,45 +168,111 @@
             
                   <section class="content">
                     <div class="container-fluid">
-                      <!--Add Topic Button Start-->
-                      <div class="text-end">
-                       
-                      </div>
-                      <!--Add Topic Button End-->
-                      <!--Topic Table List Start-->
                       <div class="row justify-content-center">
-                        <div class="col-md-12">
-                          <div class="table-responsive border p-3 shadow">
-                            <table id="deletedIndicatorTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
-                              <thead  style="width: 100%;">
-                                <tr>
-                                  <th>Name English</th>
-                                  <th>Name Amharic</th>
-                                  <th>Catagory</th>
-                                  <th>Created Date</th>
-                                  <th>Action</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {% for indicator in recycled_indicators %}
-                                <tr>
-                                  <td>{{ indicator.title_ENG }}</td>
-                                  <td>{{ indicator.title_AMH }}</td>
-                                  <td>{{ indicator.for_category }}</td>
-                                  <td>{{ indicator.created_at|date:'F d, Y' }}</td>
-                                  <td>
-                                    <div class="d-flex justify-content-around text-center">
-                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
-                                    </div>
-                                  </td>
-                                </tr>
-                              {% endfor %}
-                              </tbody>
-                            </table>
+                        <!--Accordion Start -->
+                        <div class="col-md-3">
+                          <div class="accordion" id="accordionExample">
+                            
+                            <!--Accordion 1 Start-->
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="headingOne">
+                                <button
+                                  class="accordion-button"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target="#collapseOne"
+                                  aria-expanded="true"
+                                  aria-controls="collapseOne"
+                                >
+                                  Topics
+                                </button>
+                              </h2>
+                              <div
+                                id="collapseOne"
+                                class="accordion-collapse collapse show"
+                                aria-labelledby="headingOne"
+                                data-bs-parent="#accordionExample"
+                              >
+                                <div class="accordion-body">
+                                  <ul class="list-unstyled mb-0 filter-list scrollable" id='topic_list_filter'>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            <!--Accordion 1 End-->
+            
+                            <!--Category-->
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="headingTwo">
+                                <button
+                                  class="accordion-button collapsed"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target="#collapseTwo"
+                                  aria-expanded="false"
+                                  aria-controls="collapseTwo"
+                                >
+                                  Categories
+                                </button>
+                              </h2>
+                              <div
+                                id="collapseTwo"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="headingTwo"
+                                data-bs-parent="#accordionExample"
+                              >
+                                <div class="accordion-body p-2">
+                                  <div class="accordion-body p-2">
+                                    <ul class="list-unstyled mb-0 filter-list scrollable" id="category_list_filter">
+                                      <p class="text-danger">Please Select Topic</p>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+            
+            
+            
+                            <div class="d-grid" id="filter_apply_button">
+                              <button id="apply_button" style="display: none;" class="btn btn-primary m-2">Apply</button>
+                            </div>
+                          </div>
+                        </div>
+                        <!--Accordion End-->
+                        
+                        <div class="col-md-9">
+                          <!--Add Data Start-->
+                           <!--Messages-->
+                        {% include 'user-admin/include/messages.html'%}
+                        
+                          <div class="card">
+                            <div class="card-body" id="list_table_view">
+                              <table id="deletedIndicatorTable"class="table table-bordered m-0 p-0" style="width:100%">
+                                <thead>
+                                  <tr>
+                                    <th class="ps-5 pe-5">English</th>
+                                    <th>Amharic</th>
+                                    <th>Created Date</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                         
+                          <!--Data List End-->
+                        </div>
+                      </div>
+            
+                      <div class="row justify-content-center">
+                        <div class="col-10">
+                          <div id="tableTest" class="mt-5">
+            
                           </div>
                         </div>
                       </div>
-                      <!--Topic Table List End-->
                     </div>
                   </section>
             </div>
@@ -211,7 +322,7 @@
                                   <td>{{ catagory.created_at|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                      {% comment %} <button type="button" name="trashRestore" data-item-type="topic" data-item-id="{{topic.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                                     </div>
                                   </td>
                                 </tr>
@@ -268,7 +379,7 @@
                                   <td>{{ measurement.created|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                      {% comment %} <button type="button" name="trashRestore" data-item-type="measurement" data-item-id="{{measurement.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                                     </div>
                                   </td>
                                 </tr>
@@ -326,7 +437,7 @@
                                 <td>{{ source.created|date:'F d, Y' }}</td>
                                 <td>
                                   <div class="d-flex justify-content-around text-center">
-                                    <a href="#"><i class="fas text-primary fa-pen"></i></a>
+                                    {% comment %} <button type="button" name="trashRestore" id="{{source.id}}" data-item-type="source" data-item-id="{{source.id}}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash"><i class="fas fa-trash-restore"></i></button> {% endcomment %}
                                   </div>
                                 </td>
                               </tr>
@@ -353,51 +464,44 @@
         <!--Body End-->
         {% include 'user-admin/include/footer.html'%} 
         {% include 'user-admin/include/footer_js.html'%}
-        
-        <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
-
-        <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-        <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
-        <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
-        <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
-        <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-        <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+        <script src="{% static 'assets/js/trash.js' %}"></script>
+        <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
         <script>
-          $(document).ready(function () {
-          $("#deletedIndicatorTable").DataTable({
-              "responsive": true, "lengthChange": false, "autoWidth": false,
-              "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-          });
-
-          $(document).ready(function () {
-          $("#deletedcatagoryTable").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-          }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)')
-          });
-
-        $(document).ready(function () {
-        $("#deleteMeasurmentsTable").DataTable({
-          "responsive": true, "lengthChange": false, "autoWidth": false,
-          "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
+          document.addEventListener('DOMContentLoaded', function () {
+            var restoreModal = new bootstrap.Modal(document.getElementById('restoreModaltrash'));
+    var confirmRestoreButton = document.getElementById('confirmRestore');
+    
+    document.querySelectorAll('[data-bs-target="#restoreModaltrash"]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var itemType = this.getAttribute('data-item-type');
+        var itemId = this.getAttribute('data-item-id');
         
-        $(document).ready(function () {
-        $("#deletdSourceTable").DataTable({
-          "responsive": true, "lengthChange": false, "autoWidth": false,
-          "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-        </script>
+        if (itemType && itemId) {
+          document.forms['restoretrash'].action = '{% url 'restore_item' 'default_type' 0 %}'.replace('default_type', itemType || 'default').replace('0', itemId);
 
+          restoreModal.show();
+        }
+      });
+    });
+
+    confirmRestoreButton.addEventListener('click', function () {
+      document.forms['restoretrash'].submit();
+    });
+
+    restoreModal._element.addEventListener('hidden.bs.modal', function () {
+      document.forms['restoretrash'].reset();
+    });
+          });
+        </script>
+        
+        
+        
   </body>
 </html>

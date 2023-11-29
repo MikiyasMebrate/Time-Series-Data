@@ -1,4 +1,8 @@
 from django.contrib import admin
+from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget  # For foreignkey
+from import_export.fields import Field
+from import_export.admin import ImportExportModelAdmin #Admin 
 from . import models
 
 # Register your models here.
@@ -12,6 +16,23 @@ admin.site.register(models.Month)
 admin.site.register(models.Measurement)
 admin.site.register(models.DataValue)
 admin.site.register(models.Source)
+
+
+
+
+class BookResource(resources.ModelResource):
+    user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username'))  #Allow u to reference model
+    class Meta:
+        model = models.Book
+        fields = ('title_ENG', 'title_AMH', 'user__username' )
+        export_order = ('title_ENG', 'title_AMH',)
+
+
+
+class BookAdmin(ImportExportModelAdmin):
+    resource_classes = [BookResource]
+
+admin.site.register(models.Book, BookAdmin)
 
 
 class searchIndicator(admin.ModelAdmin):
