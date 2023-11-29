@@ -47,7 +47,7 @@ class Indicator(models.Model):
         return ' -> '.join(full_path[::-1])
 
     def __str__(self):
-        return self.title_ENG
+        return self.title_ENG + "      ---- Deleted: " + str(self.is_deleted)
 
 
 
@@ -179,17 +179,31 @@ def call_my_function(sender, instance, created, **kwargs):
     else:  
         instance.calculate_parent_value()
 
-    
+
+
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
-    
+    is_deleted = models.BooleanField(default = False)
     def __str__(self):
         return self.title_ENG
     
+
+
+
+class Book(models.Model):
+    title_ENG = models.CharField(max_length=50)
+    title_AMH = models.CharField(max_length=50)
+    updated =  models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default = False)
+    user = models.ForeignKey(CustomUser, on_delete = models.SET_NULL, null=True )
+    def __str__(self):
+        return self.title_ENG
+    
+
 
 class Location(models.Model):
     name_ENG = models.CharField(max_length=50) 

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'UserManagement',
     'UserAdmin',
     'widget_tweaks',
+    'import_export'
 ]
 
 MIDDLEWARE = [
@@ -128,7 +129,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
