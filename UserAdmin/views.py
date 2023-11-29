@@ -992,3 +992,46 @@ def restore_item(request, item_type, item_id):
 
     # Redirect to the view where the recycled items are displayed
     return HttpResponseRedirect(previous_page)
+
+
+def restore_indicator(request, pk):
+    indicator = Indicator.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+
+    #Parent Indicator 
+    indicator.is_deleted = False
+    indicator.save()
+
+    indicator_list = Indicator.objects.all()
+
+
+    #Check Child of Child 
+    def check_child(parent_obj):
+        for indicator_obj in indicator_list:
+            if indicator_obj.parent == parent_obj:
+                indicator_obj.is_deleted = False
+                indicator_obj.save()
+                check_child(indicator_obj)
+    
+
+    for indicator_obj in indicator_list:
+        if indicator_obj.parent == indicator:
+            indicator_obj.is_deleted = False
+            indicator_obj.save()
+            check_child(indicator_obj)
+
+
+    #Parent Related Values 
+    years = DataPoint.objects.all()
+    for year in  years:
+        try: 
+           deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
+           deleted_indicator.is_deleted = False
+           deleted_indicator.save()
+        except:
+            None
+
+
+
+    messages.success(request, "Successfully Restored!")
+    return HttpResponseRedirect(previous_page)

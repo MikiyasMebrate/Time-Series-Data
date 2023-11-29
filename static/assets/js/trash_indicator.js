@@ -11,65 +11,6 @@ $(document).ready(function () {
             }
           }
         );
-
-        let titleEnglish = document.getElementById("id_title_ENG");
-        let titleAmharic = document.getElementById("id_title_AMH");
-        let category = document.getElementById("id_for_category");
-        let category_div = document.getElementById("id_category_option");
-        let parentContainer = document.querySelector("#list_table_view");
-
-        //Edit Indicator Function
-        let editIndicatorModal = () => {
-          let btnEdit = document.getElementsByName("EditIndicator");
-          btnEdit.forEach((editIndicator) => {
-            editIndicator.addEventListener("click", () => {
-              let indicatorId = editIndicator.id;
-              category_div.style.display = "block";
-              let selectedIndicator = data.indicators.find(
-                (indicator) => String(indicator.id) == String(indicatorId)
-              );
-              let selectCategory = data.categories.find(
-                (cat) =>
-                  String(cat.id) == String(selectedIndicator.for_category_id)
-              );
-              if (selectedIndicator.title_AMH == null)
-                selectedIndicator.title_AmH = "";
-              titleEnglish.value = selectedIndicator.title_ENG;
-              titleAmharic.value = selectedIndicator.title_AMH;
-              category.value = selectCategory.id;
-              document.getElementById("id_indicator_id").value = indicatorId;
-            });
-          });
-        };
-
-        //Remove Indicators Function
-        let removeIndicatorModal = () => {
-          let btnDelete = document.getElementsByName("btnDeleteIndicator");
-          btnDelete.forEach((deleteIndicator) => {
-            deleteIndicator.addEventListener("click", () => {
-              console.log(deleteIndicator.id);
-              let approveAnchor = document.getElementById("forRemoveIndicator");
-              approveAnchor.setAttribute(
-                "href",
-                `/user-admin/indicator-delete/${deleteIndicator.id}`
-              );
-              console.log(approveAnchor);
-            });
-          });
-        };
-
-        //Call for First Time
-        editIndicatorModal();
-        removeIndicatorModal();
-
-        //Call After table is Changed
-        parentContainer.addEventListener("click", (event) => {
-          //Edit Indicator re-initializing
-          editIndicatorModal();
-          //Remove Indicator re-initializing
-          removeIndicatorModal();
-        });
-
         selectTopic = data.topics.map(
           ({ title_ENG, title_AMH, id, is_deleted }) => {
             if (!is_deleted) {
@@ -137,7 +78,6 @@ $(document).ready(function () {
                 }
               }
 
-              console.log(countDeletedIndicatorCategory);
               if (!countDeletedIndicatorCategory == 0) {
                 return `
                 <li>
@@ -157,7 +97,11 @@ $(document).ready(function () {
         let displayApplyButton = document.getElementById("apply_button");
 
         topicHtml = document.getElementById("topic_list_filter");
-        topicHtml.innerHTML = selectTopic.join("");
+        if (selectTopic.join("") != "") {
+          topicHtml.innerHTML = selectTopic.join("");
+        } else {
+          topicHtml.innerHTML = `<p class="test-primary">No Deleted Indicator</p>`;
+        }
 
         topicHtmlList = document.getElementsByName("topic_lists");
 
@@ -261,7 +205,6 @@ $(document).ready(function () {
                   document.getElementById("list_table_view");
 
                 displayApplyButton.addEventListener("click", () => {
-                  //Updated Your table Here
                   let table = "";
                   table += `
               <table id="newTable" class="table table-bordered m-0 p-0">
@@ -291,7 +234,7 @@ $(document).ready(function () {
                                       <td class="fw-normal">   
                                           <div class="row">
                                 <div class="col-9">
-                                 ${space}  ${childIndicator.title_ENG} ${childIndicator.is_deleted}
+                                 ${space}  ${childIndicator.title_ENG} 
                                 </div>
                                 <div class="col-1">
                               
@@ -304,7 +247,7 @@ $(document).ready(function () {
                           if (
                             String(check.parent_id) ===
                               String(parentIndicator.id) &&
-                            check.is_deleted == false
+                            check.is_deleted == true
                           ) {
                             checkParentHasChild = true;
                           }
@@ -357,13 +300,10 @@ $(document).ready(function () {
                     for (let childIndicator of data.indicators) {
                       if (
                         String(childIndicator.parent_id) ==
-                          String(parentIndicator.id) &&
-                        childIndicator.is_deleted
+                          String(parentIndicator.id) 
                       ) {
+                        //Add Parent Indicator
 
-                        //Add Parent Indicator 
-
-                        
                         test = true;
 
                         //Table Row Start
@@ -372,20 +312,22 @@ $(document).ready(function () {
                                 <td class="fw-bold">  
                                 <div class="row">
                                 <div class="col-9">
-                                ${childIndicator.title_ENG} ${childIndicator.is_deleted}
+                                ${childIndicator.title_ENG}
                                 </div>
                                 <div class="col-1">
-                              <button type="button" name="btnDeleteIndicator" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">Restore</button> 
+                              <button type="button" id="${parentIndicator.id}"  name="btnRestoreIndicator" data-bs-toggle="modal"  data-bs-target="#restoreIndicator"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash-restore text-info"></i></button> 
                             </div> 
                                 </td>
                               `;
+
+
                         //Child List
                         let checkParentHasChild = false;
                         for (check of data.indicators) {
                           if (
                             String(check.parent_id) ===
                               String(parentIndicator.id) &&
-                            check.is_deleted == false
+                            check.is_deleted == true
                           ) {
                             checkParentHasChild = true;
                           }
@@ -459,10 +401,10 @@ $(document).ready(function () {
                                  <td class="fw-bold">  
                                  <div class="row">
                                  <div class="col-9">
-                                 ${parentIndicator.title_ENG} ${parentIndicator.title_AMH} --> ${parentIndicator.is_deleted}
+                                 ${parentIndicator.title_ENG} ${parentIndicator.title_AMH}
                                  </div>
                                  <div class="col-1">
-                               <button type="button" name="btnDeleteIndicator" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">Restore</button> 
+                               <button type="button" id="${parentIndicator.id}" id="${parentIndicator.id}"  name="btnRestoreIndicator" data-bs-toggle="modal"  data-bs-target="#restoreIndicator"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash-restore text-info"></i></button> 
                              </div> 
                                  </td>
                                     `;
@@ -532,6 +474,40 @@ $(document).ready(function () {
                       buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                     });
                   });
+
+                  let parentContainer =
+                    document.querySelector("#list_table_view");
+
+                  //Remove Indicators Function
+                  let restoreDeletedIndicator = () => {
+                    let btnDelete = document.getElementsByName(
+                      "btnRestoreIndicator"
+                    );
+                    btnDelete.forEach((deleteIndicator) => {
+                      deleteIndicator.addEventListener("click", () => {
+                        console.log(deleteIndicator.id);
+                        let approveAnchor = document.getElementById(
+                          "forRestoreIndicator"
+                        );
+                        approveAnchor.setAttribute(
+                          "href",
+                          `/user-admin/restore-indicator/${deleteIndicator.id}/`
+                        );
+                        console.log(approveAnchor);
+                      });
+                    });
+                  };
+
+                  //Call for First Time
+                  restoreDeletedIndicator();
+
+                  //Call After table is Changed
+                  parentContainer.addEventListener("click", (event) => {
+                    //Edit Indicator re-initializing
+
+                    //Remove Indicator re-initializing
+                    restoreDeletedIndicator();
+                  });
                 });
               });
             });
@@ -543,29 +519,3 @@ $(document).ready(function () {
 
   filterIndicator();
 });
-
-// Function to initialize DataTable
-function initDataTable(tableId) {
-  console.log("Initializing DataTable for table with ID:", tableId);
-
-  // Check if DataTable is already initialized on the table
-  if (!$.fn.dataTable.isDataTable("#" + tableId)) {
-    $(document).ready(function () {
-      $("#" + tableId)
-        .DataTable({
-          responsive: true,
-          lengthChange: true,
-          autoWidth: false,
-          buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
-        })
-        .buttons()
-        .container()
-        .appendTo("#" + tableId + "_wrapper .col-md-6:eq(0)");
-    });
-  } else {
-    console.log("DataTable is already initialized on table with ID:", tableId);
-  }
-}
-
-// Call the function for each table
-initDataTable("deletedTopicsTable");

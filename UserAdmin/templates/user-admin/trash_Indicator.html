@@ -12,21 +12,21 @@
 
   <body class="hold-transition sidebar-mini layout-fixed">
 <!-- Restore trash modal -->
-<div class="modal fade" id="restoreModaltrash" tabindex="-1" aria-labelledby="restoreModaltrashLabel" aria-hidden="true">
+<div class="modal fade" id="restoreIndicator" tabindex="-1" aria-labelledby="restoreIndicatorLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="restoreModaltrashLabel">Restore Topic</h5>
+        <h5 class="modal-title" id="restoreIndicatorLabel">Restore Topic</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form name="restoretrash" method="post" action="{% url 'restore_item' 'topic' 0 %}" id="form_trash_restore">
         {% csrf_token %}
         <div class="modal-body text-center fs-4">
-          <p>Are you sure you want to restore this topic?</p>
+          <p>Are you sure you want to restore this Indicator?</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-danger" id="confirmRestore">Yes</button>
+          <a href="#" id="forRestoreIndicator" class="btn btn-danger">Yes</a>
         </div>
       </form>
     </div>
@@ -214,17 +214,26 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
         <script>
           $(document).ready(function () {
-      $("#deletedIndicatorTable")
-        .DataTable({
-          responsive: true,
-          lengthChange: true,
-          autoWidth: false,
-          buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
-        })
-        .buttons()
-        .container()
-        .appendTo("#" + tableId + "_wrapper .col-md-6:eq(0)");
-    });
+            $("#deletedIndicatorTable").DataTable({
+              retrieve: true,
+              ordering: false,
+              scrollX: true,
+              responsive: true,
+              paging: true,
+              searching: true,
+              orderNumber: true,
+              lengthMenu: [
+                [10, 25, 50, -1],
+                ["10 rows", "25 rows", "50 rows", "Show all"],
+              ],
+              columnDefs: [
+                { width: "100%" },
+                { width: "300px", targets: 0 },
+              ],
+              dom: "Bfrtip",
+              buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+            });
+          });
         </script>
   </body>
 </html>
