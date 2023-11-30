@@ -28,10 +28,6 @@ urlpatterns = [
     path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
     path('indicator-detail/<int:pk>', views.indicator_detail, name='user-admin-indicator-detail'),
     
-    #Location
-    path('location/', views.location, name="user-admin-location"),
-    path('location/<int:pk>', views.location_detail, name="user-location-detail"),
-    path('location-delete/<int:pk>', views.delete_location, name='user-location-delete'),
    
    #Data-Point
     path('data-point/', views.data_point, name="user-admin-data-point"),

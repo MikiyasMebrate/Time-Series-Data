@@ -97,12 +97,13 @@ def user_registration_view(request):
 
 def update_user(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
+    form = CustomUserForm(request.POST or None, request.FILES or None,instance=user)
     if request.method == 'POST':
-        form = CustomUserForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()         
-    else:
-        form = CustomUserForm(instance=user)
+            form.save()
+            messages.success(request, 'Successfully Updated!')
+        else:
+            messages.error(request, 'Please tye again!')         
     return render(request, 'user-admin/profile.html', {'form': form, 'user': user})
 
 def delete_user(request, user_id):
