@@ -28,10 +28,6 @@ urlpatterns = [
     path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
     path('indicator-detail/<int:pk>', views.indicator_detail, name='user-admin-indicator-detail'),
     
-    #Location
-    path('location/', views.location, name="user-admin-location"),
-    path('location/<int:pk>', views.location_detail, name="user-location-detail"),
-    path('location-delete/<int:pk>', views.delete_location, name='user-location-delete'),
    
    #Data-Point
     path('data-point/', views.data_point, name="user-admin-data-point"),
@@ -56,9 +52,13 @@ urlpatterns = [
     path('topic/<int:pk>', views.topic_detail, name="user-topic-detail"),
     path('topic-delete/<int:pk>', views.delete_topic, name='user-topic-delete'),
 
-    
-    path('recyclebin/', views.recyclebin, name="user-admin-recyclebin"),
+    #Trash
     path('restore_item/<str:item_type>/<int:item_id>/', views.restore_item, name='restore_item'),
-   
+    path('restore-indicator/<str:pk>/', views.restore_indicator, name='restore-indicator'),
+    path('trash-topic/', views.trash_topic, name="trash-topic"),
+    path('trash-indicator/', views.trash_indicator, name="trash-indicator"),
+    path('trash-category/', views.trash_category,name="trash-category"),
+    path('trash-source/', views.trash_source, name='trash-source'),
+
 ]
     

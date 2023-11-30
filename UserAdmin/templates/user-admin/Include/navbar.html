@@ -26,10 +26,10 @@
            
 
             <!-- Profile -->
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown pb-2">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                     aria-expanded="true">
-                        <img class="img-circle img-fluid" width="40px" src="{% static 'assets/img/avatar.png'%}" alt="Profile Picture">
+                        <img class="img-circle  img-fluid" width="40px"  src="/media/{{user.photo}}" alt="Profile Picture">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="{% url 'user-admin-profile' %}"><i

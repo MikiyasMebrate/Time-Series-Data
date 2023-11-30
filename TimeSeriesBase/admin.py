@@ -28,6 +28,17 @@ class BookResource(resources.ModelResource):
         export_order = ('title_ENG', 'title_AMH',)
 
 
+class BookResourceWithStoreInstance(resources.ModelResource):
+        user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
+        class Meta:
+            #fields = ('id','title_ENG', 'title_AMH', 'user__username' )
+            model = models.Book
+            store_instance = True
+            #Handle Duplicated Data
+            skip_unchanged = True
+            report_skipped = False
+            unique_together = ('title_ENG', 'title_AMH', 'user')
+
 
 class BookAdmin(ImportExportModelAdmin):
     resource_classes = [BookResource]

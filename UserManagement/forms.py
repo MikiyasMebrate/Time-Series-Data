@@ -31,6 +31,18 @@ class CustomUserForm(forms.ModelForm):
 #     widgets = {
 #             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
 #         }    
+
+class CustomUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'first_name','last_name', 'photo']   
+
+        widgets = {
+                'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+                'photo' : forms.ClearableFileInput(attrs={
+                    'class' : 'form-control'
+                })
+            }    
 class Login_Form(forms.Form):
     # username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
     #     'class' : 'form-control',
