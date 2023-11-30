@@ -12,6 +12,8 @@ from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm
 from .decorators import unauthenticated_user
+
+
 #Session
 def users_list(request):
     users = CustomUser.objects.all()
@@ -112,12 +114,33 @@ def delete_user(request, user_id):
         user.delete()
         messages.success(request, "Successfully Deleted!")
         return HttpResponseRedirect(previous_page)
-    
-    
+
    
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.views import PasswordChangeView
+from .forms import Login_Form, PasswordChangingForm
+from django.urls import reverse_lazy       
+ 
+class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
+    model=CustomUser
+    form_class=PasswordChangingForm
+    success_url=reverse_lazy("change_password")
+    success_message = 'password successful updated'
+
+    
 
 
+def activate_deactivate_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    if request.method == 'POST':
+        user.is_active = not user.is_active  # Toggle the is_active status
+        user.save()
+        messages.success(request, f"User '{user.username}' has been {'activated' if user.is_active else 'deactivated'}!")
+        return HttpResponseRedirect(previous_page)
 
+    return render(request, 'user-admin/users_list.html', {'user': user})
 
 
 

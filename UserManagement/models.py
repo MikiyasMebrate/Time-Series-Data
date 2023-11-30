@@ -7,6 +7,6 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
     photo = models.ImageField(upload_to='User/Photo', null=True, blank=True)
-    
+    is_active = models.BooleanField(default=True)
     USERNAME_FIELD='email'
     REQUIRED_FIELDS=['first_name','username','last_name']

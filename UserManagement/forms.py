@@ -1,14 +1,36 @@
 from django import forms
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
+
+class PasswordChangingForm(PasswordChangeForm):
+    old_password=forms.CharField(widget= forms.PasswordInput(attrs={
+                'class' : 'form-control','placeholder': 'old password'}))
+    new_password1=forms.CharField(widget= forms.PasswordInput(attrs={
+                'class' : 'form-control','placeholder': 'new password'}))
+    new_password2=forms.CharField(widget= forms.PasswordInput(attrs={
+                'class' : 'form-control','placeholder': 'confirm password'}))
+    class Meta:
+        model=CustomUser
+        fields=['old_password','new_password1','new_password2']
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name','last_name']   
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_active']  
 
-    widgets = {
+        widgets = {
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
-        }    
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+        
+# class CustomUserForm(forms.ModelForm):
+#     class Meta:
+#         model = CustomUser
+#         fields = ['username', 'email', 'first_name','last_name']   
+
+#     widgets = {
+#             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+#         }    
 class Login_Form(forms.Form):
     # username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
     #     'class' : 'form-control',

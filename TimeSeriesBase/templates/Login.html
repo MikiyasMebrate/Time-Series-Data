@@ -250,7 +250,20 @@
 {% endfor %}
                                     <form method="POST">
                                         {% csrf_token %}
-                                        {{form.as_p}}
+                                        
+                                         
+                                        {% comment %} <div class="mb-3">
+                                            {{form.email.label}}
+                                            {{form.email}}
+                                          </div> {% endcomment %}
+                                          <div class="mb-3">
+                                            {{form.email.label}}
+                                            {{form.email}}
+                                          </div>
+                                          <div class="mb-3">
+                                            {{form.password.label}}
+                                            {{form.password}}
+                                          </div>
                                         {% comment %} <div class="form-group animated-input-group">
                                             <i class="fas fa-envelope input-icon"></i>
                                             <input type="username" class="form-control animated-input" placeholder="Your username" name="username">
