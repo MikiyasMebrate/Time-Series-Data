@@ -18,63 +18,63 @@
 
   <body class="hold-transition sidebar-mini layout-fixed">
     <!--User Registration Modal Start-->
-    <!--Data Add Modal Start-->
+     <!--Data Add Modal Start-->
     <div class="modal fade" id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-         <div class="modal-content">
-             <div class="modal-header bg-primary text-white">
-                 <h5 class="modal-title" id="userRegistrationLabel">
-                     New User Registration
-                 </h5>
-                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-             </div>
-             <div class="modal-body">
-               <form  method="post" class="auth-form"> {% csrf_token %}
-                                                
-                 <div class="row">
-                  
-                 <div class=" col-md mb-3">
-                   <label class="small"  for="{{form.first_name.id_for_label}}">First Name: {% for err in form.first_name.errors %} <small class="text-warning fw-bold "> {{err}}</small> {% endfor %}  </label>
-                     {{form.first_name}}
-                 </div>
-                 <div class="col-md mb-3">
+       <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-primary text-white">
+                  <h5 class="modal-title" id="userRegistrationLabel">
+                      New User Registration
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form  method="post" class="auth-form"> {% csrf_token %}
+                                                 
+                  <div class="row">
                    
-                   <label class="small" for="{{form.last_name.id_for_label}}">Last Name: {% for err in form.last_name.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                     {{form.last_name}}
-                 </div>
-     
-               </div>
+                  <div class=" col-md mb-3">
+                    <label class="small"  for="{{form.first_name.id_for_label}}">First Name: {% for err in form.first_name.errors %} <small class="text-warning fw-bold "> {{err}}</small> {% endfor %}  </label>
+                      {{form.first_name}}
+                  </div>
+                  <div class="col-md mb-3">
+                    
+                    <label class="small" for="{{form.last_name.id_for_label}}">Last Name: {% for err in form.last_name.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
+                      {{form.last_name}}
+                  </div>
+      
+                </div>
 
 
-                 <div class="mb-3">
-                   <label class="small" for="{{form.username.id_for_label}}">Username: {% for err in form.username.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                       {{form.username}}
-                   </div>
-                   <div class="mb-3">
-                   <label class="small" for="{{form.email.id_for_label}}">Email: {% for err in form.email.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                       {{form.email}}
-                   </div>
-                   
-                   <div class="mb-3">
-                     <label class="small" for="{{form.password1.id_for_label}}">Password: {% for err in form.password1.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                     {{form.password1}}
-                   </div>
+                  <div class="mb-3">
+                    <label class="small" for="{{form.username.id_for_label}}">Username: {% for err in form.username.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
+                        {{form.username}}
+                    </div>
+                    <div class="mb-3">
+                    <label class="small" for="{{form.email.id_for_label}}">Email: {% for err in form.email.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
+                        {{form.email}}
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="small" for="{{form.password1.id_for_label}}">Password: {% for err in form.password1.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
+                      {{form.password1}}
+                    </div>
 
-                   <div class="mb-3">
-                     <label class="small" for="{{form.password2.id_for_label}}">Confirm Password: {% for err in form.password2.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                       {{form.password2}}
-                 </div>
-                   <div class="text-center">
-                       <button type="submit"
-                           class="btn btn-white btn-hover w-100">Add User</buttom>
-                   </div>
-               </form>
-             </div>
-             
-         </div>
-     </div>
- </div>
- <!--Data Add Modal End-->
+                    <div class="mb-3">
+                      <label class="small" for="{{form.password2.id_for_label}}">Confirm Password: {% for err in form.password2.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
+                        {{form.password2}}
+                  </div>
+                    <div class="text-center">
+                        <button type="submit"
+                            class="btn btn-white btn-hover w-100">Add User</buttom>
+                    </div>
+                </form>
+              </div>
+              
+          </div>
+      </div>
+  </div>
+  <!--Data Add Modal End-->
 
  <!-- Edit User Modal Start -->
 {% for user in users %}
@@ -89,6 +89,7 @@
       </div>
       <div class="modal-body">
         <form method="post" id="update-user-form" action="{% url 'edit_user' user.id %}">
+          {% comment %} action="{% url 'edit_user' user.id %}" {% endcomment %}
           {% csrf_token %}
           <div class="modal-body">
             <div class="mb-3">
@@ -109,6 +110,14 @@
               <label for="{{ form.email.id_for_label }}" class="col-form-label">Email:</label>
               <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ user.email }}" />
             </div>
+            {% comment %} <div class="mb-3">
+              <label for="{{ form.password.id_for_label }}" class="col-form-label">password:</label>
+              <input type="password" class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" value="{{ user.password }}" />
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.password2.id_for_label }}" class="col-form-label">password:</label>
+            <input type="password" class="form-control" id="{{ form.password2.id_for_label }}" name="{{ form.password.name }}" value="{{ user.password }}" />
+        </div> {% endcomment %}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -122,6 +131,7 @@
 </div>
 {% endfor %}
 <!-- Edit User Modal End -->
+
 <!-- Deactivate User Modal Start -->
 {% for user in users %}
   <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
@@ -166,14 +176,13 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Users Lists</h1>
+              <h1 class="m-0"></h1>
             </div>
           </div>
         </div>
       </div>
       <!--Title End-->
 
-      
       {% if action_result %}
       <div class="alert alert-success" role="alert">
         {{ action_result }}
@@ -221,10 +230,12 @@
               </div>
             </div>
           </div>
+         
           <!--Card End-->
 
           <!--User Registration Button Start-->
           <div class="text-end">
+           
             <button
               type="button"
               class="btn btn-primary mb-2"
@@ -290,7 +301,6 @@
 
         </div>
       </section>
-      
     </div>
     <!--Body End-->
     {% include 'user-admin/include/footer.html'%}

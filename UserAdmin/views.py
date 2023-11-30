@@ -27,8 +27,8 @@ def index(request):
     resource = BookResourceWithStoreInstance()
     result = resource.import_data(dataset)
 
-    # for row_result in result:
-    #     try: print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
+    for row_result in result:
+        try: print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
         except: print('nothing to save')
     return render(request, 'user-admin/index.html')
 
