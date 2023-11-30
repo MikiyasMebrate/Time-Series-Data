@@ -9,6 +9,7 @@ class CustomUserForm(forms.ModelForm):
 
     widgets = {
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+             
         }    
 class Login_Form(forms.Form):
     # username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
