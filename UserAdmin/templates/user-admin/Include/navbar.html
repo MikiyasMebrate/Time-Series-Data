@@ -26,15 +26,15 @@
            
 
             <!-- Profile -->
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown pb-2">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                     aria-expanded="true">
-                        <img class="img-circle img-fluid" width="40px" src="{% static 'assets/img/avatar.png'%}" alt="Profile Picture">
+                        <img class="img-circle  img-fluid" width="40px" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="{% url 'user-admin-profile' %}"><i
                                 class="fas fa-sliders-h fa-fw"></i> My Profile</a></li>
-                    <li><a class="dropdown-item" href="{% url 'user-admin-profile' %}"><i class="fas fa-cog fa-fw"></i>
+                    <li><a class="dropdown-item" href="{% url 'user-admin-settings' %}"><i class="fas fa-cog fa-fw"></i>
                             Settings</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="{% url "logout" %}"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a></li>

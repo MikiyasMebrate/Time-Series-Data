@@ -12,31 +12,26 @@ from django.contrib.auth.decorators import login_required
 from TimeSeriesBase import models
 from UserManagement.decorators import *
 import tablib
-from import_export import resources
-from import_export import resources, fields
-from import_export.widgets import ForeignKeyWidget  # For foreignkey
+from TimeSeriesBase.admin import BookResourceWithStoreInstance
 
 @login_required(login_url='login')
 def index(request):
-    # class BookResourceWithStoreInstance(resources.ModelResource):
-    #     user = fields.Field(column_name='user', attribute='user', widget=ForeignKeyWidget(models.CustomUser, field='username')) 
-    #     class Meta:
-    #         model = Book
-    #         store_instance = True
+    
 
-    # rows = [
-    #     ( 'Lord ', 'Lord ', 'hp'),
-    #     ('Lord ', 'Lord ', 'hp'),
-    #     ('Lord ', 'Lord ', 'hp'),
-    # ]
-    # dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
-    # resource = BookResourceWithStoreInstance()
-    # result = resource.import_data(dataset)
+    rows = [
+        ( 'k ', 'Lord ', 'hp'),
+        ('o  ', 'Lord ', 'hp'),
+        ('t ', 'Lord ', 'hp'),
+    ]
+    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
+    resource = BookResourceWithStoreInstance()
+    result = resource.import_data(dataset)
 
-    # for row_result in result:
-    #     print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
-        
+    for row_result in result:
+        try: print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
+        except: print('nothing to save')
     return render(request, 'user-admin/index.html')
+
 @login_required(login_url='login')
 def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
@@ -414,65 +409,7 @@ def data_list_detail(request, pk):
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 
-
-
-#Location
-@login_required(login_url='login')
-def location(request):
-    
-    location = Location.objects.all()
-    
-    form = LocationForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
-            form= LocationForm()
-            messages.success(request, "Location has been successfully Added!")
-        else:
-            messages.error(request, "Value Exist or Please Try again!")
-            
-    context = {
-        'form' : form,
-        'locations' : location
-    }
-    return render(request, 'user-admin/location.html', context)
-
-@login_required(login_url='login')
-def location_detail(request, pk):
-    location = Location.objects.get(pk=pk)
-    form = LocationForm(request.POST or None, instance=location)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
-            messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-location')
-        else:
-            messages.error(request, 'Value Exist or Please try Again!')
-    context = {
-        'form' : form,
-        'location' : location
-    }  
-    return render(request, 'user-admin/location_detail.html', context)
-
-@login_required(login_url='login')
-def delete_location(request,pk):
-    location = Location.objects.get(pk=pk)
-    previous_page = request.META.get('HTTP_REFERER')
-    
-    # Soft delete the category
-    category.is_deleted = True
-    category.save()
-
-    # Optionally, you can soft delete related objects here if needed
-    
-    messages.success(request, "Successfully Deleted!")
-    return HttpResponseRedirect(previous_page)
-        
+       
 
 #Indicator 
 @login_required(login_url='login')
@@ -982,7 +919,7 @@ def trash_category(request):
     context = {
         'recycled_categories': recycled_categories,
     }
-    return render(request, 'user-admin/trash_Source.html', context)
+    return render(request, 'user-admin/trash_Category.html', context)
 
 
 @login_required(login_url='login')
@@ -1031,47 +968,4 @@ def restore_item(request, item_type, item_id):
     messages.success(request,'Successfully restored')
 
     # Redirect to the view where the recycled items are displayed
-    return HttpResponseRedirect(previous_page)
-
-
-def restore_indicator(request, pk):
-    indicator = Indicator.objects.get(pk=pk)
-    previous_page = request.META.get('HTTP_REFERER')
-
-    #Parent Indicator 
-    indicator.is_deleted = False
-    indicator.save()
-
-    indicator_list = Indicator.objects.all()
-
-
-    #Check Child of Child 
-    def check_child(parent_obj):
-        for indicator_obj in indicator_list:
-            if indicator_obj.parent == parent_obj:
-                indicator_obj.is_deleted = False
-                indicator_obj.save()
-                check_child(indicator_obj)
-    
-
-    for indicator_obj in indicator_list:
-        if indicator_obj.parent == indicator:
-            indicator_obj.is_deleted = False
-            indicator_obj.save()
-            check_child(indicator_obj)
-
-
-    #Parent Related Values 
-    years = DataPoint.objects.all()
-    for year in  years:
-        try: 
-           deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
-           deleted_indicator.is_deleted = False
-           deleted_indicator.save()
-        except:
-            None
-
-
-
-    messages.success(request, "Successfully Restored!")
-    return HttpResponseRedirect(previous_page)
+    return redirect('user-admin-recyclebin') 

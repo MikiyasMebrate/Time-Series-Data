@@ -1,14 +1,62 @@
 from django import forms
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
+
+class PasswordChangingForm(PasswordChangeForm):
+    old_password=forms.CharField(widget= forms.PasswordInput(attrs={
+                'class' : 'form-control','placeholder': 'old password'}))
+    new_password1=forms.CharField(widget= forms.PasswordInput(attrs={
+                'class' : 'form-control','placeholder': 'new password'}))
+    new_password2=forms.CharField(widget= forms.PasswordInput(attrs={
+                'class' : 'form-control','placeholder': 'confirm password'}))
+    class Meta:
+        model=CustomUser
+        fields=['old_password','new_password1','new_password2']
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name','last_name']   
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_active']  
 
-    widgets = {
+        widgets = {
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
-        }    
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+        
+# class CustomUserForm(forms.ModelForm):
+#     class Meta:
+#         model = CustomUser
+#         fields = ['username', 'email', 'first_name','last_name']   
+
+#     widgets = {
+#             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+#         }    
+
+class CustomUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'first_name','last_name', 'photo', 'is_superuser']   
+
+        widgets = {
+                'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+                'photo' : forms.ClearableFileInput(attrs={
+                    'class' : 'form-control'
+                })
+            } 
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'first_name','last_name', 'photo']   
+
+        widgets = {
+                'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+                'photo' : forms.ClearableFileInput(attrs={
+                    'class' : 'form-control'
+                })
+            } 
+           
+
 class Login_Form(forms.Form):
     # username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
     #     'class' : 'form-control',
@@ -62,21 +110,16 @@ class CustomUserCreationForm(UserCreationForm):
    
     }))
 
-    # is_superuser = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
-    #     'class' : 'form-check-input'
-    # }))
 
-    is_admin = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+    is_superuser = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
         'class' : 'form-check-input'
     }))
 
-    is_user = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
-        'class' : 'form-check-input'
-    }))
+
 
     class Meta:
         model = CustomUser
-        fields = ('first_name','last_name', 'username' , 'is_user', 'is_admin', 'email','password1', 'password2', 'photo')
+        fields = ('first_name','last_name', 'username' , 'is_superuser', 'email','password1', 'password2', 'photo')
 
 
 class UserUpdateForm(forms.ModelForm):
