@@ -4,8 +4,21 @@ from .models import CustomUser
 # Register your models here.
 
 # admin.site.register(CustomUser, UserAdmin)
+class YourModelAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_user', 'is_admin', 'photo')  # Add the new fields here
 
-admin.site.register(CustomUser, UserAdmin)
+    def custom_field(self, obj):
+        # Logic to generate the custom field value
+        return obj.username 
+
+    custom_field.short_description = 'Custom Field'  # Optional: Set a custom column header for the field
+
+
+class CustomUserAdmin(YourModelAdmin):
+    model = CustomUser
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_user', 'is_admin', 'photo')  # Add the new fields here
+
+admin.site.register(CustomUser, CustomUserAdmin)
 
 
 
