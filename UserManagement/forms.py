@@ -35,6 +35,18 @@ class CustomUserForm(forms.ModelForm):
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
+        fields = ['username', 'email', 'first_name','last_name', 'photo', 'is_superuser']   
+
+        widgets = {
+                'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+                'photo' : forms.ClearableFileInput(attrs={
+                    'class' : 'form-control'
+                })
+            } 
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
         fields = ['username', 'email', 'first_name','last_name', 'photo']   
 
         widgets = {
@@ -42,7 +54,9 @@ class CustomUserForm(forms.ModelForm):
                 'photo' : forms.ClearableFileInput(attrs={
                     'class' : 'form-control'
                 })
-            }    
+            } 
+           
+
 class Login_Form(forms.Form):
     # username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
     #     'class' : 'form-control',
@@ -96,21 +110,16 @@ class CustomUserCreationForm(UserCreationForm):
    
     }))
 
-    # is_superuser = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
-    #     'class' : 'form-check-input'
-    # }))
 
-    is_admin = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+    is_superuser = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
         'class' : 'form-check-input'
     }))
 
-    is_user = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
-        'class' : 'form-check-input'
-    }))
+
 
     class Meta:
         model = CustomUser
-        fields = ('first_name','last_name', 'username' , 'is_user', 'is_admin', 'email','password1', 'password2', 'photo')
+        fields = ('first_name','last_name', 'username' , 'is_superuser', 'email','password1', 'password2', 'photo')
 
 
 class UserUpdateForm(forms.ModelForm):
