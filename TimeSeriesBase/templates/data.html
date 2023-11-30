@@ -16,7 +16,6 @@
 ></script>
 
 
-<link rel="stylesheet" href="{% static 'assets/css/d.css' %}">
 <link href="{% static 'assets/image/mopd_logo_green.png' %}" rel="icon">
 
 
@@ -382,21 +381,19 @@
               
                       <div class="card-body">
                           <div class="tab-content p-0">
-              
-                              <div class="chart tab-pane active" id="bar-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
+                               <label class='text-danger form-label fw-bold' for="indicatorDropdown ">Select Indicator to display indicator data</label>
+                               <select class='form-select indicatorDropdown mb-1'></select>
+                              <div class="chart tab-pane active " id="bar-chart" style="position: relative; height: 500px;">
+                                
                                   <div id="bar-chart-canvas" height="300" style="height: 500px;"></div>
                               </div>
                               <div class="chart tab-pane" id="series-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
                                   <div id="series-chart-canvas" height="300" style="height: 500px;"></div>
                               </div>
                               <div class="chart tab-pane" id="line-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
                                   <div id="line-chart-canvas" height="300" style="height: 500px;"></div>
                               </div>
                               <div class="chart tab-pane" id="area-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
                                   <figure class="highcharts-figure">
                                       <div id="parent-container">
                                           <div id="play-controls">
@@ -490,33 +487,16 @@
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
 
-    <script src="{% static 'assets/js/adminlte.min2167.js' %}"></script>
-    <script src="{% static 'assets/js/demo.js' %}"></script>
 
-       <!-- chart -->
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-   
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/annotations.js"></script>
-       <script src="https://code.highcharts.com/modules/data.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-   
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-   
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/data.js"></script>
-       <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<!-- chart -->
+ <script src="https://code.highcharts.com/highcharts.js"></script>
+ <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+ <script src="https://code.highcharts.com/modules/annotations.js"></script>
+ <script src="https://code.highcharts.com/modules/data.js"></script>
+ <script src="https://code.highcharts.com/modules/exporting.js"></script>
+ <script src="https://code.highcharts.com/modules/export-data.js"></script>
+ <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+       
 
 
 

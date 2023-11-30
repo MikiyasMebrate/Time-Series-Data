@@ -569,76 +569,109 @@ function filterData() {
           $("#displayOptions a:nth-child(2)").addClass("active");
           $("#displayOptions a:nth-child(1)").removeClass("active");
           // $("#displayOptions a:nth-child(3)").removeClass("active");
-
-          $(document).ready(function () {
-            StoreData();
-            draw();
-          });
           
-          function StoreData() {
+          $(document).ready(function () {
             // Extract data for the chart
             let chartData = [];
             let indicators = [];
-
+        
             selectIndicator = data.indicators.map(({ title_ENG, id, for_category_id, is_deleted }) => {
-              if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && !is_deleted) {
-
-                let indicatorData = {
-                  name: title_ENG,
-                  data: []
-                };
-
-                for (let j of yearTableList) {
-                  let statusData = false;
-                  for (let k of data.value) {
-                    if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
-                      indicatorData.data.push({
-                        x: `${j[1]}-E.C ${j[2]}-G.C`,
-                        y: parseFloat(k.value)
-                      });
-                      statusData = false;
-                      break;
-                    } else {
-                      statusData = true;
+                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && !is_deleted) {
+                    let indicatorData = {
+                        name: title_ENG,
+                        data: []
+                    };
+        
+                    for (let j of yearTableList) {
+                        let statusData = false;
+                        for (let k of data.value) {
+                            if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
+                                indicatorData.data.push({
+                                    x: `${j[1]}-E.C ${j[2]}-G.C`,
+                                    y: parseFloat(k.value)
+                                });
+                                statusData = false;
+                                break;
+                            } else {
+                                statusData = true;
+                            }
+                        }
+                        if (statusData) {
+                            indicatorData.data.push({
+                                x: `${j[1]}-E.C ${j[2]}-G.C`,
+                                y: null
+                            });
+                        }
                     }
-                  }
-                  if (statusData) {
-                    indicatorData.data.push({
-                      x: `${j[1]}-E.C ${j[2]}-G.C`,
-                      y: null
-                    });
-                  }
+        
+                    chartData.push(indicatorData);
+                    indicators.push({ id, title_ENG, for_category_id, is_deleted });
                 }
-
-                chartData.push(indicatorData);
-                indicators.push({ id, title_ENG, for_category_id, is_deleted });
-              }
             });
-
+        
             // Convert data to JSON
             let jsonData = {
-              indicators: indicators,
-              chartData: chartData
+                indicators: indicators,
+                chartData: chartData
             };
-            console.log(jsonData)
-
-            // Select all elements with the name attribute "indicatorDropdown"
-            const dropdowns = document.querySelectorAll('[name="indicatorDropdown"]');
-
+            console.log('json data', jsonData);
+        
+            // Select all elements with the class "indicatorDropdown"
+            const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
+        
             // Iterate over each dropdown and update its options
-            dropdowns.forEach((dropdown) => {
+            dropdowns.forEach((dropdown, index) => {
                 dropdown.innerHTML = ''; // Clear existing options
-                indicators.forEach(({ id, title_ENG }) => {
+                indicators.forEach(({ id, title_ENG }, i) => {
                     const option = document.createElement('option');
                     option.value = id;
                     option.text = title_ENG;
                     dropdown.appendChild(option);
+        
+                    // Set the first option as selected by default
+                    if (i === 0) {
+                        option.selected = true;
+                    }
                 });
+        
+                // Add event listener to the dropdown
+                dropdown.addEventListener('change', function () {
+                    const selectedIndicatorId = this.value;
+                    console.log('Selected indicator ID:', selectedIndicatorId);
+        
+                    // Find the selected indicator in jsonData.indicators
+                    const selectedIndicator = jsonData.indicators.find(indicator => indicator.id === Number(selectedIndicatorId));
+                    console.log('All indicators:', jsonData.indicators);
+                    console.log('Selected indicator:', selectedIndicator);
+        
+                    if (selectedIndicator) {
+                        // Find the selected indicator's data in jsonData.chartData
+                        const selectedChartData = jsonData.chartData.find(chartItem => chartItem.name === selectedIndicator.title_ENG);
+        
+                        if (selectedChartData) {
+                            // Log the data property of the selected indicator
+                            console.log('Selected indicator data:', selectedChartData.data);
+        
+                            // Use selectedChartData.data for drawing the chart
+                            draw(selectedChartData.data, index); // Pass the index to identify the correct chart
+                            console.log('Chart data:', selectedChartData.data);
+                        } else {
+                            console.error('Selected indicator data is undefined in jsonData.chartData.');
+                        }
+                    } else {
+                        console.error('Selected indicator is undefined.');
+                    }
+                });
+        
+                // Trigger change event on the first dropdown
+                if (index === 0) {
+                    dropdown.dispatchEvent(new Event('change'));
+                }
             });
+        });
 
-          }
-          function draw() {
-
+          function draw(chartdata) {
+          // ================================================ first chart =======================================
             (async () => {
 
               const data = await fetch(
@@ -705,7 +738,7 @@ function filterData() {
             })();
 
 
-            //second chart 
+    
             const btn = document.getElementById('play-pause-button'),
               input = document.getElementById('play-range'),
               startYear = 1973,
@@ -725,8 +758,10 @@ function filterData() {
               return `<span style='font-size: 60px'>${input.value}</span>`;
             }
 
-            const formatRevenue = [];
 
+
+            // ================================== second chart =================================
+            const formatRevenue = [];
             const chart = Highcharts.chart('area-chart-canvas', {
               chart: {
                 events: {
@@ -1032,141 +1067,71 @@ function filterData() {
             // Trigger the update on the range bar click.
             input.addEventListener('input', update);
 
-
-            //=========================== third chart ====================================
-            // On chart load, start an interval that adds points to the chart and animate
-            // the pulsating marker.
-            const onChartLoad = function () {
-              const chart = this,
-                series = chart.series[0];
-
-              setInterval(function () {
-                const x = (new Date()).getTime(), // current time
-                  y = Math.random();
-
-                series.addPoint([x, y], true, true);
-              }, 1000);
-            };
-
-            // Create the initial data
-            const data = (function () {
-              const data = [];
-              const time = new Date().getTime();
-
-              for (let i = -19; i <= 0; i += 1) {
-                data.push({
-                  x: time + i * 1000,
-                  y: Math.random()
-                });
-              }
-              return data;
-            }());
-
-            // Plugin to add a pulsating marker on add point
-            Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
-              const point = e.point,
-                series = e.target;
-
-              if (!series.pulse) {
-                series.pulse = series.chart.renderer.circle()
-                  .add(series.markerGroup);
-              }
-
-              setTimeout(() => {
-                series.pulse
-                  .attr({
-                    x: series.xAxis.toPixels(point.x, true),
-                    y: series.yAxis.toPixels(point.y, true),
-                    r: series.options.marker.radius,
-                    opacity: 1,
-                    fill: series.color
-                  })
-                  .animate({
-                    r: 20,
-                    opacity: 0
-                  }, {
-                    duration: 1000
-                  });
-              }, 1);
-            });
-
-            //third chart moving line chart
+            //==================================================== third chart moving line chart ===================================================
             Highcharts.chart('line-chart-canvas', {
-              chart: {
-                type: 'spline',
-                events: {
-                  load: onChartLoad
-                }
-              },
-
-              time: {
-                useUTC: false
-              },
 
               title: {
-                text: 'Live random data'
+                  text: 'U.S Solar Employment Growth',
+                  align: 'left'
               },
-
-              accessibility: {
-                announceNewData: {
-                  enabled: true,
-                  minAnnounceInterval: 15000,
-                  announcementFormatter: function (allSeries, newSeries, newPoint) {
-                    if (newPoint) {
-                      return 'New point added. Value: ' + newPoint.y;
-                    }
-                    return false;
-                  }
-                }
+          
+              subtitle: {
+                  text: 'By Job Category. Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>.',
+                  align: 'left'
               },
-
-              xAxis: {
-                type: 'datetime',
-                tickPixelInterval: 150,
-                maxPadding: 0.1
-              },
-
+          
               yAxis: {
-                title: {
-                  text: 'Value'
-                },
-                plotLines: [
-                  {
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
+                  title: {
+                      text: 'Number of Employees'
                   }
-                ]
               },
-
-              tooltip: {
-                headerFormat: '<b>{series.name}</b><br/>',
-                pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
+          
+              xAxis: {
+                  accessibility: {
+                      rangeDescription: 'Range: 2010 to 2020'
+                  }
               },
-
+          
               legend: {
-                enabled: false
+                  layout: 'vertical',
+                  align: 'right',
+                  verticalAlign: 'middle'
               },
-
-              exporting: {
-                enabled: false
+          
+              plotOptions: {
+                  series: {
+                      label: {
+                          connectorAllowed: false
+                      },
+                      pointStart: 2010
+                  }
               },
+          
+              series: [{
+                  name: 'Installation & Developers',
+                  data: [43934, 48656, 65165, 81827, 112143, 142383,
+                      171533, 165174, 155157, 161454, 154610]
+              }],
+          
+              responsive: {
+                  rules: [{
+                      condition: {
+                          maxWidth: 500
+                      },
+                      chartOptions: {
+                          legend: {
+                              layout: 'horizontal',
+                              align: 'center',
+                              verticalAlign: 'bottom'
+                          }
+                      }
+                  }]
+              }
+          
+          });
+          
 
-              series: [
-                {
-                  name: 'Random data',
-                  lineWidth: 2,
-                  color: Highcharts.getOptions().colors[2],
-                  data
-                }
-              ]
-            });
-
-
-            //fourth chart 
-            // Implement the logic to create a line chart
-            // Example:
-            // Create the chart
+            // ======================================= fourth chart create a line chart ==============================
             Highcharts.chart('bar-chart-canvas', {
               chart: {
                 type: 'column'
@@ -1216,6 +1181,7 @@ function filterData() {
             });
 
           };
+
         });
 
         });
