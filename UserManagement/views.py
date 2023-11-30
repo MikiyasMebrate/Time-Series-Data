@@ -12,12 +12,11 @@ from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm
 from .decorators import unauthenticated_user
-
+from django.contrib.auth.decorators import login_required
 
 #Session
+@login_required(login_url='login')
 def users_list(request):
-    # Use get_or_create to retrieve the group or create it if it doesn't exist
-    group, created = Group.objects.get_or_create(name='otherusers')
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -26,11 +25,11 @@ def users_list(request):
             user.is_staff = True
             user.save()
 
-            # Add the user to the group
-            user.groups.add(group)
 
-            messages.success(request, 'Your Account has been Successfully Created! Please Login')
+            messages.success(request, 'Your Account has been Successfully Created!')
             return redirect('user-admin-user-list')
+        else:
+            messages.error(request, 'Please Try Again!')
 
     # If it's a GET request or the form is not valid, render the form and user list
     form = CustomUserCreationForm()
@@ -51,9 +50,12 @@ def users_list(request):
         
 
 
+@login_required(login_url='login')
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -77,7 +79,7 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 
-
+@login_required(login_url='login')
 def edit_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
 
@@ -95,6 +97,7 @@ def edit_user(request, user_id):
         'user': user,
     })
 
+@login_required(login_url='login')
 def user_registration_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -107,19 +110,21 @@ def user_registration_view(request):
 
     return render(request, 'user-admin/profile.html', {'form': form})
 
+@login_required(login_url='login')
 def update_user(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
-    form = CustomUserForm(request.POST or None, request.FILES or None,instance=user)
+    form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
+            form = EditProfileForm()
             messages.success(request, 'Successfully Updated!')
         else:
             messages.error(request, 'Please tye again!')         
     return render(request, 'user-admin/profile.html', {'form': form, 'user': user})
 
 
-
+@login_required(login_url='login')
 def activate_deactivate_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     previous_page = request.META.get('HTTP_REFERER')
@@ -127,7 +132,7 @@ def activate_deactivate_user(request, user_id):
     if request.method == 'POST':
         user.is_active = not user.is_active  # Toggle the is_active status
         user.save()
-        messages.success(request, f"User '{user.username}' has been {'activated' if user.is_active else 'deactivated'}!")
+        messages.success(request, f"User '{user.first_name} {user.last_name}' has been {'Activated ' if user.is_active else 'Deactivated'}!")
         return HttpResponseRedirect(previous_page)
 
     return render(request, 'user-admin/users_list.html', {'user': user})
