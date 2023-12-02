@@ -20,10 +20,22 @@ rel="stylesheet"
       <div class="info">
         
                    
-                       
-        <img class="img-circle  img-fluid ml-5 " width="4.1rem" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
-        <a href="" class="d-block nav-link ml-5 {% if request.path == '/user-admin/' %}active{% endif %}">{{user.username | capfirst}},</a>
-        <a href="" class="d-block ml-5">Welcome</a>
+       <div class="text-center">
+        <img class="img-circle  img-fluid  " width="4.1rem" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
+       </div>                
+       
+       
+       
+        <div class="row justify-content-center text-white text-center m-0 p-0">
+        <div class="col-12">
+          <p class=" p-0 m-0 ">Welcome</p>
+        </div>
+        <div class="col-12">
+          <p class="text-white {% if request.path == '/user-admin/' %}active{% endif %}"> {{user.first_name | capfirst}} {{user.last_name | capfirst}}</p>
+        </div>
+       </div>
+
+        
       </div>
     </div>
 

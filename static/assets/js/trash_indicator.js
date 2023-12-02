@@ -246,8 +246,7 @@ $(document).ready(function () {
                         for (check of data.indicators) {
                           if (
                             String(check.parent_id) ===
-                              String(parentIndicator.id) &&
-                            check.is_deleted == true
+                              String(parentIndicator.id)
                           ) {
                             checkParentHasChild = true;
                           }
@@ -300,7 +299,7 @@ $(document).ready(function () {
                     for (let childIndicator of data.indicators) {
                       if (
                         String(childIndicator.parent_id) ==
-                          String(parentIndicator.id) 
+                          String(parentIndicator.id) && String(childIndicator.is_deleted)
                       ) {
                         //Add Parent Indicator
 
@@ -309,13 +308,12 @@ $(document).ready(function () {
                         //Table Row Start
                         table += `
                               <tr>
-                                <td class="fw-bold">  
+                                <td class="">  
                                 <div class="row">
                                 <div class="col-9">
-                                ${childIndicator.title_ENG}
+                                &nbsp;&nbsp;&nbsp;&nbsp ${childIndicator.title_ENG}
                                 </div>
                                 <div class="col-1">
-                              <button type="button" id="${parentIndicator.id}"  name="btnRestoreIndicator" data-bs-toggle="modal"  data-bs-target="#restoreIndicator"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash-restore text-info"></i></button> 
                             </div> 
                                 </td>
                               `;
@@ -327,7 +325,7 @@ $(document).ready(function () {
                           if (
                             String(check.parent_id) ===
                               String(parentIndicator.id) &&
-                            check.is_deleted == true
+                            check.is_deleted
                           ) {
                             checkParentHasChild = true;
                           }
@@ -373,7 +371,7 @@ $(document).ready(function () {
                         String(childIndicator.parent_id) ==
                         String(parentIndicator.id)
                       ) {
-                        tableDeletedIndicatorChild(childIndicator, " ");
+                        checkTableDeletedIndicatorChild(childIndicator, " ");
                       }
                     }
                   };
