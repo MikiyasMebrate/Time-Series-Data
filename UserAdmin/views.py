@@ -16,21 +16,19 @@ from TimeSeriesBase.admin import BookResourceWithStoreInstance
 
 @login_required(login_url='login')
 def index(request):
-    
+    size_topic = Topic.objects.filter(is_deleted = False).count()
+    size_category = Category.objects.filter(is_deleted = False).count()
+    size_indicator = Indicator.objects.filter(is_deleted = False).count()
+    size_source = Source.objects.filter(is_deleted = False).count()
 
-    rows = [
-        ( 'k ', 'Lord ', 'hp'),
-        ('o  ', 'Lord ', 'hp'),
-        ('t ', 'Lord ', 'hp'),
-    ]
-    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
-    resource = BookResourceWithStoreInstance()
-    result = resource.import_data(dataset)
+    context = {
+        'size_topic' : size_topic,
+        'size_category' : size_category,
+        'size_indicator'  : size_indicator,
+        'size_source' : size_source
+    }
 
-    for row_result in result:
-        try: print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
-        except: print('nothing to save')
-    return render(request, 'user-admin/index.html')
+    return render(request, 'user-admin/index.html', context)
 
 @login_required(login_url='login')
 def indicator_list(request, pk):

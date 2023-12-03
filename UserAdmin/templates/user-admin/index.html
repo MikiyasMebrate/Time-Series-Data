@@ -52,14 +52,14 @@
                     
                    
                     <p> <i class="bi bi-person-video3"></i>Total topic</p>
-                    <h3 class="text-info"><i class="bi bi-sliders"></i>140<i class="bi bi-sliders"></i></h3>
+                    <h3 class="text-info"><i class="bi bi-sliders"></i>{{size_topic}}<i class="bi bi-sliders"></i></h3>
                   </div>
                   <div class="icon">
                     <i class="ion ion-bag"></i>
                   </div>
-                  <a href="#" class="small-box-footer"
-                    >More info <i class="bi bi-arrow-down-circle-fill"></i></i
-                  ></a>
+                  <a href="{% url 'user-admin-topic' %}" class="small-box-footer"
+                  >More info <i class="bi bi-arrow-down-circle-fill"></i></i
+                ></a>
                 </div>
               </div>
               <div class="col-lg-3 col-6">
@@ -67,15 +67,15 @@
                   <div class="inner">
                     
                    
-                    <p> <i class="bi bi-app-indicator"></i>Total indicator</p>
-                    <h3 class="text-success"><i class="bi bi-sliders"></i>140<i class="bi bi-sliders"></i></h3>
+                    <p> <i class="bi bi-app-indicator"></i>Total Category</p>
+                    <h3 class="text-success"><i class="bi bi-sliders"></i>{{size_category}}<i class="bi bi-sliders"></i></h3>
                   </div>
                   <div class="icon">
                     <i class="ion ion-bag"></i>
                   </div>
-                  <a href="#" class="small-box-footer"
-                    >More info <i class="bi bi-arrow-down-circle-fill"></i></i
-                  ></a>
+                  <a href="{% url 'user-admin-category' %}" class="small-box-footer"
+                  >More info <i class="bi bi-arrow-down-circle-fill"></i></i
+                ></a>
                 </div>
               </div>
               <div class="col-lg-3 col-6">
@@ -83,13 +83,13 @@
                   <div class="inner">
                     
                    
-                    <p> <i class="bi bi-list-nested"></i>Total catagory</p>
-                    <h3 class="text-secondary"><i class="bi bi-sliders"></i>140<i class="bi bi-sliders"></i></h3>
+                    <p> <i class="bi bi-list-nested"></i>Total indicator</p>
+                    <h3 class="text-secondary"><i class="bi bi-sliders"></i>{{size_indicator}}<i class="bi bi-sliders"></i></h3>
                   </div>
                   <div class="icon">
                     <i class="ion ion-bag"></i>
                   </div>
-                  <a href="#" class="small-box-footer"
+                  <a href="{% url 'user-admin-indicators'%}" class="small-box-footer"
                     >More info <i class="bi bi-arrow-down-circle-fill"></i></i
                   ></a>
                 </div>
@@ -100,12 +100,12 @@
                     
                    
                     <p> <i class="bi bi-buildings"></i></i>Total source</p>
-                    <h3 class="text-primary"><i class="bi bi-sliders"></i>120<i class="bi bi-sliders"></i></h3>
+                    <h3 class="text-primary"><i class="bi bi-sliders"></i>{{size_source}}<i class="bi bi-sliders"></i></h3>
                   </div>
                   <div class="icon">
                     <i class="ion ion-bag"></i>
                   </div>
-                  <a href="#" class="small-box-footer"
+                  <a href="{% url 'user-admin-source'%}" class="small-box-footer"
                     >More info <i class="bi bi-arrow-down-circle-fill"></i></i
                   ></a>
                 </div>
