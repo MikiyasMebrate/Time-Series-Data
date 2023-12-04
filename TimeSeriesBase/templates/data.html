@@ -16,7 +16,6 @@
 ></script>
 
 
-<link rel="stylesheet" href="{% static 'assets/css/d.css' %}">
 <link href="{% static 'assets/image/mopd_logo_green.png' %}" rel="icon">
 
 
@@ -34,10 +33,6 @@
     />
 
 
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/dist/css/adminlte.min2167.css'%}"
-    />
     <link
       rel="stylesheet"
       href="{% static 'assets/plugins/fontawesome-free/css/all.min.css'%}"
@@ -98,6 +93,7 @@
         }
         
         .card {
+            background-color: white;
             margin: auto;
             /* set margin to auto to center the card horizontally */
         }
@@ -160,31 +156,33 @@
             margin: 0 auto;
         }
         
-        #csv {
-            display: none;
-        }
-        
-        #play-pause-button {
-            margin-left: 10px;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            border: 1px solid rgba(2, 117, 255, 1);
-            border-radius: 25px;
-            color: white;
-            background-color: rgba(2, 117, 255, 1);
-            transition: background-color 250ms;
-        }
-        
-        #play-pause-button:hover {
-            background-color: rgba(2, 117, 255, 0.5);
-        }
-        
-        #play-range {
-            transform: translateY(2.5px);
-            width: calc(100% - 90px);
-            background: #f8f8f8;
-        }
+        #play-controls {
+    display: flex;
+    align-items: center;
+}
+
+#play-pause-button {
+    width: 50px; /* Set a default width */
+    height: 50px;
+    cursor: pointer;
+    border: 1px solid rgba(2, 117, 255, 1);
+    border-radius: 25px;
+    color: white;
+    background-color: rgba(2, 117, 255, 1);
+    transition: background-color 250ms;
+}
+
+#play-pause-button:hover {
+    background-color: rgba(2, 117, 255, 0.5);
+}
+
+#play-range {
+    transform: translateY(2.5px);
+    flex-grow: 1; /* Take up remaining available space */
+    background: #f8f8f8;
+    margin-left: 10px; /* Add some margin between button and range input */
+}
+
   </style>
   </head>
 
@@ -374,7 +372,7 @@
                                       <a class="nav-link" href="#line-chart" data-toggle="tab">Line</a>
                                   </li>
                                   <li class="nav-item">
-                                      <a class="nav-link" href="#area-chart" data-toggle="tab">Area</a>
+                                      <a class="nav-link" id='area' href="#area-chart" data-toggle="tab">Area</a>
                                   </li>
                               </ul>
                           </div>
@@ -382,21 +380,19 @@
               
                       <div class="card-body">
                           <div class="tab-content p-0">
-              
-                              <div class="chart tab-pane active" id="bar-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
+                               <label id='select_label' class='text-danger form-label fw-bold' for="indicatorDropdown ">Select Indicator to display indicator data</label>
+                               <select class='form-select indicatorDropdown mb-1'></select>
+                              <div class="chart tab-pane active " id="bar-chart" style="position: relative; height: 500px;">
+                                
                                   <div id="bar-chart-canvas" height="300" style="height: 500px;"></div>
                               </div>
                               <div class="chart tab-pane" id="series-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
                                   <div id="series-chart-canvas" height="300" style="height: 500px;"></div>
                               </div>
                               <div class="chart tab-pane" id="line-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
                                   <div id="line-chart-canvas" height="300" style="height: 500px;"></div>
                               </div>
                               <div class="chart tab-pane" id="area-chart" style="position: relative; height: 500px;">
-                                <select name='indicatorDropdown'></select>
                                   <figure class="highcharts-figure">
                                       <div id="parent-container">
                                           <div id="play-controls">
@@ -406,59 +402,7 @@
                                           <div id="area-chart-canvas" height="300" style="height: 500px;"></div>
                                       </div>
                                   </figure>
-                                  <pre id="csv" style="display:none">
-                                    # Data from RIAA
-                                    year	LpEp	Vinyl	Cassette	CD	Downloads	Streams
-                                    1973	1.2	0.19	0.076
-                                    1974	1.4	0.194	0.087
-                                    1975	1.5	0.212	0.099
-                                    1976	1.7	0.245	0.146
-                                    1977	2.2	0.245	0.25
-                                    1978	2.5	0.26	0.45
-                                    1979	2.1	0.354	0.581
-                                    1980	2.2	0.25	0.705
-                                    1981	2.3	0.256	1.1
-                                    1982	1.9	0.283	1.4	0
-                                    1983	1.7	0.269	1.8	0.017
-                                    1984	1.5	0.299	2.4	0.103
-                                    1985	1.3	0.281	2.4	0.39
-                                    1986	0.983	0.228	2.5	0.93
-                                    1987	0.793	0.203	3	1.6
-                                    1988	0.532	0.18	3.4	2.1
-                                    1989	0.22	0.116	3.3	2.6
-                                    1990	0.086	0.094	3.5	3.5
-                                    1991	0.029	0.064	3	4.3
-                                    1992	0.014	0.066	3.1	5.3
-                                    1993	0.011	0.051	2.9	6.5
-                                    1994	0.018	0.047	3	8.5
-                                    1995	0.025	0.047	2.3	9.4
-                                    1996	0.036	0.048	1.9	9.9
-                                    1997	0.033	0	1.5	9.9
-                                    1998	0.034		1.4	11.4
-                                    1999	0.032		1.1	12.8
-                                    2000	0.028		0.626	13.2
-                                    2001	0.027		0.363	12.9
-                                    2002	0.021		0.21	12
-                                    2003	0.022		0.108	11.2	0
-                                    2004	0.019		0.023	11.4	0.138	0
-                                    2005	0.014			10.5	0.921	0.149
-                                    2006	0.016			9.4	1.631	0.206
-                                    2007	0.023			7.5	2.408	0.234
-                                    2008	0.057			5.5	2.612	0.321
-                                    2009	0.064			4.3	2.647	0.362
-                                    2010	0.089			3.4	2.62	0.461
-                                    2011	0.119			3.1	2.876	0.654
-                                    2012	0.161			2.5	2.946	1.033
-                                    2013	0.211			2.1	2.898	1.454
-                                    2014	0.244			1.8	2.5	1.827
-                                    2015	0.333			1.4	2.3	2.375
-                                    2016	0.355			1.1	1.769	3.818
-                                    2017	0.389			1	1.318	5.459
-                                    2018	0.419			0.696	0.945	7.255
-                                    2019	0.48			0.931	0.775	8.853
-                                    2020	0.644			0.483	0.622	10.078
-                                    2021	1			0.584	0.538	12.509
-                                    </pre>
+                          
                               </div>
                           </div>
                       </div>
@@ -480,7 +424,6 @@
 <!-- datatable -->
 <script src="{% static 'assets/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-<script src="{% static 'assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
 <script src="{% static 'assets/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
 <script src="{% static 'assets/plugins/jszip/jszip.min.js' %}"></script>
@@ -490,33 +433,16 @@
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
 
-    <script src="{% static 'assets/js/adminlte.min2167.js' %}"></script>
-    <script src="{% static 'assets/js/demo.js' %}"></script>
 
-       <!-- chart -->
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-   
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/annotations.js"></script>
-       <script src="https://code.highcharts.com/modules/data.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-   
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-   
-       <script src="https://code.highcharts.com/highcharts.js"></script>
-       <script src="https://code.highcharts.com/modules/data.js"></script>
-       <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-       <script src="https://code.highcharts.com/modules/exporting.js"></script>
-       <script src="https://code.highcharts.com/modules/export-data.js"></script>
-       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<!-- chart -->
+ <script src="https://code.highcharts.com/highcharts.js"></script>
+ <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+ <script src="https://code.highcharts.com/modules/annotations.js"></script>
+ <script src="https://code.highcharts.com/modules/data.js"></script>
+ <script src="https://code.highcharts.com/modules/exporting.js"></script>
+ <script src="https://code.highcharts.com/modules/export-data.js"></script>
+ <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+       
 
 
 

@@ -246,8 +246,7 @@ $(document).ready(function () {
                         for (check of data.indicators) {
                           if (
                             String(check.parent_id) ===
-                              String(parentIndicator.id) &&
-                            check.is_deleted == true
+                            String(parentIndicator.id)
                           ) {
                             checkParentHasChild = true;
                           }
@@ -300,7 +299,8 @@ $(document).ready(function () {
                     for (let childIndicator of data.indicators) {
                       if (
                         String(childIndicator.parent_id) ==
-                          String(parentIndicator.id) 
+                          String(parentIndicator.id) &&
+                      childIndicator.is_deleted
                       ) {
                         //Add Parent Indicator
 
@@ -312,14 +312,13 @@ $(document).ready(function () {
                                 <td class="fw-bold">  
                                 <div class="row">
                                 <div class="col-9">
-                                ${childIndicator.title_ENG}
+                                ${childIndicator.title_ENG}   
                                 </div>
                                 <div class="col-1">
-                              <button type="button" id="${parentIndicator.id}"  name="btnRestoreIndicator" data-bs-toggle="modal"  data-bs-target="#restoreIndicator"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash-restore text-info"></i></button> 
+                              <button type="button" id="${childIndicator.id}"  name="btnRestoreIndicator" data-bs-toggle="modal"  data-bs-target="#restoreIndicator"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator"><i class="fas fa-trash-restore text-info"></i></button> 
                             </div> 
                                 </td>
                               `;
-
 
                         //Child List
                         let checkParentHasChild = false;
@@ -327,7 +326,7 @@ $(document).ready(function () {
                           if (
                             String(check.parent_id) ===
                               String(parentIndicator.id) &&
-                            check.is_deleted == true
+                            check.is_deleted
                           ) {
                             checkParentHasChild = true;
                           }
@@ -369,11 +368,9 @@ $(document).ready(function () {
                           }
                         }
                         tableDeletedIndicatorChild(childIndicator, " ");
-                      } else if (
-                        String(childIndicator.parent_id) ==
-                        String(parentIndicator.id)
-                      ) {
-                        tableDeletedIndicatorChild(childIndicator, " ");
+                      }else if (String(childIndicator.parent_id) ==
+                      String(parentIndicator.id)){
+                        checkTableDeletedIndicatorChild(childIndicator)
                       }
                     }
                   };
@@ -386,11 +383,13 @@ $(document).ready(function () {
                     ) {
                       if (parentIndicator.is_deleted) {
                         let checkParentHasChild = false;
+
+
                         for (check of data.indicators) {
                           if (
                             String(check.parent_id) ===
                               String(parentIndicator.id) &&
-                            check.is_deleted == false
+                            check.is_deleted
                           ) {
                             checkParentHasChild = true;
                           }
