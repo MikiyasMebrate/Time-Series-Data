@@ -224,6 +224,7 @@ function filterData() {
                 }
               }
             );
+
             if (selectIndicator.trim() !== '') {
               var selectYearAll = '<div class="filter-submenu d-flex">' +
                 '  <input class="form-check" type="checkbox" id="select_all_year_filter">' +
@@ -245,7 +246,73 @@ function filterData() {
             let selectAllYear = document.getElementById(
               "select_all_year_filter"
             );
+            let yearListCheckAll =
+            document.getElementsByName("yearListsCheckBox");
 
+                //Selected Year
+                yearListCheckAll.forEach((yearCheckBox) => {
+                  yearCheckBox.addEventListener(
+                    "change",
+                    (eventYearCheckBox) => {
+                      if (eventYearCheckBox.target.checked) {
+                        for (checkedYear of data.year) {
+                          if (
+                            !checkedYear.is_interval &&
+                            String(yearCheckBox.value) ===
+                              String(checkedYear.id)
+                          ) {
+                            if (
+                              yearTableList.includes([
+                                checkedYear.id,
+                                checkedYear.year_EC,
+                                checkedYear.year_GC,
+                              ])
+                            ) {
+                              continue;
+                            } else {
+                              yearTableList.push([
+                                checkedYear.id,
+                                checkedYear.year_EC,
+                                checkedYear.year_GC,
+                              ]);
+                            }
+                          }
+                        }
+                      } else {
+                        selectAllYear.checked = false;
+                        try {
+                          for (checkedYear of data.year) {
+                            if (
+                              !checkedYear.is_interval &&
+                              String(yearCheckBox.value) ===
+                                String(checkedYear.id)
+                            ) {
+                              let valueToCheck = [
+                                checkedYear.id,
+                                checkedYear.year_EC,
+                                checkedYear.year_GC,
+                              ];
+                              console.log([checkedYear.id, checkedYear.year_EC,checkedYear.year_GC])
+                              console.log(yearTableList)
+                              console.log(yearTableList.includes(valueToCheck))
+
+                              for (let i = 0; i < yearTableList.length; i++) {
+                                if (
+                                  String(yearTableList[i][0]) ===
+                                  String(valueToCheck[0])
+                                ) {
+                                  yearTableList.splice(i, 1);
+                                }
+                              }
+                            }
+                          }
+                        } catch {
+                          null;
+                        }
+                      }
+                    }
+                  );
+                });
             selectAllYear.addEventListener("change", () => {
               let yearListCheckAll =
                 document.getElementsByName("yearListsCheckBox");
@@ -265,7 +332,6 @@ function filterData() {
               } else {
                 yearListCheckAll.forEach((eventYear) => {
                   eventYear.checked = false;
-
                   yearTableList = [];
                 });
               }
@@ -287,6 +353,14 @@ function filterData() {
                   yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
                 }
               });
+            });
+            
+            $('input[name="yearListsCheckBox"]:checked').each(function () {
+              var yearId = $(this).val();
+              var yearData = data.year.find(y => y.id.toString() === yearId);
+              if (yearData && !yearData.is_interval) {
+                yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+              }
             });
           };
           //Select-all Button for Indicator
@@ -553,137 +627,395 @@ function filterData() {
             });
 
           });
-          //End Indicator table
-        //make the second button in display-option div display chart when clicked
-        $("#displayOptions a:nth-child(2)").click(function () {
-          // Show chart
-          $(".data-display #display_chart").show();
-          let carddisplay = document.getElementById("chart_display")
-          carddisplay.style.display = "block";
-          // Hide table
-          $(".data-display #table-container").hide();
-          $(".data-display #main-card").hide();
-          // $(".data-display #map").hide();
 
-          // Set chart button active
-          $("#displayOptions a:nth-child(2)").addClass("active");
-          $("#displayOptions a:nth-child(1)").removeClass("active");
-          // $("#displayOptions a:nth-child(3)").removeClass("active");
-          
-          $(document).ready(function () {
-            // Extract data for the chart
-            let chartData = [];
-            let indicators = [];
-        
-            selectIndicator = data.indicators.map(({ title_ENG, id, for_category_id, is_deleted }) => {
-                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && !is_deleted) {
-                    let indicatorData = {
-                        name: title_ENG,
-                        data: []
-                    };
-        
-                    for (let j of yearTableList) {
-                        let statusData = false;
-                        for (let k of data.value) {
-                            if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
-                                indicatorData.data.push({
-                                    x: `${j[1]}-E.C ${j[2]}-G.C`,
-                                    y: parseFloat(k.value)
-                                });
-                                statusData = false;
-                                break;
-                            } else {
-                                statusData = true;
-                            }
-                        }
-                        if (statusData) {
-                            indicatorData.data.push({
-                                x: `${j[1]}-E.C ${j[2]}-G.C`,
-                                y: null
-                            });
-                        }
+          //make the second button in display-option div display chart when clicked
+          $("#displayOptions a:nth-child(2)").click(function () {
+            // Show chart
+            $(".data-display #display_chart").show();
+            let carddisplay = document.getElementById("chart_display")
+            carddisplay.style.display = "block";
+            // Hide table
+            $(".data-display #table-container").hide();
+            $(".data-display #main-card").hide();
+            // $(".data-display #map").hide();
+
+            // Set chart button active
+            $("#displayOptions a:nth-child(2)").addClass("active");
+            $("#displayOptions a:nth-child(1)").removeClass("active");
+            // $("#displayOptions a:nth-child(3)").removeClass("active");
+
+            $(document).ready(function () {
+            const labelElement = document.getElementById('select_label');
+            const selectElement = document.querySelector('.indicatorDropdown');
+
+            // Add event listeners to all nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(navLink => {
+                navLink.addEventListener('click', function () {
+                    // Toggle the visibility of the label and select elements
+                    if (labelElement && selectElement) {
+                        // Check if the clicked nav link is the "Area" nav link
+                        const isAreaNavLink = this.id === 'area';
+
+                        labelElement.style.display = isAreaNavLink ? 'none' : 'block';
+                        selectElement.style.display = isAreaNavLink ? 'none' : 'block';
                     }
-        
-                    chartData.push(indicatorData);
-                    indicators.push({ id, title_ENG, for_category_id, is_deleted });
-                }
+                });
             });
-        
-            // Convert data to JSON
-            let jsonData = {
+              // Extract data for the chart
+              let chartData = [];
+              let indicators = [];
+
+              selectIndicator = data.indicators.map(({ title_ENG, id, for_category_id, is_deleted }) => {
+                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && !is_deleted) {
+                  let indicatorData = {
+                    name: title_ENG,
+                    data: []
+                  };
+
+                  for (let j of yearTableList) {
+                    let statusData = false;
+                    for (let k of data.value) {
+                      if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
+                        indicatorData.data.push({
+                          x: `${j[1]}-E.C ${j[2]}-G.C`,
+                          y: parseFloat(k.value)
+                        });
+                        statusData = false;
+                        break;
+                      } else {
+                        statusData = true;
+                      }
+                    }
+                    if (statusData) {
+                      indicatorData.data.push({
+                        x: `${j[1]}-E.C ${j[2]}-G.C`,
+                        y: null
+                      });
+                    }
+                  }
+
+                  chartData.push(indicatorData);
+                  indicators.push({ id, title_ENG, for_category_id, is_deleted });
+                }
+              });
+
+              // Convert data to JSON
+              let jsonData = {
                 indicators: indicators,
                 chartData: chartData
-            };
-            console.log('json data', jsonData);
-        
-            // Select all elements with the class "indicatorDropdown"
-            const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
-        
-            // Iterate over each dropdown and update its options
-            dropdowns.forEach((dropdown, index) => {
+              };
+              // Select all elements with the class "indicatorDropdown"
+              const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
+
+              // Iterate over each dropdown and update its options
+              dropdowns.forEach((dropdown, index) => {
                 dropdown.innerHTML = ''; // Clear existing options
                 indicators.forEach(({ id, title_ENG }, i) => {
-                    const option = document.createElement('option');
-                    option.value = id;
-                    option.text = title_ENG;
-                    dropdown.appendChild(option);
-        
-                    // Set the first option as selected by default
-                    if (i === 0) {
-                        option.selected = true;
-                    }
+                  const option = document.createElement('option');
+                  option.value = id;
+                  option.text = title_ENG;
+                  dropdown.appendChild(option);
+
+                  // Set the first option as selected by default
+                  if (i === 0) {
+                    option.selected = true;
+                  }
                 });
-        
+
                 // Add event listener to the dropdown
                 dropdown.addEventListener('change', function () {
-                    const selectedIndicatorId = this.value;
-                    console.log('Selected indicator ID:', selectedIndicatorId);
+                  const selectedIndicatorId = this.value;
+          
+
+                  // Find the selected indicator in jsonData.indicators
+                  const selectedIndicator = jsonData.indicators.find(indicator => indicator.id === Number(selectedIndicatorId));
         
-                    // Find the selected indicator in jsonData.indicators
-                    const selectedIndicator = jsonData.indicators.find(indicator => indicator.id === Number(selectedIndicatorId));
-                    console.log('All indicators:', jsonData.indicators);
-                    console.log('Selected indicator:', selectedIndicator);
-        
-                    if (selectedIndicator) {
-                        // Find the selected indicator's data in jsonData.chartData
-                        const selectedChartData = jsonData.chartData.find(chartItem => chartItem.name === selectedIndicator.title_ENG);
-        
-                        if (selectedChartData) {
-                            // Log the data property of the selected indicator
-                            console.log('Selected indicator data:', selectedChartData.data);
-        
-                            // Use selectedChartData.data for drawing the chart
-                            draw(selectedChartData.data, index); // Pass the index to identify the correct chart
-                            console.log('Chart data:', selectedChartData.data);
-                        } else {
-                            console.error('Selected indicator data is undefined in jsonData.chartData.');
-                        }
+
+                  if (selectedIndicator) {
+                    // Find the selected indicator's data in jsonData.chartData
+                    const selectedChartData = jsonData.chartData.find(chartItem => chartItem.name === selectedIndicator.title_ENG);
+
+                    if (selectedChartData) {
+                      // Pass the index to identify the correct chart
+                      draw(selectedChartData.data);
+                      areachart(chartData)
                     } else {
-                        console.error('Selected indicator is undefined.');
+                      console.error('Selected indicator data is undefined in jsonData.chartData.');
                     }
+                  } else {
+                    console.error('Selected indicator is undefined.');
+                  }
                 });
-        
+
                 // Trigger change event on the first dropdown
                 if (index === 0) {
-                    dropdown.dispatchEvent(new Event('change'));
+                  dropdown.dispatchEvent(new Event('change'));
                 }
+              });
             });
-        });
 
-          function draw(chartdata) {
-          // ================================================ first chart =======================================
-            (async () => {
+            function areachart(alldata) {
+              const btn = document.getElementById('play-pause-button'),
+              input = document.getElementById('play-range'),
+              startYear = 1973,
+              endYear = 2021;
+              for (let i of yearTableList) {
+                console.log(i[2])
+              }
+              console.log(yearTableList[0]);
+              // Update the width of the play button based on the number of years in your data
+              const dataLength = alldata[0].data.length;
+              btn.style.width = `${dataLength * 10}px`; // Adjust the multiplier as needed
+          
+              // Update the width of the range input based on the number of years in your data
+              input.style.width = `${dataLength * 10}px`; // Adjust the multiplier as needed
+      
+              // General helper functions
+              const arrToAssociative = arr => {
+                const tmp = {};
+                arr.forEach(item => {
+                  tmp[item[0]] = item[1];
+                });
 
-              const data = await fetch(
-                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
-              ).then(response => response.json());
+                return tmp;
+              };
 
+  
+              // ================================== second chart =================================
+              const formatRevenue = [];
+              const chart = Highcharts.chart('area-chart-canvas', {
+                chart: {
+                  events: {
+                    load: function () {
+                      const annotations = this.annotations;
+
+                      if (annotations && annotations[0] && annotations[0].labels) {
+                        const labels = annotations[0].labels;
+
+                        // Check if the label with id 'vinyl-label' exists
+                        const vinylLabel = labels.find(a => a.options.id === 'vinyl-label');
+                        if (vinylLabel && vinylLabel.graphic) {
+                          vinylLabel.graphic.attr({
+                            rotation: -20
+                          });
+                        }
+
+                        // Check if the label with id 'cassettes-label' exists
+                        const cassettesLabel = labels.find(a => a.options.id === 'cassettes-label');
+                        if (cassettesLabel && cassettesLabel.graphic) {
+                          cassettesLabel.graphic.attr({
+                            rotation: 20
+                          });
+                        }
+                      }
+                    }
+                  },
+                  type: 'area',
+                  marginTop: 100,
+                  animation: {
+                    duration: 700,
+                    easing: t => t
+                  }
+                },
+                title: {
+                  text: 'All indicators Values'
+                },
+                xAxis: {
+                  categories: alldata[0].data.map(point => point.x), // Assuming the x values are years in string format
+                  labels: {
+                    rotation: -45, // Rotate labels for better readability if needed
+                    formatter: function () {
+                      return this.value; // Display the year on the x-axis
+                    }
+                  }
+                },
+                yAxis: {
+                  reversedStacks: false,
+                  title: {
+                    text: 'values'
+                  },
+                  labels: {
+                    format: '${text} B'
+                  }
+                },
+                tooltip: {
+                  split: true,
+                  headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
+                  pointFormat: '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+                  crosshairs: true
+                },
+                plotOptions: {
+                  area: {
+                    stacking: 'normal',
+                    pointStart: startYear,
+                    marker: {
+                      enabled: false
+                    }
+                  }
+                },
+                annotations: [
+                  {
+                    labelOptions: {
+                      borderWidth: 0,
+                      backgroundColor: undefined,
+                      verticalAlign: 'middle',
+                      allowOverlap: true,
+                      style: {
+                        pointerEvents: 'none',
+                        opacity: 0,
+                        transition: 'opacity 500ms'
+                      }
+                    },
+                    labels: [
+                      // Annotation labels
+                    ]
+                  }
+                ],
+                responsive: {
+                  rules: [
+                    // Responsive rules
+                  ]
+                },
+                series: alldata.map(item => ({
+                  type: 'area',
+                  name: item.name,
+                  data: item.data.map(point => ({
+                    x: point.x,
+                    y: point.y
+                  }))
+                }))
+              });
+
+              function pause(button) {
+                button.title = 'play';
+                button.className = 'fa fa-play';
+                clearTimeout(chart.sequenceTimer);
+                chart.sequenceTimer = undefined;
+              }
+
+              // ...
+
+              function update() {
+
+                const series = chart.series,
+                  labels = chart.annotations[0].labels,
+                  selectedYear = parseInt(input.value, 10), // Parse the input value to get the numeric year
+                  yearIndex = selectedYear - startYear;
+
+                if (yearIndex >= alldata[0].data.length) {
+                  // Stop the timer if we reach the end of the available data
+                  pause(btn);
+                  return;
+              }
+
+                // Replace null values with 0
+                alldata.forEach((item) => {
+                  item.data.forEach((point) => {
+                    if (point.y === null) {
+                      point.y = 0;
+                    }
+                  });
+                });
+
+                // Check if the chart is already initialized
+                if (!chart.sequenceTimer) {
+                  // Perform the initial update
+                  for (let i = 0; i < series.length; i++) {
+                    const seriesData = alldata[i].data.slice(0, yearIndex + 1);
+                    series[i].setData(seriesData, false);
+                  }
+                }
+
+                // If slider moved forward in time
+                if (yearIndex > alldata[0].data.length - 1) {
+                  const remainingYears = yearIndex - alldata[0].data.length + 1;
+                  for (let i = 0; i < series.length; i++) {
+                    for (let j = alldata[0].data.length; j < selectedYear; j++) {
+                      series[i].addPoint({ x: alldata[i].data[j].x, y: 0 }, false);
+                    }
+                  }
+                }
+
+                // Add current year
+                for (let i = 0; i < series.length; i++) {
+                  const currentData = alldata[i].data[yearIndex];
+                  if (currentData && currentData.x) {
+                    const match = currentData.x.match(/\d+/g); // Extract numeric values
+                    const currentYear = match ? parseInt(match[0], 10) : null;
+
+                    const newY = currentData.y;
+                    series[i].addPoint({ x: currentYear, y: newY }, false);
+                  }
+                }
+
+                labels.forEach((label) => {
+                  if (label.options.point && label.options.point.x) {
+                    label.graphic.css({
+                      opacity: selectedYear >= label.options.point.x | 0,
+                    });
+                  }
+                });
+
+                chart.redraw();
+
+                input.value = selectedYear + 1;
+
+                if (selectedYear >= endYear) {
+                  // Auto-pause
+                  pause(btn);
+                }
+              }
+
+              function play(button) {
+                // Reset slider at the end
+                if (input.value > endYear) {
+                  input.value = startYear;
+                }
+
+                button.title = 'pause';
+                button.className = 'fa fa-pause';
+
+                chart.sequenceTimer = setInterval(function () {
+                  const selectedYear = parseInt(input.value, 10);
+                  const yearIndex = selectedYear - startYear;
+
+                  // Check if the year index is within the available range
+                  if (yearIndex < alldata[0].data.length) {
+                    update();
+                  } else {
+                    // Stop the timer if we reach the end of the available data
+                    pause(button);
+                  }
+                }, 700);
+              }
+
+
+              btn.addEventListener('click', function () {
+                if (chart.sequenceTimer) {
+                  pause(this);
+                } else {
+                  play(this);
+                }
+              });
+
+              play(btn);
+
+              // Trigger the update on the range bar click.
+              input.addEventListener('input', update);
+            }
+
+
+            function draw(chartdata) {
+              const dropdown = document.querySelector('.indicatorDropdown');
+              const selectedIndicatorName = dropdown.options[dropdown.selectedIndex].text;
+              // ================================================ first chart =======================================
               Highcharts.chart('series-chart-canvas', {
                 chart: {
                   zoomType: 'x'
                 },
                 title: {
-                  text: 'USD to EUR exchange rate over time',
+                  text: selectedIndicatorName,
                   align: 'left'
                 },
                 subtitle: {
@@ -692,12 +1024,15 @@ function filterData() {
                   align: 'left'
                 },
                 xAxis: {
-                  type: 'datetime'
-                },
-                yAxis: {
-                  title: {
-                    text: 'Exchange rate'
-                  }
+                  type: 'category',
+                  labels: {
+                    step: 1
+                  },
+                  accessibility: {
+                    rangeDescription: `Range: ${chartdata[0].x} to ${chartdata[chartdata.length - 1].x}`
+                  },
+                  pointStart: chartdata[0].x,
+                  pointInterval: 1
                 },
                 legend: {
                   enabled: false
@@ -728,461 +1063,93 @@ function filterData() {
                     threshold: null
                   }
                 },
-
                 series: [{
                   type: 'area',
-                  name: 'USD to EUR',
-                  data: data
+                  name: 'Custom Data',
+                  data: chartdata.map(item => [item.x, item.y !== null ? item.y : 0])
                 }]
               });
-            })();
-
-
-    
-            const btn = document.getElementById('play-pause-button'),
-              input = document.getElementById('play-range'),
-              startYear = 1973,
-              endYear = 2021;
-
-            // General helper functions
-            const arrToAssociative = arr => {
-              const tmp = {};
-              arr.forEach(item => {
-                tmp[item[0]] = item[1];
-              });
-
-              return tmp;
-            };
-
-            function getSubtitle() {
-              return `<span style='font-size: 60px'>${input.value}</span>`;
-            }
 
 
 
-            // ================================== second chart =================================
-            const formatRevenue = [];
-            const chart = Highcharts.chart('area-chart-canvas', {
-              chart: {
-                events: {
-                  // Some annotation labels need to be rotated to make room
-                  load: function () {
-                    const labels = this.annotations[0].labels;
-                    labels
-                      .find(a => a.options.id === 'vinyl-label')
-                      .graphic.attr({
-                        rotation: -20
-                      });
-                    labels
-                      .find(a => a.options.id === 'cassettes-label')
-                      .graphic.attr({
-                        rotation: 20
-                      });
-                  }
-                },
-                type: 'area',
-                marginTop: 100,
-                animation: {
-                  duration: 700,
-                  easing: t => t
-                }
-              },
-              title: {
-                text: 'Music revenue race chart'
-              },
-              subtitle: {
-                text: getSubtitle(),
-                floating: true,
-                align: 'right',
-                verticalAlign: 'middle',
-                x: -100,
-                y: -110
-              },
-              data: {
-                csv: document.getElementById('csv').innerHTML,
-                itemDelimiter: '\t',
-                complete: function (options) {
-                  for (let i = 0; i < options.series.length; i++) {
-                    formatRevenue[i] = arrToAssociative(options.series[i].data);
-                    options.series[i].data = null;
-                  }
-                }
-              },
-              xAxis: {
-                allowDecimals: false,
-                min: startYear,
-                max: endYear
-              },
-              yAxis: {
-                reversedStacks: false,
+              //==================================================== third chart===================================================
+              Highcharts.chart('line-chart-canvas', {
                 title: {
-                  text: 'Revenue in the U.S.'
-                },
-                labels: {
-                  format: '${text} B'
-                }
-              },
-              tooltip: {
-                split: true,
-                headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
-                pointFormat:
-                  '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
-                crosshairs: true
-              },
-              plotOptions: {
-                area: {
-                  stacking: 'normal',
-                  pointStart: startYear,
-                  marker: {
-                    enabled: false
-                  }
-                }
-              },
-              annotations: [
-                {
-                  labelOptions: {
-                    borderWidth: 0,
-                    backgroundColor: undefined,
-                    verticalAlign: 'middle',
-                    allowOverlap: true,
-                    style: {
-                      pointerEvents: 'none',
-                      opacity: 0,
-                      transition: 'opacity 500ms'
-                    }
-                  },
-                  labels: [
-                    {
-                      text: 'Vinyl',
-                      verticalAlign: 'top',
-                      point: {
-                        x: 1975,
-                        xAxis: 0,
-                        y: 1.45,
-                        yAxis: 0
-                      },
-                      style: {
-                        fontSize: '0.8em',
-                        color: '#000'
-                      },
-                      id: 'vinyl-label'
-                    },
-                    {
-                      text: 'LP-EP',
-                      point: {
-                        x: 1980,
-                        xAxis: 0,
-                        y: 0.2,
-                        yAxis: 0
-                      },
-                      style: {
-                        fontSize: '1.4em',
-                        color: '#ffffff'
-                      },
-                      id: 'lpep-label'
-                    },
-                    {
-                      text: 'Cass',
-                      point: {
-                        x: 1987,
-                        xAxis: 0,
-                        y: 2.6,
-                        yAxis: 0
-                      },
-                      style: {
-                        fontSize: '1.5em',
-                        color: '#ffffff'
-                      },
-                      id: 'cassettes-label'
-                    },
-                    {
-                      text: 'CD',
-                      point: {
-                        x: 1999,
-                        xAxis: 0,
-                        y: 6,
-                        yAxis: 0
-                      },
-                      style: {
-                        fontSize: '4em',
-                        color: '#ffffff'
-                      },
-                      id: 'cd-label'
-                    },
-                    {
-                      text: 'DL',
-                      point: {
-                        x: 2011,
-                        xAxis: 0,
-                        y: 4,
-                        yAxis: 0
-                      },
-                      style: {
-                        fontSize: '1.2em',
-                        color: '#ffffff'
-                      },
-                      id: 'dl-label'
-                    },
-                    {
-                      text: 'Strm',
-                      point: {
-                        x: 2018,
-                        xAxis: 0,
-                        y: 5,
-                        yAxis: 0
-                      },
-                      style: {
-                        fontSize: '1.5em',
-                        color: '#ffffff'
-                      },
-                      id: 'streams-label'
-                    }
-                  ]
-                }
-              ],
-
-              responsive: {
-                rules: [
-                  {
-                    condition: {
-                      maxWidth: 500
-                    },
-                    chartOptions: {
-                      title: {
-                        align: 'left'
-                      },
-                      subtitle: {
-                        y: -150,
-                        x: -20
-                      },
-                      yAxis: {
-                        labels: {
-                          align: 'left',
-                          x: 0,
-                          y: -3
-                        },
-                        tickLength: 0,
-                        title: {
-                          align: 'high',
-                          reserveSpace: false,
-                          rotation: 0,
-                          textAlign: 'left',
-                          y: -20
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
-            });
-
-            function pause(button) {
-              button.title = 'play';
-              button.className = 'fa fa-play';
-              clearTimeout(chart.sequenceTimer);
-              chart.sequenceTimer = undefined;
-            }
-
-            function update() {
-              chart.update(
-                {
-                  subtitle: {
-                    text: getSubtitle()
-                  }
-                },
-                false,
-                false,
-                false
-              );
-
-              const series = chart.series,
-                labels = chart.annotations[0].labels,
-                yearIndex = input.value - startYear,
-                dataLength = series[0].options.data.length;
-
-              // If slider moved back in time
-              if (yearIndex < dataLength - 1) {
-                for (let i = 0; i < series.length; i++) {
-                  const seriesData = series[i].data.slice(0, yearIndex);
-                  series[i].setData(seriesData, false);
-                }
-              }
-
-              // If slider moved forward in time
-              if (yearIndex > dataLength - 1) {
-                const remainingYears = yearIndex - dataLength;
-                for (let i = 0; i < series.length; i++) {
-                  for (let j = input.value - remainingYears; j < input.value; j++) {
-                    series[i].addPoint([formatRevenue[i][j]], false);
-                  }
-                }
-              }
-
-              // Add current year
-              for (let i = 0; i < series.length; i++) {
-                const newY = formatRevenue[i][input.value];
-                series[i].addPoint([newY], false);
-              }
-
-              labels.forEach(label => {
-                label
-                  .graphic
-                  .css({
-                    opacity: input.value >= label.options.point.x | 0
-                  });
-              });
-
-              chart.redraw();
-
-              input.value = parseInt(input.value, 10) + 1;
-
-              if (input.value > endYear) {
-                // Auto-pause
-                pause(btn);
-              }
-            }
-
-            function play(button) {
-              // Reset slider at the end
-              if (input.value > endYear) {
-                input.value = startYear;
-              }
-              button.title = 'pause';
-              button.className = 'fa fa-pause';
-              chart.sequenceTimer = setInterval(function () {
-                update();
-              }, 700);
-            }
-
-            btn.addEventListener('click', function () {
-              if (chart.sequenceTimer) {
-                pause(this);
-              } else {
-                play(this);
-              }
-            });
-
-            play(btn);
-
-            // Trigger the update on the range bar click.
-            input.addEventListener('input', update);
-
-            //==================================================== third chart moving line chart ===================================================
-            Highcharts.chart('line-chart-canvas', {
-
-              title: {
-                  text: 'U.S Solar Employment Growth',
+                  text: selectedIndicatorName,
                   align: 'left'
-              },
-          
-              subtitle: {
-                  text: 'By Job Category. Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>.',
-                  align: 'left'
-              },
-          
-              yAxis: {
-                  title: {
-                      text: 'Number of Employees'
-                  }
-              },
-          
-              xAxis: {
+                },
+                xAxis: {
                   accessibility: {
-                      rangeDescription: 'Range: 2010 to 2020'
-                  }
-              },
-          
-              legend: {
+                    rangeDescription: `Range: ${chartdata[0].x} to ${chartdata[chartdata.length - 1].x}`
+                  },
+                  categories: chartdata.map(item => item.x),
+                },
+                legend: {
                   layout: 'vertical',
                   align: 'right',
-                  verticalAlign: 'middle'
-              },
-          
-              plotOptions: {
-                  series: {
-                      label: {
-                          connectorAllowed: false
-                      },
-                      pointStart: 2010
-                  }
-              },
-          
-              series: [{
-                  name: 'Installation & Developers',
-                  data: [43934, 48656, 65165, 81827, 112143, 142383,
-                      171533, 165174, 155157, 161454, 154610]
-              }],
-          
-              responsive: {
-                  rules: [{
+                  verticalAlign: 'middle',
+                },
+                series: [{
+                  data: chartdata.map(item => (item.y !== null ? item.y : 0)),
+                }],
+                responsive: {
+                  rules: [
+                    {
                       condition: {
-                          maxWidth: 500
+                        maxWidth: 500,
                       },
                       chartOptions: {
-                          legend: {
-                              layout: 'horizontal',
-                              align: 'center',
-                              verticalAlign: 'bottom'
-                          }
-                      }
-                  }]
-              }
-          
-          });
-          
-
-            // ======================================= fourth chart create a line chart ==============================
-            Highcharts.chart('bar-chart-canvas', {
-              chart: {
-                type: 'column'
-              },
-              title: {
-                text: 'Corn vs wheat estimated production for 2020',
-                align: 'left'
-              },
-              subtitle: {
-                text:
-                  'Source: <a target="_blank" ' +
-                  'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
-                align: 'left'
-              },
-              xAxis: {
-                categories: ['USA', 'China', 'Brazil', 'EU', 'India', 'Russia'],
-                crosshair: true,
-                accessibility: {
-                  description: 'Countries'
-                }
-              },
-              yAxis: {
-                min: 0,
-                title: {
-                  text: '1000 metric tons (MT)'
-                }
-              },
-              tooltip: {
-                valueSuffix: ' (1000 MT)'
-              },
-              plotOptions: {
-                column: {
-                  pointPadding: 0.2,
-                  borderWidth: 0
-                }
-              },
-              series: [
-                {
-                  name: 'Corn',
-                  data: [406292, 260000, 107000, 68300, 27500, 14500]
+                        legend: {
+                          layout: 'horizontal',
+                          align: 'center',
+                          verticalAlign: 'bottom',
+                        },
+                      },
+                    },
+                  ],
                 },
-                {
-                  name: 'Wheat',
-                  data: [51086, 136000, 5500, 141000, 107180, 77000]
-                }
-              ]
-            });
+              });
 
-          };
 
-        });
+
+              // ======================================= fourth chart create a line chart ==============================
+              // Replace null values with 0
+              const modifiedData = chartdata.map(item => ({
+                x: item.x,
+                y: item.y !== null ? item.y : 0
+              }));
+
+              if (modifiedData.length === 0) {
+                console.error('No valid data points to display.');
+                return;
+              }
+
+              // Check if the dropdown element is found
+              if (dropdown) {
+
+
+                Highcharts.chart('bar-chart-canvas', {
+                  chart: {
+                    type: 'column'
+                  },
+                  title: {
+                    text: selectedIndicatorName // Set the title to the selected indicator name
+                  },
+                  xAxis: {
+                    categories: modifiedData.map(item => item.x),
+                    // Other xAxis configurations...
+                  },
+                  series: [{
+                    data: modifiedData.map(item => item.y)
+                  }]
+                });
+              } else {
+                console.error('Dropdown element not found.');
+              }
+
+            };
+
+          });
 
         });
 
