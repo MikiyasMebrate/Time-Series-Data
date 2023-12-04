@@ -13,6 +13,19 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import AuthenticationForm
 from .decorators import unauthenticated_user
 from django.contrib.auth.decorators import login_required
+import random
+import string
+from django.core.mail import EmailMultiAlternatives
+
+def generate_password(length):
+    characters = string.ascii_letters + string.digits 
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+# Example usage: generate a password with length 10
+
+
+
 
 #Session
 @login_required(login_url='login')
@@ -21,11 +34,33 @@ def users_list(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_staff = True
-            user.save()
+            username = form.cleaned_data['username']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            is_admin = form.cleaned_data['is_superuser']
+            
+            auto_password = generate_password(10)
+            user_obj = CustomUser.objects.create_user(email=email, first_name=first_name, is_superuser = is_admin, last_name = last_name, is_active= True, is_staff=True,  username=username, password=auto_password)
 
 
+
+            subject, from_email, to = "Account Creation", "mikiyasmebrate2656@gmail.com", f"{email}"
+            text_content = "Account Created Successfully"
+            html_content = f''' <p> Dear {first_name} {last_name}, </p>
+            <p> We are delighted to inform you that your account has been successfully created. Welcome to our platform!</p>
+            <p>Below are your account details:</p>
+            <p>Email: {email}</p>
+            <p>Password: {auto_password}</p>
+            <p>Please keep this information secure and do not share it with anyone.</p>
+            <p>Thank you for joining us! We look forward to providing you with a great experience on our platform.</p>
+            <p>Best regards,</p>
+            <p>MoPD Team</p>'''
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            print(msg.send())
+            print(email)
+            #print(user_obj.password)
             messages.success(request, 'Your Account has been Successfully Created!')
             return redirect('user-admin-user-list')
         else:

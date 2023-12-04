@@ -13,6 +13,8 @@ from TimeSeriesBase import models
 from UserManagement.decorators import *
 import tablib
 from TimeSeriesBase.admin import BookResourceWithStoreInstance
+from django.core.mail import send_mail
+
 
 @login_required(login_url='login')
 def index(request):

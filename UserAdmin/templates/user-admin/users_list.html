@@ -17,6 +17,11 @@
   </head>
 
   <body class="hold-transition sidebar-mini layout-fixed">
+
+
+
+
+
     <!--User Registration Modal Start-->
      <!--Data Add Modal Start-->
     <div class="modal fade" id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel" aria-hidden="true">
@@ -65,15 +70,6 @@
                         {{form.email}}
                     </div>
                     
-                    <div class="mb-3">
-                      <label class="small" for="{{form.password1.id_for_label}}">Password: {% for err in form.password1.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                      {{form.password1}}
-                    </div>
-
-                    <div class="mb-3">
-                      <label class="small" for="{{form.password2.id_for_label}}">Confirm Password: {% for err in form.password2.errors %} <small class="text-warning fw-bold"> {{err}}</small> {% endfor %}  </label>
-                        {{form.password2}}
-                  </div>
                     <div class="text-center">
                         <button type="submit"
                             class="btn btn-primary">Add User</button>
@@ -139,6 +135,8 @@
 </div>
 {% endfor %}
 <!-- Edit User Modal End -->
+
+
 
 <!-- Deactivate User Modal Start -->
 {% for user in users %}
@@ -257,6 +255,20 @@
           <!--User Registration Button End-->
                     <!-- User Table List Start -->
                     {% include 'user-admin/include/messages.html' %}
+
+                        <!-- example template code -->
+    {% if form.errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for field_errors in form.errors.values %}
+          {% for error in field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
 <div class="row justify-content-center">
   <div class="col-md-12">
     <div class="table-responsive border p-3 shadow">
