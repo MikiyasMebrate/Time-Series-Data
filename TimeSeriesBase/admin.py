@@ -33,11 +33,12 @@ class BookResourceWithStoreInstance(resources.ModelResource):
         class Meta:
             #fields = ('id','title_ENG', 'title_AMH', 'user__username' )
             model = models.Book
+            unique_together = ('title_ENG', 'title_AMH', 'user')
             store_instance = True
             #Handle Duplicated Data
             skip_unchanged = True
             report_skipped = False
-            unique_together = ('title_ENG', 'title_AMH', 'user')
+            
 
 
 class BookAdmin(ImportExportModelAdmin):

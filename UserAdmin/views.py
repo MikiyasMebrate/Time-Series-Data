@@ -16,21 +16,19 @@ from TimeSeriesBase.admin import BookResourceWithStoreInstance
 
 @login_required(login_url='login')
 def index(request):
-    
+    size_topic = Topic.objects.filter(is_deleted = False).count()
+    size_category = Category.objects.filter(is_deleted = False).count()
+    size_indicator = Indicator.objects.filter(is_deleted = False).count()
+    size_source = Source.objects.filter(is_deleted = False).count()
 
-    rows = [
-        ( 'k ', 'Lord ', 'hp'),
-        ('o  ', 'Lord ', 'hp'),
-        ('t ', 'Lord ', 'hp'),
-    ]
-    dataset = tablib.Dataset(*rows, headers=[ 'title_ENG', 'title_AMH', 'user'])
-    resource = BookResourceWithStoreInstance()
-    result = resource.import_data(dataset)
+    context = {
+        'size_topic' : size_topic,
+        'size_category' : size_category,
+        'size_indicator'  : size_indicator,
+        'size_source' : size_source
+    }
 
-    for row_result in result:
-        try: print(row_result.instance.pk, row_result.instance.title_ENG, row_result.instance.title_AMH, row_result.instance.user)
-        except: print('nothing to save')
-    return render(request, 'user-admin/index.html')
+    return render(request, 'user-admin/index.html', context)
 
 @login_required(login_url='login')
 def indicator_list(request, pk):
@@ -969,3 +967,46 @@ def restore_item(request, item_type, item_id):
 
     # Redirect to the view where the recycled items are displayed
     return redirect('user-admin-recyclebin') 
+
+@login_required
+def restore_indicator(request, pk):
+    indicator = Indicator.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+
+    #Parent Indicator 
+    indicator.is_deleted = False
+    indicator.save()
+
+    indicator_list = Indicator.objects.all()
+
+
+    #Check Child of Child 
+    def check_child(parent_obj):
+        for indicator_obj in indicator_list:
+            if indicator_obj.parent == parent_obj:
+                indicator_obj.is_deleted = False
+                indicator_obj.save()
+                check_child(indicator_obj)
+    
+
+    for indicator_obj in indicator_list:
+        if indicator_obj.parent == indicator:
+            indicator_obj.is_deleted = False
+            indicator_obj.save()
+            check_child(indicator_obj)
+
+
+    #Parent Related Values 
+    years = DataPoint.objects.all()
+    for year in  years:
+        try: 
+           deleted_indicator = DataValue.objects.get(for_datapoint = year, for_indicator = indicator)
+           deleted_indicator.is_deleted = False
+           deleted_indicator.save()
+        except:
+            None
+
+
+
+    messages.success(request, "Successfully Restored!")
+    return HttpResponseRedirect(previous_page)
