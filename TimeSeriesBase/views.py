@@ -11,7 +11,7 @@ from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from UserManagement.decorators import *
-
+from UserManagement.forms import *
 @login_required(login_url='login')
 # @admin_only
 def index(request):
@@ -25,10 +25,10 @@ def about(request):
 def contact(request):
     return render(request,"contact.html")
 
-class MyView(DetailView):
-    Model = CustomUser
-    def get_object(self):
-        return self.request.user
+# class MyView(DetailView):
+#     Model = CustomUser
+#     def get_object(self):
+#         return self.request.user
 
 class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
     model=CustomUser
@@ -42,14 +42,18 @@ class UserEditView(generic.UpdateView):
     success_url=reverse_lazy('setting')
     def get_object(self):
         return self.request.user
-    # def post(self,request):
-    #     post_data=request.POST or None
-    #     file_data=request.FILES or None
-    #     profile_form=profilepcform(post_data,file_data,instance=request.user.CustomUser)
-    #     if profile_form.is_valid():
-    #         profile_form.save()
 
 @login_required(login_url='login')
+def profile_view(request):
+    users = CustomUser.objects.all()
+    users.is_staff = True
+
+    context = {
+        
+        'users': users,
+      
+    }
+    return render(request,"profile.html",context)
 # @admin_only
 def data(request):
     return render(request,"data.html")

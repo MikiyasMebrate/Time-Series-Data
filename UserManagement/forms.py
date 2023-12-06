@@ -22,15 +22,7 @@ class CustomUserForm(forms.ModelForm):
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
-        
-# class CustomUserForm(forms.ModelForm):
-#     class Meta:
-#         model = CustomUser
-#         fields = ['username', 'email', 'first_name','last_name']   
-
-#     widgets = {
-#             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
-#         }    
+         
 
 class CustomUserForm(forms.ModelForm):
     class Meta:
@@ -75,7 +67,7 @@ class Login_Form(forms.Form):
         fields = ['email', 'password','username']
 
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
         'class' : 'form-control',
         'placeholder' : 'Your First Name'
@@ -94,16 +86,16 @@ class CustomUserCreationForm(UserCreationForm):
         'placeholder' : 'Enter your Email',
         'autocomplete': 'off'
     }))
-    password1 = forms.CharField( max_length=40, label='Password' ,widget=forms.PasswordInput(attrs={
-        'class' : 'form-control',
-        'placeholder' : 'Enter Your Password',
-        'autocomplete': 'off'
-    }))
-    password2 = forms.CharField( max_length=40, label='Confirm Password', widget=forms.PasswordInput(attrs={
-        'class' : 'form-control',
-        'placeholder' : 'Confirm Password',
-        'autocomplete': 'off'
-    }))
+    # password1 = forms.CharField( max_length=40, label='Password' ,widget=forms.PasswordInput(attrs={
+    #     'class' : 'form-control',
+    #     'placeholder' : 'Enter Your Password',
+    #     'autocomplete': 'off'
+    # }))
+    # password2 = forms.CharField( max_length=40, label='Confirm Password', widget=forms.PasswordInput(attrs={
+    #     'class' : 'form-control',
+    #     'placeholder' : 'Confirm Password',
+    #     'autocomplete': 'off'
+    # }))
     photo = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={
         'class' : 'form-control',
         'placeholder' : 'Add Photo(Optional)',
@@ -115,11 +107,6 @@ class CustomUserCreationForm(UserCreationForm):
         'class' : 'form-check-input'
     }))
 
-
-
-    class Meta:
-        model = CustomUser
-        fields = ('first_name','last_name', 'username' , 'is_superuser', 'email','password1', 'password2', 'photo')
 
 
 class UserUpdateForm(forms.ModelForm):
