@@ -8,3 +8,4 @@ class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD='email'
     REQUIRED_FIELDS=['first_name','username','last_name']
+    is_first_time = models.BooleanField(default = True)
