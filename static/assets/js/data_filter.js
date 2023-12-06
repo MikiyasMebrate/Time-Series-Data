@@ -8,7 +8,7 @@ let indicatorSelected = 0;
 let yearSelected = 0;
 let isdatatable = 0;
 let yearcount = 0;
-
+let theSelectedCatagory;
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -158,6 +158,7 @@ function filterData() {
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
           var selectedCategoryId = eventCategory.target.value;
+          theSelectedCatagory =data.categories.find((item) => String(item.id) == String(selectedCategoryId))
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
             if (String(indicator.for_category_id) === String(selectedCategoryId) && indicator.is_deleted == false) {
@@ -247,72 +248,72 @@ function filterData() {
               "select_all_year_filter"
             );
             let yearListCheckAll =
-            document.getElementsByName("yearListsCheckBox");
+              document.getElementsByName("yearListsCheckBox");
 
-                //Selected Year
-                yearListCheckAll.forEach((yearCheckBox) => {
-                  yearCheckBox.addEventListener(
-                    "change",
-                    (eventYearCheckBox) => {
-                      if (eventYearCheckBox.target.checked) {
-                        for (checkedYear of data.year) {
-                          if (
-                            !checkedYear.is_interval &&
-                            String(yearCheckBox.value) ===
-                              String(checkedYear.id)
-                          ) {
-                            if (
-                              yearTableList.includes([
-                                checkedYear.id,
-                                checkedYear.year_EC,
-                                checkedYear.year_GC,
-                              ])
-                            ) {
-                              continue;
-                            } else {
-                              yearTableList.push([
-                                checkedYear.id,
-                                checkedYear.year_EC,
-                                checkedYear.year_GC,
-                              ]);
-                            }
-                          }
-                        }
-                      } else {
-                        selectAllYear.checked = false;
-                        try {
-                          for (checkedYear of data.year) {
-                            if (
-                              !checkedYear.is_interval &&
-                              String(yearCheckBox.value) ===
-                                String(checkedYear.id)
-                            ) {
-                              let valueToCheck = [
-                                checkedYear.id,
-                                checkedYear.year_EC,
-                                checkedYear.year_GC,
-                              ];
-                              console.log([checkedYear.id, checkedYear.year_EC,checkedYear.year_GC])
-                              console.log(yearTableList)
-                              console.log(yearTableList.includes(valueToCheck))
-
-                              for (let i = 0; i < yearTableList.length; i++) {
-                                if (
-                                  String(yearTableList[i][0]) ===
-                                  String(valueToCheck[0])
-                                ) {
-                                  yearTableList.splice(i, 1);
-                                }
-                              }
-                            }
-                          }
-                        } catch {
-                          null;
+            //Selected Year
+            yearListCheckAll.forEach((yearCheckBox) => {
+              yearCheckBox.addEventListener(
+                "change",
+                (eventYearCheckBox) => {
+                  if (eventYearCheckBox.target.checked) {
+                    for (checkedYear of data.year) {
+                      if (
+                        !checkedYear.is_interval &&
+                        String(yearCheckBox.value) ===
+                        String(checkedYear.id)
+                      ) {
+                        if (
+                          yearTableList.includes([
+                            checkedYear.id,
+                            checkedYear.year_EC,
+                            checkedYear.year_GC,
+                          ])
+                        ) {
+                          continue;
+                        } else {
+                          yearTableList.push([
+                            checkedYear.id,
+                            checkedYear.year_EC,
+                            checkedYear.year_GC,
+                          ]);
                         }
                       }
                     }
-                  );
-                });
+                  } else {
+                    selectAllYear.checked = false;
+                    try {
+                      for (checkedYear of data.year) {
+                        if (
+                          !checkedYear.is_interval &&
+                          String(yearCheckBox.value) ===
+                          String(checkedYear.id)
+                        ) {
+                          let valueToCheck = [
+                            checkedYear.id,
+                            checkedYear.year_EC,
+                            checkedYear.year_GC,
+                          ];
+                          console.log([checkedYear.id, checkedYear.year_EC, checkedYear.year_GC])
+                          console.log(yearTableList)
+                          console.log(yearTableList.includes(valueToCheck))
+
+                          for (let i = 0; i < yearTableList.length; i++) {
+                            if (
+                              String(yearTableList[i][0]) ===
+                              String(valueToCheck[0])
+                            ) {
+                              yearTableList.splice(i, 1);
+                            }
+                          }
+                        }
+                      }
+                    } catch {
+                      null;
+                    }
+                  }
+                }
+              );
+            });
             selectAllYear.addEventListener("change", () => {
               let yearListCheckAll =
                 document.getElementsByName("yearListsCheckBox");
@@ -354,7 +355,7 @@ function filterData() {
                 }
               });
             });
-            
+
             $('input[name="yearListsCheckBox"]:checked').each(function () {
               var yearId = $(this).val();
               var yearData = data.year.find(y => y.id.toString() === yearId);
@@ -435,6 +436,9 @@ function filterData() {
             $("#chart").hide();
             $("#map").hide();
             $("#display_chart").hide();
+
+            $("#displayOptions a:nth-child(1)").addClass("active");
+            $("#displayOptions a:nth-child(2)").removeClass("active");
 
             let table = "";
             table += `
@@ -627,6 +631,9 @@ function filterData() {
             });
 
           });
+          
+          // Trigger click event on the "Bar" button
+          $("#bar_btn").trigger('click');
 
           //make the second button in display-option div display chart when clicked
           $("#displayOptions a:nth-child(2)").click(function () {
@@ -639,29 +646,33 @@ function filterData() {
             $(".data-display #main-card").hide();
             // $(".data-display #map").hide();
 
+          // Set the display property of the select dropdown to 'block'
+          $(".indicatorDropdown").css("display", "block");
+
             // Set chart button active
             $("#displayOptions a:nth-child(2)").addClass("active");
             $("#displayOptions a:nth-child(1)").removeClass("active");
             // $("#displayOptions a:nth-child(3)").removeClass("active");
 
             $(document).ready(function () {
-            const labelElement = document.getElementById('select_label');
-            const selectElement = document.querySelector('.indicatorDropdown');
+              document.getElementById('titleForCatagory').innerHTML= theSelectedCatagory.name_ENG
+              const labelElement = document.getElementById('select_label');
+              const selectElement = document.querySelector('.indicatorDropdown');
 
-            // Add event listeners to all nav links
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(navLink => {
+              // Add event listeners to all nav links
+              const navLinks = document.querySelectorAll('.nav-link');
+              navLinks.forEach(navLink => {
                 navLink.addEventListener('click', function () {
-                    // Toggle the visibility of the label and select elements
-                    if (labelElement && selectElement) {
-                        // Check if the clicked nav link is the "Area" nav link
-                        const isAreaNavLink = this.id === 'area';
+                  // Toggle the visibility of the label and select elements
+                  if (labelElement && selectElement) {
+                    // Check if the clicked nav link is the "Area" nav link
+                    const isAreaNavLink = this.id === 'area';
 
-                        labelElement.style.display = isAreaNavLink ? 'none' : 'block';
-                        selectElement.style.display = isAreaNavLink ? 'none' : 'block';
-                    }
+                    labelElement.style.display = isAreaNavLink ? 'none' : 'block';
+                    selectElement.style.display = isAreaNavLink ? 'none' : 'block';
+                  }
                 });
-            });
+              });
               // Extract data for the chart
               let chartData = [];
               let indicators = [];
@@ -708,6 +719,7 @@ function filterData() {
               // Select all elements with the class "indicatorDropdown"
               const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
 
+
               // Iterate over each dropdown and update its options
               dropdowns.forEach((dropdown, index) => {
                 dropdown.innerHTML = ''; // Clear existing options
@@ -726,11 +738,11 @@ function filterData() {
                 // Add event listener to the dropdown
                 dropdown.addEventListener('change', function () {
                   const selectedIndicatorId = this.value;
-          
+
 
                   // Find the selected indicator in jsonData.indicators
                   const selectedIndicator = jsonData.indicators.find(indicator => indicator.id === Number(selectedIndicatorId));
-        
+
 
                   if (selectedIndicator) {
                     // Find the selected indicator's data in jsonData.chartData
@@ -753,258 +765,294 @@ function filterData() {
                   dropdown.dispatchEvent(new Event('change'));
                 }
               });
-            });
 
-            function areachart(alldata) {
-              const btn = document.getElementById('play-pause-button'),
-              input = document.getElementById('play-range'),
-              startYear = 1973,
-              endYear = 2021;
-              for (let i of yearTableList) {
-                console.log(i[2])
-              }
-              console.log(yearTableList[0]);
-              // Update the width of the play button based on the number of years in your data
-              const dataLength = alldata[0].data.length;
-              btn.style.width = `${dataLength * 10}px`; // Adjust the multiplier as needed
-          
-              // Update the width of the range input based on the number of years in your data
-              input.style.width = `${dataLength * 10}px`; // Adjust the multiplier as needed
-      
-              // General helper functions
-              const arrToAssociative = arr => {
-                const tmp = {};
-                arr.forEach(item => {
-                  tmp[item[0]] = item[1];
-                });
+              function areachart(alldata) {
+                let allyears = [];
+                let input = document.getElementById('play-range');
+                for (let i of yearTableList) {
+                  allyears.push(i[1])
+                }
+                // Find the minimum and maximum values in allyears array
+                const minYear = Math.min(...allyears);
+                const maxYear = Math.max(...allyears);
 
-                return tmp;
-              };
+                // Set the min and max attributes of the input range
+                input.min = minYear;
+                input.max = maxYear;
 
-  
-              // ================================== second chart =================================
-              const formatRevenue = [];
-              const chart = Highcharts.chart('area-chart-canvas', {
-                chart: {
-                  events: {
-                    load: function () {
-                      const annotations = this.annotations;
+                const btn = document.getElementById('play-pause-button'),
+                  startYear = minYear,
+                  endYear = maxYear;
 
-                      if (annotations && annotations[0] && annotations[0].labels) {
-                        const labels = annotations[0].labels;
 
-                        // Check if the label with id 'vinyl-label' exists
-                        const vinylLabel = labels.find(a => a.options.id === 'vinyl-label');
-                        if (vinylLabel && vinylLabel.graphic) {
-                          vinylLabel.graphic.attr({
-                            rotation: -20
-                          });
+                // General helper functions
+                const arrToAssociative = arr => {
+                  const tmp = {};
+                  arr.forEach(item => {
+                    tmp[item[0]] = item[1];
+                  });
+
+                  return tmp;
+                };
+
+
+                // ================================== second chart =================================
+                const formatRevenue = [];
+                const chart = Highcharts.chart('area-chart-canvas', {
+                  chart: {
+                    events: {
+                      load: function () {
+                        const annotations = this.annotations;
+
+                        if (annotations && annotations[0] && annotations[0].labels) {
+                          const labels = annotations[0].labels;
+
+                          // Check if the label with id 'vinyl-label' exists
+                          const vinylLabel = labels.find(a => a.options.id === 'vinyl-label');
+                          if (vinylLabel && vinylLabel.graphic) {
+                            vinylLabel.graphic.attr({
+                              rotation: -20
+                            });
+                          }
+
+                          // Check if the label with id 'cassettes-label' exists
+                          const cassettesLabel = labels.find(a => a.options.id === 'cassettes-label');
+                          if (cassettesLabel && cassettesLabel.graphic) {
+                            cassettesLabel.graphic.attr({
+                              rotation: 20
+                            });
+                          }
                         }
-
-                        // Check if the label with id 'cassettes-label' exists
-                        const cassettesLabel = labels.find(a => a.options.id === 'cassettes-label');
-                        if (cassettesLabel && cassettesLabel.graphic) {
-                          cassettesLabel.graphic.attr({
-                            rotation: 20
-                          });
-                        }
-                      }
-                    }
-                  },
-                  type: 'area',
-                  marginTop: 100,
-                  animation: {
-                    duration: 700,
-                    easing: t => t
-                  }
-                },
-                title: {
-                  text: 'All indicators Values'
-                },
-                xAxis: {
-                  categories: alldata[0].data.map(point => point.x), // Assuming the x values are years in string format
-                  labels: {
-                    rotation: -45, // Rotate labels for better readability if needed
-                    formatter: function () {
-                      return this.value; // Display the year on the x-axis
-                    }
-                  }
-                },
-                yAxis: {
-                  reversedStacks: false,
-                  title: {
-                    text: 'values'
-                  },
-                  labels: {
-                    format: '${text} B'
-                  }
-                },
-                tooltip: {
-                  split: true,
-                  headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
-                  pointFormat: '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
-                  crosshairs: true
-                },
-                plotOptions: {
-                  area: {
-                    stacking: 'normal',
-                    pointStart: startYear,
-                    marker: {
-                      enabled: false
-                    }
-                  }
-                },
-                annotations: [
-                  {
-                    labelOptions: {
-                      borderWidth: 0,
-                      backgroundColor: undefined,
-                      verticalAlign: 'middle',
-                      allowOverlap: true,
-                      style: {
-                        pointerEvents: 'none',
-                        opacity: 0,
-                        transition: 'opacity 500ms'
                       }
                     },
-                    labels: [
-                      // Annotation labels
-                    ]
-                  }
-                ],
-                responsive: {
-                  rules: [
-                    // Responsive rules
-                  ]
-                },
-                series: alldata.map(item => ({
-                  type: 'area',
-                  name: item.name,
-                  data: item.data.map(point => ({
-                    x: point.x,
-                    y: point.y
-                  }))
-                }))
-              });
-
-              function pause(button) {
-                button.title = 'play';
-                button.className = 'fa fa-play';
-                clearTimeout(chart.sequenceTimer);
-                chart.sequenceTimer = undefined;
-              }
-
-              // ...
-
-              function update() {
-
-                const series = chart.series,
-                  labels = chart.annotations[0].labels,
-                  selectedYear = parseInt(input.value, 10), // Parse the input value to get the numeric year
-                  yearIndex = selectedYear - startYear;
-
-                if (yearIndex >= alldata[0].data.length) {
-                  // Stop the timer if we reach the end of the available data
-                  pause(btn);
-                  return;
-              }
-
-                // Replace null values with 0
-                alldata.forEach((item) => {
-                  item.data.forEach((point) => {
-                    if (point.y === null) {
-                      point.y = 0;
+                    type: 'area',
+                    marginTop: 100,
+                    animation: {
+                      duration: 700,
+                      easing: t => t
                     }
-                  });
+                  },
+                  title: {
+                    text: 'All indicators Values'
+                  },
+                  xAxis: {
+                    categories: (alldata[0] && alldata[0].data) ? alldata[0].data.map(point => point.x) : [],
+                    labels: {
+                        rotation: -45,
+                        formatter: function () {
+                            return this.value;
+                        }
+                    }
+                },
+                  yAxis: {
+                    reversedStacks: false,
+                    title: {
+                      text: 'values'
+                    },
+                    labels: {
+                      format: '${text} B'
+                    }
+                  },
+                  tooltip: {
+                    split: true,
+                    headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
+                    pointFormat: '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+                    crosshairs: true
+                  },
+                  plotOptions: {
+                    area: {
+                      stacking: 'normal',
+                      pointStart: startYear,
+                      marker: {
+                        enabled: false
+                      }
+                    }
+                  },
+                  annotations: [
+                    {
+                      labelOptions: {
+                        borderWidth: 0,
+                        backgroundColor: undefined,
+                        verticalAlign: 'middle',
+                        allowOverlap: true,
+                        style: {
+                          pointerEvents: 'none',
+                          opacity: 0,
+                          transition: 'opacity 500ms'
+                        }
+                      },
+                      labels: [
+                        // Annotation labels
+                      ]
+                    }
+                  ],
+                  responsive: {
+                    rules: [
+                      // Responsive rules
+                    ]
+                  },
+                  series: alldata.map(item => ({
+                    type: 'area',
+                    name: item.name,
+                    data: item.data.map(point => ({
+                      x: point.x,
+                      y: point.y
+                    }))
+                  }))
                 });
+
+                function pause(button) {
+                  button.title = 'play';
+                  button.className = 'fa fa-play';
+                  clearTimeout(chart.sequenceTimer);
+                  chart.sequenceTimer = undefined;
+                }
+
+                // ...
+
+                function update() {
+
+                  if (!alldata || !alldata.length || !alldata[0] || !alldata[0].data) {
+                    console.error('alldata, alldata[0], or alldata[0].data is undefined.');
+                    return;
+                }
+
+                  const series = chart.series,
+                  labels = chart.annotations && chart.annotations[0] && chart.annotations[0].labels,
+                  selectedYear = parseInt(input.value, 10),
+                  yearIndex = selectedYear - startYear;
+                
+                
+
+                  if (yearIndex >= alldata[0].data.length) {
+                    // Stop the timer if we reach the end of the available data
+                    pause(btn);
+                    return;
+                  }
+
+                  // Replace null values with 0
+                  alldata.forEach((item) => {
+                    item.data.forEach((point) => {
+                      if (point.y === null) {
+                        point.y = 0;
+                      }
+                    });
+                  });
 
                 // Check if the chart is already initialized
                 if (!chart.sequenceTimer) {
                   // Perform the initial update
                   for (let i = 0; i < series.length; i++) {
-                    const seriesData = alldata[i].data.slice(0, yearIndex + 1);
-                    series[i].setData(seriesData, false);
+                      // Check if alldata[i] is defined and has a 'data' property
+                      if (alldata[i] && alldata[i].data) {
+                          const seriesData = alldata[i].data.slice(0, yearIndex + 1);
+                          series[i].setData(seriesData, false);
+                      } else {
+                          console.error(`alldata[${i}] or alldata[${i}].data is undefined.`);
+                      }
                   }
                 }
 
-                // If slider moved forward in time
-                if (yearIndex > alldata[0].data.length - 1) {
-                  const remainingYears = yearIndex - alldata[0].data.length + 1;
-                  for (let i = 0; i < series.length; i++) {
-                    for (let j = alldata[0].data.length; j < selectedYear; j++) {
-                      series[i].addPoint({ x: alldata[i].data[j].x, y: 0 }, false);
+                  // If slider moved forward in time
+                  if (yearIndex > alldata[0].data.length - 1) {
+                    const remainingYears = yearIndex - alldata[0].data.length + 1;
+                    for (let i = 0; i < series.length; i++) {
+                      for (let j = alldata[0].data.length; j < selectedYear; j++) {
+                        series[i].addPoint({ x: alldata[i].data[j].x, y: 0 }, false);
+                      }
                     }
                   }
-                }
 
-                // Add current year
-                for (let i = 0; i < series.length; i++) {
-                  const currentData = alldata[i].data[yearIndex];
-                  if (currentData && currentData.x) {
-                    const match = currentData.x.match(/\d+/g); // Extract numeric values
-                    const currentYear = match ? parseInt(match[0], 10) : null;
+                  // Add current year
+                  for (let i = 0; i < series.length; i++) {
+                    const currentData = alldata[i].data[yearIndex];
+                    if (currentData && currentData.x) {
+                      const match = currentData.x.match(/\d+/g); // Extract numeric values
+                      const currentYear = match ? parseInt(match[0], 10) : null;
 
-                    const newY = currentData.y;
-                    series[i].addPoint({ x: currentYear, y: newY }, false);
+                      const newY = currentData.y;
+                      series[i].addPoint({ x: currentYear, y: newY }, false);
+                    }
+                  }
+
+                  labels.forEach((label) => {
+                    if (label.options.point && label.options.point.x) {
+                      label.graphic.css({
+                        opacity: selectedYear >= label.options.point.x | 0,
+                      });
+                    }
+                  });
+
+                  chart.redraw();
+
+                  input.value = selectedYear + 1;
+
+                  if (selectedYear >= endYear) {
+                    // Auto-pause
+                    pause(btn);
                   }
                 }
 
-                labels.forEach((label) => {
-                  if (label.options.point && label.options.point.x) {
-                    label.graphic.css({
-                      opacity: selectedYear >= label.options.point.x | 0,
-                    });
+                function play(button) {
+                  // Reset slider at the end
+                  if (input.value > endYear) {
+                    input.value = startYear;
+                  }
+
+                  button.title = 'pause';
+                  button.className = 'fa fa-pause';
+
+                  chart.sequenceTimer = setInterval(function () {
+                    const selectedYear = parseInt(input.value, 10);
+                    const yearIndex = selectedYear - startYear;
+
+                    // Check if the year index is within the available range
+                    if (yearIndex < alldata[0].data.length) {
+                      update();
+                    } else {
+                      // Stop the timer if we reach the end of the available data
+                      pause(button);
+                    }
+                  }, 800);
+                }
+
+
+                btn.addEventListener('click', function () {
+                  if (chart.sequenceTimer) {
+                    pause(this);
+                  } else {
+                    play(this);
                   }
                 });
 
-                chart.redraw();
+                play(btn);
 
-                input.value = selectedYear + 1;
-
-                if (selectedYear >= endYear) {
-                  // Auto-pause
-                  pause(btn);
-                }
+                // Trigger the update on the range bar click.
+                input.addEventListener('input', update);
               }
 
-              function play(button) {
-                // Reset slider at the end
-                if (input.value > endYear) {
-                  input.value = startYear;
-                }
-
-                button.title = 'pause';
-                button.className = 'fa fa-pause';
-
-                chart.sequenceTimer = setInterval(function () {
-                  const selectedYear = parseInt(input.value, 10);
-                  const yearIndex = selectedYear - startYear;
-
-                  // Check if the year index is within the available range
-                  if (yearIndex < alldata[0].data.length) {
-                    update();
-                  } else {
-                    // Stop the timer if we reach the end of the available data
-                    pause(button);
-                  }
-                }, 700);
-              }
-
-
-              btn.addEventListener('click', function () {
-                if (chart.sequenceTimer) {
-                  pause(this);
+              area_btn = document.getElementById('area')
+              area_btn.addEventListener('click', function () {
+                const areaChartContainer = document.getElementById('area-chart-canvas');
+                if (areaChartContainer) {
+                    // Destroy the existing chart
+                    Highcharts.charts.forEach(chart => {
+                        if (chart && chart.renderTo === areaChartContainer) {
+                            chart.destroy();
+                        }
+                    });
+            
+                    // Clear the container content
+                    areaChartContainer.innerHTML = '';
+                    // Draw the new chart
+                    areachart(jsonData.chartData);
+                    console.log('area data', jsonData.chartData)
                 } else {
-                  play(this);
+                    console.error('Element with id "area-chart-canvas" not found.');
                 }
-              });
-
-              play(btn);
-
-              // Trigger the update on the range bar click.
-              input.addEventListener('input', update);
-            }
-
+            });
+            
+          
 
             function draw(chartdata) {
               const dropdown = document.querySelector('.indicatorDropdown');
@@ -1150,13 +1198,11 @@ function filterData() {
             };
 
           });
+          });
 
         });
 
-
-
       });
-      // ... the rest of your code for setting up years and handling 'Select All' logic ...
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error('Error fetching data: ' + textStatus, errorThrown);
@@ -1181,8 +1227,6 @@ $(document).ready(function () {
   // Hide data display section by default
   $(".data-display").hide();
 
-
-
   //collpase button 
   $("#toggleButton").click(function () {
     $("#filterColumn").toggleClass("d-none");
@@ -1203,9 +1247,6 @@ $(document).ready(function () {
     $("#displayOptions a:nth-child(2)").removeClass("active");
     $("#displayOptions a:nth-child(3)").removeClass("active");
   });
-
-
-
 
   // Add event listener to table button to be active color
   $("#tableButton").click(function () {
