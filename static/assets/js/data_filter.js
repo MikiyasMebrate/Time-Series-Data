@@ -632,8 +632,6 @@ function filterData() {
 
           });
           
-          // Trigger click event on the "Bar" button
-          $("#bar_btn").trigger('click');
 
           //make the second button in display-option div display chart when clicked
           $("#displayOptions a:nth-child(2)").click(function () {
@@ -645,9 +643,11 @@ function filterData() {
             $(".data-display #table-container").hide();
             $(".data-display #main-card").hide();
             // $(".data-display #map").hide();
-
+            
+          // Trigger click event on the "Bar" button
+          $("#bar_btn").trigger('click');
           // Set the display property of the select dropdown to 'block'
-          $(".indicatorDropdown").css("display", "block");
+           $(".indicatorDropdown").css("display", "block");
 
             // Set chart button active
             $("#displayOptions a:nth-child(2)").addClass("active");
@@ -748,10 +748,9 @@ function filterData() {
                     // Find the selected indicator's data in jsonData.chartData
                     const selectedChartData = jsonData.chartData.find(chartItem => chartItem.name === selectedIndicator.title_ENG);
 
-                    if (selectedChartData) {
+                    if (selectedChartData && selectedChartData.data) {
                       // Pass the index to identify the correct chart
                       draw(selectedChartData.data);
-                      areachart(chartData)
                     } else {
                       console.error('Selected indicator data is undefined in jsonData.chartData.');
                     }
@@ -911,6 +910,8 @@ function filterData() {
                 // ...
 
                 function update() {
+                  console.log('Update function called');
+                  console.log('alldata:', alldata);
 
                   if (!alldata || !alldata.length || !alldata[0] || !alldata[0].data) {
                     console.error('alldata, alldata[0], or alldata[0].data is undefined.');
@@ -942,15 +943,20 @@ function filterData() {
                 // Check if the chart is already initialized
                 if (!chart.sequenceTimer) {
                   // Perform the initial update
-                  for (let i = 0; i < series.length; i++) {
+                  if (series && series.length) {
+                    for (let i = 0; i < series.length; i++) {
                       // Check if alldata[i] is defined and has a 'data' property
                       if (alldata[i] && alldata[i].data) {
-                          const seriesData = alldata[i].data.slice(0, yearIndex + 1);
-                          series[i].setData(seriesData, false);
+                        const seriesData = alldata[i].data.slice(0, yearIndex + 1);
+                        series[i].setData(seriesData, false);
                       } else {
-                          console.error(`alldata[${i}] or alldata[${i}].data is undefined.`);
+                        console.error(`alldata[${i}] or alldata[${i}].data is undefined.`);
                       }
+                    }
+                  } else {
+                    console.error('Series is undefined or has a length of 0.');
                   }
+                  
                 }
 
                   // If slider moved forward in time
@@ -964,6 +970,7 @@ function filterData() {
                   }
 
                   // Add current year
+                  if (series && series.length) {
                   for (let i = 0; i < series.length; i++) {
                     const currentData = alldata[i].data[yearIndex];
                     if (currentData && currentData.x) {
@@ -974,6 +981,7 @@ function filterData() {
                       series[i].addPoint({ x: currentYear, y: newY }, false);
                     }
                   }
+                }
 
                   labels.forEach((label) => {
                     if (label.options.point && label.options.point.x) {
@@ -994,8 +1002,9 @@ function filterData() {
                 }
 
                 function play(button) {
+                  console.log('Play function called');
                   // Reset slider at the end
-                  if (input.value > endYear) {
+                  if (input.value >= endYear) {
                     input.value = startYear;
                   }
 
@@ -1007,7 +1016,7 @@ function filterData() {
                     const yearIndex = selectedYear - startYear;
 
                     // Check if the year index is within the available range
-                    if (yearIndex < alldata[0].data.length) {
+                    if (alldata[0] && alldata[0].data && yearIndex < alldata[0].data.length) {
                       update();
                     } else {
                       // Stop the timer if we reach the end of the available data
@@ -1033,6 +1042,7 @@ function filterData() {
 
               area_btn = document.getElementById('area')
               area_btn.addEventListener('click', function () {
+                console.log('Area button clicked');
                 const areaChartContainer = document.getElementById('area-chart-canvas');
                 if (areaChartContainer) {
                     // Destroy the existing chart
@@ -1042,8 +1052,7 @@ function filterData() {
                         }
                     });
             
-                    // Clear the container content
-                    areaChartContainer.innerHTML = '';
+
                     // Draw the new chart
                     areachart(jsonData.chartData);
                     console.log('area data', jsonData.chartData)
