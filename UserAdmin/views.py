@@ -1,22 +1,17 @@
-import json
+
 from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
 from django.http import Http404, JsonResponse,HttpResponseRedirect
-from django.urls import reverse
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
-from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from TimeSeriesBase import models
 from UserManagement.decorators import *
-import tablib
-from TimeSeriesBase.admin import BookResourceWithStoreInstance
-from django.core.mail import send_mail
 
 
 @login_required(login_url='login')
+@admin_user_required
 def index(request):
     size_topic = Topic.objects.filter(is_deleted = False).count()
     size_category = Category.objects.filter(is_deleted = False).count()
@@ -33,6 +28,7 @@ def index(request):
     return render(request, 'user-admin/index.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
@@ -61,6 +57,7 @@ def indicator_list(request, pk):
     
 #Category
 @login_required(login_url='login')
+@admin_user_required
 def category(request, category_id=None):
     catagory = Category.objects.all()
     
@@ -115,6 +112,7 @@ def category(request, category_id=None):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def catagory_detail(request, pk):
     catagory = Category.objects.get(pk=pk)
     form = catagoryForm(request.POST or None, instance=catagory)
@@ -135,6 +133,7 @@ def catagory_detail(request, pk):
     return render(request, 'user-admin/catagories_detail.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def delete_category(request, pk):
     category = Category.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -260,8 +259,6 @@ def json_measurement(request):
     }
     return JsonResponse(context)
 
-
-
 @login_required(login_url='login')
 def json(request):
     topic = Topic.objects.all()
@@ -291,6 +288,7 @@ def json(request):
 
 #Data List
 @login_required(login_url='login')
+@admin_user_required
 def data_list(request):
     form = dataListForm(request.POST or None)
     if request.method == 'POST':
@@ -323,6 +321,7 @@ def data_list(request):
     return render(request, 'user-admin/data_list_view.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def data_list_detail(request, pk):
     form = ValueForm()
     form_update = ValueForm2()
@@ -413,6 +412,7 @@ def data_list_detail(request, pk):
 
 #Indicator 
 @login_required(login_url='login')
+@admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
     
@@ -430,6 +430,7 @@ def indicator(request):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def indicator_list(request, pk):
     add_indicator = IndicatorForm()
     category = Category.objects.get(pk = pk)
@@ -470,6 +471,7 @@ def indicator_list(request, pk):
     return render(request, 'user-admin/indicators.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def indicator_detail(request, pk):
     indicator = Indicator.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
@@ -513,6 +515,7 @@ def indicator_detail(request, pk):
     return render(request, 'user-admin/location_detail.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def delete_indicator(request,pk):
     
     indicator = Indicator.objects.get(pk=pk)
@@ -560,6 +563,7 @@ def delete_indicator(request,pk):
        
 
 @login_required(login_url='login')
+@admin_user_required
 def measurement(request):
     addMeasurementForm = MeasurementForm()
     editMeasurementForm = MeasurementForm()
@@ -598,6 +602,7 @@ def measurement(request):
     return render(request, 'user-admin/measurement.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def delete_measurement(request, pk):
     try:
         measurement = Measurement.objects.get(pk = pk)
@@ -613,6 +618,7 @@ def delete_measurement(request, pk):
 
 #Source
 @login_required(login_url='login')
+@admin_user_required
 def source(request, source_id=None):
     sources = Source.objects.all()
 
@@ -656,6 +662,7 @@ def source(request, source_id=None):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def source_detail(request, pk):
     source = Source.objects.get(pk=pk)
     
@@ -677,6 +684,7 @@ def source_detail(request, pk):
     return render(request, 'user-admin/source_detail.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def delete_source(request,pk):
     source = Source.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -691,6 +699,7 @@ def delete_source(request,pk):
     return HttpResponseRedirect(previous_page)
 
 @login_required(login_url='login')
+@admin_user_required
 def topic(request, topic_id=None):
     topics = Topic.objects.all()
 
@@ -723,7 +732,8 @@ def topic(request, topic_id=None):
 
     context = {'form': form, 'topics': topics, 'topic_id': topic_id}
     return render(request, 'user-admin/topic.html', context=context)
-#JSON
+
+
 @login_required(login_url='login')
 def json_filter_topic(request):
     topics = Topic.objects.all()
@@ -744,6 +754,7 @@ def json_filter_topic(request):
     return JsonResponse({'topics': topics_data})
 
 @login_required(login_url='login')
+@admin_user_required
 def topic_detail(request, pk):
     topic = Topic.objects.get(pk=pk)
     form = TopicForm(request.POST or None, instance=topic)
@@ -764,6 +775,7 @@ def topic_detail(request, pk):
     return render(request, 'user-admin/topic_detail.html', context)
 
 @login_required(login_url='login')
+@admin_user_required
 def delete_topic(request,pk):
     topic = Topic.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -780,6 +792,7 @@ def delete_topic(request,pk):
  
 #Data Point 
 @login_required(login_url='login')
+@admin_user_required
 def data_point(request):
     data_points = DataPoint.objects.all()
     form = DataPointForm(request.POST or None)
@@ -813,6 +826,7 @@ def data_point(request):
     return render(request, 'user-admin/data_point.html', context)     
        
 @login_required(login_url='login')
+@admin_user_required
 def data_point_detail(request, pk):
     data_point = DataPoint.objects.get(pk = pk) 
     form = DataPointForm(request.POST or None, instance=data_point)
@@ -848,6 +862,7 @@ def data_point_detail(request, pk):
     return render(request, 'user-admin/data_point_detail.html', context )
 
 @login_required(login_url='login')
+@admin_user_required
 def delete_data_point(request, pk):
     data_point = DataPoint.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
@@ -865,6 +880,7 @@ def delete_data_point(request, pk):
 
 #Month
 @login_required(login_url='login')
+@admin_user_required
 def month(request):
     months = Month.objects.all()
     context = {
@@ -874,6 +890,7 @@ def month(request):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def trash_topic(request):
     if request.method == 'POST':
         topic_id = request.POST.get('topic_id')
@@ -897,10 +914,12 @@ def trash_topic(request):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def trash_indicator(request):
     return render(request, 'user-admin/trash_Indicator.html')
 
 @login_required(login_url='login')
+@admin_user_required
 def trash_category(request):
     if request.method == 'POST':
         catagory_Id = request.POST.get('catagory_Id')
@@ -923,6 +942,7 @@ def trash_category(request):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def trash_source(request):
     if request.method == 'POST':
         source_id = request.POST.get('source_id')
@@ -945,6 +965,7 @@ def trash_source(request):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def restore_item(request, item_type, item_id):
     previous_page = request.META.get('HTTP_REFERER')
     model_mapping = {
@@ -971,6 +992,7 @@ def restore_item(request, item_type, item_id):
     return redirect('user-admin-recyclebin') 
 
 @login_required
+@admin_user_required
 def restore_indicator(request, pk):
     indicator = Indicator.objects.get(pk=pk)
     previous_page = request.META.get('HTTP_REFERER')
