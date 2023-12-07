@@ -9,6 +9,7 @@ let yearSelected = 0;
 let isdatatable = 0;
 let yearcount = 0;
 let theSelectedCatagory;
+
 function updateFilterSelection() {
   var isFilterSelected = true;
   var applyButtonExists = $('#applyButton').length > 0;
@@ -158,7 +159,7 @@ function filterData() {
 
         $('input[name="category_lists"]').on('change', function (eventCategory) {
           var selectedCategoryId = eventCategory.target.value;
-          theSelectedCatagory =data.categories.find((item) => String(item.id) == String(selectedCategoryId))
+          theSelectedCatagory = data.categories.find((item) => String(item.id) == String(selectedCategoryId))
           // Process indicators
           var selectIndicator = data.indicators.map(function (indicator) {
             if (String(indicator.for_category_id) === String(selectedCategoryId) && indicator.is_deleted == false) {
@@ -631,7 +632,7 @@ function filterData() {
             });
 
           });
-          
+
 
           //make the second button in display-option div display chart when clicked
           $("#displayOptions a:nth-child(2)").click(function () {
@@ -643,11 +644,11 @@ function filterData() {
             $(".data-display #table-container").hide();
             $(".data-display #main-card").hide();
             // $(".data-display #map").hide();
-            
-          // Trigger click event on the "Bar" button
-          $("#bar_btn").trigger('click');
-          // Set the display property of the select dropdown to 'block'
-           $(".indicatorDropdown").css("display", "block");
+
+            // Trigger click event on the "Bar" button
+            $("#bar_btn").trigger('click');
+            // Set the display property of the select dropdown to 'block'
+            $(".indicatorDropdown").css("display", "block");
 
             // Set chart button active
             $("#displayOptions a:nth-child(2)").addClass("active");
@@ -655,7 +656,7 @@ function filterData() {
             // $("#displayOptions a:nth-child(3)").removeClass("active");
 
             $(document).ready(function () {
-              document.getElementById('titleForCatagory').innerHTML= theSelectedCatagory.name_ENG
+              document.getElementById('titleForCatagory').innerHTML = theSelectedCatagory.name_ENG
               const labelElement = document.getElementById('select_label');
               const selectElement = document.querySelector('.indicatorDropdown');
 
@@ -837,12 +838,12 @@ function filterData() {
                   xAxis: {
                     categories: (alldata[0] && alldata[0].data) ? alldata[0].data.map(point => point.x) : [],
                     labels: {
-                        rotation: -45,
-                        formatter: function () {
-                            return this.value;
-                        }
+                      rotation: -45,
+                      formatter: function () {
+                        return this.value;
+                      }
                     }
-                },
+                  },
                   yAxis: {
                     reversedStacks: false,
                     title: {
@@ -916,14 +917,14 @@ function filterData() {
                   if (!alldata || !alldata.length || !alldata[0] || !alldata[0].data) {
                     console.error('alldata, alldata[0], or alldata[0].data is undefined.');
                     return;
-                }
+                  }
 
                   const series = chart.series,
-                  labels = chart.annotations && chart.annotations[0] && chart.annotations[0].labels,
-                  selectedYear = parseInt(input.value, 10),
-                  yearIndex = selectedYear - startYear;
-                
-                
+                    labels = chart.annotations && chart.annotations[0] && chart.annotations[0].labels,
+                    selectedYear = parseInt(input.value, 10),
+                    yearIndex = selectedYear - startYear;
+
+
 
                   if (yearIndex >= alldata[0].data.length) {
                     // Stop the timer if we reach the end of the available data
@@ -940,24 +941,24 @@ function filterData() {
                     });
                   });
 
-                // Check if the chart is already initialized
-                if (!chart.sequenceTimer) {
-                  // Perform the initial update
-                  if (series && series.length) {
-                    for (let i = 0; i < series.length; i++) {
-                      // Check if alldata[i] is defined and has a 'data' property
-                      if (alldata[i] && alldata[i].data) {
-                        const seriesData = alldata[i].data.slice(0, yearIndex + 1);
-                        series[i].setData(seriesData, false);
-                      } else {
-                        console.error(`alldata[${i}] or alldata[${i}].data is undefined.`);
+                  // Check if the chart is already initialized
+                  if (!chart.sequenceTimer) {
+                    // Perform the initial update
+                    if (series && series.length) {
+                      for (let i = 0; i < series.length; i++) {
+                        // Check if alldata[i] is defined and has a 'data' property
+                        if (alldata[i] && alldata[i].data) {
+                          const seriesData = alldata[i].data.slice(0, yearIndex + 1);
+                          series[i].setData(seriesData, false);
+                        } else {
+                          console.error(`alldata[${i}] or alldata[${i}].data is undefined.`);
+                        }
                       }
+                    } else {
+                      console.error('Series is undefined or has a length of 0.');
                     }
-                  } else {
-                    console.error('Series is undefined or has a length of 0.');
+
                   }
-                  
-                }
 
                   // If slider moved forward in time
                   if (yearIndex > alldata[0].data.length - 1) {
@@ -971,17 +972,17 @@ function filterData() {
 
                   // Add current year
                   if (series && series.length) {
-                  for (let i = 0; i < series.length; i++) {
-                    const currentData = alldata[i].data[yearIndex];
-                    if (currentData && currentData.x) {
-                      const match = currentData.x.match(/\d+/g); // Extract numeric values
-                      const currentYear = match ? parseInt(match[0], 10) : null;
+                    for (let i = 0; i < series.length; i++) {
+                      const currentData = alldata[i].data[yearIndex];
+                      if (currentData && currentData.x) {
+                        const match = currentData.x.match(/\d+/g); // Extract numeric values
+                        const currentYear = match ? parseInt(match[0], 10) : null;
 
-                      const newY = currentData.y;
-                      series[i].addPoint({ x: currentYear, y: newY }, false);
+                        const newY = currentData.y;
+                        series[i].addPoint({ x: currentYear, y: newY }, false);
+                      }
                     }
                   }
-                }
 
                   labels.forEach((label) => {
                     if (label.options.point && label.options.point.x) {
@@ -1045,168 +1046,168 @@ function filterData() {
                 console.log('Area button clicked');
                 const areaChartContainer = document.getElementById('area-chart-canvas');
                 if (areaChartContainer) {
-                    // Destroy the existing chart
-                    Highcharts.charts.forEach(chart => {
-                        if (chart && chart.renderTo === areaChartContainer) {
-                            chart.destroy();
-                        }
-                    });
-            
+                  // Destroy the existing chart
+                  Highcharts.charts.forEach(chart => {
+                    if (chart && chart.renderTo === areaChartContainer) {
+                      chart.destroy();
+                    }
+                  });
 
-                    // Draw the new chart
-                    areachart(jsonData.chartData);
-                    console.log('area data', jsonData.chartData)
+
+                  // Draw the new chart
+                  areachart(jsonData.chartData);
+                  console.log('area data', jsonData.chartData)
                 } else {
-                    console.error('Element with id "area-chart-canvas" not found.');
+                  console.error('Element with id "area-chart-canvas" not found.');
                 }
-            });
-            
-          
-
-            function draw(chartdata) {
-              const dropdown = document.querySelector('.indicatorDropdown');
-              const selectedIndicatorName = dropdown.options[dropdown.selectedIndex].text;
-              // ================================================ first chart =======================================
-              Highcharts.chart('series-chart-canvas', {
-                chart: {
-                  zoomType: 'x'
-                },
-                title: {
-                  text: selectedIndicatorName,
-                  align: 'left'
-                },
-                subtitle: {
-                  text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
-                  align: 'left'
-                },
-                xAxis: {
-                  type: 'category',
-                  labels: {
-                    step: 1
-                  },
-                  accessibility: {
-                    rangeDescription: `Range: ${chartdata[0].x} to ${chartdata[chartdata.length - 1].x}`
-                  },
-                  pointStart: chartdata[0].x,
-                  pointInterval: 1
-                },
-                legend: {
-                  enabled: false
-                },
-                plotOptions: {
-                  area: {
-                    fillColor: {
-                      linearGradient: {
-                        x1: 0,
-                        y1: 0,
-                        x2: 0,
-                        y2: 1
-                      },
-                      stops: [
-                        [0, Highcharts.getOptions().colors[0]],
-                        [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                      ]
-                    },
-                    marker: {
-                      radius: 2
-                    },
-                    lineWidth: 1,
-                    states: {
-                      hover: {
-                        lineWidth: 1
-                      }
-                    },
-                    threshold: null
-                  }
-                },
-                series: [{
-                  type: 'area',
-                  name: 'Custom Data',
-                  data: chartdata.map(item => [item.x, item.y !== null ? item.y : 0])
-                }]
               });
 
 
 
-              //==================================================== third chart===================================================
-              Highcharts.chart('line-chart-canvas', {
-                title: {
-                  text: selectedIndicatorName,
-                  align: 'left'
-                },
-                xAxis: {
-                  accessibility: {
-                    rangeDescription: `Range: ${chartdata[0].x} to ${chartdata[chartdata.length - 1].x}`
-                  },
-                  categories: chartdata.map(item => item.x),
-                },
-                legend: {
-                  layout: 'vertical',
-                  align: 'right',
-                  verticalAlign: 'middle',
-                },
-                series: [{
-                  data: chartdata.map(item => (item.y !== null ? item.y : 0)),
-                }],
-                responsive: {
-                  rules: [
-                    {
-                      condition: {
-                        maxWidth: 500,
-                      },
-                      chartOptions: {
-                        legend: {
-                          layout: 'horizontal',
-                          align: 'center',
-                          verticalAlign: 'bottom',
-                        },
-                      },
-                    },
-                  ],
-                },
-              });
-
-
-
-              // ======================================= fourth chart create a line chart ==============================
-              // Replace null values with 0
-              const modifiedData = chartdata.map(item => ({
-                x: item.x,
-                y: item.y !== null ? item.y : 0
-              }));
-
-              if (modifiedData.length === 0) {
-                console.error('No valid data points to display.');
-                return;
-              }
-
-              // Check if the dropdown element is found
-              if (dropdown) {
-
-
-                Highcharts.chart('bar-chart-canvas', {
+              function draw(chartdata) {
+                const dropdown = document.querySelector('.indicatorDropdown');
+                const selectedIndicatorName = dropdown.options[dropdown.selectedIndex].text;
+                // ================================================ first chart =======================================
+                Highcharts.chart('series-chart-canvas', {
                   chart: {
-                    type: 'column'
+                    zoomType: 'x'
                   },
                   title: {
-                    text: selectedIndicatorName // Set the title to the selected indicator name
+                    text: selectedIndicatorName,
+                    align: 'left'
+                  },
+                  subtitle: {
+                    text: document.ontouchstart === undefined ?
+                      'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+                    align: 'left'
                   },
                   xAxis: {
-                    categories: modifiedData.map(item => item.x),
-                    // Other xAxis configurations...
+                    type: 'category',
+                    labels: {
+                      step: 1
+                    },
+                    accessibility: {
+                      rangeDescription: `Range: ${chartdata[0].x} to ${chartdata[chartdata.length - 1].x}`
+                    },
+                    pointStart: chartdata[0].x,
+                    pointInterval: 1
+                  },
+                  legend: {
+                    enabled: false
+                  },
+                  plotOptions: {
+                    area: {
+                      fillColor: {
+                        linearGradient: {
+                          x1: 0,
+                          y1: 0,
+                          x2: 0,
+                          y2: 1
+                        },
+                        stops: [
+                          [0, Highcharts.getOptions().colors[0]],
+                          [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                      },
+                      marker: {
+                        radius: 2
+                      },
+                      lineWidth: 1,
+                      states: {
+                        hover: {
+                          lineWidth: 1
+                        }
+                      },
+                      threshold: null
+                    }
                   },
                   series: [{
-                    data: modifiedData.map(item => item.y)
+                    type: 'area',
+                    name: 'Custom Data',
+                    data: chartdata.map(item => [item.x, item.y !== null ? item.y : 0])
                   }]
                 });
-              } else {
-                console.error('Dropdown element not found.');
-              }
 
-            };
 
-          });
+
+                //==================================================== third chart===================================================
+                Highcharts.chart('line-chart-canvas', {
+                  title: {
+                    text: selectedIndicatorName,
+                    align: 'left'
+                  },
+                  xAxis: {
+                    accessibility: {
+                      rangeDescription: `Range: ${chartdata[0].x} to ${chartdata[chartdata.length - 1].x}`
+                    },
+                    categories: chartdata.map(item => item.x),
+                  },
+                  legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                  },
+                  series: [{
+                    data: chartdata.map(item => (item.y !== null ? item.y : 0)),
+                  }],
+                  responsive: {
+                    rules: [
+                      {
+                        condition: {
+                          maxWidth: 500,
+                        },
+                        chartOptions: {
+                          legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                });
+
+
+
+                // ======================================= fourth chart create a line chart ==============================
+                // Replace null values with 0
+                const modifiedData = chartdata.map(item => ({
+                  x: item.x,
+                  y: item.y !== null ? item.y : 0
+                }));
+
+                if (modifiedData.length === 0) {
+                  console.error('No valid data points to display.');
+                  return;
+                }
+
+                // Check if the dropdown element is found
+                if (dropdown) {
+
+
+                  Highcharts.chart('bar-chart-canvas', {
+                    chart: {
+                      type: 'column'
+                    },
+                    title: {
+                      text: selectedIndicatorName // Set the title to the selected indicator name
+                    },
+                    xAxis: {
+                      categories: modifiedData.map(item => item.x),
+                      // Other xAxis configurations...
+                    },
+                    series: [{
+                      data: modifiedData.map(item => item.y)
+                    }]
+                  });
+                } else {
+                  console.error('Dropdown element not found.');
+                }
+
+              };
+
+            });
           });
 
         });
