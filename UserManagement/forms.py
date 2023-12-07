@@ -2,17 +2,18 @@ from django import forms
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from django.shortcuts import render
 
-class PasswordChangingForm(PasswordChangeForm):
-    old_password=forms.CharField(widget= forms.PasswordInput(attrs={
-                'class' : 'form-control','placeholder': 'old password'}))
-    new_password1=forms.CharField(widget= forms.PasswordInput(attrs={
-                'class' : 'form-control','placeholder': 'new password'}))
-    new_password2=forms.CharField(widget= forms.PasswordInput(attrs={
-                'class' : 'form-control','placeholder': 'confirm password'}))
-    class Meta:
-        model=CustomUser
-        fields=['old_password','new_password1','new_password2']
+
+class PasswordChangingForm(PasswordChangeView):
+    form_class = PasswordChangeForm
+    template_name = 'user-admin/setting.html'
+    success_url = reverse_lazy('your_success_url')
+
+
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
@@ -50,11 +51,7 @@ class EditProfileForm(forms.ModelForm):
            
 
 class Login_Form(forms.Form):
-    # username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
-    #     'class' : 'form-control',
-    #     'placeholder' : 'Enter your Username',
-    #     'autocomplete': 'off' 
-    # }))
+
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={
         'class' : 'form-control',
         'placeholder' : 'Enter Your Email'
@@ -64,7 +61,7 @@ class Login_Form(forms.Form):
         'placeholder' : 'Enter Your Password'
     }))
     class Meta:
-        fields = ['email', 'password','username']
+        fields = ['email', 'password']
 
 
 class CustomUserCreationForm(forms.Form):
@@ -109,7 +106,3 @@ class CustomUserCreationForm(forms.Form):
 
 
 
-class UserUpdateForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name']

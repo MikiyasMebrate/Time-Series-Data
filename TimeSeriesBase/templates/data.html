@@ -356,14 +356,14 @@
                     <!-- Add chart here -->
                     <div class="card" id='chart_display' style="display:none;">
                       <div class="card-header">
-                          <h3 class="card-title">
+                          <h3 class="card-title d-flex">
                               <i class="fas fa-chart-pie mr-1"></i>
-                              The Catagory Name
+                              <p class="fw-bold fs-3 pl-1" id="titleForCatagory"></p>
                           </h3>
                           <div class="card-tools">
                               <ul class="nav nav-pills ml-auto">
                                   <li class="nav-item">
-                                      <a class="nav-link active" href="#bar-chart" data-toggle="tab">Bar</a>
+                                      <a class="nav-link active"  id="bar_btn" href="#bar-chart" data-toggle="tab">Bar</a>
                                   </li>
                                   <li class="nav-item">
                                       <a class="nav-link" href="#series-chart" data-toggle="tab">Series</a>
@@ -397,7 +397,7 @@
                                       <div id="parent-container">
                                           <div id="play-controls">
                                               <button id="play-pause-button" class="fa fa-play" title="play"></button>
-                                              <input id="play-range" type="range" value="1973" min="1973" max="2022" />
+                                              <input id="play-range" type="range" value="" min="" max="" />
                                           </div>
                                           <div id="area-chart-canvas" height="300" style="height: 500px;"></div>
                                       </div>

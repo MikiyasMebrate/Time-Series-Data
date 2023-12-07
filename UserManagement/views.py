@@ -1,68 +1,65 @@
-from django.http import JsonResponse,HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
-from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
 from django.shortcuts import render, redirect
-# from .forms import CustomUserForm,UserUpdateForm
-from django.contrib.auth.models import Group
 from .models import CustomUser
 from django.contrib.auth import login,authenticate,logout
-from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.forms import AuthenticationForm
-from .decorators import unauthenticated_user
+from  .decorators import admin_user_required, staff_user_required
 from django.contrib.auth.decorators import login_required
 import random
 import string
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 def generate_password(length):
     characters = string.ascii_letters + string.digits 
     password = ''.join(random.choice(characters) for _ in range(length))
     return password
 
-# Example usage: generate a password with length 10
-
-
-
 
 #Session
 @login_required(login_url='login')
+@admin_user_required
 def users_list(request):
-
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-            is_admin = form.cleaned_data['is_superuser']
-            
-            auto_password = generate_password(10)
-            user_obj = CustomUser.objects.create_user(email=email, first_name=first_name, is_superuser = is_admin, last_name = last_name, is_active= True, is_staff=True,  username=username, password=auto_password)
-
-
-
-            subject, from_email, to = "Account Creation", "mikiyasmebrate2656@gmail.com", f"{email}"
-            text_content = "Account Created Successfully"
-            html_content = f''' <p> Dear {first_name} {last_name}, </p>
-            <p> We are delighted to inform you that your account has been successfully created. Welcome to our platform!</p>
-            <p>Below are your account details:</p>
-            <p>Email: {email}</p>
-            <p>Password: {auto_password}</p>
-            <p>Please keep this information secure and do not share it with anyone.</p>
-            <p>Thank you for joining us! We look forward to providing you with a great experience on our platform.</p>
-            <p>Best regards,</p>
-            <p>MoPD Team</p>'''
-            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
-            print(msg.send())
-            print(email)
-            #print(user_obj.password)
-            messages.success(request, 'Your Account has been Successfully Created!')
-            return redirect('user-admin-user-list')
+            try: 
+                 username = form.cleaned_data['username']
+                 first_name = form.cleaned_data['first_name']
+                 last_name = form.cleaned_data['last_name']
+                 email = form.cleaned_data['email']
+                 is_admin = form.cleaned_data['is_superuser']
+                 
+                 auto_password = generate_password(10)
+                 user_obj = CustomUser.objects.create_user(email=email, first_name=first_name, is_superuser = is_admin, last_name = last_name, is_active= True, is_staff=True,  username=username, password=auto_password)
+     
+     
+     
+                 subject, from_email, to = "Account Creation", "mikiyasmebrate2656@gmail.com", f"{email}"
+                 text_content = "Account Created Successfully"
+                 html_content = f''' <p> Dear {first_name} {last_name}, </p>
+                 <p> We are delighted to inform you that your account has been successfully created. Welcome to our platform!</p>
+                 <p>Below are your account details:</p>
+                 <p>Email: {email}</p>
+                 <p>Password: {auto_password}</p>
+                 <p>Please keep this information secure and do not share it with anyone.</p>
+                 <p>Thank you for joining us! We look forward to providing you with a great experience on our platform.</p>
+                 <p>Best regards,</p>
+                 <p>MoPD Team</p>'''
+                 msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+                 msg.attach_alternative(html_content, "text/html")
+                 
+                 if msg.send():
+                     messages.success(request, 'Email Successfully Sent!')
+                     messages.success(request, 'Your Account has been Successfully Created!')
+                 print(email)                
+                 return redirect('user-admin-user-list')
+            except:
+                messages.error('Please Try Again! Username and Email should be UNIQUE! ')
         else:
             messages.error(request, 'Please Try Again!')
 
@@ -96,7 +93,6 @@ def login_view(request):
     if request.method == 'POST':
         form = Login_Form(request.POST)
         if form.is_valid():
-            # username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(request,email=email,password=password)
@@ -109,12 +105,14 @@ def login_view(request):
                 return redirect('index')
             else:
                 messages.error(request, 'Invalid Password or Email')
+            form = Login_Form()
     else:
         form = Login_Form()
     return render(request, 'login.html', {'form': form})
 
 
 @login_required(login_url='login')
+@admin_user_required
 def edit_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
 
@@ -133,6 +131,7 @@ def edit_user(request, user_id):
     })
 
 @login_required(login_url='login')
+@admin_user_required
 def user_registration_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -146,6 +145,7 @@ def user_registration_view(request):
     return render(request, 'user-admin/profile.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_user_required
 def update_user(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
@@ -160,6 +160,7 @@ def update_user(request, pk):
 
 
 @login_required(login_url='login')
+@admin_user_required
 def activate_deactivate_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     previous_page = request.META.get('HTTP_REFERER')
@@ -173,42 +174,20 @@ def activate_deactivate_user(request, user_id):
     return render(request, 'user-admin/users_list.html', {'user': user})
 
 
-
-# def delete_user(request, user_id):
-#     user = get_object_or_404(CustomUser, id=user_id)
-#     previous_page = request.META.get('HTTP_REFERER')
-#     if request.method == 'POST':
-#         user.delete()
-#         messages.success(request, "Successfully Deleted!")
-#         return HttpResponseRedirect(previous_page)
     
-    
-   
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.views import PasswordChangeView
-from .forms import Login_Form, PasswordChangingForm
-from django.urls import reverse_lazy       
- 
-class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
-    model=CustomUser
-    form_class=PasswordChangingForm
-    success_url=reverse_lazy("change_password")
-    success_message = 'password successful updated'
-
-    
-
-
-def activate_deactivate_user(request, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
-    previous_page = request.META.get('HTTP_REFERER')
-    
+@login_required(login_url='login')
+@admin_user_required
+def admin_change_password(request):
     if request.method == 'POST':
-        user.is_active = not user.is_active  # Toggle the is_active status
-        user.save()
-        messages.success(request, f"User '{user.username}' has been {'activated' if user.is_active else 'deactivated'}!")
-        return HttpResponseRedirect(previous_page)
-
-    return render(request, 'user-admin/users_list.html', {'user': user})
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Successfully Updated!')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request,'user-admin/setting.html', {'formChangePassword': form})
 
 
 
