@@ -173,13 +173,13 @@ sup {
 }
 
 a {
-    color: #007bff;
+    color: green;
     text-decoration: none;
     background-color: transparent
 }
 
 a:hover {
-    color: #0056b3;
+    color: green;
     text-decoration: none
 }
 
@@ -13176,7 +13176,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 }
 
 .layout-fixed .brand-link {
-    width: 250px
+    width: 500px
 }
 
 .layout-fixed .main-sidebar {
@@ -13889,7 +13889,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
     display: block;
     font-size: 1.25rem;
     line-height: 1.5;
-    padding: .8125rem .5rem;
+    padding: 1.02 .5rem;
     transition: width .3s ease-in-out;
     white-space: nowrap
 }
