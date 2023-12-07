@@ -128,7 +128,7 @@
                                   <div class="card card-primary card-outline">
                                     <div class="card-body box-profile">
                                       <div class="text-center">
-                                        <img class="img-circle img-fluid" width="200px" src="/media/{{user.photo}}" alt="Profile Picture">
+                                        <img class="img-circle  img-fluid" width="40px" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
                                       </div>
                                       <h3 class="profile-username text-center">
                                         {{user.username | capfirst}}
@@ -141,13 +141,14 @@
                                 <div class="col-md-8">
                                   <div class="card">
                                     <div class="card-header p-2">
-                                      <ul class="nav nav-pills">
-                                        <li class="nav-item">
-                                          <a class="nav-link" href="{% url "setting" %}"  aria-selected="true">Edit Profile</a>
-                                        </li>
-                                        <li class="nav-item">
-                                          <a class="nav-link" href="{% url "change_password" %}"  aria-selected="true">change_password</a>
-                                        </li>
+                                        <ul class="nav ml-5 ">
+                                            <div class="ml-5">                                    
+                                          <a class="nav-link ml-5 bg-Light" href="{% url "setting" %}"  aria-selected="true">Edit Profile</a>
+                                    </div>
+                                    <div>
+                                          <a class="nav-link ml-5 bg-Light" href="{% url "change_password" %}"  aria-selected="true">change password</a>
+                                     
+                                    </div>
                                       </ul>
                                     </div>
                 
@@ -155,50 +156,47 @@
                                       <div class="tab-content">
                                           <div class="active tab-pane" id="settings">
                                               {% comment %} from strat {% endcomment %}
-                                              <form class="form-horizontal" method="POST">
+                                              <form method="post" id="update-user-form" action="{% url 'update-user' pk=user.pk %}" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <div class="form-group row">
-                                                  <label for="oldPassword" class="col-sm-2 col-form-label"
-                                                    >Username</label
-                                                  >
-                                                  <div class="col-sm-10">
-                                                    {{form.username}}
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.username.id_for_label }}" class="col-form-label">Username:</label>
+                                                        <input type="text" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" value="{{ user.username }}" />
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col mb-3">
+                                                            <label for="{{ form.first_name.id_for_label }}" class="col-form-label">First Name:</label>
+                                                            <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" value="{{ user.first_name }}" />
+                                                        </div>
+                                                        <div class="col mb-3">
+                                                            <label for="{{ form.last_name.id_for_label }}" class="col-form-label">Last Name:</label>
+                                                            <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" value="{{ user.last_name }}" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.email.id_for_label }}" class="col-form-label">Email:</label>
+                                                        <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ user.email }}" />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                      <label for="{{ form.photo.id_for_label }}" class="col-form-label">Photo:</label>
+                                                      {{form.photo}}
                                                   </div>
                                                 </div>
-                                                <div class="form-group row">
-                                                  <label for="newPassword" class="col-sm-2 col-form-label"
-                                                    >First name:</label
-                                                  >
-                                                  <div class="col-sm-10">
-                                                      {{form.first_name}}
-                                                  </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </div>
-                                                <div class="form-group row">
-                                                  <label for="newPassword" class="col-sm-2 col-form-label"
-                                                    >Last name:</label
-                                                  >
-                                                  <div class="col-sm-10">
-                                                      {{form.last_name}}
-                                                  </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                  <label
-                                                    for="confirmPassword"
-                                                    class="col-sm-2 col-form-label"
-                                                    >Email</label
-                                                  >
-                                                  <div class="col-sm-10">
-                                                      {{form.email}}
-                                                  </div>
-                                                </div>
-                                                 <div class="form-group row">
-                                                  <div class="offset-sm-2 col-sm-10">
-                                                    <button type="submit" class="btn btn-danger ">
-                                                      save changes
-                                                    </button>
-                                                  </div>
-                                                </form>
-                                              
+                              
+                                                {% if form.errors %}
+                                                     <ul class="errorlist">
+                                                      {% for field, errors in form.errors.items %}
+                                                    {% for error in errors %}
+                                                     <li>{{ field }}: {{ error }}</li>
+                                                   {% endfor %}
+                                                   {% endfor %}
+                                                   </ul>
+                                                    {% endif %}
+                                                  </form>
                                               
                                               {% comment %} from end {% endcomment %}
                                           </div>
@@ -225,135 +223,6 @@
   
 
   </body>
-  <footer style="margin-top: 100px;">
-    <div class="footer__area grey-bg pt-100">
-        <div class="footer__top pb-45">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 pr-0">
-                        <div class="footer__widget mb-45 wow fadeInUp" data-wow-delay=".2s">
-                            <div class="footer__widget-title mb-30">
-                                <div class="logo">
-                                    <img src="{% static "assets/img/icon/brand/trianlge.png" %}" alt=""><h3>MoPD</h3>
-                                </div>
-                            </div>
-                            <div class="footer__widget-content">
-                                <p> This analysis tool is designed to provide insights</p>
-                                <div class="footer__img">
-                                    <img src="{% static "assets/img/footer/footer-img-1.png" %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 offset-xl-1 col-lg-2 offset-lg-1 col-md-4 col-sm-6">
-                        <div class="footer__widget footer__widget-3 mb-45 wow fadeInUp" data-wow-delay=".4s">
-                            <div class="footer__widget-title">
-                                <h4>Company</h4>
-                            </div>
-                            <div class="footer__widget-content">
-                                <div class="footer__links">
-                                    <ul>
-                                        <li><a href="#">About</a></li>
-                                        <li><a href="#">profile</a></li>
-                                        <li><a href="#">Contact Us</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 offset-xl-1 col-lg-2 offset-lg-1 col-md-4 col-sm-6">
-                        <div class="footer__widget mb-45 wow fadeInUp" data-wow-delay=".6s">
-                            <div class="footer__widget-title">
-                                <h4>Resources</h4>
-                            </div>
-                            <div class="footer__widget-content">
-                                <div class="footer__links">
-                                    <ul>
-                                        
-                                        <li><a href="#">Contact Us</a></li>
-                                       <li><a href="#">evalute data</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3  col-lg-3 col-md-4 col-sm-6">
-                        <div class="footer__widget footer__widget-3 mb-45  ml-70 wow fadeInUp" data-wow-delay=".8s">
-                            <div class="footer__widget-title">
-                                <h4>Information</h4>
-                            </div>
-                            <div class="footer__widget-content">
-                                <div class="footer__info mb-35">
-                                    <ul>
-                                        <li>
-                                        <div class="icon">
-                                            <i class="fal fa-map-marker-alt"></i>
-                                        </div>
-                                        <div class="text">
-                                            <span> 6kilo <br>
-                                                Ethiopia, AA</span>
-                                        </div>
-                                    </li>
-                                        <li>
-                                            <div class="icon theme-color ">
-                                                <i class="fal fa-envelope"></i>
-                                            </div>
-                                            <div class="text theme-color ">
-                                                <span>info@mopd.gov.et</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="icon theme-color">
-                                                <i class="fas fa-phone-alt"></i>
-                                            </div>
-                                            <div class="text theme-color">
-                                                <span><a href="tel:(+642)-394-396-432">0111403049</a></span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="footer__social theme-social">
-                                    <ul>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fab fa-facebook-f"></i>
-                                                <i class="fab fa-facebook-f"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fab fa-twitter"></i>
-                                                <i class="fab fa-twitter"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fab fa-vimeo-v"></i>
-                                                <i class="fab fa-vimeo-v"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer__copyright-3">
-            <div class="container">
-                <div class="footer__copyright-inner">
-                    <div class="row align-items-center">
-                        <div class="col-xl-12">
-                            <div class="footer__copyright-text text-center">
-                                <p>Copyright © MOPD</span></strong>. All Rights Reserved <a href="index.html"></a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </footer>
+
 {%include "includes/footer_js.html" %}
 </html>
