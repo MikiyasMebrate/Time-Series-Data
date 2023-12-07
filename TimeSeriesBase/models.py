@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.db import models
 from UserManagement.models import CustomUser
 from django.db.models.signals import post_save, pre_save
@@ -92,6 +93,29 @@ class DataPoint(models.Model):
             return self.year_start_EC + " - " + self.year_end_EC + "E.C"
         else:
             return self.year_EC+" "+"E.C"
+        
+    def save(self, *args, **kwargs):
+        if not self.year_EC:
+            # Use the default year of the current day
+            current_year = datetime.now().year
+            current_month = datetime.now().month
+
+            # Adjust Ethiopian calendar year based on the overlap
+            if current_month <= 7:  # If it's before or in July, consider the overlap with the previous G.C year
+                ec_year = current_year - 8
+            else:
+                ec_year = current_year - 7
+
+            self.year_EC = ec_year
+
+            # Calculate Gregorian calendar years
+            gc_year_start = ec_year + 7
+            gc_year_end = ec_year + 8
+            self.year_GC = f"{gc_year_start}/{gc_year_end}"
+
+        super().save(*args, **kwargs)
+
+
 
 class Quarter(models.Model):
     quarter = models.CharField(max_length=50)
@@ -136,7 +160,7 @@ class DataValue(models.Model):
     value = models.CharField(max_length=50, blank=True ,null=True)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
-    for_datapoint = models.ForeignKey("DataPoint", on_delete=models.SET_NULL, blank=True, null=True)
+    for_datapoint = models.ForeignKey("DataPoint", related_name="datavalue_set", on_delete=models.SET_NULL, blank=True, null=True)
     for_source = models.ForeignKey("Source",on_delete=models.SET_NULL  ,blank=True, null=True,)
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
