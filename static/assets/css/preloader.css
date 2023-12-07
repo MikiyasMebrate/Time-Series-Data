@@ -29,7 +29,7 @@
 .object{
 	width: 20px;
 	height: 20px;
-	background-color: #5749ff;
+	background-color: green;
 	position: absolute;
 	-moz-border-radius: 50% 50% 50% 50%;
 	-webkit-border-radius: 50% 50% 50% 50%;

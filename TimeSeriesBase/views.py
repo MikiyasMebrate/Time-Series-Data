@@ -37,7 +37,7 @@ class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
     success_message = 'password successful updated'
   
 class UserEditView(generic.UpdateView):
-    form_class=UserChangingForm
+    form_class=EditProfileForm
     template_name='setting.html'
     success_url=reverse_lazy('setting')
     def get_object(self):
