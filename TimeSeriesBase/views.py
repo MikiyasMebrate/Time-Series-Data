@@ -9,32 +9,29 @@ from .forms import Login_Form, PasswordChangingForm,UserChangingForm
 from django.urls import reverse_lazy
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
 # Create your views here.
 from UserManagement.decorators import *
 from UserManagement.forms import *
 @login_required(login_url='login')
-# @admin_only
 def index(request):
     return render(request,"index.html")
 @login_required(login_url='login')
-# @admin_only
 def about(request):
     return render(request,"about.html")
 @login_required(login_url='login')
-# @admin_only
 def contact(request):
     return render(request,"contact.html")
-
-# class MyView(DetailView):
-#     Model = CustomUser
-#     def get_object(self):
-#         return self.request.user
-
-class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
-    model=CustomUser
-    form_class=PasswordChangingForm
-    success_url=reverse_lazy("change_password")
-    success_message = 'password successful updated'
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Successfully Updated!')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request,'password_change.html', {'form': form})
   
 class UserEditView(generic.UpdateView):
     form_class=EditProfileForm

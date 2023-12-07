@@ -12,8 +12,9 @@ urlpatterns = [
     path('contact/',contact,name="contact"),
     path('data/',data,name="data"),
     path('profile', profile_view, name = 'profile'),
+    
     # path('profile', MyView.as_view(template_name='profile.html'), name = 'profile'),
-    path('change_password', PasswordChangeView.as_view(template_name='password_change.html'), name = 'change_password'),
+    path('change_password', change_password, name = 'change_password'),
     path('setting', UserEditView.as_view(template_name='setting.html'), name = 'setting'),
     path('login/',views.login_view,name="login"),
     path('logout/',views.logout_view,name="logout"),
