@@ -26,7 +26,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form method="post" id="update-user-form" action="{% url 'admin-update-profile' pk=user.pk %}" enctype="multipart/form-data">
+                <form method="post" id="update-user-form" action="{% url 'admin-update-profile'%}" enctype="multipart/form-data">
                   {% csrf_token %}
                   <div class="modal-body">
                       <div class="mb-3">
@@ -57,15 +57,7 @@
                       <button type="submit" class="btn btn-primary">Save changes</button>
                   </div>
 
-                  {% if form.errors %}
-                       <ul class="errorlist">
-                        {% for field, errors in form.errors.items %}
-                      {% for error in errors %}
-                       <li>{{ field }}: {{ error }}</li>
-                     {% endfor %}
-                     {% endfor %}
-                     </ul>
-                      {% endif %}
+                  
                     </form>
               </div>
               
@@ -98,6 +90,15 @@
               <div class="row justify-content-center">
                 {% include 'user-admin/include/messages.html'%}
                 <div class="col-md-8 ">
+                  {% if form.errors %}
+                       <ul class="text-danger">
+                        {% for field, errors in form.errors.items %}
+                      {% for error in errors %}
+                       <li>{{ field }}: {{ error }}</li>
+                     {% endfor %}
+                     {% endfor %}
+                     </ul>
+                      {% endif %}
                   <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                       <div class="text-center">
