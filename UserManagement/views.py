@@ -102,8 +102,6 @@ def login_view(request):
                 return redirect('user-admin-index')
             elif user is not None and user.is_staff:
                 login(request, user)
-                if user.is_first_time:
-                    return    
                 return redirect('index')
             else:
                 messages.error(request, 'Invalid Password or Email')
