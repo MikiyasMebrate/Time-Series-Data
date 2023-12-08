@@ -38,17 +38,22 @@ class CustomUserForm(forms.ModelForm):
             } 
 
 class EditProfileForm(forms.ModelForm):
+    error_css_class = 'text-danger'
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'first_name','last_name', 'photo']   
 
         widgets = {
+            'username' : forms.TextInput(attrs={'class': 'form-control'}),
+            'email' : forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name' : forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name' : forms.TextInput(attrs={'class': 'form-control'}),
                 'password': forms.PasswordInput(attrs={'class': 'form-control'}),
                 'photo' : forms.ClearableFileInput(attrs={
                     'class' : 'form-control'
                 })
             } 
-           
+        
 
 class Login_Form(forms.Form):
 

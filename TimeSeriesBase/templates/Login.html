@@ -56,14 +56,14 @@ crossorigin="anonymous"
 
         .form-control {
             height: 50px;
-            border-radius: 25px;
-            border: 1px solid transparent;
+            border-radius: 10px;
+            border: 1px solid ;
             margin-bottom: 15px;
-            transition: box-shadow 0.3s, background-color 0.3s, transform 0.5s;
+            transition: box-shadow 0.3s, transform 0.5s;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #ccc;
             font-size: 16px;
             animation: wave 0.5s;
+            
             /* Added wave animation */
         }
 
@@ -87,62 +87,15 @@ crossorigin="anonymous"
             }
         }
 
-        .form-group:hover .form-control {
+        .form-group:hover  {
             box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
             /* Add a box-shadow to create a border effect on hover */
-            background-color: #ddd;
             transition: box-shadow 0.3s ease, background-color 0.3s ease;
             /* Add transitions for box-shadow and background-color */
             animation: none;
         }
 
-        .form-control:focus {
-            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 0, 0, 0.2);
-            /* Add a box-shadow to create a border effect on focus */
-            background-color: #ddd;
-            transform: translateY(-5px);
-            /* Add a translateY transformation on focus */
-            transition: box-shadow 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
-            /* Add transitions for box-shadow, background-color, and transform */
-            outline: none;
-            /* Remove default focus outline */
-        }
 
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            border-radius: 25px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-primary:focus {
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
-
-        .custom-checkbox .custom-control-input:checked~.custom-control-label::before {
-            background-color: #007bff;
-        }
-
-        .social-auth-links .btn {
-            border-radius: 25px;
-            margin: 10px 0;
-        }
-
-        .social-auth-links .btn i {
-            margin-right: 10px;
-        }
-
-        .social-auth-links .btn-primary {
-            background-color: #3b5998;
-        }
-
-        .social-auth-links .btn-danger {
-            background-color: #dd4b39;
-        }
 
         .forgot-password-link a {
             color: #007bff;
@@ -169,7 +122,6 @@ crossorigin="anonymous"
             overflow: hidden;
             border-radius: 50%;
             margin: 0 auto 20px;
-            background-color: #fff;
             padding: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
@@ -209,8 +161,7 @@ crossorigin="anonymous"
         .btn-lemon {
             background-color: green;
             border: none;
-            color: #fff;
-            transition: background-color 0.3s;
+    
             width: 220px;
             border-radius: 40px;
         }
@@ -229,13 +180,9 @@ crossorigin="anonymous"
             top: 50%;
             left: 15px;
             transform: translateY(-50%);
-            color: black;
-            transition: color 0.3s;
         }
 
-        .animated-input-group input {
-            padding-left: 40px;
-        }
+
 
         .animated-input-group input:focus+.input-icon i {
             color: #007bff;
