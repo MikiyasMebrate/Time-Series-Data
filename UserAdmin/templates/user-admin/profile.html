@@ -26,7 +26,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form method="post" id="update-user-form" action="{% url 'update-user' pk=user.pk %}" enctype="multipart/form-data">
+                <form method="post" id="update-user-form" action="{% url 'admin-update-profile' pk=user.pk %}" enctype="multipart/form-data">
                   {% csrf_token %}
                   <div class="modal-body">
                       <div class="mb-3">
@@ -101,7 +101,7 @@
                   <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                       <div class="text-center">
-                        <img class="img-circle img-fluid" width="200px" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} " alt="Profile Picture">
+                        <img class="img-circle img-fluid" width="200px" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
                       </div>
                       <h3 class="profile-username text-center">
                         {{user.username | capfirst}}
