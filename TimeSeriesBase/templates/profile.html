@@ -128,7 +128,7 @@
                                   <div class="card card-primary card-outline">
                                     <div class="card-body box-profile">
                                       <div class="text-center">
-                                        <img class="img-circle img-fluid" width="40px" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
+                                        <img class="img-circle img-fluid" width="90px" {% if user.photo %} src="/media/{{user.photo}}" {% else%} src="{% static 'assets/img/avatar.png'%}" {% endif %} alt="Profile Picture">
                                       </div>
                                       <h3 class="profile-username text-center">
                                         {{user.username | capfirst}}
