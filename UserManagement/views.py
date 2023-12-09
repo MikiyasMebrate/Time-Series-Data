@@ -156,7 +156,6 @@ def admin_profile_updated(request):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            form = EditProfileForm()
             messages.success(request, 'Successfully Updated!')
         else:
             messages.error(request, 'Please tye again!')         
@@ -164,7 +163,7 @@ def admin_profile_updated(request):
 
 
 @login_required(login_url='login')
-@admin_user_required
+@staff_user_required
 def staff_profile_updated(request):
     user = CustomUser.objects.get(pk = request.user.pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)

@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'UserManagement',
     'UserAdmin',
     'widget_tweaks',
-    'import_export'
+    'import_export',
+    'auditlog',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auditlog.middleware.AuditlogMiddleware'
 ]
 
 ROOT_URLCONF = 'TimeSeries.urls'
