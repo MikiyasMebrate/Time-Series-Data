@@ -102,8 +102,6 @@ def login_view(request):
                 return redirect('user-admin-index')
             elif user is not None and user.is_staff:
                 login(request, user)
-                if user.is_first_time:
-                    return    
                 return redirect('index')
             else:
                 messages.error(request, 'Invalid Password or Email')
@@ -152,13 +150,12 @@ def admin_profile(request):
 
 @login_required(login_url='login')
 @admin_user_required
-def admin_profile_updated(request, pk):
-    user = get_object_or_404(CustomUser, pk=pk)
+def admin_profile_updated(request):
+    user = CustomUser.objects.get(pk = request.user.pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            form = EditProfileForm()
             messages.success(request, 'Successfully Updated!')
         else:
             messages.error(request, 'Please tye again!')         
@@ -166,7 +163,7 @@ def admin_profile_updated(request, pk):
 
 
 @login_required(login_url='login')
-@admin_user_required
+@staff_user_required
 def staff_profile_updated(request):
     user = CustomUser.objects.get(pk = request.user.pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)

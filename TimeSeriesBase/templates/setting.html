@@ -71,9 +71,8 @@
                                                             </ul>
                                                         </ul>
                                                       </div>
-                                                    <form method="post" id="update-user-form"
-                                                            action="{% url 'staff-update-profile' %}"
-                                                            enctype="multipart/form-data">
+                                                    <form method="post" id="update-user-form" action="{% url 'staff-update-profile' %}" enctype="multipart/form-data">
+
                                                             {% csrf_token %}
                                                             {% if form.errors %}
                                                             <ul class="text-danger">

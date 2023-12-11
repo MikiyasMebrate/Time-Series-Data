@@ -18,7 +18,7 @@ urlpatterns = [
     path('staff-setting/', views.staff_change_password,  name='staff-change-password'),
     
     #User Operation 
-    path('admin-update-profile/<int:pk>/', views.admin_profile_updated, name='admin-update-profile'),
+    path('admin-update-profile/', views.admin_profile_updated, name='admin-update-profile'),
     path('staff-update-profile/', views.staff_profile_updated, name='staff-update-profile'),
 
 
