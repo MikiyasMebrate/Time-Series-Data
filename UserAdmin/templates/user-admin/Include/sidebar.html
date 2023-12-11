@@ -124,24 +124,25 @@ rel="stylesheet"
           </ul>
         </li>
         </li>
-        <li class="nav-item">
+        <li class="nav-item ">
           <a href="{% url 'user-admin-user-list' %}" class="nav-link {% if request.path == '/user-admin/users/' %}active{% endif %}">
             <i class="nav-icon fas fa-users"></i>
             <p>User Lists</p>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="{% url 'trash-topic'%}" class="nav-link {% if request.path == '/user-admin/trash-topic/' %}active{% endif %}">
-           <i class="bi bi-recycle"></i> 
-          
-            <p>Trash (Recyclebin)</p>
-          </a>
-        </li>
-        <li class="nav-item">
+       
+        <li class="nav-item ">
           <a href="{% url 'user-admin-audit'%}" class="nav-link {% if request.path == '/user-admin/audit/' %}active{% endif %}">
            <i class="nav-icon fas fa-history"></i> 
           
             <p>Audit-log</p>
+          </a>
+        </li>
+        <li class="nav-item ml-3">
+          <a href="{% url 'trash-topic'%}" class="nav-link {% if request.path == '/user-admin/trash-topic/' %}active{% endif %}">
+           <i class="bi bi-recycle"></i> 
+          
+            <p>Trash (Recyclebin)</p>
           </a>
         </li>
       </ul>
