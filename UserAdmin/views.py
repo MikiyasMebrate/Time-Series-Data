@@ -8,7 +8,9 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
-from auditlog.models import LogEntry, LogEntryManager
+from auditlog.models import LogEntry
+
+
 def audit_log_list(request):
     auditlog_entries = LogEntry.objects.all()
     return render(request, 'user-admin/audit.html', {'auditlog_entries': auditlog_entries})
