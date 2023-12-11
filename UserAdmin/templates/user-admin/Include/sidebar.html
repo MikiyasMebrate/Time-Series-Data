@@ -137,6 +137,13 @@ rel="stylesheet"
             <p>Trash (Recyclebin)</p>
           </a>
         </li>
+        <li class="nav-item">
+          <a href="{% url 'user-admin-audit'%}" class="nav-link {% if request.path == '/user-admin/audit/' %}active{% endif %}">
+           <i class="nav-icon fas fa-history"></i> 
+          
+            <p>Audit-log</p>
+          </a>
+        </li>
       </ul>
     </nav>
   </div>

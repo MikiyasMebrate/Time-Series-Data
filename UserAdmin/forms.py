@@ -1,19 +1,5 @@
 from django import forms
-from TimeSeriesBase.models import Topic, Location,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
-
-class LocationForm(forms.ModelForm):
-    class Meta:
-        model = Location
-        fields =  ('name_ENG', 'name_AMH')
-        
-        widgets = {
-            'name_ENG' : forms.TextInput(attrs={
-                'class' : 'form-control'
-            }),
-            'name_AMH' : forms.TextInput(attrs={
-                'class' : 'form-control'
-            })
-        }
+from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
 
 class catagoryForm(forms.ModelForm):
     class Meta:

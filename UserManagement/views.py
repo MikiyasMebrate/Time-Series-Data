@@ -59,7 +59,7 @@ def users_list(request):
                  print(email)                
                  return redirect('user-admin-user-list')
             except:
-                messages.error('Please Try Again! Username and Email should be UNIQUE! ')
+                messages.error(request, 'Please Try Again! Username and Email should be UNIQUE! ')
         else:
             messages.error(request, 'Please Try Again!')
 
@@ -130,9 +130,10 @@ def edit_user(request, user_id):
         'user': user,
     })
 
+
 @login_required(login_url='login')
 @admin_user_required
-def user_registration_view(request):
+def admin_profile(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -144,19 +145,41 @@ def user_registration_view(request):
 
     return render(request, 'user-admin/profile.html', {'form': form})
 
+
+
+
 @login_required(login_url='login')
 @admin_user_required
-def update_user(request, pk):
-    user = get_object_or_404(CustomUser, pk=pk)
+def admin_profile_updated(request):
+    user = CustomUser.objects.get(pk = request.user.pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            form = EditProfileForm()
             messages.success(request, 'Successfully Updated!')
         else:
             messages.error(request, 'Please tye again!')         
     return render(request, 'user-admin/profile.html', {'form': form, 'user': user})
+
+
+@login_required(login_url='login')
+@staff_user_required
+def staff_profile_updated(request):
+    user = CustomUser.objects.get(pk = request.user.pk)
+    form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated!')
+        else:
+            messages.error(request, 'Please tye again!')  
+
+    context = {
+        'form' : form
+    }       
+    return render(request, 'setting.html', context)
+
+
 
 
 @login_required(login_url='login')
@@ -176,12 +199,13 @@ def activate_deactivate_user(request, user_id):
 
     
 @login_required(login_url='login')
-@admin_user_required
 def admin_change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.is_first_time = False
+            user.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Successfully Updated!')
     else:
@@ -191,7 +215,20 @@ def admin_change_password(request):
 
 
 
-
+@login_required(login_url='login')
+def staff_change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_first_time = False
+            user.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Successfully Updated!')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request,'password.html', {'form': form})
 
 
 

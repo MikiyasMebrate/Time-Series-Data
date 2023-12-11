@@ -37,6 +37,9 @@
               <div class="row justify-content-center">
                 {% include 'user-admin/include/messages.html'%}
                 <div class="col-md-8 ">
+                  {% if request.user.is_first_time%}
+                  <h2 class="text-danger text-center">Please Change Your Password!</h2>
+                  {% endif %}
                   <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                       <div class="text-center">
@@ -51,22 +54,25 @@
                   </div>
                 </div>
                 <div class="col-md-8">
-                  <div class="card">
-                    <div class="card-header p-2 ml-5">
-                      <ul class="nav nav-pills ml-5">
-                        <li class="nav-item ml-5">
-                          <a class="nav-link ml-5" href="#settings" data-toggle="tab"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-lock" viewBox="0 0 16 16">
-                            <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a1.9 1.9 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>
-                          </svg>changepassword</a>
-                        </li>
-                      </ul>
-                    </div>
-
+                  <div class="card pt-3">
                     <div class="card-body">
                       <div class="tab-content">
                           <div class="active tab-pane" id="settings">
                               <form method="POST" >
                                 {% csrf_token %}
+                                
+                                {% if formChangePassword.errors %}
+                               <div class="text-danger">
+                                 <ul>
+                                   {% for field in formChangePassword %}
+                                     {% if field.errors %}
+                                       <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+                                     {% endif %}
+                                   {% endfor %}
+                                 </ul>
+                               </div>
+                             {% endif %}
+
                                 <div class="form-group row">
                                  <label for="oldPassword" class="col-sm-2 col-form-label"
                                    >Old Password</label
@@ -101,19 +107,6 @@
                                      <input class="btn btn-danger text-center" type="submit" value="Change My Password"> </div>
                                </form>
 
-                               <div class="mt-4 text-danger">
-                                {% if formChangePassword.errors %}
-                               <div class="error">
-                                 <ul>
-                                   {% for field in formChangePassword %}
-                                     {% if field.errors %}
-                                       <li>{{ field.label }}: {{ field.errors|striptags }}</li>
-                                     {% endif %}
-                                   {% endfor %}
-                                 </ul>
-                               </div>
-                             {% endif %}
-                               </div>
 
 
                           </div>

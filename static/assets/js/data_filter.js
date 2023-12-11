@@ -431,7 +431,11 @@ function filterData() {
             $("#dataDisplay").show();
             // Show table
             $("#table-container").show();
-            $("#table_card").show();
+            let table_card = document.getElementById("table_card")
+            table_card.style.display = "block"
+            let list_table = document.getElementById("list_table_view")
+            list_table.style.display = "block"
+            
 
             // Hide chart
             $("#chart").hide();

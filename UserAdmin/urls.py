@@ -3,7 +3,8 @@ from . import views
 from UserAdmin import views
 urlpatterns = [
     path('', views.index, name="user-admin-index"),
-    
+    #Audit 
+    path('audit/', views.audit_log_list, name='user-admin-audit'),
     #JSON
     path('json/', views.json,name="json"),
     path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),

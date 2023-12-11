@@ -3,6 +3,12 @@ from django.db import models
 from UserManagement.models import CustomUser
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.db import models
+from auditlog.registry import auditlog
+
+
+
+
 
 
 class Topic(models.Model):
@@ -213,30 +219,16 @@ class Source(models.Model):
     is_deleted = models.BooleanField(default = False)
     def __str__(self):
         return self.title_ENG
-    
 
 
 
-class Book(models.Model):
-    title_ENG = models.CharField(max_length=50)
-    title_AMH = models.CharField(max_length=50)
-    updated =  models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default = False)
-    user = models.ForeignKey(CustomUser, on_delete = models.SET_NULL, null=True )
-    def __str__(self):
-        return self.title_ENG
-    
-
-
-class Location(models.Model):
-    name_ENG = models.CharField(max_length=50) 
-    name_AMH = models.CharField(max_length=50) 
-    updated =  models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        ordering = ['-created','-updated']
-    
-    def __str__(self):
-        return self.name_ENG
+auditlog.register(Topic)
+auditlog.register(Category)
+auditlog.register(Indicator)
+auditlog.register(Indicator_Point)
+auditlog.register(DataPoint)
+auditlog.register(Quarter)
+auditlog.register(Month)
+auditlog.register(Measurement)
+auditlog.register(DataValue)
+auditlog.register(Source)
