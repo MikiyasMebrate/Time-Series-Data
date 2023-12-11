@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from auditlog.registry import auditlog
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -9,3 +10,8 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD='email'
     REQUIRED_FIELDS=['first_name','username','last_name']
     is_first_time = models.BooleanField(default = True)
+
+
+
+
+auditlog.register(CustomUser)
