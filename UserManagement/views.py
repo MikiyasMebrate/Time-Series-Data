@@ -147,35 +147,11 @@ def admin_profile(request):
 
 
 
-<<<<<<< HEAD
 
 @login_required(login_url='login')
 @admin_user_required
 def admin_profile_updated(request):
     user = CustomUser.objects.get(pk = request.user.pk)
-=======
-@login_required(login_url='login')
-def staff_profile(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            
-            form = CustomUserCreationForm()   
-    else:
-        form = CustomUserCreationForm()
-
-    return render(request, 'profile.html', {'form': form})
-
-
-
-
-
-@login_required(login_url='login')
-@admin_user_required
-def admin_profile_updated(request, pk):
-    user = get_object_or_404(CustomUser, pk=pk)
->>>>>>> 6d433e7 (user page updated)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
     if request.method == 'POST':
         if form.is_valid():
@@ -192,18 +168,16 @@ def admin_profile_updated(request, pk):
 =======
 @admin_user_required
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> a1f2441 (minor change on decoraters)
+=======
+>>>>>>> d3040dc (minor change on decoraters)
 def staff_profile_updated(request):
     user = CustomUser.objects.get(pk = request.user.pk)
-=======
-def staff_profile_updated(request, pk):
-    user = get_object_or_404(CustomUser, pk=pk)
->>>>>>> 6d433e7 (user page updated)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-<<<<<<< HEAD
             messages.success(request, 'Successfully Updated!')
         else:
             messages.error(request, 'Please tye again!')  
@@ -212,13 +186,6 @@ def staff_profile_updated(request, pk):
         'form' : form
     }       
     return render(request, 'setting.html', context)
-=======
-            form = EditProfileForm()
-            messages.success(request, 'Successfully Updated!')
-        else:
-            messages.error(request, 'Please tye again!')         
-    return render(request, 'profile.html', {'form': form, 'user': user})
->>>>>>> 6d433e7 (user page updated)
 
 
 

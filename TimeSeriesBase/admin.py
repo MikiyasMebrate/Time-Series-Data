@@ -19,6 +19,11 @@ admin.site.register(models.Source)
 
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> d3040dc (minor change on decoraters)
 
 class searchIndicator(admin.ModelAdmin):
     search_fields = ['title_ENG', 'title_AMH']  # Replace field1 and field2 with the fields you want to enable search on
