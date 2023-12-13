@@ -186,23 +186,17 @@ function filterData() {
           } else {
             document.getElementById('seriesAvailableBadge').innerHTML = 0;
           }
+
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
             updateFilterSelection();
           });
 
           document.getElementById('indicator_list_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>'
           document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
+
           $('#indicator_list_filter').html(selectAll + selectIndicator);
 
-          if (selectIndicator.trim() !== '') {
-            // Attach event handler for 'Select All' for indicators
-            $('#select_all').change(function () {
-              var checkedStatus = this.checked;
-              $('input[name="indicator_lists"]').each(function () {
-                $(this).prop('checked', checkedStatus);
-              });
-            });
-          }
+
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
             updateFilterSelection();
             if (indicatorSelected > 0) {
@@ -233,6 +227,7 @@ function filterData() {
                 '  <label class="form-label pl-1" for="select_all_year_filter" style="font-size: small;"> Select All</label>' +
                 '</div>';
             }
+
             var viewRecentYear = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
               '<div class="filter-submenu mb-2">' +
               '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
@@ -365,62 +360,68 @@ function filterData() {
               }
             });
           };
-          //Select-all Button for Indicator
-          let selectAllIndicator = document.getElementById("select_all");
-          let selectedIndictorId = [];
-          selectAllIndicator.addEventListener("change", () => {
 
-            let indicatorListCheckAll =
-              document.getElementsByName("indicator_lists");
+          // Update the Select All logic for indicators
+          let selectAllIndicator = document.getElementById("select_all");
+          let selectedIndicatorId = [];
+
+          selectAllIndicator.addEventListener("change", () => {
+            let indicatorListCheckAll = document.getElementsByName("indicator_lists");
 
             if (selectAllIndicator.checked) {
               indicatorListCheckAll.forEach((event) => {
                 event.checked = true;
-                if (!selectedIndictorId.includes(event.value)) {
-                  selectedIndictorId.push(event.value);
+                if (!selectedIndicatorId.includes(event.value)) {
+                  selectedIndicatorId.push(event.value);
                 }
-                //Active apply Button
-                yearList();
               });
+              // Active apply Button
+              yearList();
             } else {
               indicatorListCheckAll.forEach((event) => {
                 event.checked = false;
-                try {
-                  selectedIndictorId.pop(event.value);
-                } catch {
-                  null;
-                }
               });
+              selectedIndicatorId = [];
+              // Active apply Button
+              yearList();
             }
           });
 
-          //indicator list HTML
-          let indicatorHtmlList =
-            document.getElementsByName("indicator_lists");
+          // Push selected Indicator
+          let indicatorHtmlList = document.getElementsByName("indicator_lists");
 
-          //Display Indicator into Table
-
-          //Push selected Indicator
           indicatorHtmlList.forEach((indicatorCheckBox) => {
             indicatorCheckBox.addEventListener(
               "change",
               (eventIndicator) => {
-                if (
-                  eventIndicator.target.checked &&
-                  !selectedIndictorId.includes(eventIndicator.target.value)
-                ) {
-                  selectedIndictorId.push(eventIndicator.target.value);
+                if (eventIndicator.target.checked) {
+                  selectedIndicatorId.push(eventIndicator.target.value);
                 } else {
-                  try {
-                    selectedIndictorId.pop(eventIndicator.target.value);
-                  } catch {
-                    null;
-                  }
+                  selectedIndicatorId = selectedIndicatorId.filter(id => id !== eventIndicator.target.value);
                 }
+                // Update the 'Select All' checkbox state based on individual checkboxes
+                selectAllIndicator.checked = indicatorHtmlList.length === selectedIndicatorId.length;
                 yearList();
               }
             );
           });
+
+          // Attach event handler for 'Select All' for indicators
+          $('#select_all').change(function () {
+            var checkedStatus = this.checked;
+            $('input[name="indicator_lists"]').each(function () {
+              $(this).prop('checked', checkedStatus);
+              // Update the selectedIndicatorId array accordingly
+              if (checkedStatus && !selectedIndicatorId.includes($(this).val())) {
+                selectedIndicatorId.push($(this).val());
+              } else if (!checkedStatus) {
+                selectedIndicatorId = selectedIndicatorId.filter(id => id !== $(this).val());
+              }
+            });
+            // Trigger the change event for the indicators
+            $('input[name="indicator_lists"]').trigger('change');
+          });
+
 
           //Display Data with Apply Button
           $('#button').on('click', '#applyButton', function () {
@@ -435,7 +436,7 @@ function filterData() {
             table_card.style.display = "block"
             let list_table = document.getElementById("list_table_view")
             list_table.style.display = "block"
-            
+
 
             // Hide chart
             $("#chart").hide();
@@ -461,7 +462,7 @@ function filterData() {
                   `;
 
             selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
-              if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted === false) {
+              if (String(for_category_id) === String(selectedCategoryId) && selectedIndicatorId.includes(String(id)) && is_deleted === false) {
                 let title_amharic = "";
                 if (!title_AMH === null)
                   title_amharic = " - " + title_AMH;
@@ -683,7 +684,7 @@ function filterData() {
               let indicators = [];
 
               selectIndicator = data.indicators.map(({ title_ENG, id, for_category_id, is_deleted }) => {
-                if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && !is_deleted) {
+                if (String(for_category_id) === String(selectedCategoryId) && selectedIndicatorId.includes(String(id)) && !is_deleted) {
                   let indicatorData = {
                     name: title_ENG,
                     data: []

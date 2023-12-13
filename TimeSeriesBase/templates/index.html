@@ -254,17 +254,17 @@
 
                 <!--Landing Graph Start-->
                 <div class="container mt-5">
-                  <h3 class="text-center">CPI Time Series</h3>
+                  <h3 class="text-center">Some Time Series Datas</h3>
                   <hr />
                   <div class="row justify-content-center">
                     <!--Bar Chart Start-->
                     <div class="col-md-6">
                       <div class="card card-primary card-outline">
                         <div class="card-header">
-                          <h3 class="card-title">
-                            <i class="far fa-chart-bar"></i>
-                            Bar Chart
-                          </h3>
+                            <h3 class="card-title d-flex" >
+                                <i class="far fa-chart-bar mr-1"></i>
+                                <p class='ml-1 fs-4 text-success' id='barchart_head_id'></p>
+                              </h3>
                           <div class="card-tools">
                             <button
                               type="button"
@@ -289,10 +289,10 @@
                     <div class="col-md-6">
                       <div class="card card-primary card-outline">
                         <div class="card-header">
-                          <h3 class="card-title">
-                            <i class="far fa-chart-bar"></i>
-                            Line Chart
-                          </h3>
+                            <h3 class="card-title d-flex" >
+                                <i class="far fa-chart-bar mr-1"></i>
+                                <p class='ml-1 fs-4 text-success' id='linechart_head_id'></p>
+                              </h3>
                           <div class="card-tools">
                             <button
                               type="button"
@@ -338,7 +338,12 @@
     <script src="{% static "assets/plugins/flot/plugins/jquery.flot.resize.js" %}"></script>
   
     <script src="{% static "assets/plugins/flot/plugins/jquery.flot.pie.js" %}"></script>
-  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
     <script src="{% static "assets/dist/js/demo.js" %}"></script>
     <script src="{% static "assets/js/home_page_chart.js" %}"></script>
 
