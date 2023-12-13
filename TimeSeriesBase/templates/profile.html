@@ -11,6 +11,67 @@
   <!--Navbar End-->
 
 
+<<<<<<< HEAD
+=======
+    <!--Data Add Modal Start-->
+    <div class="modal fade" id="userRegistration" tabindex="-1" aria-labelledby="userRegistrationLabel" aria-hidden="true">
+       <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-primary text-white">
+                  <h5 class="modal-title" id="userRegistrationLabel">
+                       Update User Profile
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form method="post" id="update-user-form" action="{% url 'staff-update-profile' pk=user.pk %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="modal-body">
+                      <div class="mb-3">
+                          <label for="{{ form.username.id_for_label }}" class="col-form-label">Username:</label>
+                          <input type="text" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" value="{{ user.username }}" />
+                      </div>
+                      <div class="row">
+                          <div class="col mb-3">
+                              <label for="{{ form.first_name.id_for_label }}" class="col-form-label">First Name:</label>
+                              <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" value="{{ user.first_name }}" />
+                          </div>
+                          <div class="col mb-3">
+                              <label for="{{ form.last_name.id_for_label }}" class="col-form-label">Last Name:</label>
+                              <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" value="{{ user.last_name }}" />
+                          </div>
+                      </div>
+                      <div class="mb-3">
+                          <label for="{{ form.email.id_for_label }}" class="col-form-label">Email:</label>
+                          <input type="email" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" value="{{ user.email }}" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="{{ form.photo.id_for_label }}" class="col-form-label">Photo:</label>
+                        {{form.photo}}
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+
+                  {% if form.errors %}
+                       <ul class="errorlist">
+                        {% for field, errors in form.errors.items %}
+                      {% for error in errors %}
+                       <li>{{ field }}: {{ error }}</li>
+                     {% endfor %}
+                     {% endfor %}
+                     </ul>
+                      {% endif %}
+                    </form>
+              </div>
+              
+          </div>
+      </div>
+  </div>
+  <!--Data Add Modal End-->
+>>>>>>> 6d433e7 (user page updated)
 
 
   <div style="margin-top: 100px;"  class="container emp-profile">

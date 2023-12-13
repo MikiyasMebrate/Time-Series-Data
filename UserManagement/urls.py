@@ -12,14 +12,23 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     #Profile  
     path('admin-profile/', views.admin_profile, name="user-admin-profile"),
+<<<<<<< HEAD
+=======
+    path('staff-profile/', views.staff_profile,name='staff-profile'),
+>>>>>>> 6d433e7 (user page updated)
 
     #Password 
     path('admin-setting/', views.admin_change_password, name='user-admin-change-password'),
     path('staff-setting/', views.staff_change_password,  name='staff-change-password'),
     
     #User Operation 
+<<<<<<< HEAD
     path('admin-update-profile/', views.admin_profile_updated, name='admin-update-profile'),
     path('staff-update-profile/', views.staff_profile_updated, name='staff-update-profile'),
+=======
+    path('admin-update-profile/<int:pk>/', views.admin_profile_updated, name='admin-update-profile'),
+    path('staff-update-profile/<int:pk>/', views.staff_profile_updated, name='staff-update-profile'),
+>>>>>>> 6d433e7 (user page updated)
 
 
     path('users/', views.users_list, name="user-admin-user-list"),
