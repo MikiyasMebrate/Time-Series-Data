@@ -220,7 +220,6 @@ class Source(models.Model):
         return self.title_ENG
 
 
-<<<<<<< HEAD
 
 auditlog.register(Topic)
 auditlog.register(Category)
@@ -232,16 +231,3 @@ auditlog.register(Month)
 auditlog.register(Measurement)
 auditlog.register(DataValue)
 auditlog.register(Source)
-=======
-class Location(models.Model):
-    name_ENG = models.CharField(max_length=50) 
-    name_AMH = models.CharField(max_length=50) 
-    updated =  models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        ordering = ['-created','-updated']
-    
-    def __str__(self):
-        return self.name_ENG
->>>>>>> a1f2441 (minor change on decoraters)
