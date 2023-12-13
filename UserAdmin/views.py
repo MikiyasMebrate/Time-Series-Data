@@ -177,7 +177,7 @@ def filter_indicator(request, pk):
     indicators = list(Indicator.objects.all().values())
     year = list(DataPoint.objects.all().values())
     value = list(DataValue.objects.all().values())
-    indicator_point = list(Indicator_Point.objects.all().values())
+    indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
 
     def child_list(parent, space):
@@ -270,12 +270,14 @@ def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
     indicator = Indicator.objects.all()
+    indicator_point = Indicator_Point.objects.all()
     year = DataPoint.objects.all()
     value = DataValue.objects.all()
     
     topic_data = list(topic.values())
     category_data = list(category.values())
     indicator_data = list(indicator.values())
+    indicator_point_data = list(indicator_point.values())
     year = list(year.values())
     values = list(value.values())
 
@@ -285,6 +287,7 @@ def json(request):
         'topics': topic_data,
         'categories': category_data,
         'indicators':indicator_data,
+        'indicator_point' : indicator_point_data,
         'year' : year,
         'value' : values
     }
@@ -405,6 +408,46 @@ def data_list_detail(request, pk):
                     messages.error(request, 'Please Try Again!')
             else:
                 messages.error(request, 'Please Try Again not valid!')
+        if 'indicatorYearId' in request.POST:
+            is_actual = request.POST.get('isActualInput')
+            is_actual_data_point_id = request.POST.get('indicatorYearId')
+
+            print(is_actual_data_point_id)
+            try:    
+                indicator_point = Indicator_Point.objects.get(for_indicator = indicator, for_datapoint = is_actual_data_point_id)
+            except:
+                indicator_point = None
+
+            try:
+                data_point = DataPoint.objects.get(pk = is_actual_data_point_id)
+            except:
+                data_point = None
+
+            #Is Indicator Point is Found
+            print(data_point)
+            if(indicator_point):
+                if(is_actual):
+                    indicator_point.is_actual = True
+                else:
+                    indicator_point.is_actual = False
+                 
+                indicator_point.save()
+                messages.success(request, 'Successfully Actual Point updated!')
+            elif(data_point):
+                indicator_obj = Indicator_Point()
+                indicator_obj.for_indicator = indicator
+                indicator_obj.for_datapoint = data_point
+                if(is_actual):
+                    indicator_obj.is_actual = True
+                else:
+                    indicator_obj.is_actual = False
+                
+                indicator_obj.save()
+                messages.success(request, 'Successfully Actual Point Added!')
+            else:
+                messages.error(request, 'Please Try Again!')
+                
+            
                        
     context = {
         'form' : form,

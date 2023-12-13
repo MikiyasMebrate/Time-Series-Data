@@ -67,13 +67,12 @@ data_point_type = [
 
 class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
-    for_datapoint = models.ForeignKey("DataPoint",on_delete=models.CASCADE)
-    for_indicator = models.ForeignKey("Indicator",on_delete=models.CASCADE)
-    for_measurement = models.ManyToManyField('Measurement', blank=True)
+    for_datapoint = models.ForeignKey("DataPoint",on_delete=models.SET_NULL, null = True)
+    for_indicator = models.ForeignKey(Indicator,on_delete=models.SET_NULL, null = True)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
     
     def __str__(self):
-         return self.for_indicator.title_ENG + " " + self.for_datapoint.year_EC + "E.C" +" " + self.type_of
+         return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual)
 
 
 class DataPoint(models.Model):

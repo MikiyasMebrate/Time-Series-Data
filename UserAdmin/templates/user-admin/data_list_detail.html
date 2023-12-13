@@ -160,6 +160,34 @@
     </div>
   
 
+<!-- Is-Actual Modal -->
+<div class="modal fade" id="isActualModal" tabindex="-1" aria-labelledby="isActualModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+
+    <form method="post">
+      {% csrf_token %}
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="isActualModalLabel">Actualness </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="indicatorYearId" name="indicatorYearId">
+        <label class="form-label" for="">Is Actual</label>
+        <input type="checkbox" name="isActualInput" id="isActualInput" class="form-check">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+    </div>
+  </form>
+
+
+  </div>
+</div>
+
 
   {% include 'user-admin/include/navbar.html'%}
   {% include 'user-admin/include/sidebar.html'%}
