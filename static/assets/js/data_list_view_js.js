@@ -151,7 +151,7 @@ let filterData = () => {
               );
 
               let indicator_type = `  
-              <span class="fw-bold me-2"> Yearly:  <input type="radio" name="indicator_type_button" value="yearly" id=""></span>
+              <span class="fw-bold me-2"> Yearly:  <input type="radio"  checked name="indicator_type_button" value="yearly" id=""></span>
               <span class="fw-bold me-2"> Monthly:  <input type="radio" name="indicator_type_button" value="monthly" id=""></span>
               <span class="fw-bold me-2"> Quarterly:  <input type="radio" name="indicator_type_button" value="quarterly" id=""></span> 
               <hr class="pt-1">

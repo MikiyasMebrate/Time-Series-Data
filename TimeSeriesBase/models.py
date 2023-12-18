@@ -32,6 +32,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name_ENG
 
+
+data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+
+
 class Indicator(models.Model):
     title_ENG = models.CharField(max_length=100) 
     title_AMH = models.CharField(max_length=100 , null=True, blank=True)
@@ -40,7 +48,7 @@ class Indicator(models.Model):
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
     measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
-      
+    type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True) 
 
     def str(self):
         return self.get_full_path()
@@ -60,17 +68,13 @@ class Indicator(models.Model):
 
 
 
-data_point_type = [
-    ('yearly', 'Yearly'),
-    ('quarterly', 'Quarterly'),
-    ('monthly', 'Monthly'),
-]
+
 
 class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
     for_datapoint = models.ForeignKey("DataPoint",on_delete=models.SET_NULL, null = True)
     for_indicator = models.ForeignKey(Indicator,on_delete=models.SET_NULL, null = True)
-    type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
+   
     
     def __str__(self):
          return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual)

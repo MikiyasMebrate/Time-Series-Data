@@ -464,7 +464,6 @@ def data_list_detail(request, pk):
 @admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
-    indicator_point = IndicatorPointForm(request.POST or None)
     
     if request.method == 'POST':
         if add_indicator.is_valid():
@@ -475,7 +474,6 @@ def indicator(request):
     
     context = {
         'add_indicator' : add_indicator,
-        'indicator_point' : indicator_point
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -493,11 +491,15 @@ def indicator_list(request, pk):
             if form.is_valid():
                 title_ENG = form.cleaned_data['title_ENG']
                 title_AMH = form.cleaned_data['title_AMH']
+                category_obj = form.cleaned_data['for_category']
+                type_of_obj = form.cleaned_data['type_of']
                 indicator_id = request.POST.get('indicator_Id')
     
                 indicator_obj = Indicator.objects.get(id = indicator_id)
                 indicator_obj.title_AMH = title_AMH
                 indicator_obj.title_ENG = title_ENG
+                indicator_obj.for_category = category_obj
+                indicator_obj.type_of = type_of_obj
                 indicator_obj.save()
                 form = IndicatorForm()
                 messages.success(request, 'Successfully Updated')
