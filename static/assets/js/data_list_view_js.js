@@ -28,8 +28,10 @@ let filterData = () => {
       topicHtmlList = document.getElementsByName("topic_lists");
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
-          document.getElementById("indicator_list_filter").innerHTML =
+          document.getElementById("indicator_list_filter_header").innerHTML =
             ' <p class="text-danger">Please Select Indicator</p>';
+          document.getElementById("indicator_list_filter_body").innerHTML = "";
+
           document.getElementById("Year_list_filter").innerHTML =
             ' <p class="text-danger">Please Select Indicator</p>';
           displayApplyButton.style.display = "none";
@@ -115,13 +117,29 @@ let filterData = () => {
             categoryRadio.addEventListener("change", (eventCategory) => {
               document.getElementById("Year_list_filter").innerHTML =
                 ' <p class="text-danger">Please Select Category</p>';
-                document.getElementById("indicator_list_filter").innerHTML =
+              document.getElementById(
+                "indicator_list_filter_header"
+              ).innerHTML =
                 ' <p class="text-danger">Please Select Indicator</p>';
+              document.getElementById("indicator_list_filter_body").innerHTML =
+                "";
               displayApplyButton.style.display = "none";
 
               let selectedCategoryId = eventCategory.target.value;
-              selectIndicator = data.indicators.map(
-                ({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+
+              let selectYearIndicator = [];
+              let selectQuarterlyIndicator = [];
+              let selectMonthlyIndicator = [];
+              //Yearly Indicator
+              data.indicators.map(
+                ({
+                  title_ENG,
+                  title_AMH,
+                  id,
+                  for_category_id,
+                  is_deleted,
+                  type_of,
+                }) => {
                   if (
                     String(for_category_id) === String(selectedCategoryId) &&
                     is_deleted == false
@@ -132,33 +150,80 @@ let filterData = () => {
                       title_amharic = " - " + title_AMH;
                     }
 
-                    return `
-                            <li>
-                            <div class="flex-grow-2 ">
-                               <div class="row ">
-                                  <div class="col-1"> 
-                                       <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
-                                  </div>
-                                  <div class="col-11">
-                                     <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
-                                 </div>
+                    if (String(type_of) == "yearly") {
+                      selectYearIndicator.push(
+                        `
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
                               </div>
-                            </div>
-                          </li>
-                            `;
+                              <div class="col-11">
+                                 <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                             </div>
+                          </div>
+                        </div>
+                      </li>
+                        `
+                      );
+                    } else if (String(type_of) == "quarterly") {
+                      selectQuarterlyIndicator.push(
+                        `
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
+                              </div>
+                              <div class="col-11">
+                                 <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                             </div>
+                          </div>
+                        </div>
+                      </li>
+                        `
+                      );
+                    } else if (String(type_of) == "monthly") {
+                      selectMonthlyIndicator.push(
+                        `
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
+                              </div>
+                              <div class="col-11">
+                                 <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                             </div>
+                          </div>
+                        </div>
+                      </li>
+                        `
+                      );
+                    }
                   }
                 }
               );
 
-              let indicator_type = `  
-              <span class="fw-bold me-2"> Yearly:  <input type="radio"  checked name="indicator_type_button" value="yearly" id=""></span>
-              <span class="fw-bold me-2"> Monthly:  <input type="radio" name="indicator_type_button" value="monthly" id=""></span>
-              <span class="fw-bold me-2"> Quarterly:  <input type="radio" name="indicator_type_button" value="quarterly" id=""></span> 
+              let indicator_type = ` 
+              <div class="row fw-bold">
+                   <div class="col">
+                      Yr <span class="badge bg-danger">${selectYearIndicator.length}</span>:  <input type="radio"  checked name="indicator_type_input" value="yearly" id=""> 
+                   </div>
+                   <div class="col">
+                       Qr <span class="badge bg-danger">${selectQuarterlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="quarterly" id=""> 
+                   </div>
+                   <div class="col">
+                        Mon <span class="badge bg-danger">${selectMonthlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="monthly" id=""> 
+                   </div>
+              </div>
+
               <hr class="pt-1">
-              ` 
+              `;
 
               let selectAll = `
-                        <li>
+                        <li id="">
                           <div class="flex-grow-2 ">
                              <div class="row ">
                                 <div class="col-1"> 
@@ -173,15 +238,95 @@ let filterData = () => {
                         </li>
                         `;
 
-              let indicatorHtml = document.getElementById(
-                "indicator_list_filter"
+              let indicatorHtmlHeader = document.getElementById(
+                "indicator_list_filter_header"
               );
+              let indicatorHtmlBody = document.getElementById(
+                "indicator_list_filter_body"
+              );
+              let indicatorHtmlSelectAll = document.getElementById(
+                "indicator_list_filter_select_all"
+              );
+              let indicatorListCheckAll =
+                document.getElementsByName("indicator_lists");
+              //indicator list HTML
+              let indicatorHtmlList =
+                document.getElementsByName("indicator_lists");
+              indicatorHtmlSelectAll.innerHTML = selectAll;
 
-              if (selectIndicator.join("") == "") {
-                indicatorHtml.innerHTML =
-                  '<p class="text-danger">Please select Another Indicator</p>';
+              let displayNone = (element) => {
+                element.style.display = "none";
+              };
+              let displayBlock = (element) => {
+                element.style.display = "block";
+              };
+
+              if (
+                selectYearIndicator.length == 0 &&
+                selectQuarterlyIndicator.length == 0 &&
+                selectMonthlyIndicator.length == 0
+              ) {
+                indicatorHtmlHeader.innerHTML =
+                  '<p class="text-danger">Please select Another Category, No data Found! </p>';
+                indicatorHtmlBody.innerHTML = "";
               } else {
-                indicatorHtml.innerHTML = indicator_type + selectAll + selectIndicator.join("");
+                indicatorHtmlHeader.innerHTML = indicator_type;
+
+                if (selectYearIndicator.length == 0) {
+                  indicatorHtmlBody.innerHTML =
+                    '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                  displayNone(indicatorHtmlSelectAll);
+                } else {
+                  indicatorHtmlBody.innerHTML = selectYearIndicator.join("");
+
+                  displayBlock(indicatorHtmlSelectAll);
+                }
+
+                let selectedIndicatorType = document.getElementsByName(
+                  "indicator_type_input"
+                );
+
+                selectedIndicatorType.forEach((type) => {
+                  type.addEventListener("change", () => {
+                    
+                    if (String(type.value) == "yearly") {
+                      if (selectYearIndicator.length == 0) {
+                        displayNone(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                      } else {
+                        displayBlock(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          selectYearIndicator.join("");
+                      }
+                    } else if (String(type.value) == "quarterly") {
+                      if (selectQuarterlyIndicator.length == 0) {
+                        displayNone(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                      } else {
+                        displayBlock(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          selectQuarterlyIndicator.join("");
+                      }
+                    } else if (String(type.value) == "monthly") {
+                      if (selectMonthlyIndicator.length == 0) {
+                        displayNone(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                      } else {
+                        displayBlock(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          selectMonthlyIndicator.join("");
+                      }
+                    }
+
+                    // indicatorListCheckAll =
+                    //   document.getElementsByName("indicator_lists");
+                    // indicatorHtmlList =
+                    //   document.getElementsByName("indicator_lists");
+                  });
+                });
               }
 
               //Return Selected Year
@@ -491,9 +636,6 @@ let filterData = () => {
               let selectedIndictorId = [];
               selectAllIndicator.addEventListener("change", () => {
                 displayApplyButton.style.display = "none";
-                let indicatorListCheckAll =
-                  document.getElementsByName("indicator_lists");
-
                 if (selectAllIndicator.checked) {
                   indicatorListCheckAll.forEach((event) => {
                     event.checked = true;
@@ -515,13 +657,14 @@ let filterData = () => {
                 }
               });
 
-              //indicator list HTML
-              let indicatorHtmlList =
-                document.getElementsByName("indicator_lists");
-
               //Display Indicator into Table
 
               //Push selected Indicator
+              let selectedIndicatorType = document.getElementsByName(
+                "indicator_type_input"
+              );
+
+              // For Fist TIme Checked Indicator
               indicatorHtmlList.forEach((indicatorCheckBox) => {
                 indicatorCheckBox.addEventListener(
                   "change",
@@ -529,7 +672,9 @@ let filterData = () => {
                     displayApplyButton.style.display = "none";
                     if (
                       eventIndicator.target.checked &&
-                      !selectedIndictorId.includes(eventIndicator.target.value)
+                      !selectedIndictorId.includes(
+                        eventIndicator.target.value
+                      )
                     ) {
                       selectedIndictorId.push(eventIndicator.target.value);
                     } else {
@@ -544,6 +689,37 @@ let filterData = () => {
                 );
               });
 
+
+              selectedIndicatorType.forEach((type) => {
+                type.addEventListener("change", () => {
+                  indicatorHtmlList.forEach((indicatorCheckBox) => {
+                    indicatorCheckBox.addEventListener(
+                      "change",
+                      (eventIndicator) => {
+                        displayApplyButton.style.display = "none";
+                        if (
+                          eventIndicator.target.checked &&
+                          !selectedIndictorId.includes(
+                            eventIndicator.target.value
+                          )
+                        ) {
+                          selectedIndictorId.push(eventIndicator.target.value);
+                        } else {
+                          try {
+                            selectedIndictorId.pop(eventIndicator.target.value);
+                          } catch {
+                            null;
+                          }
+                        }
+                        yearList();
+                      }
+                    );
+                  });
+                });
+              });
+
+
+              
 
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
@@ -562,7 +738,7 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(
+                selectYearIndicator = data.indicators.map(
                   ({
                     title_ENG,
                     title_AMH,
@@ -752,8 +928,6 @@ let filterData = () => {
                 });
               });
               //End Indicator table
-
-
             });
           });
         });
@@ -762,94 +936,3 @@ let filterData = () => {
 };
 
 filterData();
-
-//AJAX SUBMIT FORM
-let form = document.getElementById("addDataForm");
-$(document).on("submit", "#addDataForm", function (e) {
-  e.preventDefault();
-  $.ajax({
-    type: "POST",
-    url: "/user-admin/data-list/",
-    data: {
-      topic: $("#id_topic_option").val(),
-      category: $("#id_categories_option").val(),
-      is_interval: $("#is_interval").val(),
-      year: $("#id_year_option").val(),
-      indicator: $("#id_indicators_option").val(),
-      is_actual: $("#is_actual").val(),
-      type: $("#id_type_option").val(),
-      value: $("#id_value").val(),
-      source: $("#id_source").val(),
-    },
-    beforeSend: function (xhr, settings) {
-      xhr.setRequestHeader(
-        "X-CSRFToken",
-        $("input[name=csrfmiddlewaretoken]").val()
-      );
-    },
-    success: function (response) {
-      if (response == "Successfully Added!") {
-        swal({
-          title: "Successfully Added! Do you want to Add Another data?",
-          icon: "success",
-          buttons: ["No", "Yes"],
-          dangerMode: true,
-        }).then((willProceed) => {
-          if (willProceed) {
-            const selectElement = document.getElementById(
-              "id_indicators_option"
-            );
-            selectElement.selectedIndex = 0;
-            const value = (document.getElementById("id_value").value = "");
-          } else {
-            location.reload();
-          }
-        });
-      } else if (response == "The Data Already Added") {
-        swal({
-          title: "The Data Already Submitted!",
-          icon: "error",
-          buttons: ["No", "Re-Enter"],
-          dangerMode: true,
-        }).then((willProceed) => {
-          if (willProceed) {
-          } else {
-            location.reload();
-          }
-        });
-      } else {
-        swal({
-          title: "Please Try Again!",
-          icon: "error",
-          buttons: ["No", "Re-Enter"],
-          dangerMode: true,
-        }).then((willProceed) => {
-          if (willProceed) {
-          } else {
-          }
-        });
-      }
-    },
-
-    error: function (error) {
-      // handle any errors that occurred during the request
-      console.log(error);
-      swal({
-        title: "Please Try Again!",
-        icon: "error",
-        buttons: ["No", "Yes"],
-        dangerMode: true,
-      }).then((willProceed) => {
-        if (willProceed) {
-          const selectElement = document.getElementById("id_indicators_option");
-          selectElement.selectedIndex = 0;
-
-          const value = (document.getElementById("id_value").value = "");
-        } else {
-          // No option selected
-          // Add your code here for the "No" scenario
-        }
-      });
-    },
-  });
-});

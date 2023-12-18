@@ -50,8 +50,9 @@ class Indicator(models.Model):
     measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True) 
 
-    def str(self):
-        return self.get_full_path()
+
+
+
 
     def get_full_path(self):
         full_path = [self.title_ENG]
@@ -95,7 +96,7 @@ class DataPoint(models.Model):
     
     
     class Meta:
-        ordering = ['-year_EC'] #Oldest First
+        ordering = ['year_EC'] #Oldest First
         
         
     def __str__(self):
