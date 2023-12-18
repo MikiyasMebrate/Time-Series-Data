@@ -61,6 +61,7 @@ class SubIndicatorFormDetail(forms.ModelForm):
 
 
 
+
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
@@ -187,3 +188,14 @@ class ValueForm2(forms.Form):
     }))
 
 
+
+data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+#Type of Indicator 
+class IndicatorPointForm(forms.Form):
+    Type = forms.CharField(required=True, widget=forms.Select(choices=data_point_type,attrs={
+        'class' : 'form-select'
+    }))

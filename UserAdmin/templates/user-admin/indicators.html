@@ -28,7 +28,7 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="editModalIndicatorLabel">Modal title</h5>
+                <h5 class="modal-title" id="editModalIndicatorLabel">Edit Indicator</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
         
@@ -37,6 +37,7 @@
               <div class="modal-body">
                 <input type="number"  name="indicator_Id" id="id_indicator_id" style="display: none;">
                 <div class="mt-2">
+                 
                   {{form.title_ENG.label}}
                   
                 {{form.title_ENG}}
@@ -109,7 +110,6 @@
             {{add_indicator.for_category.label}}
           <select name="for_category" class="form-select" id="for_category_add"></select>
           </div>
-          
           <div class="mt-2 fw-bold">
             {{add_indicator.title_ENG.label}}
           {{add_indicator.title_ENG}}
@@ -119,6 +119,8 @@
             {{add_indicator.title_AMH.label}}
           {{add_indicator.title_AMH}}
           </div>
+
+          {{indicator_point.as_p}}
               
 
         </div>
@@ -150,6 +152,7 @@
       <section class="content">
         <div class="container-fluid">
           <div class="row justify-content-center">
+           
             <!--Accordion Start -->
             <div class="col-md-3">
               <div class="accordion" id="accordionExample">

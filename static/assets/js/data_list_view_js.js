@@ -29,7 +29,7 @@ let filterData = () => {
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
           document.getElementById("indicator_list_filter").innerHTML =
-            ' <p class="text-danger">Please Select Category</p>';
+            ' <p class="text-danger">Please Select Indicator</p>';
           document.getElementById("Year_list_filter").innerHTML =
             ' <p class="text-danger">Please Select Indicator</p>';
           displayApplyButton.style.display = "none";
@@ -115,6 +115,8 @@ let filterData = () => {
             categoryRadio.addEventListener("change", (eventCategory) => {
               document.getElementById("Year_list_filter").innerHTML =
                 ' <p class="text-danger">Please Select Category</p>';
+                document.getElementById("indicator_list_filter").innerHTML =
+                ' <p class="text-danger">Please Select Indicator</p>';
               displayApplyButton.style.display = "none";
 
               let selectedCategoryId = eventCategory.target.value;
@@ -148,6 +150,13 @@ let filterData = () => {
                 }
               );
 
+              let indicator_type = `  
+              <span class="fw-bold me-2"> Yearly:  <input type="radio" name="indicator_type_button" value="yearly" id=""></span>
+              <span class="fw-bold me-2"> Monthly:  <input type="radio" name="indicator_type_button" value="monthly" id=""></span>
+              <span class="fw-bold me-2"> Quarterly:  <input type="radio" name="indicator_type_button" value="quarterly" id=""></span> 
+              <hr class="pt-1">
+              ` 
+
               let selectAll = `
                         <li>
                           <div class="flex-grow-2 ">
@@ -170,9 +179,9 @@ let filterData = () => {
 
               if (selectIndicator.join("") == "") {
                 indicatorHtml.innerHTML =
-                  '<p class="text-danger">Please select Another Category</p>';
+                  '<p class="text-danger">Please select Another Indicator</p>';
               } else {
-                indicatorHtml.innerHTML = selectAll + selectIndicator.join("");
+                indicatorHtml.innerHTML = indicator_type + selectAll + selectIndicator.join("");
               }
 
               //Return Selected Year

@@ -27,7 +27,6 @@ $(document).ready(function () {
             if (String(topic_id) === String(selectedTopic)) {
               
               if(!is_deleted){
-                console.log('hello')
                 return (
                   `<option value="${id}">${name_ENG} - ${name_AMH}</option>`
                 )

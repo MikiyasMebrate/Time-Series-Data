@@ -464,6 +464,7 @@ def data_list_detail(request, pk):
 @admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
+    indicator_point = IndicatorPointForm(request.POST or None)
     
     if request.method == 'POST':
         if add_indicator.is_valid():
@@ -474,6 +475,7 @@ def indicator(request):
     
     context = {
         'add_indicator' : add_indicator,
+        'indicator_point' : indicator_point
     }
     return render(request, 'user-admin/indicators.html', context)
 

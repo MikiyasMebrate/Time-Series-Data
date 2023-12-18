@@ -61,8 +61,9 @@ class Indicator(models.Model):
 
 
 data_point_type = [
+    ('yearly', 'Yearly'),
     ('quarterly', 'Quarterly'),
-    ('monthly', 'monthly'),
+    ('monthly', 'Monthly'),
 ]
 
 class Indicator_Point(models.Model):
