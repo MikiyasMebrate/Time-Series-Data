@@ -268,9 +268,6 @@ let filterData = () => {
                       checkedYear.year_EC,
                       checkedYear.year_GC,
                     ];
-                    // console.log([checkedYear.id, checkedYear.year_EC,checkedYear.year_GC])
-                    // console.log(yearTableList)
-                    // console.log(yearTableList.includes(valueToCheck))
 
                     for (let i = 0; i < yearTableList.length; i++) {
                       if (
@@ -285,8 +282,11 @@ let filterData = () => {
                 null;
               }
             }
+            //Sort Year by Ethiopian Calender 
+            yearTableList.sort((a, b) => a[1] > b[1] ? 1 : -1);
           });
         });
+
       };
 
       selectTopic = data.topics.map(
@@ -653,6 +653,7 @@ let filterData = () => {
                     }
                     //Active apply Button
                     yearList();
+                    
                   });
                 } else {
                   indicatorListCheckAll.forEach((event) => {
@@ -903,6 +904,8 @@ let filterData = () => {
         });
       });
     });
+
+    
 };
 
 filterData();
