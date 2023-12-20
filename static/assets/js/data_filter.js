@@ -97,6 +97,20 @@ function updateFilterSelection() {
   }
 }
 
+// Function to fetch measurement details by ID
+const fetchMeasurementById = async (measurementId) => {
+  try {
+    const response = await fetch(`/user-admin/json-filter-measurement/${measurementId}`);
+    if (!response.ok) {
+      throw new Error(`Error fetching measurement details. Status: ${response.status}`);
+    }
+    const measurementData = await response.json();
+    return measurementData.measurements[0];
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
 
 //make datatable
 $(function () {
@@ -361,6 +375,147 @@ function filterData() {
             });
           };
 
+
+          function updateYearCheckboxes() {
+            // Clear the yearTableList before updating it
+            yearTableList = [];
+
+            // Uncheck all year checkboxes
+            $('input[name="yearListsCheckBox"]').prop('checked', false);
+
+            // Filter out the years that were selected before
+            let previouslySelectedYears = yearTableList.map(year => year[0]);
+
+            // Check the year checkboxes for selected indicators, excluding previously selected years
+            selectedIndicatorId.forEach((indicatorId) => {
+              // Find the associated years for the selected indicator
+              let indicatorYears = data.value.filter((item) => String(item.for_indicator_id) === indicatorId);
+
+              // Check the corresponding year checkboxes, excluding previously selected years
+              indicatorYears.forEach((yearData) => {
+                let yearCheckbox = $(`#yearList${yearData.for_datapoint_id}`);
+                if (yearCheckbox.length && !previouslySelectedYears.includes(yearData.for_datapoint_id)) {
+                  // Add the selected year to the yearTableList
+                  let yearId = yearData.for_datapoint_id;
+                  let yearData = data.year.find(y => y.id.toString() === yearId);
+                  if (yearData && !yearData.is_interval) {
+                    yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+                    yearCheckbox.prop('checked', true);
+                  }
+                }
+              });
+            });
+
+            // Update the UI based on the presence of selected indicators
+            let yearListFilterElement = document.getElementById('Year_list_filter');
+            if (selectedIndicatorId.length === 0) {
+              yearListFilterElement.innerHTML = '<p class="text-danger">Please Select Indicator</p>';
+            } else {
+              // Display the selected years
+              let selectYearAll = '<div class="filter-submenu d-flex">' +
+                '  <input class="form-check" type="checkbox" id="select_all_year_filter">' +
+                '  <label class="form-label pl-1" for="select_all_year_filter" style="font-size: small;"> Select All</label>' +
+                '</div>';
+
+              var viewRecentYear = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
+                '<div class="filter-submenu mb-2">' +
+                '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
+                '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button>' +
+                '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button>' +
+                '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>' +
+                '</div>';
+
+              let selectYear = data.year.map(({ id, year_EC, year_GC, is_interval }) => {
+                if (!is_interval) {
+                  return '<div class="filter-submenu">' +
+                    '  <input type="checkbox" value="' + id + '" name="yearListsCheckBox" id="yearList' + id + '">' +
+                    '  <label for="yearList' + id + '" style="font-size: small;">' + year_EC + ' E.C - ' + year_GC + ' G.C</label>' +
+                    '</div>';
+                }
+              });
+
+              yearListFilterElement.innerHTML = viewRecentYear + selectYearAll + selectYear.join('');
+
+              let selectAllYear = document.getElementById('select_all_year_filter');
+              let yearListCheckAll = document.getElementsByName('yearListsCheckBox');
+
+              // Selected Year
+              yearListCheckAll.forEach((yearCheckBox) => {
+                yearCheckBox.addEventListener('change', (eventYearCheckBox) => {
+                  if (eventYearCheckBox.target.checked) {
+                    for (checkedYear of data.year) {
+                      if (!checkedYear.is_interval && String(yearCheckBox.value) === String(checkedYear.id)) {
+                        if (yearTableList.includes([checkedYear.id, checkedYear.year_EC, checkedYear.year_GC])) {
+                          continue;
+                        } else {
+                          yearTableList.push([checkedYear.id, checkedYear.year_EC, checkedYear.year_GC]);
+                        }
+                      }
+                    }
+                  } else {
+                    try {
+                      for (checkedYear of data.year) {
+                        if (!checkedYear.is_interval && String(yearCheckBox.value) === String(checkedYear.id)) {
+                          let valueToCheck = [checkedYear.id, checkedYear.year_EC, checkedYear.year_GC];
+                          for (let i = 0; i < yearTableList.length; i++) {
+                            if (String(yearTableList[i][0]) === String(valueToCheck[0])) {
+                              yearTableList.splice(i, 1);
+                            }
+                          }
+                        }
+                      }
+                    } catch {
+                      null;
+                    }
+                  }
+                });
+              });
+
+              selectAllYear.addEventListener('change', () => {
+                let yearListCheckAll = document.getElementsByName('yearListsCheckBox');
+                if (selectAllYear.checked) {
+                  yearListCheckAll.forEach((eventYear) => {
+                    eventYear.checked = true;
+                    yearTableList = data.year.map(({ id, year_EC, year_GC, is_interval }) => {
+                      if (!is_interval) {
+                        return [id, year_EC, year_GC];
+                      }
+                    });
+                  });
+                } else {
+                  yearListCheckAll.forEach((eventYear) => {
+                    eventYear.checked = false;
+                    yearTableList = [];
+                  });
+                }
+              });
+
+              $('#last_5_year, #last_10_year, #last_15_year, #last_20_year').click(function () {
+                var yearsToShow = parseInt($(this).text(), 10);
+                $('input[name="yearListsCheckBox"]').prop('checked', false);
+                $('input[name="yearListsCheckBox"]:lt(' + yearsToShow + ')').prop('checked', true);
+                $('input[name="yearListsCheckBox"]').trigger('change');
+                yearTableList = [];
+                $('input[name="yearListsCheckBox"]:checked').each(function () {
+                  var yearId = $(this).val();
+                  var yearData = data.year.find(y => y.id.toString() === yearId);
+                  if (yearData && !yearData.is_interval) {
+                    yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+                  }
+                });
+              });
+
+              $('input[name="yearListsCheckBox"]:checked').each(function () {
+                var yearId = $(this).val();
+                var yearData = data.year.find(y => y.id.toString() === yearId);
+                if (yearData && !yearData.is_interval) {
+                  yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+                }
+              });
+            }
+          }
+
+
           // Update the Select All logic for indicators
           let selectAllIndicator = document.getElementById("select_all");
           let selectedIndicatorId = [];
@@ -376,14 +531,14 @@ function filterData() {
                 }
               });
               // Active apply Button
-              yearList();
+              updateYearCheckboxes();
             } else {
               indicatorListCheckAll.forEach((event) => {
                 event.checked = false;
               });
               selectedIndicatorId = [];
               // Active apply Button
-              yearList();
+              updateYearCheckboxes();
             }
           });
 
@@ -399,9 +554,17 @@ function filterData() {
                 } else {
                   selectedIndicatorId = selectedIndicatorId.filter(id => id !== eventIndicator.target.value);
                 }
+                // Debugging: Log selected indicator IDs
+                console.log('Selected Indicator IDs:', selectedIndicatorId);
+
                 // Update the 'Select All' checkbox state based on individual checkboxes
                 selectAllIndicator.checked = indicatorHtmlList.length === selectedIndicatorId.length;
-                yearList();
+
+                // Update the year checkboxes based on selected indicators
+                updateYearCheckboxes();
+
+                // Debugging: Log updated yearTableList
+                console.log('Updated yearTableList:', yearTableList);
               }
             );
           });
@@ -446,6 +609,7 @@ function filterData() {
             $("#displayOptions a:nth-child(1)").addClass("active");
             $("#displayOptions a:nth-child(2)").removeClass("active");
 
+
             let table = "";
             table += `
                   <table id="newTable" class="table table-bordered m-0 p-0">
@@ -461,7 +625,7 @@ function filterData() {
                         <tbody>
                   `;
 
-            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+            selectIndicator = data.indicators.map(({ title_ENG, title_AMH, id, for_category_id, is_deleted,Amount_ENG }) => {
               if (String(for_category_id) === String(selectedCategoryId) && selectedIndicatorId.includes(String(id)) && is_deleted === false) {
                 let title_amharic = "";
                 if (!title_AMH === null)
@@ -473,7 +637,7 @@ function filterData() {
                         <td>
                             <div class="row">
                                <div class="col-10">
-                                 <a  style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                 <a  style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic} ${Amount_ENG !== null ? `<span style="color: blue;">(${Amount_ENG})</span>` : ''}</a>
                                </div>
                             </div>
                         </td>`;
@@ -635,6 +799,7 @@ function filterData() {
                 buttons: ["pageLength", "excel", "csv", "pdf", "print"],
               });
             });
+
 
           });
 

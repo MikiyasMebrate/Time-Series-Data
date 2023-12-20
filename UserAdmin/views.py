@@ -260,10 +260,32 @@ def filter_catagory_json(request):
 @login_required(login_url='login')
 def json_measurement(request):
     measurements = list(Measurement.objects.all().values())
+    
     context = {
         'measurements' : measurements
     }
     return JsonResponse(context)
+
+def json_measurement_byID(request, measurement_id=None):
+    # If measurement_id is provided, fetch the specific measurement
+    if measurement_id is not None:
+        measurement = Measurement.objects.filter(id=measurement_id).values().first()
+
+        if measurement is None:
+            # Return a 404 response if the measurement with the given ID is not found
+            return JsonResponse({'error': 'Measurement not found'}, status=404)
+
+        # Return the specific measurement
+        return JsonResponse({'measurement': measurement})
+
+    # If no measurement_id is provided, return the list of all measurements
+    measurements = list(Measurement.objects.all().values())
+    context = {
+        'measurements': measurements
+    }
+    return JsonResponse(context)
+
+from django.http import JsonResponse
 
 @login_required(login_url='login')
 def json(request):
@@ -272,23 +294,33 @@ def json(request):
     indicator = Indicator.objects.all()
     year = DataPoint.objects.all()
     value = DataValue.objects.all()
+    measurement = Measurement.objects.all()
     
     topic_data = list(topic.values())
     category_data = list(category.values())
     indicator_data = list(indicator.values())
-    year = list(year.values())
-    values = list(value.values())
+    year_data = list(year.values())
+    values_data = list(value.values())
+    measurement_data = list(measurement.values())
 
-        
-        
+    # Add Amount_ENG attribute to each indicator
+    for ind in indicator_data:
+        measurement_id = ind.get('measurement_id')
+        if measurement_id is not None:
+            matching_measurement = next((m for m in measurement_data if m['id'] == measurement_id), None)
+            ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
+        else:
+            ind['Amount_ENG'] = None
+
     context = {
         'topics': topic_data,
         'categories': category_data,
-        'indicators':indicator_data,
-        'year' : year,
-        'value' : values
+        'indicators': indicator_data,
+        'year': year_data,
+        'value': values_data,
     }
-    return(JsonResponse(context))
+    return JsonResponse(context)
+
 
     
 

@@ -158,9 +158,6 @@ $(function () {
             title: {
               text: randomIndicator2.title_ENG
             },
-            subtitle: {
-              text: 'Resize the frame or click buttons to change appearance'
-            },
             legend: {
               align: 'right',
               verticalAlign: 'middle',

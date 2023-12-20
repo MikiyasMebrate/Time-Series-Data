@@ -7,10 +7,6 @@ from django.db import models
 from auditlog.registry import auditlog
 
 
-
-
-
-
 class Topic(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)

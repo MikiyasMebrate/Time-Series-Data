@@ -39,50 +39,45 @@
             <div class="col-md-11">
               <h3>AUDIT</h3>            
               <div class="card">
-                <div class="card-body" id="list_table_view">
-                  <table id="tableIndicator"class="table table-bordered m-0 p-0" style="width:100%">
-                    <thead>
-                      <tr>
-                        <th class="ps-5 pe-5">Timestamp</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Object</th>
-                        <th>Model</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-
-
-                      {% for entry in auditlog_entries %}
-                      <tr>
-                        <td>{{ entry.timestamp }}</td>
-                        <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
-                        {% if entry.action ==  0 %}
-                        <td class="fw-bold text-success">Created</td>
-                         {% elif   entry.action ==  1  %}
-                         <td class="fw-bold text-warning">Updated</td>
-                         {% elif   entry.action ==  2  %}
-                         <td class="fw-bold text-danger">Deleted</td>
-                         {% else %}
-                         <td>Other</td>
-                         {% endif %}
-                        <td>{{ entry.object_repr }} 
-                         </td>
-                         <td>
-                          {{ entry.content_type}} 
-                         </td>
-
-                      </tr>
-                    {% endfor %}
-
-
-                    </tbody>
-                  </table>
-                </div>
+                  <div class="card-body" id="list_table_view">
+                      <table id="tableIndicator" class="table table-bordered m-0 p-0" style="width:100%">
+                          <thead>
+                              <tr>
+                                  <th class="ps-5 pe-5">Timestamp</th>
+                                  <th>User</th>
+                                  <th>Action</th>
+                                  <th>Object</th>
+                                  <th>Model</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+          
+                            {% for entry in auditlog_entries %}
+                            <tr>
+                                <td>{{ entry.timestamp }}</td>
+                                <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
+                                {% if entry.action == 0 %}
+                                    <td class="fw-bold text-success">Created</td>
+                                {% elif entry.action == 1 %}
+                                    <td class="fw-bold text-warning">Updated</td>
+                                {% elif entry.action == 2 %}
+                                    <td class="fw-bold text-danger">Deleted</td>
+                                {% else %}
+                                    <td class="fw-bold text-primary">Other</td>
+                                {% endif %}
+                                <td>{{ entry.object_repr }}</td>
+                                <td>{{ entry.content_type.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        
+          
+                          </tbody>
+                      </table>
+                  </div>
               </div>
-             
-              <!--Data List End-->
-            </div>
+              <!-- Data List End-->
+          </div>
+          
           </div>
 
           <div class="row justify-content-center">
