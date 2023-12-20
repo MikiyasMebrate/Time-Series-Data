@@ -3,6 +3,7 @@ let filterData = () => {
     .then((response) => response.json())
     .then((data) => {
       let table = "";
+      let indicatorSelectedType = 'yearly'
 
       let indicatorHtmlSelectAll = document.getElementById(
         "indicator_list_filter_select_all"
@@ -574,7 +575,12 @@ let filterData = () => {
                 selectedIndicatorType.forEach((type) => {
                   type.addEventListener("change", () => {
                     table = ""
+                    displayApplyButton.style.display = "none";
+                    document.getElementById("Year_list_filter").innerHTML =
+            ' <p class="text-danger">Please Select Indicator</p>';
+
                     if (String(type.value) == "yearly") {
+                      indicatorSelectedType = 'yearly'
                       if (selectYearIndicator.length == 0) {
                         displayNone(indicatorHtmlSelectAll);
                         indicatorHtmlBody.innerHTML =
@@ -585,6 +591,7 @@ let filterData = () => {
                           selectYearIndicator.join("");
                       }
                     } else if (String(type.value) == "quarterly") {
+                      indicatorSelectedType = 'quarterly'
                       if (selectQuarterlyIndicator.length == 0) {
                         displayNone(indicatorHtmlSelectAll);
                         indicatorHtmlBody.innerHTML =
@@ -595,6 +602,7 @@ let filterData = () => {
                           selectQuarterlyIndicator.join("");
                       }
                     } else if (String(type.value) == "monthly") {
+                      indicatorSelectedType = 'monthly'
                       if (selectMonthlyIndicator.length == 0) {
                         displayNone(indicatorHtmlSelectAll);
                         indicatorHtmlBody.innerHTML =
@@ -695,7 +703,8 @@ let filterData = () => {
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
                 
-                table += `
+                let typeYearTable = () =>{
+                  table += `
                       <table id="newTable" class="table table-bordered m-0 p-0">
                       <thead>
                         <tr>
@@ -875,6 +884,13 @@ let filterData = () => {
                   document.getElementById("list_table_view");
                 dataListViewTable.innerHTML = table;
                 table = "";
+                }
+
+                
+                if (String(indicatorSelectedType) == 'yearly'){
+                  typeYearTable()
+                }
+                
 
                 $(document).ready(function () {
                   $("#newTable").DataTable({

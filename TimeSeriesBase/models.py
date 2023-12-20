@@ -142,8 +142,10 @@ class Month(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['created_at'] #Oldest First
     def __str__(self):
-        return self.month_ENG
+        return self.month_AMH + " : " + self.month_ENG
     
 class Measurement(models.Model):
     Amount_ENG = models.CharField(max_length=50)
