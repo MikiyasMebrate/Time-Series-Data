@@ -27,7 +27,6 @@ $(document).ready(function () {
             if (String(topic_id) === String(selectedTopic)) {
               
               if(!is_deleted){
-                console.log('hello')
                 return (
                   `<option value="${id}">${name_ENG} - ${name_AMH}</option>`
                 )
@@ -49,6 +48,7 @@ $(document).ready(function () {
         let titleEnglish = document.getElementById("id_title_ENG");
         let titleAmharic = document.getElementById("id_title_AMH");
         let category = document.getElementById("id_for_category");
+        let type = document.getElementById("id_type_of")
         let category_div = document.getElementById("id_category_option");
         let parentContainer = document.querySelector("#list_table_view");
 
@@ -70,6 +70,11 @@ $(document).ready(function () {
                 selectedIndicator.title_AmH = "";
               titleEnglish.value = selectedIndicator.title_ENG;
               titleAmharic.value = selectedIndicator.title_AMH;
+              if(selectedIndicator.type_of == null){
+                type.value = 'yearly'
+              }else{
+                type.value = selectedIndicator.type_of
+              }
               category.value = selectCategory.id;
               document.getElementById("id_indicator_id").value = indicatorId;
             });
@@ -175,6 +180,7 @@ $(document).ready(function () {
                     let titleEnglish = document.getElementById("id_title_ENG");
                     let titleAmharic = document.getElementById("id_title_AMH");
                     let category = document.getElementById("id_for_category");
+                    
 
                     let selectedIndicator = data.indicators.find(
                       (indicator) => String(indicator.id) == String(indicatorId)

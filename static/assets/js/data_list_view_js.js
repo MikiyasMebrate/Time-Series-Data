@@ -2,6 +2,293 @@ let filterData = () => {
   fetch("/user-admin/json/")
     .then((response) => response.json())
     .then((data) => {
+      let table = "";
+
+      let indicatorHtmlSelectAll = document.getElementById(
+        "indicator_list_filter_select_all"
+      );
+
+      let displayNone = (element) => {
+        element.style.display = "none";
+      };
+      let displayBlock = (element) => {
+        element.style.display = "block";
+      };
+      //Return Selected Year
+      let yearTableList = [];
+
+      let yearList = () => {
+        yearTableList = []
+        //Year list
+        let selectYear = data.year.map(
+          ({ id, year_EC, year_GC, is_interval }) => {
+            if (!is_interval) {
+              return `
+            <li>
+            <div class="flex-grow-2 ">
+               <div class="row ">
+                  <div class="col-1"> 
+                       <input  type="checkbox" value=${id} name="yearListsCheckBox" id="yearList${id}">
+                  </div>
+                  <div class="col-11">
+                     <label class="form-label" for="yearList${id}" style="font-size: small;">${year_EC} E.C  - ${year_GC} G.C </label></div>
+                 </div>
+              </div>
+            </div>
+          </li>
+            `;
+            }
+          }
+        );
+
+        let selectYearAll = `
+        <li>
+          <div class="flex-grow-2 ">
+             <div class="row ">
+                <div class="col-1"> 
+                     <input class='form-check' type="checkbox"  id="select_all_year_filter">
+                </div>
+                <div class="col-11">
+                   <label class="form-label" for="select_all_year_filter" style="font-size: small;">Select All</label></div>
+               </div>
+               <hr>
+            </div>
+          </div>
+        </li>
+        `;
+
+        let viewRecentYear = `
+        <p class="m-0 mb-1 fw-bold">View Recent Year </p>
+        <div class="mb-2">
+          <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>
+        </div>
+        <hr>
+        `;
+
+        let yearHtml = document.getElementById("Year_list_filter");
+        yearHtml.innerHTML =
+          viewRecentYear + selectYearAll + selectYear.join("");
+
+        let selectAllYear = document.getElementById("select_all_year_filter");
+
+        selectAllYear.addEventListener("change", () => {
+          let yearListCheckAll =
+            document.getElementsByName("yearListsCheckBox");
+          if (selectAllYear.checked) {
+            yearListCheckAll.forEach((eventYear) => {
+              eventYear.checked = true;
+              displayApplyButton.style.display = "block";
+              yearTableList = data.year.map(
+                ({ id, year_EC, year_GC, is_interval }) => {
+                  if (!is_interval) {
+                    return [id, year_EC, year_GC];
+                  }
+                }
+              );
+            });
+          } else {
+            yearListCheckAll.forEach((eventYear) => {
+              eventYear.checked = false;
+              displayApplyButton.style.display = "none";
+              yearTableList = [];
+            });
+          }
+        });
+
+        let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
+
+        //Select last 5 Year
+        let lastFiveYear = document.getElementById("last_5_year");
+        lastFiveYear.addEventListener("click", () => {
+          for (let uncheck = 0; uncheck < yearListCheckAll.length; uncheck++) {
+            try {
+              yearListCheckAll[uncheck].checked = false;
+            } catch {
+              null;
+            }
+          }
+          yearTableList = [];
+          for (let checkedYear = 0; checkedYear < 5; checkedYear++) {
+            try {
+              yearListCheckAll[checkedYear].checked = true;
+            } catch {
+              null;
+            }
+            if (
+              !data.year[checkedYear].is_interval &&
+              String(yearListCheckAll[checkedYear].value) ===
+                String(data.year[checkedYear].id)
+            ) {
+              yearTableList.push([
+                data.year[checkedYear].id,
+                data.year[checkedYear].year_EC,
+                data.year[checkedYear].year_GC,
+              ]);
+            }
+          }
+          displayApplyButton.style.display = "block";
+        });
+
+        //Select last 10 Year
+        let lastTenYear = document.getElementById("last_10_year");
+        lastTenYear.addEventListener("click", () => {
+          for (let uncheck = 0; uncheck < yearListCheckAll.length; uncheck++) {
+            try {
+              yearListCheckAll[uncheck].checked = false;
+            } catch {
+              null;
+            }
+          }
+          yearTableList = [];
+          for (let checkedYear = 0; checkedYear < 10; checkedYear++) {
+            try {
+              yearListCheckAll[checkedYear].checked = true;
+            } catch {
+              null;
+            }
+            if (
+              !data.year[checkedYear].is_interval &&
+              String(yearListCheckAll[checkedYear].value) ===
+                String(data.year[checkedYear].id)
+            ) {
+              yearTableList.push([
+                data.year[checkedYear].id,
+                data.year[checkedYear].year_EC,
+                data.year[checkedYear].year_GC,
+              ]);
+            }
+          }
+          displayApplyButton.style.display = "block";
+        });
+
+        //Select last 15 Year
+        let lastFiftyYear = document.getElementById("last_15_year");
+        lastFiftyYear.addEventListener("click", () => {
+          for (let uncheck = 0; uncheck < yearListCheckAll.length; uncheck++) {
+            try {
+              yearListCheckAll[uncheck].checked = false;
+            } catch {
+              null;
+            }
+          }
+
+          yearTableList = [];
+          for (let checkedYear = 0; checkedYear < 15; checkedYear++) {
+            try {
+              yearListCheckAll[checkedYear].checked = true;
+            } catch {
+              null;
+            }
+            if (
+              !data.year[checkedYear].is_interval &&
+              String(yearListCheckAll[checkedYear].value) ===
+                String(data.year[checkedYear].id)
+            ) {
+              yearTableList.push([
+                data.year[checkedYear].id,
+                data.year[checkedYear].year_EC,
+                data.year[checkedYear].year_GC,
+              ]);
+            }
+          }
+          displayApplyButton.style.display = "block";
+        });
+
+        //Select last 20 Year
+        let lastTwentyYear = document.getElementById("last_20_year");
+        lastTwentyYear.addEventListener("click", () => {
+          for (let uncheck = 0; uncheck < yearListCheckAll.length; uncheck++) {
+            try {
+              yearListCheckAll[uncheck].checked = false;
+            } catch {
+              null;
+            }
+          }
+
+          yearTableList = [];
+          for (let checkedYear = 0; checkedYear < 20; checkedYear++) {
+            try {
+              yearListCheckAll[checkedYear].checked = true;
+            } catch {
+              null;
+            }
+            try {
+              if (
+                !data.year[checkedYear].is_interval &&
+                String(yearListCheckAll[checkedYear].value) ===
+                  String(data.year[checkedYear].id)
+              ) {
+                yearTableList.push([
+                  data.year[checkedYear].id,
+                  data.year[checkedYear].year_EC,
+                  data.year[checkedYear].year_GC,
+                ]);
+              }
+            } catch {
+              null;
+            }
+          }
+          displayApplyButton.style.display = "block";
+        });
+
+        //Selected Year
+        yearListCheckAll.forEach((yearCheckBox) => {
+          yearCheckBox.addEventListener("change", (eventYearCheckBox) => {
+            displayApplyButton.style.display = "block";
+            if (eventYearCheckBox.target.checked) {
+              for (checkedYear of data.year) {
+                if (
+                  !checkedYear.is_interval &&
+                  String(yearCheckBox.value) === String(checkedYear.id)
+                ) {
+
+                  if (
+                    yearTableList.find((item)=> String(item[0]) ==  String(checkedYear.id))
+                  ) {
+                    continue;
+                  } else {
+                    yearTableList.push([
+                      checkedYear.id,
+                      checkedYear.year_EC,
+                      checkedYear.year_GC,
+                    ]);
+                  }
+                }
+              }
+            } else {
+              selectAllYear.checked = false;
+              try {
+                for (checkedYear of data.year) {
+                  if (
+                    !checkedYear.is_interval &&
+                    String(yearCheckBox.value) === String(checkedYear.id)
+                  ) {
+                    let valueToCheck = [
+                      checkedYear.id,
+                      checkedYear.year_EC,
+                      checkedYear.year_GC,
+                    ];
+
+                    for (let i = 0; i < yearTableList.length; i++) {
+                      if (
+                        String(yearTableList[i][0]) === String(valueToCheck[0])
+                      ) {
+                        yearTableList.splice(i, 1);
+                      }
+                    }
+                  }
+                }
+              } catch {
+                null;
+              }
+            }
+            //Sort Year by Ethiopian Calender 
+            yearTableList.sort((a, b) => a[1] > b[1] ? 1 : -1);
+          });
+        });
+
+      };
+
       selectTopic = data.topics.map(
         ({ title_ENG, title_AMH, id, is_deleted }) => {
           if (is_deleted) {
@@ -28,10 +315,14 @@ let filterData = () => {
       topicHtmlList = document.getElementsByName("topic_lists");
       topicHtmlList.forEach((topicRadio) => {
         topicRadio.addEventListener("change", (event) => {
-          document.getElementById("indicator_list_filter").innerHTML =
+          document.getElementById("indicator_list_filter_header").innerHTML =
             ' <p class="text-danger">Please Select Category</p>';
+          document.getElementById("indicator_list_filter_body").innerHTML = "";
+          displayNone(indicatorHtmlSelectAll);
+
           document.getElementById("Year_list_filter").innerHTML =
             ' <p class="text-danger">Please Select Indicator</p>';
+
           displayApplyButton.style.display = "none";
           selectedTopicId = event.target.value;
           defaultTable = `
@@ -114,12 +405,31 @@ let filterData = () => {
           categoryHtmlList.forEach((categoryRadio) => {
             categoryRadio.addEventListener("change", (eventCategory) => {
               document.getElementById("Year_list_filter").innerHTML =
+                ' <p class="text-danger">Please Select Indicator</p>';
+              document.getElementById(
+                "indicator_list_filter_header"
+              ).innerHTML =
                 ' <p class="text-danger">Please Select Category</p>';
+              document.getElementById("indicator_list_filter_body").innerHTML =
+                "";
               displayApplyButton.style.display = "none";
 
               let selectedCategoryId = eventCategory.target.value;
-              selectIndicator = data.indicators.map(
-                ({ title_ENG, title_AMH, id, for_category_id, is_deleted }) => {
+
+              let selectYearIndicator = [];
+              let selectQuarterlyIndicator = [];
+              let selectMonthlyIndicator = [];
+
+              //Yearly Indicator
+              data.indicators.map(
+                ({
+                  title_ENG,
+                  title_AMH,
+                  id,
+                  for_category_id,
+                  is_deleted,
+                  type_of,
+                }) => {
                   if (
                     String(for_category_id) === String(selectedCategoryId) &&
                     is_deleted == false
@@ -130,26 +440,80 @@ let filterData = () => {
                       title_amharic = " - " + title_AMH;
                     }
 
-                    return `
-                            <li>
-                            <div class="flex-grow-2 ">
-                               <div class="row ">
-                                  <div class="col-1"> 
-                                       <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
-                                  </div>
-                                  <div class="col-11">
-                                     <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
-                                 </div>
+                    if (String(type_of) == "yearly") {
+                      selectYearIndicator.push(
+                        `
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
                               </div>
-                            </div>
-                          </li>
-                            `;
+                              <div class="col-11">
+                                 <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                             </div>
+                          </div>
+                        </div>
+                      </li>
+                        `
+                      );
+                    } else if (String(type_of) == "quarterly") {
+                      selectQuarterlyIndicator.push(
+                        `
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
+                              </div>
+                              <div class="col-11">
+                                 <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                             </div>
+                          </div>
+                        </div>
+                      </li>
+                        `
+                      );
+                    } else if (String(type_of) == "monthly") {
+                      selectMonthlyIndicator.push(
+                        `
+                        <li>
+                        <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                                   <input  type="checkbox" value=${id} name="indicator_lists" id="indicator_list${id}">
+                              </div>
+                              <div class="col-11">
+                                 <label class="form-label" for="indicator_list${id}" style="font-size: small;">${title_ENG} ${title_amharic}</label></div>
+                             </div>
+                          </div>
+                        </div>
+                      </li>
+                        `
+                      );
+                    }
                   }
                 }
               );
 
+              let indicator_type = ` 
+              <div class="row fw-bold">
+                   <div class="col">
+                      Yr <span class="badge bg-danger">${selectYearIndicator.length}</span>:  <input type="radio"  checked name="indicator_type_input" value="yearly" id=""> 
+                   </div>
+                   <div class="col">
+                       Qr <span class="badge bg-danger">${selectQuarterlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="quarterly" id=""> 
+                   </div>
+                   <div class="col">
+                        Mon <span class="badge bg-danger">${selectMonthlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="monthly" id=""> 
+                   </div>
+              </div>
+
+              <hr class="pt-1">
+              `;
+
               let selectAll = `
-                        <li>
+                        <li id="">
                           <div class="flex-grow-2 ">
                              <div class="row ">
                                 <div class="col-1"> 
@@ -164,327 +528,123 @@ let filterData = () => {
                         </li>
                         `;
 
-              let indicatorHtml = document.getElementById(
-                "indicator_list_filter"
-              );
-
-              if (selectIndicator.join("") == "") {
-                indicatorHtml.innerHTML =
-                  '<p class="text-danger">Please select Another Category</p>';
-              } else {
-                indicatorHtml.innerHTML = selectAll + selectIndicator.join("");
-              }
-
-              //Return Selected Year
-              let yearTableList = [];
-
-              let yearList = () => {
-                //Year list
-                let selectYear = data.year.map(
-                  ({ id, year_EC, year_GC, is_interval }) => {
-                    if (!is_interval) {
-                      return `
-                    <li>
-                    <div class="flex-grow-2 ">
-                       <div class="row ">
-                          <div class="col-1"> 
-                               <input  type="checkbox" value=${id} name="yearListsCheckBox" id="yearList${id}">
-                          </div>
-                          <div class="col-11">
-                             <label class="form-label" for="yearList${id}" style="font-size: small;">${year_EC} E.C  - ${year_GC} G.C </label></div>
-                         </div>
-                      </div>
-                    </div>
-                  </li>
-                    `;
-                    }
-                  }
-                );
-
-                let selectYearAll = `
-                <li>
-                  <div class="flex-grow-2 ">
-                     <div class="row ">
-                        <div class="col-1"> 
-                             <input class='form-check' type="checkbox"  id="select_all_year_filter">
-                        </div>
-                        <div class="col-11">
-                           <label class="form-label" for="select_all_year_filter" style="font-size: small;">Select All</label></div>
-                       </div>
-                       <hr>
-                    </div>
-                  </div>
-                </li>
-                `;
-
-                let viewRecentYear = `
-                <p class="m-0 mb-1 fw-bold">View Recent Year </p>
-                <div class="mb-2">
-                  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button> <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>
-                </div>
-                <hr>
-                `;
-
-                let yearHtml = document.getElementById("Year_list_filter");
-                yearHtml.innerHTML =
-                  viewRecentYear + selectYearAll + selectYear.join("");
-
-                let selectAllYear = document.getElementById(
-                  "select_all_year_filter"
-                );
-
-                selectAllYear.addEventListener("change", () => {
-                  let yearListCheckAll =
-                    document.getElementsByName("yearListsCheckBox");
-                  if (selectAllYear.checked) {
-                    yearListCheckAll.forEach((eventYear) => {
-                      eventYear.checked = true;
-                      displayApplyButton.style.display = "block";
-                      yearTableList = data.year.map(
-                        ({ id, year_EC, year_GC, is_interval }) => {
-                          if (!is_interval) {
-                            return [id, year_EC, year_GC];
-                          }
-                        }
-                      );
-                    });
-                  } else {
-                    yearListCheckAll.forEach((eventYear) => {
-                      eventYear.checked = false;
-                      displayApplyButton.style.display = "none";
-                      yearTableList = [];
-                    });
-                  }
-                });
-
-                let yearListCheckAll =
-                  document.getElementsByName("yearListsCheckBox");
-
-                //Select last 5 Year
-                let lastFiveYear = document.getElementById("last_5_year");
-                lastFiveYear.addEventListener("click", () => {
-                  for (
-                    let uncheck = 0;
-                    uncheck < yearListCheckAll.length;
-                    uncheck++
-                  ) {
-                    try {
-                      yearListCheckAll[uncheck].checked = false;
-                    } catch {
-                      null;
-                    }
-                  }
-                  yearTableList = [];
-                  for (let checkedYear = 0; checkedYear < 5; checkedYear++) {
-                    try {
-                      yearListCheckAll[checkedYear].checked = true;
-                    } catch {
-                      null;
-                    }
-                    if (
-                      !data.year[checkedYear].is_interval &&
-                      String(yearListCheckAll[checkedYear].value) ===
-                        String(data.year[checkedYear].id)
-                    ) {
-                      yearTableList.push([
-                        data.year[checkedYear].id,
-                        data.year[checkedYear].year_EC,
-                        data.year[checkedYear].year_GC,
-                      ]);
-                    }
-                  }
-                  displayApplyButton.style.display = "block";
-                });
-
-                //Select last 10 Year
-                let lastTenYear = document.getElementById("last_10_year");
-                lastTenYear.addEventListener("click", () => {
-                  for (
-                    let uncheck = 0;
-                    uncheck < yearListCheckAll.length;
-                    uncheck++
-                  ) {
-                    try {
-                      yearListCheckAll[uncheck].checked = false;
-                    } catch {
-                      null;
-                    }
-                  }
-                  yearTableList = [];
-                  for (let checkedYear = 0; checkedYear < 10; checkedYear++) {
-                    try {
-                      yearListCheckAll[checkedYear].checked = true;
-                    } catch {
-                      null;
-                    }
-                    if (
-                      !data.year[checkedYear].is_interval &&
-                      String(yearListCheckAll[checkedYear].value) ===
-                        String(data.year[checkedYear].id)
-                    ) {
-                      yearTableList.push([
-                        data.year[checkedYear].id,
-                        data.year[checkedYear].year_EC,
-                        data.year[checkedYear].year_GC,
-                      ]);
-                    }
-                  }
-                  displayApplyButton.style.display = "block";
-                });
-
-                //Select last 15 Year
-                let lastFiftyYear = document.getElementById("last_15_year");
-                lastFiftyYear.addEventListener("click", () => {
-                  for (
-                    let uncheck = 0;
-                    uncheck < yearListCheckAll.length;
-                    uncheck++
-                  ) {
-                    try {
-                      yearListCheckAll[uncheck].checked = false;
-                    } catch {
-                      null;
-                    }
-                  }
-
-                  yearTableList = [];
-                  for (let checkedYear = 0; checkedYear < 15; checkedYear++) {
-                    try {
-                      yearListCheckAll[checkedYear].checked = true;
-                    } catch {
-                      null;
-                    }
-                    if (
-                      !data.year[checkedYear].is_interval &&
-                      String(yearListCheckAll[checkedYear].value) ===
-                        String(data.year[checkedYear].id)
-                    ) {
-                      yearTableList.push([
-                        data.year[checkedYear].id,
-                        data.year[checkedYear].year_EC,
-                        data.year[checkedYear].year_GC,
-                      ]);
-                    }
-                  }
-                  displayApplyButton.style.display = "block";
-                });
-
-                //Select last 20 Year
-                let lastTwentyYear = document.getElementById("last_20_year");
-                lastTwentyYear.addEventListener("click", () => {
-                  for (
-                    let uncheck = 0;
-                    uncheck < yearListCheckAll.length;
-                    uncheck++
-                  ) {
-                    try {
-                      yearListCheckAll[uncheck].checked = false;
-                    } catch {
-                      null;
-                    }
-                  }
-
-                  yearTableList = [];
-                  for (let checkedYear = 0; checkedYear < 20; checkedYear++) {
-                    try {
-                      yearListCheckAll[checkedYear].checked = true;
-                    } catch {
-                      null;
-                    }
-                    try {
-                      if (
-                        !data.year[checkedYear].is_interval &&
-                        String(yearListCheckAll[checkedYear].value) ===
-                          String(data.year[checkedYear].id)
-                      ) {
-                        yearTableList.push([
-                          data.year[checkedYear].id,
-                          data.year[checkedYear].year_EC,
-                          data.year[checkedYear].year_GC,
-                        ]);
-                      }
-                    } catch {
-                      null;
-                    }
-                  }
-                  displayApplyButton.style.display = "block";
-                });
-
-                //Selected Year
-                yearListCheckAll.forEach((yearCheckBox) => {
-                  yearCheckBox.addEventListener(
-                    "change",
-                    (eventYearCheckBox) => {
-                      displayApplyButton.style.display = "block";
-                      if (eventYearCheckBox.target.checked) {
-                        for (checkedYear of data.year) {
-                          if (
-                            !checkedYear.is_interval &&
-                            String(yearCheckBox.value) ===
-                              String(checkedYear.id)
-                          ) {
-                            if (
-                              yearTableList.includes([
-                                checkedYear.id,
-                                checkedYear.year_EC,
-                                checkedYear.year_GC,
-                              ])
-                            ) {
-                              continue;
-                            } else {
-                              yearTableList.push([
-                                checkedYear.id,
-                                checkedYear.year_EC,
-                                checkedYear.year_GC,
-                              ]);
-                            }
-                          }
-                        }
-                      } else {
-                        selectAllYear.checked = false;
-                        try {
-                          for (checkedYear of data.year) {
-                            if (
-                              !checkedYear.is_interval &&
-                              String(yearCheckBox.value) ===
-                                String(checkedYear.id)
-                            ) {
-                              let valueToCheck = [
-                                checkedYear.id,
-                                checkedYear.year_EC,
-                                checkedYear.year_GC,
-                              ];
-                              // console.log([checkedYear.id, checkedYear.year_EC,checkedYear.year_GC])
-                              // console.log(yearTableList)
-                              // console.log(yearTableList.includes(valueToCheck))
-
-                              for (let i = 0; i < yearTableList.length; i++) {
-                                if (
-                                  String(yearTableList[i][0]) ===
-                                  String(valueToCheck[0])
-                                ) {
-                                  yearTableList.splice(i, 1);
-                                }
-                              }
-                            }
-                          }
-                        } catch {
-                          null;
-                        }
-                      }
-                    }
-                  );
-                });
-              };
-
               //Select-all Button for Indicator
               let selectAllIndicator = document.getElementById("select_all");
               let selectedIndictorId = [];
+
+              let indicatorHtmlHeader = document.getElementById(
+                "indicator_list_filter_header"
+              );
+              let indicatorHtmlBody = document.getElementById(
+                "indicator_list_filter_body"
+              );
+
+              let indicatorListCheckAll =
+                document.getElementsByName("indicator_lists");
+              //indicator list HTML
+              let indicatorHtmlList =
+                document.getElementsByName("indicator_lists");
+              indicatorHtmlSelectAll.innerHTML = selectAll;
+              selectAllIndicator = document.getElementById("select_all");
+
+              if (
+                selectYearIndicator.length == 0 &&
+                selectQuarterlyIndicator.length == 0 &&
+                selectMonthlyIndicator.length == 0
+              ) {
+                indicatorHtmlHeader.innerHTML =
+                  '<p class="text-danger">Please select Another Category, No data Found! </p>';
+                indicatorHtmlBody.innerHTML = "";
+              } else {
+                indicatorHtmlHeader.innerHTML = indicator_type;
+
+                if (selectYearIndicator.length == 0) {
+                  indicatorHtmlBody.innerHTML =
+                    '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                  displayNone(indicatorHtmlSelectAll);
+                } else {
+                  indicatorHtmlBody.innerHTML = selectYearIndicator.join("");
+                  displayBlock(indicatorHtmlSelectAll);
+                }
+
+                let selectedIndicatorType = document.getElementsByName(
+                  "indicator_type_input"
+                );
+
+                selectedIndicatorType.forEach((type) => {
+                  type.addEventListener("change", () => {
+                    table = ""
+                    if (String(type.value) == "yearly") {
+                      if (selectYearIndicator.length == 0) {
+                        displayNone(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                      } else {
+                        displayBlock(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          selectYearIndicator.join("");
+                      }
+                    } else if (String(type.value) == "quarterly") {
+                      if (selectQuarterlyIndicator.length == 0) {
+                        displayNone(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                      } else {
+                        displayBlock(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          selectQuarterlyIndicator.join("");
+                      }
+                    } else if (String(type.value) == "monthly") {
+                      if (selectMonthlyIndicator.length == 0) {
+                        displayNone(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          '<p class="text-danger">Please select Another Time Series, No data Found! </p>';
+                      } else {
+                        displayBlock(indicatorHtmlSelectAll);
+                        indicatorHtmlBody.innerHTML =
+                          selectMonthlyIndicator.join("");
+                      }
+                    }
+
+                    // indicatorListCheckAll =
+                    //   document.getElementsByName("indicator_lists");
+                    // indicatorHtmlList =
+                    //   document.getElementsByName("indicator_lists");
+                    selectAllIndicator.checked = false;
+                    indicatorHtmlList.forEach((indicatorCheckBox) => {
+                      indicatorCheckBox.addEventListener(
+                        "change",
+                        (eventIndicator) => {
+                          table = ""
+                          displayApplyButton.style.display = "none";
+                          if (
+                            eventIndicator.target.checked &&
+                            !selectedIndictorId.includes(
+                              eventIndicator.target.value
+                            )
+                          ) {
+                            selectedIndictorId.push(
+                              eventIndicator.target.value
+                            );
+                          } else {
+                            try {
+                              selectedIndictorId.pop(
+                                eventIndicator.target.value
+                              );
+                            } catch {
+                              null;
+                            }
+                          }
+                          yearList();
+                        }
+                      );
+                    });
+                  });
+                });
+              }
+
               selectAllIndicator.addEventListener("change", () => {
                 displayApplyButton.style.display = "none";
-                let indicatorListCheckAll =
-                  document.getElementsByName("indicator_lists");
-
                 if (selectAllIndicator.checked) {
                   indicatorListCheckAll.forEach((event) => {
                     event.checked = true;
@@ -493,6 +653,7 @@ let filterData = () => {
                     }
                     //Active apply Button
                     yearList();
+                    
                   });
                 } else {
                   indicatorListCheckAll.forEach((event) => {
@@ -506,13 +667,9 @@ let filterData = () => {
                 }
               });
 
-              //indicator list HTML
-              let indicatorHtmlList =
-                document.getElementsByName("indicator_lists");
-
               //Display Indicator into Table
 
-              //Push selected Indicator
+              // For Fist TIme Checked Indicator
               indicatorHtmlList.forEach((indicatorCheckBox) => {
                 indicatorCheckBox.addEventListener(
                   "change",
@@ -535,10 +692,9 @@ let filterData = () => {
                 );
               });
 
-
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
-                let table = "";
+                
                 table += `
                       <table id="newTable" class="table table-bordered m-0 p-0">
                       <thead>
@@ -553,7 +709,7 @@ let filterData = () => {
                             <tbody>
                       `;
 
-                selectIndicator = data.indicators.map(
+                data.indicators.map(
                   ({
                     title_ENG,
                     title_AMH,
@@ -743,104 +899,13 @@ let filterData = () => {
                 });
               });
               //End Indicator table
-
-
             });
           });
         });
       });
     });
+
+    
 };
 
 filterData();
-
-//AJAX SUBMIT FORM
-let form = document.getElementById("addDataForm");
-$(document).on("submit", "#addDataForm", function (e) {
-  e.preventDefault();
-  $.ajax({
-    type: "POST",
-    url: "/user-admin/data-list/",
-    data: {
-      topic: $("#id_topic_option").val(),
-      category: $("#id_categories_option").val(),
-      is_interval: $("#is_interval").val(),
-      year: $("#id_year_option").val(),
-      indicator: $("#id_indicators_option").val(),
-      is_actual: $("#is_actual").val(),
-      type: $("#id_type_option").val(),
-      value: $("#id_value").val(),
-      source: $("#id_source").val(),
-    },
-    beforeSend: function (xhr, settings) {
-      xhr.setRequestHeader(
-        "X-CSRFToken",
-        $("input[name=csrfmiddlewaretoken]").val()
-      );
-    },
-    success: function (response) {
-      if (response == "Successfully Added!") {
-        swal({
-          title: "Successfully Added! Do you want to Add Another data?",
-          icon: "success",
-          buttons: ["No", "Yes"],
-          dangerMode: true,
-        }).then((willProceed) => {
-          if (willProceed) {
-            const selectElement = document.getElementById(
-              "id_indicators_option"
-            );
-            selectElement.selectedIndex = 0;
-            const value = (document.getElementById("id_value").value = "");
-          } else {
-            location.reload();
-          }
-        });
-      } else if (response == "The Data Already Added") {
-        swal({
-          title: "The Data Already Submitted!",
-          icon: "error",
-          buttons: ["No", "Re-Enter"],
-          dangerMode: true,
-        }).then((willProceed) => {
-          if (willProceed) {
-          } else {
-            location.reload();
-          }
-        });
-      } else {
-        swal({
-          title: "Please Try Again!",
-          icon: "error",
-          buttons: ["No", "Re-Enter"],
-          dangerMode: true,
-        }).then((willProceed) => {
-          if (willProceed) {
-          } else {
-          }
-        });
-      }
-    },
-
-    error: function (error) {
-      // handle any errors that occurred during the request
-      console.log(error);
-      swal({
-        title: "Please Try Again!",
-        icon: "error",
-        buttons: ["No", "Yes"],
-        dangerMode: true,
-      }).then((willProceed) => {
-        if (willProceed) {
-          const selectElement = document.getElementById("id_indicators_option");
-          selectElement.selectedIndex = 0;
-
-          const value = (document.getElementById("id_value").value = "");
-        } else {
-          // No option selected
-          // Add your code here for the "No" scenario
-        }
-      });
-    },
-  });
-});

@@ -28,6 +28,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name_ENG
 
+
+data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+
+
 class Indicator(models.Model):
     title_ENG = models.CharField(max_length=100) 
     title_AMH = models.CharField(max_length=100 , null=True, blank=True)
@@ -36,10 +44,11 @@ class Indicator(models.Model):
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
     measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
-      
+    type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True) 
 
-    def str(self):
-        return self.get_full_path()
+
+
+
 
     def get_full_path(self):
         full_path = [self.title_ENG]
@@ -56,20 +65,16 @@ class Indicator(models.Model):
 
 
 
-data_point_type = [
-    ('quarterly', 'Quarterly'),
-    ('monthly', 'monthly'),
-]
+
 
 class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
-    for_datapoint = models.ForeignKey("DataPoint",on_delete=models.CASCADE)
-    for_indicator = models.ForeignKey("Indicator",on_delete=models.CASCADE)
-    for_measurement = models.ManyToManyField('Measurement', blank=True)
-    type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
+    for_datapoint = models.ForeignKey("DataPoint",on_delete=models.SET_NULL, null = True)
+    for_indicator = models.ForeignKey(Indicator,on_delete=models.SET_NULL, null = True)
+   
     
     def __str__(self):
-         return self.for_indicator.title_ENG + " " + self.for_datapoint.year_EC + "E.C" +" " + self.type_of
+         return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual)
 
 
 class DataPoint(models.Model):
@@ -87,7 +92,7 @@ class DataPoint(models.Model):
     
     
     class Meta:
-        ordering = ['-year_EC'] #Oldest First
+        ordering = ['year_EC'] #Oldest First
         
         
     def __str__(self):

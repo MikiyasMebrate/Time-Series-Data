@@ -18,9 +18,20 @@ class catagoryForm(forms.ModelForm):
         self.fields['topic'].queryset = Topic.objects.filter(is_deleted=False)
 
 class IndicatorForm(forms.ModelForm):
+    data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+    type_of = forms.CharField(required=True, widget=forms.Select(choices=data_point_type,attrs={
+        'class' : 'form-select'
+    }))
+    for_category = forms.ModelChoiceField(queryset=Category.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Category"}))
+
     class Meta:
+        
         model = Indicator
-        fields =  ('title_ENG', 'title_AMH', 'for_category')
+        fields =  ('title_ENG', 'title_AMH', 'for_category', 'type_of')
         
         widgets = {
             'title_ENG' : forms.TextInput(attrs={
@@ -30,6 +41,7 @@ class IndicatorForm(forms.ModelForm):
                 'class' : 'form-control'
             }),
             'for_category': forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Category"}),
+            'type_of': forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Type"}),
         }
     def init(self, *args, **kwargs):
         super(IndicatorForm, self).init(*args, **kwargs)
@@ -58,6 +70,7 @@ class SubIndicatorFormDetail(forms.ModelForm):
                 'class' : 'form-control'
             }),
         }
+
 
 
 
@@ -185,5 +198,7 @@ class ValueForm2(forms.Form):
     value2 = forms.CharField(required=True,widget=forms.Select(attrs={
         'class' : 'form-control'
     }))
+
+
 
 

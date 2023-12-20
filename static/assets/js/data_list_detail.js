@@ -6,11 +6,17 @@ $(document).ready(function () {
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
+      let parentIndicator = data.indicators.find((item) => item.parent == null )
+        
+
+
  
       let currentIndicator = data.indicators.find(
         (indicator) => String(indicator.id) == String(pathID)
       );
 
+
+      
 
       //Edit Measurement
       let currentMeasurement = data.measurements.find(
@@ -75,9 +81,31 @@ $(document).ready(function () {
       <tr>
         <th class="ps-5 pe-5">Name</th>`;
 
-      for (let year of data.year) {
-        table += `<th style="font-size: small;">${year.year_EC}-E.C </br>${year.year_GC}<span>-G.C</span></th>`;
+       
+
+        for (let year of data.year) {
+          let checkActual = data.indicator_point.find((item) => String(item.for_indicator_id) == String(parentIndicator.id) && String(item.for_datapoint_id) == String(year.id))
+          let is_actual = null
+          let actualId = null
+           
+          try{
+            if(checkActual.is_actual){
+            is_actual = 'Actual'
+            }else{
+              is_actual = "Not Actual"
+            }
+
+            actualId = checkActual.id
+
+          }catch{
+            is_actual = "No Data"
+          }
+          
+        table += `<th style="font-size: small;" class = "text-center">${year.year_EC}-E.C </br>${year.year_GC}-G.C  <hr> <button id="${actualId}" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button>   </th>`;
       }
+
+       
+
       table += `</tr>
     </thead> 
     <tbody>`;
@@ -412,6 +440,30 @@ $(document).ready(function () {
         addIndicator();
         removeIndicator();
       });
+
+
+
+      //Edit Actual nesss
+      let btnActual = document.getElementsByName('btnEditIsActual')
+      btnActual.forEach((btn) =>{
+        btn.addEventListener('click', ()=>{
+          console.log('clicked', btn.id)
+          let selectedYearId = btn.getAttribute('yearId')
+          let indicatorPoint  = data.indicator_point.find((item) => String(item.id) == String(btn.id))
+          
+          
+          if(indicatorPoint){
+            if(indicatorPoint.is_actual){
+              document.getElementById('isActualInput').checked = true
+            }else{
+              document.getElementById('isActualInput').checked = false
+            }
+          }
+          console.log(selectedYearId)
+          document.getElementById('indicatorYearId').value = selectedYearId
+        })
+      })
+
     })
     .catch((err) => console.log(err));
 });

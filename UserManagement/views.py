@@ -254,6 +254,7 @@ def admin_profile_updated(request):
 
 @login_required(login_url='login')
 @staff_user_required
+@admin_user_required
 def staff_profile_updated(request):
     user = CustomUser.objects.get(pk = request.user.pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)
