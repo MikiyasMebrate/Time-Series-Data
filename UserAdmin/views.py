@@ -296,9 +296,9 @@ def json(request):
     indicator_point = Indicator_Point.objects.all()
     year = DataPoint.objects.all()
     value = DataValue.objects.all()
-    measurement = Measurement.objects.all()
     month = Month.objects.all()
     quarter = Quarter.objects.all()
+    measurement = Measurement.objects.all()
     
     topic_data = list(topic.values())
     category_data = list(category.values())
@@ -306,6 +306,8 @@ def json(request):
     indicator_point_data = list(indicator_point.values())
     year = list(year.values())
     values = list(value.values())
+    months = list(month.values())
+    quarters = list(quarter.values())
     measurement_data = list(measurement.values())
 
         # Add Amount_ENG attribute to each indicator
