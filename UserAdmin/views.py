@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 
-
+@login_required(login_url='login')
+@admin_user_required
 def audit_log_list(request):
     auditlog_entries = LogEntry.objects.all()
     return render(request, 'user-admin/audit.html', {'auditlog_entries': auditlog_entries})
@@ -296,6 +297,8 @@ def json(request):
     year = DataPoint.objects.all()
     value = DataValue.objects.all()
     measurement = Measurement.objects.all()
+    month = Month.objects.all()
+    quarter = Quarter.objects.all()
     
     topic_data = list(topic.values())
     category_data = list(category.values())
@@ -321,6 +324,8 @@ def json(request):
         'indicators':indicator_data,
         'indicator_point' : indicator_point_data,
         'year' : year,
+        'quarter' : quarters,
+        'month' : months,
         'value' : values
     }
     return JsonResponse(context)

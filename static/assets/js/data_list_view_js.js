@@ -3,6 +3,7 @@ let filterData = () => {
     .then((response) => response.json())
     .then((data) => {
       let table = "";
+      let indicatorSelectedType = "yearly";
 
       let indicatorHtmlSelectAll = document.getElementById(
         "indicator_list_filter_select_all"
@@ -18,7 +19,7 @@ let filterData = () => {
       let yearTableList = [];
 
       let yearList = () => {
-        yearTableList = []
+        yearTableList = [];
         //Year list
         let selectYear = data.year.map(
           ({ id, year_EC, year_GC, is_interval }) => {
@@ -241,9 +242,10 @@ let filterData = () => {
                   !checkedYear.is_interval &&
                   String(yearCheckBox.value) === String(checkedYear.id)
                 ) {
-
                   if (
-                    yearTableList.find((item)=> String(item[0]) ==  String(checkedYear.id))
+                    yearTableList.find(
+                      (item) => String(item[0]) == String(checkedYear.id)
+                    )
                   ) {
                     continue;
                   } else {
@@ -282,11 +284,10 @@ let filterData = () => {
                 null;
               }
             }
-            //Sort Year by Ethiopian Calender 
-            yearTableList.sort((a, b) => a[1] > b[1] ? 1 : -1);
+            //Sort Year by Ethiopian Calender
+            yearTableList.sort((a, b) => (a[1] > b[1] ? 1 : -1));
           });
         });
-
       };
 
       selectTopic = data.topics.map(
@@ -573,8 +574,13 @@ let filterData = () => {
 
                 selectedIndicatorType.forEach((type) => {
                   type.addEventListener("change", () => {
-                    table = ""
+                    table = "";
+                    displayApplyButton.style.display = "none";
+                    document.getElementById("Year_list_filter").innerHTML =
+                      ' <p class="text-danger">Please Select Indicator</p>';
+
                     if (String(type.value) == "yearly") {
+                      indicatorSelectedType = "yearly";
                       if (selectYearIndicator.length == 0) {
                         displayNone(indicatorHtmlSelectAll);
                         indicatorHtmlBody.innerHTML =
@@ -585,6 +591,7 @@ let filterData = () => {
                           selectYearIndicator.join("");
                       }
                     } else if (String(type.value) == "quarterly") {
+                      indicatorSelectedType = "quarterly";
                       if (selectQuarterlyIndicator.length == 0) {
                         displayNone(indicatorHtmlSelectAll);
                         indicatorHtmlBody.innerHTML =
@@ -595,6 +602,7 @@ let filterData = () => {
                           selectQuarterlyIndicator.join("");
                       }
                     } else if (String(type.value) == "monthly") {
+                      indicatorSelectedType = "monthly";
                       if (selectMonthlyIndicator.length == 0) {
                         displayNone(indicatorHtmlSelectAll);
                         indicatorHtmlBody.innerHTML =
@@ -615,7 +623,7 @@ let filterData = () => {
                       indicatorCheckBox.addEventListener(
                         "change",
                         (eventIndicator) => {
-                          table = ""
+                          table = "";
                           displayApplyButton.style.display = "none";
                           if (
                             eventIndicator.target.checked &&
@@ -653,7 +661,6 @@ let filterData = () => {
                     }
                     //Active apply Button
                     yearList();
-                    
                   });
                 } else {
                   indicatorListCheckAll.forEach((event) => {
@@ -694,40 +701,41 @@ let filterData = () => {
 
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
-                
-                table += `
+                let typeYearTable = () => {
+                  table += `
                       <table id="newTable" class="table table-bordered m-0 p-0">
                       <thead>
                         <tr>
                           <th class="ps-5 pe-5">Name</th>`;
-                for (let i of yearTableList) {
-                  table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
-                }
+                  for (let i of yearTableList) {
+                    table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+                  }
 
-                table += `</tr>
+                  table += `</tr>
                                  </thead>
                             <tbody>
                       `;
 
-                data.indicators.map(
-                  ({
-                    title_ENG,
-                    title_AMH,
-                    id,
-                    for_category_id,
-                    is_deleted,
-                  }) => {
-                    if (
-                      String(for_category_id) === String(selectedCategoryId) &&
-                      selectedIndictorId.includes(String(id)) &&
-                      is_deleted == false
-                    ) {
-                      let title_amharic = "";
-                      if (!title_AMH === null)
-                        title_amharic = " - " + title_AMH;
+                  data.indicators.map(
+                    ({
+                      title_ENG,
+                      title_AMH,
+                      id,
+                      for_category_id,
+                      is_deleted,
+                    }) => {
+                      if (
+                        String(for_category_id) ===
+                          String(selectedCategoryId) &&
+                        selectedIndictorId.includes(String(id)) &&
+                        is_deleted == false
+                      ) {
+                        let title_amharic = "";
+                        if (!title_AMH === null)
+                          title_amharic = " - " + title_AMH;
 
-                      //Table Row Start
-                      table += `
+                        //Table Row Start
+                        table += `
                           <tr>
                             <td>
                                 <div class="row">
@@ -737,41 +745,41 @@ let filterData = () => {
                                 </div>
                             </td>`;
 
-                      for (j of yearTableList) {
-                        let statusData = false;
-                        for (k of data.value) {
-                          if (
-                            String(j[0]) === String(k.for_datapoint_id) &&
-                            String(id) === String(k.for_indicator_id)
-                          ) {
-                            table += `<td>${k.value}</td>`;
-                            statusData = false;
-                            break;
-                          } else {
-                            statusData = true;
+                        for (j of yearTableList) {
+                          let statusData = false;
+                          for (k of data.value) {
+                            if (
+                              String(j[0]) === String(k.for_datapoint_id) &&
+                              String(id) === String(k.for_indicator_id)
+                            ) {
+                              table += `<td>${k.value}</td>`;
+                              statusData = false;
+                              break;
+                            } else {
+                              statusData = true;
+                            }
+                          }
+                          if (statusData) {
+                            table += `<td> - </td>`;
                           }
                         }
-                        if (statusData) {
-                          table += `<td> - </td>`;
-                        }
-                      }
 
-                      table += `</tr>`;
+                        table += `</tr>`;
 
-                      //Table Row End
+                        //Table Row End
 
-                      let table_child_list = (parent, title_ENG, space) => {
-                        space += String("&nbsp;&nbsp;&nbsp;&nbsp");
-                        let status = false;
+                        let table_child_list = (parent, title_ENG, space) => {
+                          space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                          let status = false;
 
-                        for (i of data.indicators) {
-                          if (
-                            String(i.parent_id) === String(parent) &&
-                            i.is_deleted == false
-                          ) {
-                            status = true;
-                            //Table Row Start
-                            table += `
+                          for (i of data.indicators) {
+                            if (
+                              String(i.parent_id) === String(parent) &&
+                              i.is_deleted == false
+                            ) {
+                              status = true;
+                              //Table Row Start
+                              table += `
                           <tr>
                             <td>
                               <a>
@@ -781,12 +789,66 @@ let filterData = () => {
                               </a>
                             </td>`;
 
+                              for (j of yearTableList) {
+                                let statusData = false;
+                                for (k of data.value) {
+                                  if (
+                                    String(j[0]) ===
+                                      String(k.for_datapoint_id) &&
+                                    String(i.id) === String(k.for_indicator_id)
+                                  ) {
+                                    table += `<td>${k.value}</td>`;
+                                    statusData = false;
+                                    break;
+                                  } else {
+                                    statusData = true;
+                                  }
+                                }
+                                if (statusData) {
+                                  table += `<td> - </td>`;
+                                }
+                              }
+
+                              table += `</tr>`;
+
+                              //Table Row End
+                              table_child_list(
+                                i.id,
+                                i.title_ENG,
+                                String(space)
+                              );
+                            }
+                          }
+                          return status;
+                        };
+
+                        //Child Lists
+                        for (let indicator of data.indicators) {
+                          if (
+                            String(indicator.parent_id) == String(id) &&
+                            indicator.is_deleted == false
+                          ) {
+                            test = true;
+                            //li.push(`<optgroup label="${title_ENG}">`)
+
+                            //Table Row Start
+                            table += `
+                        <tr>
+                          <td>
+                            <a>
+                              <h6 class="mb-1">
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                              </h6>
+                            </a>
+                          </td>`;
+
                             for (j of yearTableList) {
                               let statusData = false;
                               for (k of data.value) {
                                 if (
                                   String(j[0]) === String(k.for_datapoint_id) &&
-                                  String(i.id) === String(k.for_indicator_id)
+                                  String(indicator.id) ===
+                                    String(k.for_indicator_id)
                                 ) {
                                   table += `<td>${k.value}</td>`;
                                   statusData = false;
@@ -803,78 +865,131 @@ let filterData = () => {
                             table += `</tr>`;
 
                             //Table Row End
-                            table_child_list(i.id, i.title_ENG, String(space));
+
+                            //li.push(`<option value=${indicator.id}>${indicator.title_ENG} ${indicator.title_AMH} </option>`)
+                            table_child_list(
+                              indicator.id,
+                              indicator.title_ENG,
+                              " "
+                            );
+                            //li.push(child)
+                            // li.push('</optgroup>')
                           }
                         }
-                        return status;
-                      };
+                        return null;
+                      }
+                    }
+                  );
 
-                      //Child Lists
-                      for (let indicator of data.indicators) {
-                        if (
-                          String(indicator.parent_id) == String(id) &&
-                          indicator.is_deleted == false
-                        ) {
-                          test = true;
-                          //li.push(`<optgroup label="${title_ENG}">`)
+                  table += `</tbody>
+                      </table>`;
 
-                          //Table Row Start
-                          table += `
-                        <tr>
-                          <td>
-                            <a>
-                              <h6 class="mb-1">
-                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
-                              </h6>
-                            </a>
-                          </td>`;
+                      $(document).ready(function () {
+                        $("#newTable").DataTable({
+                          retrieve: true,
+                          ordering: false,
+                          scrollX: true,
+                          responsive: true,
+                          paging: true,
+                          searching: true,
+                          orderNumber: true,
+                          lengthMenu: [
+                            [10, 25, 50, -1],
+                            ["10 rows", "25 rows", "50 rows", "Show all"],
+                          ],
+                          columnDefs: [
+                            { width: "100%" },
+                            { width: "200px", targets: 0 },
+                          ],
+                          dom: "Bfrtip",
+                          buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                        });
+                      });
+                };
 
-                          for (j of yearTableList) {
-                            let statusData = false;
-                            for (k of data.value) {
-                              if (
-                                String(j[0]) === String(k.for_datapoint_id) &&
-                                String(indicator.id) ===
-                                  String(k.for_indicator_id)
-                              ) {
-                                table += `<td>${k.value}</td>`;
-                                statusData = false;
-                                break;
-                              } else {
-                                statusData = true;
-                              }
-                            }
-                            if (statusData) {
-                              table += `<td> - </td>`;
-                            }
+                let typeMonthTable = () => {
+                  table += `
+                  <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
+                  <thead>
+                    <tr>
+                    <th class="vertical-text border">Year</th>
+                    <th class="vertical-text border">Month</th>`;
+
+                  data.indicators.map(
+                    ({
+                      title_ENG,
+                      title_AMH,
+                      id,
+                      for_category_id,
+                      is_deleted,
+                    }) => {
+                      if (
+                        String(for_category_id) ===
+                          String(selectedCategoryId) &&
+                        selectedIndictorId.includes(String(id)) &&
+                        is_deleted == false
+                      ) {
+                        let title_amharic = "";
+                        if (!title_AMH === null)
+                          title_amharic = " - " + title_AMH;
+
+                        table += ` <th class="vertical-text  border" ">
+                         <a href="/user-admin/data-list-detail/${id}" class="fw-bold text-dark p-0 m-0">${title_ENG} ${title_amharic}</a>
+                         </th>`;
+
+                        //Child List
+                        for (let indicator of data.indicators) {
+                          if (
+                            String(indicator.parent_id) == String(id) &&
+                            indicator.is_deleted == false
+                          ) {
+                            test = true;
+                            table += `
+                            <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                            `
                           }
-
-                          table += `</tr>`;
-
-                          //Table Row End
-
-                          //li.push(`<option value=${indicator.id}>${indicator.title_ENG} ${indicator.title_AMH} </option>`)
-                          table_child_list(
-                            indicator.id,
-                            indicator.title_ENG,
-                            " "
-                          );
-                          //li.push(child)
-                          // li.push('</optgroup>')
                         }
                       }
-                      return null;
                     }
-                  }
-                );
+                  );
 
-                table += `</tbody>
-                      </table>`;
+                  table += `</tr>
+                  </thead>`;
+
+                  $(document).ready(function () {
+                    $("#newTable").DataTable({
+                      retrieve: true,
+                      ordering: false,
+                      scrollX: true,
+                      responsive: true,
+                      paging: true,
+                      searching: true,
+                      orderNumber: true,
+                      columnDefs: [
+                        { width: "100%" },
+                      ],
+                      lengthMenu: [
+                        [10, 25, 50, -1],
+                        ["10 rows", "25 rows", "50 rows", "Show all"],
+                      ],
+                      dom: "Bfrtip",
+                      buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                    });
+                  });
+                };
+
+                if (String(indicatorSelectedType) == "yearly") {
+                  typeYearTable();
+                } else if (String(indicatorSelectedType) == "monthly") {
+                  typeMonthTable();
+                }
 
                 let dataListViewTable =
                   document.getElementById("list_table_view");
                 dataListViewTable.innerHTML = table;
                 table = "";
+                indicatorSelectedType = "yearly";
+
 
                 $(document).ready(function () {
                   $("#newTable").DataTable({
@@ -904,8 +1019,6 @@ let filterData = () => {
         });
       });
     });
-
-    
 };
 
 filterData();

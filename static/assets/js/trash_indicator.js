@@ -84,7 +84,7 @@ $(document).ready(function () {
                 <div class="flex-grow-2">
                    <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
                     <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                  </div>
+                </div>
               </li>
                 `;
               } else {

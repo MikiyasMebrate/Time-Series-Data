@@ -74,7 +74,7 @@ class Indicator_Point(models.Model):
    
     
     def __str__(self):
-         return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual)
+         return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual) + " Year: " + str(self.for_datapoint)
 
 
 class DataPoint(models.Model):
@@ -125,11 +125,16 @@ class DataPoint(models.Model):
 
 
 class Quarter(models.Model):
-    quarter = models.CharField(max_length=50)
-    year = models.ForeignKey(DataPoint, on_delete=models.CASCADE, blank=True, null=True)
+    title_ENG = models.CharField(max_length=50)
+    title_AMH = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at'] #Oldest First
     
     def __str__(self):
-        return self.quarter
+        return self.title_AMH + " " + self.title_AMH
     
 
 class Month(models.Model):
@@ -138,8 +143,10 @@ class Month(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['created_at'] #Oldest First
     def __str__(self):
-        return self.month_ENG
+        return self.month_AMH + " : " + self.month_ENG
     
 class Measurement(models.Model):
     Amount_ENG = models.CharField(max_length=50)
