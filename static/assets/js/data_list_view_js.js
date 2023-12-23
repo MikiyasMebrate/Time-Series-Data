@@ -701,6 +701,8 @@ let filterData = () => {
 
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
+                console.log(indicatorSelectedType)
+                //Type Year Table
                 let typeYearTable = () => {
                   table += `
                       <table id="newTable" class="table table-bordered m-0 p-0">
@@ -907,13 +909,14 @@ let filterData = () => {
                       });
                 };
 
+                //Type Month table
                 let typeMonthTable = () => {
                   table += `
                   <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
                   <thead>
                     <tr>
-                    <th class="vertical-text border">Year</th>
-                    <th class="vertical-text border">Month</th>`;
+                    <th  style="width: 40px;"  class="vertical-text border">Year</th>
+                    <th style="width: 40px;"  class="vertical-text border">Month</th>`;
 
                   data.indicators.map(
                     ({
@@ -937,6 +940,28 @@ let filterData = () => {
                          <a href="/user-admin/data-list-detail/${id}" class="fw-bold text-dark p-0 m-0">${title_ENG} ${title_amharic}</a>
                          </th>`;
 
+                         let childIndicatorList = (parent, space) =>{
+                          space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                          let status = false;
+
+                          for(let indicator of data.indicators ){
+                            if (
+                              String(indicator.parent_id) === String(parent) &&
+                              indicator.is_deleted == false
+                            ) {
+                              test = true;
+                              table += `
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                              `
+
+                              childIndicatorList(
+                                indicator.id,
+                                String(space)
+                              );
+
+                            }
+                          }
+                         }
                         //Child List
                         for (let indicator of data.indicators) {
                           if (
@@ -947,6 +972,8 @@ let filterData = () => {
                             table += `
                             <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
                             `
+
+                            childIndicatorList(indicator.id," ")
                           }
                         }
                       }
@@ -955,6 +982,34 @@ let filterData = () => {
 
                   table += `</tr>
                   </thead>`;
+
+                  table += `<tbody>`
+                  for (let year of yearTableList){
+                    let checkYearPrint = false
+                    for (let month of data.month){
+                      table+=`
+                      <tr>`
+
+                      if(!checkYearPrint){
+                        table+=`<td  class="border-bottom-0 p-0 m-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`
+                      }else{
+                        table+=` <td class="border-0"></td>`
+                      }
+                      table+=`                     
+                      <td class="fw-bold">${month.month_AMH} ${month.month_ENG}</td>
+                      <td class="fw-bold">4</td>
+                      <td>4</td>
+                      <td>5</td>
+                      <td>2</td>
+                      <td>2</td>
+                      <td>4</td>
+                    </tr>
+                    `
+                    checkYearPrint = true;
+                    }
+                          
+                  }
+                  table += `</tbody>`
 
                   $(document).ready(function () {
                     $("#newTable").DataTable({
@@ -969,14 +1024,16 @@ let filterData = () => {
                         { width: "100%" },
                       ],
                       lengthMenu: [
-                        [10, 25, 50, -1],
-                        ["10 rows", "25 rows", "50 rows", "Show all"],
+                        [24, 50,100, -1],
+                        [ "24 rows", "50 rows" , "100 rows" , "Show all"],
                       ],
                       dom: "Bfrtip",
                       buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                     });
                   });
                 };
+
+                
 
                 if (String(indicatorSelectedType) == "yearly") {
                   typeYearTable();
@@ -988,31 +1045,10 @@ let filterData = () => {
                   document.getElementById("list_table_view");
                 dataListViewTable.innerHTML = table;
                 table = "";
-                indicatorSelectedType = "yearly";
-
-
-                $(document).ready(function () {
-                  $("#newTable").DataTable({
-                    retrieve: true,
-                    ordering: false,
-                    scrollX: true,
-                    responsive: true,
-                    paging: true,
-                    searching: true,
-                    orderNumber: true,
-                    lengthMenu: [
-                      [10, 25, 50, -1],
-                      ["10 rows", "25 rows", "50 rows", "Show all"],
-                    ],
-                    columnDefs: [
-                      { width: "100%" },
-                      { width: "200px", targets: 0 },
-                    ],
-                    dom: "Bfrtip",
-                    buttons: ["pageLength", "excel", "csv", "pdf", "print"],
-                  });
-                });
               });
+
+
+              indicatorSelectedType = "yearly";
               //End Indicator table
             });
           });
