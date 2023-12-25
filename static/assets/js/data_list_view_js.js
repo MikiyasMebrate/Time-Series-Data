@@ -713,6 +713,7 @@ let filterData = () => {
                             <tbody>
                       `;
 
+                  //let indicatorList = data.indicators.filter((item)=>String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false)
                   data.indicators.map(
                     ({
                       title_ENG,
@@ -909,7 +910,7 @@ let filterData = () => {
                   table += `
                   <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
                   <thead>
-                    <tr>
+                    <tr class="text-center">
                     <th  style="width: 40px;"  class="vertical-text border">Year</th>
                     <th style="width: 40px;"  class="vertical-text border">Month</th>`;
 
@@ -1037,10 +1038,6 @@ let filterData = () => {
                           }
                         
                       }
-
-
-                      
-
                       table += `
                     </tr>`;
 
