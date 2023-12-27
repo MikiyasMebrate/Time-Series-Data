@@ -6,10 +6,21 @@ from UserManagement.models import CustomUser
 from django.contrib.auth.forms import SetPasswordForm
 
 class CustomUserSetPasswordForm(SetPasswordForm):
-    new_password1=forms.CharField(widget= forms.PasswordInput(attrs={
-                'class' : 'form-control','placeholder': 'new password'}))
-    new_password2=forms.CharField(widget= forms.PasswordInput(attrs={
-                'class' : 'form-control','placeholder': 'confirm password'}))
+    new_password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'New Password',
+        })
+    )
+    new_password2 = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm Password',
+        })
+    )
+
     class Meta:
         model = CustomUser
         fields = ['new_password1', 'new_password2']

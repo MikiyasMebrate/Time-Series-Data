@@ -62,7 +62,6 @@ def forget_password(request):
 
 
 # views.py
-
 def reset_password(request, token, uidb64):
     try:
         uid = smart_str(urlsafe_base64_decode(uidb64))
@@ -77,10 +76,9 @@ def reset_password(request, token, uidb64):
             return redirect('forget_password')
 
         if request.method == 'POST':
-            # Use get() with a default value to avoid MultiValueDictKeyError
-            password = request.POST.get('new_password1', '')
-            form = CustomUserSetPasswordForm(user, {'new_password1': password, 'new_password2': password})
+            form = CustomUserSetPasswordForm(user, request.POST)
             if form.is_valid():
+                password = form.cleaned_data['new_password1']
                 form.save()
 
                 # Log the user in after password reset
@@ -88,7 +86,9 @@ def reset_password(request, token, uidb64):
                 login(request, user)
 
                 # Redirect to the success page
+                messages.success(request, 'Password reset successfully. You are now logged in.')
                 return redirect('reset_password_confirm')
+            # Do not add the generic error message here
         else:
             form = CustomUserSetPasswordForm(user)
 
@@ -96,6 +96,7 @@ def reset_password(request, token, uidb64):
     else:
         messages.error(request, 'The reset password link is invalid or has expired. Please request a new one.')
         return redirect('forget_password')
+
 
     
 def reset_password_confirm(request):

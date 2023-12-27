@@ -614,10 +614,6 @@ let filterData = () => {
                       }
                     }
 
-                    // indicatorListCheckAll =
-                    //   document.getElementsByName("indicator_lists");
-                    // indicatorHtmlList =
-                    //   document.getElementsByName("indicator_lists");
                     selectAllIndicator.checked = false;
                     indicatorHtmlList.forEach((indicatorCheckBox) => {
                       indicatorCheckBox.addEventListener(
@@ -701,6 +697,7 @@ let filterData = () => {
 
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
+                //Type Year Table
                 let typeYearTable = () => {
                   table += `
                       <table id="newTable" class="table table-bordered m-0 p-0">
@@ -716,6 +713,7 @@ let filterData = () => {
                             <tbody>
                       `;
 
+                  //let indicatorList = data.indicators.filter((item)=>String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false)
                   data.indicators.map(
                     ({
                       title_ENG,
@@ -884,77 +882,171 @@ let filterData = () => {
                   table += `</tbody>
                       </table>`;
 
-                      $(document).ready(function () {
-                        $("#newTable").DataTable({
-                          retrieve: true,
-                          ordering: false,
-                          scrollX: true,
-                          responsive: true,
-                          paging: true,
-                          searching: true,
-                          orderNumber: true,
-                          lengthMenu: [
-                            [10, 25, 50, -1],
-                            ["10 rows", "25 rows", "50 rows", "Show all"],
-                          ],
-                          columnDefs: [
-                            { width: "100%" },
-                            { width: "200px", targets: 0 },
-                          ],
-                          dom: "Bfrtip",
-                          buttons: ["pageLength", "excel", "csv", "pdf", "print"],
-                        });
-                      });
+                  $(document).ready(function () {
+                    $("#newTable").DataTable({
+                      retrieve: true,
+                      ordering: false,
+                      scrollX: true,
+                      responsive: true,
+                      paging: true,
+                      searching: true,
+                      orderNumber: true,
+                      lengthMenu: [
+                        [10, 25, 50, -1],
+                        ["10 rows", "25 rows", "50 rows", "Show all"],
+                      ],
+                      columnDefs: [
+                        { width: "100%" },
+                        { width: "200px", targets: 0 },
+                      ],
+                      dom: "Bfrtip",
+                      buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                    });
+                  });
                 };
 
+                //Type Month table
                 let typeMonthTable = () => {
                   table += `
                   <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
                   <thead>
-                    <tr>
-                    <th class="vertical-text border">Year</th>
-                    <th class="vertical-text border">Month</th>`;
+                    <tr class="text-center">
+                    <th  style="width: 40px;"  class="vertical-text border">Year</th>
+                    <th style="width: 40px;"  class="vertical-text border">Month</th>`;
 
-                  data.indicators.map(
-                    ({
-                      title_ENG,
-                      title_AMH,
-                      id,
-                      for_category_id,
-                      is_deleted,
-                    }) => {
-                      if (
-                        String(for_category_id) ===
-                          String(selectedCategoryId) &&
-                        selectedIndictorId.includes(String(id)) &&
-                        is_deleted == false
-                      ) {
+
+                   let filterIndicators =  data.indicators.filter((item) => String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false )
+                    for(filterIndicator of filterIndicators) {
                         let title_amharic = "";
-                        if (!title_AMH === null)
-                          title_amharic = " - " + title_AMH;
+                        if (!filterIndicator.title_AMH === null)
+                          title_amharic = " - " + filterIndicator.title_AMH;
 
                         table += ` <th class="vertical-text  border" ">
-                         <a href="/user-admin/data-list-detail/${id}" class="fw-bold text-dark p-0 m-0">${title_ENG} ${title_amharic}</a>
+                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
                          </th>`;
 
+                        let childIndicatorList = (parent, space) => {
+                          space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                          let status = false;
+
+                          for (let indicator of data.indicators) {
+                            if (
+                              String(indicator.parent_id) === String(parent) &&
+                              indicator.is_deleted == false
+                            ) {
+                              test = true;
+                              table += `
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                              `;
+
+                              childIndicatorList(indicator.id, String(space));
+                            }
+                          }
+                        };
                         //Child List
                         for (let indicator of data.indicators) {
                           if (
-                            String(indicator.parent_id) == String(id) &&
+                            String(indicator.parent_id) == String(filterIndicator.id) &&
                             indicator.is_deleted == false
                           ) {
                             test = true;
                             table += `
                             <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                            `
+                            `;
+
+                            childIndicatorList(indicator.id, " ");
                           }
                         }
-                      }
+                      
                     }
-                  );
+                
 
                   table += `</tr>
                   </thead>`;
+
+                  table += `<tbody>`;
+
+                  //year loop
+                  for (let year of yearTableList) {
+                    let checkYearPrint = false;
+
+                    //month loop
+                    for (let month of data.month) {
+                      table += `
+                      <tr class="text-center">`;
+
+                      if (!checkYearPrint) {
+                        table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                      } else {
+                        table += ` <td class="border-0"></td>`;
+                      }
+
+                      table += `                     
+                      <td class="fw-bold" style="width: 22%;" >${month.month_AMH}: ${month.month_ENG}</td>`
+                    
+
+
+                      //Filter parent indicators 
+                      let indicatorsObject = data.indicators.filter((item) => String(item.for_category_id) ===  String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) &&
+                      item.is_deleted == false )
+
+                      for(let indicatorObj of indicatorsObject){
+                          table+=`<td class="fw-bold"  style="width: 10%";> 5 </td>`
+                          //Filter Only Child Indicator 
+                          let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(indicatorObj.id))
+
+
+                          let childIndicatorDataValue = (parent)=>{
+                            let filterChild = data.indicators.filter((item) => String(item.parent_id) == String(parent) && item.is_deleted == false )
+                            if(filterChild){
+                              for(indicatorList of filterChild){
+                                valueData = data.value.find((value)=> {
+                                  if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(indicatorList.id) && String(value.for_datapoint_id) === String(year[0])){
+                                    return value
+                                  }
+                                })
+      
+                                if(valueData){
+                                  table+=`<td> ${valueData.value} </td>`
+                                }else{
+                                  table+=`<td> - </td>`
+                                }
+                                childIndicatorDataValue(indicatorList.id)
+                              }
+                            }
+                          }
+
+
+
+                          for(let childIndicator of childIndicators){
+                            valueData = data.value.find((value)=> {
+                              if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(childIndicator.id) && String(value.for_datapoint_id) === String(year[0])){
+                                return value
+                              }
+                            })
+  
+                            if(valueData){
+                              table+=`<td> ${valueData.value} </td>`
+                            }else{
+                              table+=`<td> - </td>`
+                            }
+
+
+                            //Call Child
+                            childIndicatorDataValue(childIndicator.id)
+
+                          }
+                        
+                      }
+                      table += `
+                    </tr>`;
+
+                      checkYearPrint = true;
+                    }
+
+
+                  }
+                  table += `</tbody>`;
 
                   $(document).ready(function () {
                     $("#newTable").DataTable({
@@ -965,12 +1057,10 @@ let filterData = () => {
                       paging: true,
                       searching: true,
                       orderNumber: true,
-                      columnDefs: [
-                        { width: "100%" },
-                      ],
+                      columnDefs: [{ width: "100%" }],
                       lengthMenu: [
-                        [10, 25, 50, -1],
-                        ["10 rows", "25 rows", "50 rows", "Show all"],
+                        [24, 50, 100, -1],
+                        ["24 rows", "50 rows", "100 rows", "Show all"],
                       ],
                       dom: "Bfrtip",
                       buttons: ["pageLength", "excel", "csv", "pdf", "print"],
@@ -988,31 +1078,9 @@ let filterData = () => {
                   document.getElementById("list_table_view");
                 dataListViewTable.innerHTML = table;
                 table = "";
-                indicatorSelectedType = "yearly";
-
-
-                $(document).ready(function () {
-                  $("#newTable").DataTable({
-                    retrieve: true,
-                    ordering: false,
-                    scrollX: true,
-                    responsive: true,
-                    paging: true,
-                    searching: true,
-                    orderNumber: true,
-                    lengthMenu: [
-                      [10, 25, 50, -1],
-                      ["10 rows", "25 rows", "50 rows", "Show all"],
-                    ],
-                    columnDefs: [
-                      { width: "100%" },
-                      { width: "200px", targets: 0 },
-                    ],
-                    dom: "Bfrtip",
-                    buttons: ["pageLength", "excel", "csv", "pdf", "print"],
-                  });
-                });
               });
+
+              indicatorSelectedType = "yearly";
               //End Indicator table
             });
           });
