@@ -180,6 +180,8 @@ def filter_indicator(request, pk):
     value = list(DataValue.objects.all().values())
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
+    month = list(Month.objects.all().values())
+    quarter = list(Quarter.objects.all().values())
 
     def child_list(parent, space):
         space = space + "   "
@@ -197,7 +199,9 @@ def filter_indicator(request, pk):
         'indicator_point': indicator_point,
         'year' : year,
         'value' : value,
-        'measurements' : measurements
+        'measurements' : measurements,
+        'month' : month,
+        'quarter' : quarter
     }
     
     return JsonResponse(context)

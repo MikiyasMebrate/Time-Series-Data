@@ -7,6 +7,10 @@ from django.db import models
 from auditlog.registry import auditlog
 
 
+
+
+
+
 class Topic(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
@@ -144,9 +148,10 @@ class Month(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        ordering = ['created_at'] #Oldest First
+        ordering = ['pk'] #Oldest First
+
     def __str__(self):
-        return self.month_AMH + " : " + self.month_ENG
+        return self.month_AMH + " : " + self.month_ENG 
     
 class Measurement(models.Model):
     Amount_ENG = models.CharField(max_length=50)
@@ -179,37 +184,52 @@ class DataValue(models.Model):
     for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
 
+
+    def __str__(self) -> str:
+        return str(self.for_indicator)+" "+str(self.for_datapoint)
+    
+
     def calculate_parent_value(self):
         try: 
-            main_parent = self.for_indicator.parent
-            try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
-            except:parent_data_value = None
-            child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
-           
-            sum = 0
-            for child in child_indicators:
-                try: 
-                    child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
-                    if(child_data_value.is_deleted == False):
-                        sum  = sum + int(child_data_value.value)
-                    else:
-                        None
-                except: 
-                    None
-                
-            if parent_data_value is None:
-                parent_data = DataValue()
-                parent_data.value = sum
-                parent_data.for_indicator = main_parent
-                parent_data.for_datapoint = self.for_datapoint
-                parent_data.save()
-            else: 
-                parent_data_value.value = sum
-                try: parent_data_value.save()
-                except: None
+            if not self.for_month and self.for_datapoint:
+               main_parent = self.for_indicator.parent
+               try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
+               except:parent_data_value = None
+               child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
+              
+               sum = 0
+               for child in child_indicators:
+                   try: 
+                       child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
+                       if(child_data_value.is_deleted == False):
+                           sum  = sum + int(child_data_value.value)
+                       else:
+                           None
+                   except: 
+                       None
+                   
+               if parent_data_value is None:
+                   parent_data = DataValue()
+                   parent_data.value = sum
+                   parent_data.for_indicator = main_parent
+                   parent_data.for_datapoint = self.for_datapoint
+                   parent_data.save()
+               else: 
+                   parent_data_value.value = sum
+                   try: parent_data_value.save()
+                   except: None
+            elif self.month:
+                print('Month Data')
+                main_parent = self.for_indicator.parent
+                try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint, for_month = self.for_month)
+                except:parent_data_value = None
+                child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
+
+                print(main_parent)
+                print(child_indicators)
         except:
             None
-    
+
 @receiver(post_save, sender=DataValue)
 def call_my_function(sender, instance, created, **kwargs):
     if created: 
