@@ -85,22 +85,10 @@ $(document).ready(function () {
               String(item.for_indicator_id) == String(parentIndicator.id) &&
               String(item.for_datapoint_id) == String(year.id)
           );
-          let is_actual = null;
-          let actualId = null;
+          let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
+         
 
-          try {
-            if (checkActual.is_actual) {
-              is_actual = "Actual";
-            } else {
-              is_actual = "Not Actual";
-            }
-
-            actualId = checkActual.id;
-          } catch {
-            is_actual = "No Data";
-          }
-
-          table += `<th style="font-size: small;" class = "text-center">${year.year_EC}-E.C </br>${year.year_GC}-G.C  <hr> <button id="${actualId}" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button>   </th>`;
+          table += `<th style="font-size: small;" class = "text-center">${year.year_EC}-E.C </br>${year.year_GC}-G.C  <hr> <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button>   </th>`;
         }
 
         table += `</tr>
@@ -417,13 +405,30 @@ $(document).ready(function () {
          for (let year of data.year) {
           let checkYearPrint = false;
 
+
+          let checkActual = data.indicator_point.find((item) =>
+              String(item.for_indicator_id) == String(currentIndicator.id) &&
+              String(item.for_datapoint_id) == String(year.id)
+          );
+
+          let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
+
+
+          
+
+
+
+
           //month loop
           for (let month of data.month) {
             table += `
             <tr class="text-center">`;
+           
 
             if (!checkYearPrint) {
-              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C </br>${year.year_GC}-G.C</td>`;
+              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C </br>${year.year_GC}-G.C
+              <hr> <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
+              </td>`;
             } else {
               table += ` <td class="border-0"></td>`;
             }
@@ -433,22 +438,20 @@ $(document).ready(function () {
           
 
 
-            //Filter parent indicators 
-            let indicatorObj = currentIndicator
 
-            if(indicatorObj){
-              let checkParentHasChild = data.indicators.find((item) => String(item.parent_id) === String(indicatorObj.id) && !item.is_deleted);
+            if(currentIndicator){
+              let checkParentHasChild = data.indicators.find((item) => String(item.parent_id) === String(currentIndicator.id) && !item.is_deleted);
 
                //Print Main Indicator Value
                if(checkParentHasChild){
-                table += `<td  style="width: 10%"; class="text-center fw-bold"> ${indicatorObj.value ? indicatorObj.value : ' - ' } </td>`;
+                table += `<td  style="width: 10%"; class="text-center fw-bold"> ${currentIndicator.value ? currentIndicator.value : ' - ' } </td>`;
               }else {
-                table += ` <td class="p-0"><button id="${indicatorObj.id}" value="${indicatorObj.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${indicatorObj.value ? indicatorObj.value : ' - ' }</button></td>`;
+                table += ` <td class="p-0"><button id="${currentIndicator.id}" value="${currentIndicator.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${currentIndicator.value ? currentIndicator.value : ' - ' }</button></td>`;
               }
               
 
                 //Filter Only Child Indicator 
-                let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(indicatorObj.id))
+                let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(currentIndicator.id))
 
 
                 //Child of Child
