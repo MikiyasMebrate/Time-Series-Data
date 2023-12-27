@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'auditlog.middleware.AuditlogMiddleware'
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 ROOT_URLCONF = 'TimeSeries.urls'
@@ -159,8 +159,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'mikiyasmebrate2656@gmail.com'
-EMAIL_HOST_PASSWORD = 'itdxavkvbkabarmz'  # Replace with your actual Gmail password
+EMAIL_HOST_USER = 'habtamutesfaye.com@gmail.com'
+EMAIL_HOST_PASSWORD = 'jawvozmglrbqtfbk'  # Replace with your actual Gmail password
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 

@@ -1,11 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
+from django.urls import reverse
 from TimeSeriesBase.models import *
 from .forms import *
 from django.shortcuts import render, redirect
 from .models import CustomUser
-from django.contrib.auth import login,authenticate,logout
+from django.contrib.auth import login,authenticate,logout,get_user_model
 from  .decorators import admin_user_required, staff_user_required
 from django.contrib.auth.decorators import login_required
 import random
@@ -13,6 +14,96 @@ import string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+
+#forget passsword
+from TimeSeriesBase.forms import CustomUserSetPasswordForm
+# views.py
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import authenticate, login
+from django.utils.encoding import force_bytes, smart_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from django.urls import reverse_lazy
+
+User = get_user_model()
+
+
+def forget_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, 'User with this email does not exist.')
+            return redirect('forget_password')
+
+        # Generate token and uidb64
+        token = default_token_generator.make_token(user)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Generate reset URL
+        reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
+        reset_url = request.build_absolute_uri(reset_url)
+        print(reset_url)
+
+        subject = 'Reset Your Password'
+        message = f'Click the link below to reset your password:\n\n{reset_url}'
+        send_mail(subject, message, 'habtamutesfaye.com@gmail.com', [user.email])
+
+        messages.success(request, 'Password reset link has been sent to your email.')
+        return redirect('forget_password')
+
+    return render(request, 'forget_pass.html')
+
+
+# views.py
+def reset_password(request, token, uidb64):
+    try:
+        uid = smart_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        # Check if last_reset_password is set and compare the time
+        if user.last_reset_password and timezone.now() - user.last_reset_password > timezone.timedelta(hours=1):
+            messages.error(request, 'The reset password link has expired. Please request a new one.')
+            return redirect('forget_password')
+
+        if request.method == 'POST':
+            form = CustomUserSetPasswordForm(user, request.POST)
+            if form.is_valid():
+                password = form.cleaned_data['new_password1']
+                form.save()
+
+                # Log the user in after password reset
+                user = authenticate(request, username=user.email, password=password)
+                login(request, user)
+
+                # Redirect to the success page
+                messages.success(request, 'Password reset successfully. You are now logged in.')
+                return redirect('reset_password_confirm')
+            # Do not add the generic error message here
+        else:
+            form = CustomUserSetPasswordForm(user)
+
+        return render(request, 'reset_password.html', {'form': form})
+    else:
+        messages.error(request, 'The reset password link is invalid or has expired. Please request a new one.')
+        return redirect('forget_password')
+
+
+    
+def reset_password_confirm(request):
+    return render(request, 'sucess.html')
+
+#forget password end
+
 
 def generate_password(length):
     characters = string.ascii_letters + string.digits 
@@ -164,6 +255,7 @@ def admin_profile_updated(request):
 
 @login_required(login_url='login')
 @staff_user_required
+@admin_user_required
 def staff_profile_updated(request):
     user = CustomUser.objects.get(pk = request.user.pk)
     form = EditProfileForm(request.POST or None, request.FILES or None,instance=user)

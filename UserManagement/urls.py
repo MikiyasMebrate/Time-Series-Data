@@ -26,5 +26,8 @@ urlpatterns = [
     path('activate_deactivate_user/<int:user_id>/', views.activate_deactivate_user, name='activate_deactivate_user'),
     path('users/<int:user_id>/edit/', views.edit_user, name='edit_user'),   
 
+    path('forget-password/', forget_password, name='forget_password'),
+    path('reset-password/<str:token>/<str:uidb64>/', reset_password, name='reset_password'),  # Updated URL pattern
+    path('reset-password-confirm/', reset_password_confirm, name='reset_password_confirm'),
 ]
      

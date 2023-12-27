@@ -13,6 +13,8 @@ urlpatterns = [
     path('json-filter-catagory/', views.filter_catagory_json, name='json_filter_catagory'),
     path('json-filter-source/', views.json_filter_source, name='json_filter_source'),
     path('json-filter-measurement/', views.json_measurement, name='json_measurement'),
+    # URL for fetching a specific measurement by ID
+    path('json-filter-measurement/<int:measurement_id>/', views.json_measurement_byID, name='json_measurement_by_id'),
     
     #Category
     path('category/', views.category, name="user-admin-category"),

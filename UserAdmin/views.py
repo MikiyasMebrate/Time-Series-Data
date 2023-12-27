@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 
-
+@login_required(login_url='login')
+@admin_user_required
 def audit_log_list(request):
     auditlog_entries = LogEntry.objects.all()
     return render(request, 'user-admin/audit.html', {'auditlog_entries': auditlog_entries})
@@ -177,7 +178,7 @@ def filter_indicator(request, pk):
     indicators = list(Indicator.objects.all().values())
     year = list(DataPoint.objects.all().values())
     value = list(DataValue.objects.all().values())
-    indicator_point = list(Indicator_Point.objects.all().values())
+    indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
 
     def child_list(parent, space):
@@ -260,35 +261,77 @@ def filter_catagory_json(request):
 @login_required(login_url='login')
 def json_measurement(request):
     measurements = list(Measurement.objects.all().values())
+    
     context = {
         'measurements' : measurements
     }
     return JsonResponse(context)
+
+def json_measurement_byID(request, measurement_id=None):
+    # If measurement_id is provided, fetch the specific measurement
+    if measurement_id is not None:
+        measurement = Measurement.objects.filter(id=measurement_id).values().first()
+
+        if measurement is None:
+            # Return a 404 response if the measurement with the given ID is not found
+            return JsonResponse({'error': 'Measurement not found'}, status=404)
+
+        # Return the specific measurement
+        return JsonResponse({'measurement': measurement})
+
+    # If no measurement_id is provided, return the list of all measurements
+    measurements = list(Measurement.objects.all().values())
+    context = {
+        'measurements': measurements
+    }
+    return JsonResponse(context)
+
+from django.http import JsonResponse
 
 @login_required(login_url='login')
 def json(request):
     topic = Topic.objects.all()
     category = Category.objects.all()
     indicator = Indicator.objects.all()
+    indicator_point = Indicator_Point.objects.all()
     year = DataPoint.objects.all()
     value = DataValue.objects.all()
+    month = Month.objects.all()
+    quarter = Quarter.objects.all()
+    measurement = Measurement.objects.all()
     
     topic_data = list(topic.values())
     category_data = list(category.values())
     indicator_data = list(indicator.values())
+    indicator_point_data = list(indicator_point.values())
     year = list(year.values())
     values = list(value.values())
+    months = list(month.values())
+    quarters = list(quarter.values())
+    measurement_data = list(measurement.values())
 
-        
-        
+        # Add Amount_ENG attribute to each indicator
+    for ind in indicator_data:
+        measurement_id = ind.get('measurement_id')
+        if measurement_id is not None:
+            matching_measurement = next((m for m in measurement_data if m['id'] == measurement_id), None)
+            ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
+        else:
+            ind['Amount_ENG'] = None
+
+
     context = {
         'topics': topic_data,
         'categories': category_data,
         'indicators':indicator_data,
+        'indicator_point' : indicator_point_data,
         'year' : year,
+        'quarter' : quarters,
+        'month' : months,
         'value' : values
     }
-    return(JsonResponse(context))
+    return JsonResponse(context)
+
 
     
 
@@ -405,6 +448,46 @@ def data_list_detail(request, pk):
                     messages.error(request, 'Please Try Again!')
             else:
                 messages.error(request, 'Please Try Again not valid!')
+        if 'indicatorYearId' in request.POST:
+            is_actual = request.POST.get('isActualInput')
+            is_actual_data_point_id = request.POST.get('indicatorYearId')
+
+            print(is_actual_data_point_id)
+            try:    
+                indicator_point = Indicator_Point.objects.get(for_indicator = indicator, for_datapoint = is_actual_data_point_id)
+            except:
+                indicator_point = None
+
+            try:
+                data_point = DataPoint.objects.get(pk = is_actual_data_point_id)
+            except:
+                data_point = None
+
+            #Is Indicator Point is Found
+            print(data_point)
+            if(indicator_point):
+                if(is_actual):
+                    indicator_point.is_actual = True
+                else:
+                    indicator_point.is_actual = False
+                 
+                indicator_point.save()
+                messages.success(request, 'Successfully Actual Point updated!')
+            elif(data_point):
+                indicator_obj = Indicator_Point()
+                indicator_obj.for_indicator = indicator
+                indicator_obj.for_datapoint = data_point
+                if(is_actual):
+                    indicator_obj.is_actual = True
+                else:
+                    indicator_obj.is_actual = False
+                
+                indicator_obj.save()
+                messages.success(request, 'Successfully Actual Point Added!')
+            else:
+                messages.error(request, 'Please Try Again!')
+                
+            
                        
     context = {
         'form' : form,
@@ -448,11 +531,15 @@ def indicator_list(request, pk):
             if form.is_valid():
                 title_ENG = form.cleaned_data['title_ENG']
                 title_AMH = form.cleaned_data['title_AMH']
+                category_obj = form.cleaned_data['for_category']
+                type_of_obj = form.cleaned_data['type_of']
                 indicator_id = request.POST.get('indicator_Id')
     
                 indicator_obj = Indicator.objects.get(id = indicator_id)
                 indicator_obj.title_AMH = title_AMH
                 indicator_obj.title_ENG = title_ENG
+                indicator_obj.for_category = category_obj
+                indicator_obj.type_of = type_of_obj
                 indicator_obj.save()
                 form = IndicatorForm()
                 messages.success(request, 'Successfully Updated')
