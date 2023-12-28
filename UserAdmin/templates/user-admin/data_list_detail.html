@@ -16,6 +16,18 @@
       overflow-y: auto;
       /* enable horizontal scrolling */
     }
+    .vertical-text {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      text-orientation: sideways-right;
+      white-space: nowrap;
+      width: 100%;
+      text-align: center; /* Add this line to center the text */
+    }
+    .horizontal-text {
+      writing-mode: horizontal-tb;
+      text-align: center; /* Add this line to center the text */
+    }
   </style>
 </head>
 
@@ -87,6 +99,7 @@
             <div class="modal-body" id="form_body">
               <input type="number" id="indicator_id" name="indicator" style="display: none;">
               <input type="number" id="data_point_id" name="data_point" style="display: none;">
+              <input type="number" id="month_id" name="month" style="display: none;">
               <label for="id_value" class="form-label">Value: </label>
               {{form.value}}
             </div>
@@ -200,7 +213,7 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1 class="m-0">
-              Total Revenue and Grants</h1>
+              {{indicator.title_ENG}}</h1>
           </div>
         </div>
       </div>
@@ -245,7 +258,7 @@
             {% include 'user-admin/include/messages.html'%}
 
             <!--Data List Start-->
-            <div class="card">
+            <div  class="card">
               <div class="card-body" id="list_table_view">
                 <div id="tableTest">
                 </div>
