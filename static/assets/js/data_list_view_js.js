@@ -991,7 +991,20 @@ let filterData = () => {
                       item.is_deleted == false )
 
                       for(let indicatorObj of indicatorsObject){
-                          table+=`<td class="fw-bold"  style="width: 10%";> 5 </td>`
+
+                        let currentDataValue  = data.value.find((item)=> {
+                          if(String(item.for_month_id) === String(month.id) && String(item.for_indicator_id) === String(indicatorObj.id) && String(item.for_datapoint_id) === String(year[0])){
+                            return item
+                          }
+                        })
+          
+                         //Print Main Indicator Value
+                         table+=`<td class="fw-bold"  style="width: 10%";> ${currentDataValue ? currentDataValue.value : ' - '} </td>`
+
+
+
+
+
                           //Filter Only Child Indicator 
                           let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(indicatorObj.id))
 

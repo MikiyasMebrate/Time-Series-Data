@@ -192,7 +192,7 @@ class DataValue(models.Model):
     def calculate_parent_value(self):
         try: 
             if not self.for_month and self.for_datapoint:
-               main_parent = self.for_indicator.parent
+               main_parent = self.for_indicator.parent # get Parent of Indicator
                try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
                except:parent_data_value = None
                child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
@@ -218,15 +218,34 @@ class DataValue(models.Model):
                    parent_data_value.value = sum
                    try: parent_data_value.save()
                    except: None
-            elif self.month:
-                print('Month Data')
+
+            elif self.for_month:
                 main_parent = self.for_indicator.parent
                 try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint, for_month = self.for_month)
                 except:parent_data_value = None
                 child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
 
-                print(main_parent)
-                print(child_indicators)
+                sum = 0
+                for child in child_indicators:
+                   try: 
+                       child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_month = self.for_month)
+                       if(child_data_value.is_deleted == False):
+                           sum  = sum + int(child_data_value.value)
+                       else:
+                           None
+                   except: 
+                       None
+                if parent_data_value is None:
+                   parent_data = DataValue()
+                   parent_data.value = sum
+                   parent_data.for_indicator = main_parent
+                   parent_data.for_datapoint = self.for_datapoint
+                   parent_data.for_month = self.for_month
+                   parent_data.save()
+                else: 
+                   parent_data_value.value = sum
+                   try: parent_data_value.save()
+                   except: None
         except:
             None
 

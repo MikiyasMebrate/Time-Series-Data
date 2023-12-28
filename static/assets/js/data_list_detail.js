@@ -338,7 +338,7 @@ $(document).ready(function () {
       
       } else if (String(currentIndicator.type_of) === "monthly") {
         table += `
-        <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
+        <table id="newTable" class="table table-bordered m-0 p-0">
         <thead>
           <tr class="text-center">
           <th  style="width: 40px;"  class="vertical-text border">Year</th>
@@ -441,11 +441,25 @@ $(document).ready(function () {
             if(currentIndicator){
               let checkParentHasChild = data.indicators.find((item) => String(item.parent_id) === String(currentIndicator.id) && !item.is_deleted);
 
+              let currentDataValue  = data.value.find((value)=> {
+                if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(currentIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
+                  return value
+                }
+              })
+
                //Print Main Indicator Value
-               if(checkParentHasChild){
-                table += `<td  style="width: 10%"; class="text-center fw-bold"> ${currentIndicator.value ? currentIndicator.value : ' - ' } </td>`;
-              }else {
-                table += ` <td class="p-0"><button id="${currentIndicator.id}" value="${currentIndicator.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${currentIndicator.value ? currentIndicator.value : ' - ' }</button></td>`;
+              if(currentDataValue){
+                if(checkParentHasChild){
+                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${currentDataValue.value ? currentDataValue.value : ' - ' } </td>`;
+                }else {
+                  table += `<td class="p-0"><button id="${currentDataValue.id}" value="${currentDataValue.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${currentDataValue.value ? currentDataValue.value : ' - ' }</button></td>`;
+                }
+              }else{
+                if(checkParentHasChild){
+                  table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                }else {
+                  table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                }
               }
               
 
