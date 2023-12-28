@@ -64,6 +64,8 @@ $(document).ready(function () {
       let measurementHtml = document.getElementById("measurementOptionId");
       measurementHtml.innerHTML = measurementOptions;
 
+
+      //Assign Measurement 
       try {
         document.getElementById("measurement_option_id_select").value =
           currentMeasurement.id;
@@ -72,6 +74,8 @@ $(document).ready(function () {
       }
 
       let table = "";
+
+      //Check What Type Indicator is 
       if (String(currentIndicator.type_of) === "yearly") {
         table += `
         <table id="newTable" class="table table-bordered m-0 p-0">
@@ -92,8 +96,8 @@ $(document).ready(function () {
         }
 
         table += `</tr>
-  </thead> 
-  <tbody>`;
+                   </thead> 
+                  <tbody>`;
 
         data.indicators.map(
           ({ title_ENG, title_AMH, id, for_category, is_deleted }) => {
@@ -219,20 +223,20 @@ $(document).ready(function () {
                           status = true;
                           //Table Row Start
                           table += `
-                <tr>
-                <td class="fw-normal">
-                  <div class="row">
-                    <div class="col-9">
-                      &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
-                    </div>
-                    <div class="col-1">
-                      <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
-                    </div>
-                    <div class="col-1">
-                  <button type="button" name="btnDeleteIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
-                </div>
-                  </div>
-                </td>`;
+                           <tr>
+                           <td class="fw-normal">
+                             <div class="row">
+                               <div class="col-9">
+                                 &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
+                               </div>
+                               <div class="col-1">
+                                 <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                               </div>
+                               <div class="col-1">
+                             <button type="button" name="btnDeleteIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                           </div>
+                             </div>
+                           </td>`;
 
                           for (year of data.year) {
                             let statusData = false;
@@ -331,6 +335,7 @@ $(document).ready(function () {
             }
           }
         );
+      
       } else if (String(currentIndicator.type_of) === "monthly") {
         table += `
         <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
@@ -412,12 +417,6 @@ $(document).ready(function () {
           );
 
           let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
-
-
-          
-
-
-
 
           //month loop
           for (let month of data.month) {
@@ -555,19 +554,23 @@ $(document).ready(function () {
 
       let btnIndicator = document.getElementsByName("btnIndicator");
 
+
       btnIndicator.forEach((clickableButton) => {
         clickableButton.addEventListener("click", (eventButton) => {
           let target = eventButton.target.getAttribute("id");
           let form1 = document.getElementById("form_1");
           let form2 = document.getElementById("form_2");
+          let indicatorInput = document.getElementById("indicator_id");
+          let dataPointInput = document.getElementById("data_point_id");
+          let monthInput = document.getElementById('month_id')
+
           try {
             target = target.split("-");
             let indicatorId = target[0];
             let yearId = target[1];
-            if (yearId != undefined) {
-              let indicatorInput = document.getElementById("indicator_id");
-              let dataPointInput = document.getElementById("data_point_id");
 
+            if(String(currentIndicator.type_of)=='yearly'){
+            if (yearId != undefined) {
               indicatorInput.value = indicatorId;
               dataPointInput.value = yearId;
 
@@ -581,6 +584,23 @@ $(document).ready(function () {
               document.getElementById("data_value").value = value_id;
               let setValue = (document.getElementById("id_value_form2").value =
                 value);
+            }
+            }else if(String(currentIndicator.type_of)=='monthly'){
+              if(yearId){
+                indicatorInput.value = indicatorId;
+                dataPointInput.value = yearId;
+                monthInput.value = target[2];
+  
+                form2.style.display = "none";
+                form1.style.display = "block";
+              }else{
+                let value_id = eventButton.target.getAttribute("id");
+                let value = eventButton.target.getAttribute("value");
+                form1.style.display = "none";
+                form2.style.display = "block";
+                document.getElementById("data_value").value = value_id;
+                document.getElementById("id_value_form2").value = value;
+              }
             }
           } catch {
             null;
@@ -625,7 +645,7 @@ $(document).ready(function () {
         removeIndicator();
       });
 
-      //Edit Actual nesss
+      //Edit Actual
       let btnActual = document.getElementsByName("btnEditIsActual");
       btnActual.forEach((btn) => {
         btn.addEventListener("click", () => {

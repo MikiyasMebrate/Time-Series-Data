@@ -386,23 +386,47 @@ def data_list_detail(request, pk):
         if 'addValueIndicator' in request.POST:
             form = ValueForm(request.POST)
             if form.is_valid():
-                try:
-                    indicator_id = request.POST.get('indicator') 
-                    data_point_id = request.POST.get('data_point')
-                    value = form.cleaned_data['value']
-                    indicator_obj = Indicator.objects.get(pk = indicator_id)
-                    data_point_obj = DataPoint.objects.get(pk = data_point_id)
-                
-                    value_obj = DataValue()
-                    value_obj.value = value
-                    value_obj.for_datapoint = data_point_obj
-                    value_obj.for_indicator = indicator_obj
-                    value_obj.save()
-                    form = ValueForm()
-                    messages.success(request, 'Successfully Added!')
-                    return redirect(request.path)
-                except: 
-                    messages.error(request, 'Please Try Again To Edit Indicator!')
+                if indicator.type_of == 'yearly':
+                    try:
+                        indicator_id = request.POST.get('indicator') 
+                        data_point_id = request.POST.get('data_point')
+                        value = form.cleaned_data['value']
+                        indicator_obj = Indicator.objects.get(pk = indicator_id)
+                        data_point_obj = DataPoint.objects.get(pk = data_point_id)
+                    
+                        value_obj = DataValue()
+                        value_obj.value = value
+                        value_obj.for_datapoint = data_point_obj
+                        value_obj.for_indicator = indicator_obj
+                        value_obj.save()
+                        form = ValueForm()
+                        messages.success(request, 'Successfully Added!')
+                        return redirect(request.path)
+                    except: 
+                        messages.error(request, 'Please Try Again To Edit Indicator!')
+                elif indicator.type_of == 'monthly':
+                    try:
+                        indicator_id = request.POST.get('indicator') 
+                        data_point_id = request.POST.get('data_point')
+                        month_id = request.POST.get('month')
+                        value = form.cleaned_data['value']
+
+
+                        indicator_obj = Indicator.objects.get(pk = indicator_id)
+                        data_point_obj = DataPoint.objects.get(pk = data_point_id)
+                        month_obj = Month.objects.get(pk = month_id)
+                    
+                        value_obj = DataValue()
+                        value_obj.value = value
+                        value_obj.for_datapoint = data_point_obj
+                        value_obj.for_indicator = indicator_obj
+                        value_obj.for_month = month_obj
+                        value_obj.save()
+                        form = ValueForm()
+                        messages.success(request, 'Successfully Added!')
+                        return redirect(request.path)
+                    except: 
+                        messages.error(request, 'Please Try Again To Edit Indicator!')
         
         if 'editFormIndicatorValue' in request.POST:
             form_update = ValueForm2(request.POST)
@@ -452,6 +476,7 @@ def data_list_detail(request, pk):
                     messages.error(request, 'Please Try Again!')
             else:
                 messages.error(request, 'Please Try Again not valid!')
+        
         if 'indicatorYearId' in request.POST:
             is_actual = request.POST.get('isActualInput')
             is_actual_data_point_id = request.POST.get('indicatorYearId')
