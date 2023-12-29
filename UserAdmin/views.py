@@ -20,6 +20,7 @@ def audit_log_list(request):
 @login_required(login_url='login')
 @admin_user_required
 def index(request):
+    auditlog_entries = LogEntry.objects.all()
     size_topic = Topic.objects.filter(is_deleted = False).count()
     size_category = Category.objects.filter(is_deleted = False).count()
     size_indicator = Indicator.objects.filter(is_deleted = False).count()
@@ -29,7 +30,8 @@ def index(request):
         'size_topic' : size_topic,
         'size_category' : size_category,
         'size_indicator'  : size_indicator,
-        'size_source' : size_source
+        'size_source' : size_source,
+        'auditlog_entries': auditlog_entries
     }
 
     return render(request, 'user-admin/index.html', context)
