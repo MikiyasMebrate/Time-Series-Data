@@ -116,108 +116,90 @@
 
             </div>
             <!--Card End-->
-
-            <div class="row justify-content-center">
-               <!--Topic Graph Start-->
-            <div class="col-10">
-              <div class="card ">
-                <div class="card-header">
-                  <h3 class="card-title d-flex" >
-                    <i class="fas fa-chart-pie mr-1"></i>
-                    <p class='ml-1' id='chart_head_id'></p>
-                  </h3>
-                </div>
-                <div class="d-flex justify-content-center align-items-center"> <p id="chart_indicator"></p></div>
-                <div class="card-body">
-                  <div class="tab-content p-0">
-                    <div
-                      class="chart tab-pane active"
-                      id="revenue-chart"
-                      style="position: relative; height:440px"
-                    >
-                      <canvas
-                        id="revenue-chart-canvas"
-                        height="350"
-                        style="height: 350px"
-                      ></canvas>
-                    </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
- <!--Topic Graph End-->
-              <div class="col-md-12">
-                <!--Recent data Table Start-->
-                <div class="card">
+            <div class="row">
+              <div class="col-6">
+                <div class="card ">
                   <div class="card-header">
-                    <h3 class="card-title">Recent Data</h3>
-                    <div class="card-tools">
-                      <ul class="pagination pagination-sm float-right">
-                        <li class="page-item">
-                          <a class="page-link" href="#">&laquo;</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">&raquo;</a>
-                        </li>
-                      </ul>
+                    <h3 class="card-title d-flex" >
+                      <i class="fas fa-chart-pie mr-1"></i>
+                      <p class='ml-1' id='chart_head_id'></p>
+                    </h3>
+                  </div>
+                  <div class="d-flex justify-content-center align-items-center"> <p id="chart_indicator"></p></div>
+                  <div class="card-body">
+                    <div class="tab-content p-0">
+                      <div
+                        class="chart tab-pane active"
+                        id="revenue-chart"
+                        style="position: relative; height:440px"
+                      >
+                        <canvas
+                          id="revenue-chart-canvas"
+                          height="350"
+                          style="height: 350px"
+                        ></canvas>
+                      </div>
+                      </div>
                     </div>
                   </div>
-
-                  <!--Table Start-->
-                  <div class="card-body p-0">
-                    <table id="tableIndicator" class="table table-bordered m-0 p-0" style="width:100%">
-                      <thead>
-                          <tr>
-                              <th class="ps-5 pe-5">Timestamp</th>
-                              <th>User</th>
-                              <th>Action</th>
-                              <th>Object</th>
-                              <th>Model</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-      
-                        {% for entry in auditlog_entries %}
-                        <tr>
-                            <td>{{ entry.timestamp }}</td>
-                            <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
-                            {% if entry.action == 0 %}
-                                <td class="fw-bold text-success">Created</td>
-                            {% elif entry.action == 1 %}
-                                <td class="fw-bold text-warning">Updated</td>
-                            {% elif entry.action == 2 %}
-                                <td class="fw-bold text-danger">Deleted</td>
-                            {% else %}
-                                <td class="fw-bold text-primary">Other</td>
-                            {% endif %}
-                            <td>{{ entry.object_repr }}</td>
-                            <td>{{ entry.content_type.name }}</td>
-                        </tr>
-                    {% endfor %}
-                    
-      
-                      </tbody>
-                  </table>
-                  </div>
-                  
-
-                
-              
-                  <!--Table End-->
                 </div>
-                <!--Recent data Table End-->
-              </div>
+
+
+                <div class="col-6">
+                  <!--Recent data Table Start-->
+                  <div class="card">
+                    
+  
+                    <!--Table Start-->
+                    <div class="card-body p-0">
+                      <table id="" class="table table-bordered m-0 p-0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="ps-5 pe-5">Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Object</th>
+                                <th>Model</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        
+                          {% for entry in auditlog_entries %}
+                          <tr>
+                              <td>{{ entry.timestamp }}</td>
+                              {% if entry.actor.get_full_name %}
+                              <td class="fw-bold">{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
+                              {% else %}
+                             <td class="fw-bold"> Anonymous User  </td>
+                              {% endif %}
+                              {% if entry.action == 0 %}
+                                  <td class="fw-bold text-success">Created</td>
+                              {% elif entry.action == 1 %}
+                                  <td class="fw-bold text-warning">Updated</td>
+                              {% elif entry.action == 2 %}
+                                  <td class="fw-bold text-danger">Deleted</td>
+                              {% else %}
+                                  <td class="fw-bold text-primary">Other</td>
+                              {% endif %}
+                              <td>{{ entry.object_repr }}</td>
+                              <td>{{ entry.content_type.name }}</td>
+                          </tr>
+                      {% endfor %}
+                      
+        
+                        </tbody>
+                    </table>
+                    </div>
+                    
+  
+                  
+                
+                    <!--Table End-->
+                  </div>
+                  <!--Recent data Table End-->
+                </div>
             </div>
+
           </div>
         </section>
       </div>
@@ -243,20 +225,14 @@
       
       $(document).ready(function () {
         $("#tableIndicator").DataTable({
-          retrieve: true,
+          retrieve: false,
           ordering: false,
           scrollX: true,
           responsive: true,
           paging: true,
           searching: true,
-          orderNumber: true,
-          lengthMenu: [
-            [10, 25, 50, -1],
-            ["10 rows", "25 rows", "50 rows", "Show all"],
-          ],
+          orderNumber: false,
           columnDefs: [{ width: "100%" }],
-          dom: "Bfrtip",
-          buttons: ["pageLength", "excel", "csv", "pdf", "print"],
         });
       });
     </script>

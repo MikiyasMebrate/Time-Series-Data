@@ -144,6 +144,7 @@ class Quarter(models.Model):
 class Month(models.Model):
     month_ENG = models.CharField(max_length=50)
     month_AMH = models.CharField(max_length=50)
+    number = models.IntegerField()
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     
@@ -188,7 +189,7 @@ class DataValue(models.Model):
     def __str__(self) -> str:
         return str(self.for_indicator)+" "+str(self.for_datapoint)
     
-
+    
     def calculate_parent_value(self):
         try: 
             #Year Type Data

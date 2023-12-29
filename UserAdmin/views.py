@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
+from datetime import datetime, timezone
 
 @login_required(login_url='login')
 @admin_user_required
@@ -20,7 +21,7 @@ def audit_log_list(request):
 @login_required(login_url='login')
 @admin_user_required
 def index(request):
-    auditlog_entries = LogEntry.objects.all()
+    auditlog_entries = LogEntry.objects.filter()[:6]
     size_topic = Topic.objects.filter(is_deleted = False).count()
     size_category = Category.objects.filter(is_deleted = False).count()
     size_indicator = Indicator.objects.filter(is_deleted = False).count()
@@ -377,6 +378,57 @@ def data_list_detail(request, pk):
     sub_indicator_form = SubIndicatorFormDetail()
     indicator = Indicator.objects.get(pk = pk)
     measurement_form = MeasurementSelectForm()
+    months = Month.objects.all()
+    years = DataPoint.objects.all()
+
+    child_indicator = Indicator.objects.filter(parent = indicator)
+
+    data_set = []
+
+    if indicator.type_of == 'monthly':
+        arr = []
+        for year in years:
+            for month in months:
+                value = DataValue.objects.filter(for_indicator = indicator, for_month = month, for_datapoint = year, is_deleted = False,).first()
+                if value is not None:
+                    date = datetime(int(value.for_datapoint.year_EC), int(value.for_month.number), 1)
+                    val = [[int(value.for_datapoint.year_EC), int(value.for_month.number), 1], value.value]
+                    arr.append(val)                
+        #data_set.append({'name' : indicator.title_ENG, 'data' : arr})
+    
+        for child in child_indicator:
+            arr = []
+            for year in years:
+                for month in months:
+                        value_child = DataValue.objects.filter(for_indicator = child, for_month = month, for_datapoint = year, is_deleted = False,).first()
+                        if value_child is not None:
+                            date = datetime(int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1)
+                            val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
+                            arr.append(val)
+            data_set.append({'name' : child.title_ENG, 'data' : arr})
+
+    elif indicator.type_of == 'yearly':
+        for year in years:
+            value = DataValue.objects.filter(for_indicator = indicator, for_month = None, for_datapoint = year, is_deleted = False,).first()
+            try: data_set.append(value.value)
+            except: data_set.append('None')
+
+    
+
+
+
+
+                
+
+
+
+
+
+
+
+
+
+    
 
     if request.method == 'POST':
         if 'addValueIndicator' in request.POST:
@@ -538,7 +590,9 @@ def data_list_detail(request, pk):
         'form' : form,
         'form_update' : form_update,
         'sub_indicator_form' : sub_indicator_form,
-        'indicator' : indicator
+        'indicator' : indicator,
+        'measurement_form' :measurement_form,
+        'data_set' : data_set
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 

@@ -29,10 +29,12 @@ $(function () {
             // Randomly select a category from the filtered list
             randomCategory = relatedCategories[Math.floor(Math.random() * relatedCategories.length)];
 
-            relatedIndicators = data.indicators.filter(indicator => indicator.for_category_id === randomCategory.id);
+            relatedIndicators = data.indicators.filter(indicator => indicator.for_category_id === randomCategory.id  &&  String(indicator.type_of) == 'yearly');
+            
 
             // Check if there are related indicators
             if (relatedIndicators.length > 0) {
+              console.log(relatedIndicators)
               randomIndicator = relatedIndicators[Math.floor(Math.random() * relatedIndicators.length)];
 
               // Fetch data for the selected indicator
@@ -55,13 +57,13 @@ $(function () {
       function generateForIndicator(indicatorId, data) {
 
         // Filter the data for the selected indicator
-        var indicatorData = data.value.filter(value => value.for_indicator_id === indicatorId);
+        var indicatorData = data.value.filter(value => value.for_indicator_id === indicatorId );
 
         indicatorData.forEach(entry => {
           var datapointId = entry.for_datapoint_id;
           var datapoint = getDataPointById(datapointId, data.year); // Assuming 'year' is the array containing DataPoint information
           if (datapoint) {
-            values.push(entry.value.substring(0, 10)); // Limit value to a maximum length of 10
+            values.push(entry.value); // Limit value to a maximum length of 10
             years.push(datapoint.year_EC || datapoint.year_GC);
           }
         });

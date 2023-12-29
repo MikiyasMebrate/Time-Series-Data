@@ -17,17 +17,21 @@
       overflow-y: auto;
       /* enable horizontal scrolling */
     }
+
     .vertical-text {
       writing-mode: vertical-rl;
       transform: rotate(180deg);
       text-orientation: sideways-right;
       white-space: nowrap;
       width: 100%;
-      text-align: center; /* Add this line to center the text */
+      text-align: center;
+      /* Add this line to center the text */
     }
+
     .horizontal-text {
       writing-mode: horizontal-tb;
-      text-align: center; /* Add this line to center the text */
+      text-align: center;
+      /* Add this line to center the text */
     }
   </style>
 </head>
@@ -103,7 +107,7 @@
               <input type="number" id="month_id" name="month" style="display: none;">
               <input type="number" id="quarter_id" name="quarter" style="display: none;">
               <label for="id_value" class="form-label">Value: </label>
-              <input type="text"  name="value" class="form-control" maxlength="50" required id="id_value">
+              <input type="text" name="value" class="form-control" maxlength="50" required id="id_value">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -115,15 +119,15 @@
         <div id="form_2">
           <form name="editFormIndicator" id="editForm" method="post">
             {% csrf_token %}
-          <div class="modal-body" id="form_body">
-            <input type="number" id="data_value" name="data_value" style="display: none;">
-            <label for="id_value"  class="form-label">Value: </label>
-            <input type="text"  name="value2" class="form-control" maxlength="50" required id="id_value_form2">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" name="editFormIndicatorValue">Save changes</button>
-          </div>
+            <div class="modal-body" id="form_body">
+              <input type="number" id="data_value" name="data_value" style="display: none;">
+              <label for="id_value" class="form-label">Value: </label>
+              <input type="text" name="value2" class="form-control" maxlength="50" required id="id_value_form2">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" name="editFormIndicatorValue">Save changes</button>
+            </div>
           </form>
         </div>
 
@@ -151,57 +155,57 @@
   </div>
 
 
-    <!-- Modal Edit Measurement  -->
-    <div class="modal fade" id="editMeasurement" tabindex="-1" aria-labelledby="editMeasurementLabel" aria-hidden="true">
-      <div class="modal-dialog">
+  <!-- Modal Edit Measurement  -->
+  <div class="modal fade" id="editMeasurement" tabindex="-1" aria-labelledby="editMeasurementLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editMeasurementLabel">Edit Measurement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <form id="measurementFormId" method="post">
+          {% csrf_token %}
+          <div class="modal-body" id="measurementOptionId">
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" name="measurementFormId" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Is-Actual Modal -->
+  <div class="modal fade" id="isActualModal" tabindex="-1" aria-labelledby="isActualModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+
+      <form method="post">
+        {% csrf_token %}
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="editMeasurementLabel">Edit Measurement</h5>
+            <h5 class="modal-title" id="isActualModalLabel">Actualness </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-
-          <form id="measurementFormId" method="post">
-            {% csrf_token %}
-            <div class="modal-body" id="measurementOptionId">
-              
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit"  name="measurementFormId" class="btn btn-primary">Save changes</button> 
-            </div>
-          </form>
+          <div class="modal-body">
+            <input type="hidden" id="indicatorYearId" name="indicatorYearId">
+            <label class="form-label" for="">Is Actual</label>
+            <input type="checkbox" name="isActualInput" id="isActualInput" class="form-check">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
         </div>
-      </div>
     </div>
-  
-
-<!-- Is-Actual Modal -->
-<div class="modal fade" id="isActualModal" tabindex="-1" aria-labelledby="isActualModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-
-    <form method="post">
-      {% csrf_token %}
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="isActualModalLabel">Actualness </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="indicatorYearId" name="indicatorYearId">
-        <label class="form-label" for="">Is Actual</label>
-        <input type="checkbox" name="isActualInput" id="isActualInput" class="form-check">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-    </div>
-  </form>
+    </form>
 
 
   </div>
-</div>
+  </div>
 
 
   {% include 'user-admin/include/navbar.html'%}
@@ -242,15 +246,15 @@
               <div class="mt-2 mb-2 text-start">
                 <div>
                   <p class="h4">
-                    {% if  indicator.measurement %}
-                    {{indicator.measurement.parent.Amount_ENG}} - {{indicator.measurement.Amount_ENG}} 
+                    {% if indicator.measurement %}
+                    {{indicator.measurement.parent.Amount_ENG}} - {{indicator.measurement.Amount_ENG}}
                     {% else %}
                     <span class="text-warning">Please Add Measurement</span>
-                    
+
                     {% endif %}
-                    <button class="ms-4 btn btn-sm btn-primary" data-bs-toggle="modal"  data-bs-target="#editMeasurement"
-                    data-bs-whatever="@mdo" >Edit</button> 
-                  </p> 
+                    <button class="ms-4 btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editMeasurement"
+                      data-bs-whatever="@mdo">Edit</button>
+                  </p>
                 </div>
               </div>
               <!--Measurement End-->
@@ -260,45 +264,45 @@
             {% include 'user-admin/include/messages.html'%}
 
             {% if form.errors %}
-                {% for field in form %}
-                  {% if field.errors %}
-                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>{{ field.errors|striptags }}!</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                  {% endif %}
-                {% endfor %}
-          {% endif %}
+            {% for field in form %}
+            {% if field.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <strong>{{ field.errors|striptags }}!</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
 
 
-          {% if form_update.errors %}
-                {% for field in form_update %}
-                  {% if field.errors %}
-                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>{{ field.errors|striptags }}!</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                  {% endif %}
-                {% endfor %}
-          {% endif %}
+            {% if form_update.errors %}
+            {% for field in form_update %}
+            {% if field.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <strong>{{ field.errors|striptags }}!</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
 
 
-          {% if sub_indicator_form.errors %}
+            {% if sub_indicator_form.errors %}
             <div class="text-danger">
               <ul>
                 {% for field in sub_indicator_form %}
-                  {% if field.errors %}
-                    <li>{{ field.label }}: {{ field.errors|striptags }}</li>
-                  {% endif %}
+                {% if field.errors %}
+                <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+                {% endif %}
                 {% endfor %}
               </ul>
             </div>
-          {% endif %}
+            {% endif %}
 
 
 
             <!--Data List Start-->
-            <div  class="card">
+            <div class="card">
               <div class="card-body" id="list_table_view">
                 <div id="tableTest">
                 </div>
@@ -309,6 +313,137 @@
         </div>
       </div>
     </section>
+
+
+
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
+    
+    <div class="row justify-content-center">
+      <div class="col-10">
+        <div id="container"></div>
+      </div>
+    </div>
+
+<script>
+  // Data retrieved from https://www.vikjavev.no/ver/snjomengd
+let d = {{data_set | safe }}
+
+d.forEach((item, index, array) => {
+  if (item === "None") {
+    array[index] = null;
+  }
+});
+
+let yearData = d
+let datas = []
+
+{% if indicator.type_of == 'monthly'%}
+for(data of d){
+  let arr = []
+  for (value of data.data){
+    arr.push([Date.UTC(parseInt(value[0][0]) , parseInt(value[0][1])  , 1),parseInt(value[1])])
+  }
+  datas.push({name:data.name, data:arr})
+
+
+  //datas.push([Date.UTC(parseInt(data[0][0]) , parseInt(data[0][1])  , 1),parseInt(data[1])])
+}
+
+(async () => {
+
+
+/**
+ * Create the chart when all data is loaded
+ * @return {undefined}
+ */
+function createChart(series) {
+
+    Highcharts.stockChart('container', {
+
+        rangeSelector: {
+            selected: 4
+        },
+
+        yAxis: {
+            labels: {
+                format: '{#if (gt value 0)}+{/if}{value}%'
+            },
+            plotLines: [{
+                value: 0,
+                width: 2,
+                color: 'silver'
+            }]
+        },
+
+        plotOptions: {
+        series: {
+            label: {
+                connectorAllowed: false
+            },
+        }
+    },
+
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+            valueDecimals: 2,
+            split: true
+        },
+
+        series
+    });
+
+}
+createChart(datas);
+
+})();
+{% endif %}
+
+{% if indicator.type_of == 'yearly'%}
+// Data retrieved from https://fas.org/issues/nuclear-weapons/status-world-nuclear-forces/
+Highcharts.chart('container', {
+  chart: {
+      type: 'area'
+  },
+  title: {
+      text: '{{indicator.title_ENG}}'
+  },
+  xAxis: {
+      allowDecimals: false,
+      accessibility: {
+          rangeDescription: 'Range: 1940 to 2017.'
+      }
+  },
+  tooltip: {
+      pointFormat: '{series.name}'
+  },
+  plotOptions: {
+      area: {
+          pointStart: 1940,
+          marker: {
+              enabled: false,
+              symbol: 'circle',
+              radius: 2,
+              states: {
+                  hover: {
+                      enabled: true
+                  }
+              }
+          }
+      }
+  },
+  series: [ {
+      name: '{{indicator.title_ENG}}',
+      data: yearData
+  }]
+});
+
+
+{% endif %}
+
+</script>
   </div>
   <!--Body End-->
   {% include 'user-admin/include/footer.html' %}
@@ -338,10 +473,16 @@
       });
     });
 
+    
+
+
+    //Chart
+
 
 
 
   </script>
+
 
 
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
@@ -354,7 +495,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
   <script src="{% static 'assets/js/data_list_detail.js'%}"></script>
-  =
+
+
+
 
 </body>
 
