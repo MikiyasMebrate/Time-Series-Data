@@ -9,6 +9,7 @@
   {% include 'user-admin/include/head.html'%}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
   <style>
     .scrollable {
       max-height: 500px;
@@ -100,8 +101,9 @@
               <input type="number" id="indicator_id" name="indicator" style="display: none;">
               <input type="number" id="data_point_id" name="data_point" style="display: none;">
               <input type="number" id="month_id" name="month" style="display: none;">
+              <input type="number" id="quarter_id" name="quarter" style="display: none;">
               <label for="id_value" class="form-label">Value: </label>
-              {{form.value}}
+              <input type="text"  name="value" class="form-control" maxlength="50" required id="id_value">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -115,8 +117,8 @@
             {% csrf_token %}
           <div class="modal-body" id="form_body">
             <input type="number" id="data_value" name="data_value" style="display: none;">
-            <label for="id_value" class="form-label">Value: </label>
-            <input type="text" name="value2" class="form-control" maxlength="50" required="" id="id_value_form2">
+            <label for="id_value"  class="form-label">Value: </label>
+            <input type="text"  name="value2" class="form-control" maxlength="50" required id="id_value_form2">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -256,6 +258,44 @@
 
             <!--Messages-->
             {% include 'user-admin/include/messages.html'%}
+
+            {% if form.errors %}
+                {% for field in form %}
+                  {% if field.errors %}
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ field.errors|striptags }}!</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+          {% endif %}
+
+
+          {% if form_update.errors %}
+                {% for field in form_update %}
+                  {% if field.errors %}
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ field.errors|striptags }}!</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+          {% endif %}
+
+
+          {% if sub_indicator_form.errors %}
+            <div class="text-danger">
+              <ul>
+                {% for field in sub_indicator_form %}
+                  {% if field.errors %}
+                    <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+
 
             <!--Data List Start-->
             <div  class="card">

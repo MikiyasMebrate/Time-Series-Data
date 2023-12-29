@@ -77,8 +77,6 @@ def category(request, category_id=None):
                 category_instance = get_object_or_404(Category, id=int(catagory_id_str))
                 form = catagoryForm(request.POST, instance=category_instance)
             except Http404 as e:
-                # Print more information about the exception
-                print(f"Http404 Exception: {e}")
                 messages.error(request, "Invalid category ID provided.")
                 return redirect('user-admin-category')
         else:
@@ -94,8 +92,6 @@ def category(request, category_id=None):
                 messages.success(request, "Category has been successfully added!")
             return redirect('user-admin-category')
         else:
-            # Print form errors as plain text
-            print(str(form.errors))
             messages.error(request, "Value exists or please try again!")
 
     else:
@@ -105,8 +101,6 @@ def category(request, category_id=None):
                 category_instance = get_object_or_404(Category, id=category_id)
                 form = catagoryForm(instance=category_instance)
             except Http404 as e:
-                # Print more information about the exception
-                print(f"Http404 Exception: {e}")
                 messages.error(request, "Invalid category ID provided.")
                 return redirect('user-admin-category')
         else:
@@ -428,6 +422,29 @@ def data_list_detail(request, pk):
                         messages.success(request, 'Successfully Added!')
                         return redirect(request.path)
                     except: 
+                        messages.error(request, 'Please Try Again To Edit Indicator!')              
+                elif indicator.type_of == 'quarterly':
+                    try:
+                        indicator_id = request.POST.get('indicator') 
+                        data_point_id = request.POST.get('data_point')
+                        quarter_id = request.POST.get('quarter')
+                        value = form.cleaned_data['value']
+
+
+                        indicator_obj = Indicator.objects.get(pk = indicator_id)
+                        data_point_obj = DataPoint.objects.get(pk = data_point_id)
+                        quarter = Quarter.objects.get(pk = quarter_id)
+                    
+                        value_obj = DataValue()
+                        value_obj.value = value
+                        value_obj.for_datapoint = data_point_obj
+                        value_obj.for_indicator = indicator_obj
+                        value_obj.for_quarter = quarter
+                        value_obj.save()
+                        form = ValueForm()
+                        messages.success(request, 'Successfully Added!')
+                        return redirect(request.path)
+                    except: 
                         messages.error(request, 'Please Try Again To Edit Indicator!')
         
         if 'editFormIndicatorValue' in request.POST:
@@ -468,7 +485,6 @@ def data_list_detail(request, pk):
             if measurement_form.is_valid():
                 try:
                     measurement_id = measurement_form.cleaned_data['measurement_form']
-                    print(measurement_id)
                     measurement = Measurement.objects.get(pk = measurement_id)
                     indicator.measurement = measurement
                     indicator.save()
@@ -483,7 +499,6 @@ def data_list_detail(request, pk):
             is_actual = request.POST.get('isActualInput')
             is_actual_data_point_id = request.POST.get('indicatorYearId')
 
-            print(is_actual_data_point_id)
             try:    
                 indicator_point = Indicator_Point.objects.get(for_indicator = indicator, for_datapoint = is_actual_data_point_id)
             except:
@@ -495,7 +510,6 @@ def data_list_detail(request, pk):
                 data_point = None
 
             #Is Indicator Point is Found
-            print(data_point)
             if(indicator_point):
                 if(is_actual):
                     indicator_point.is_actual = True
@@ -763,8 +777,6 @@ def source(request, source_id=None):
                 messages.success(request, "Source has been successfully added!")
             return redirect('user-admin-source')
         else:
-            # Print form errors as plain text
-            print(str(form.errors))
             messages.error(request, "Value exists or please try again!")
 
     else:
@@ -1018,7 +1030,6 @@ def month(request):
 def trash_topic(request):
     if request.method == 'POST':
         topic_id = request.POST.get('topic_id')
-        print(f"Received topic_id: {topic_id}")  # Add this line for debugging
         if topic_id:
             topic = get_object_or_404(Topic, pk=topic_id)
             topic.is_deleted = False
@@ -1027,7 +1038,6 @@ def trash_topic(request):
             return redirect('trash-topic')
         else:
             messages.error(request, 'Failed to restore topic.')
-            print("Failed to restore topic. Missing topic ID.")  # Add this line for debugging
 
     recycled_topics = Topic.objects.filter(is_deleted=True)
     
@@ -1047,7 +1057,6 @@ def trash_indicator(request):
 def trash_category(request):
     if request.method == 'POST':
         catagory_Id = request.POST.get('catagory_Id')
-        print(f"Received source_Id: {catagory_Id}")  # Add this line for debugging
         if catagory_Id:
             category = get_object_or_404(Source, pk=catagory_Id)
             category.is_deleted = False
@@ -1056,7 +1065,6 @@ def trash_category(request):
             return redirect('trash-source')
         else:
             messages.error(request, 'Failed to restore Source.')
-            print("Failed to restore Source. Missing Source ID.")  # Add this line for debugging
 
     recycled_categories = Category.objects.filter(is_deleted=True)
     context = {
@@ -1070,7 +1078,6 @@ def trash_category(request):
 def trash_source(request):
     if request.method == 'POST':
         source_id = request.POST.get('source_id')
-        print(f"Received source_Id: {source_id}")  # Add this line for debugging
         if source_id:
             source = get_object_or_404(Source, pk=source_id)
             source.is_deleted = False
@@ -1079,7 +1086,6 @@ def trash_source(request):
             return redirect('trash-source')
         else:
             messages.error(request, 'Failed to restore Source.')
-            print("Failed to restore Source. Missing Source ID.")  # Add this line for debugging
 
     recycled_sources = Source.objects.filter(is_deleted=True)
     context = {
@@ -1100,7 +1106,6 @@ def restore_item(request, item_type, item_id):
     }
 
     model = model_mapping.get(item_type)
-    print('mode', model)
     if not model:  
         messages.error(request,'Failed to restore item')
         return HttpResponseRedirect(previous_page) # Change to the actual view name for recycled items

@@ -389,9 +389,9 @@ $(document).ready(function () {
               indicator.is_deleted == false
             ) {
               test = true;
-              table += ` <th class="vertical-text  border" ">
+              table += ` <th class="vertical-text fw-normal border" ">
                               <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn  horizontal-text btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
-                              ${indicator.title_ENG} ${title_amharic}
+                              &nbsp;&nbsp; ${indicator.title_ENG} ${title_amharic}
                               <div class="horizontal-text">
                                  <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                                </div>
@@ -425,8 +425,8 @@ $(document).ready(function () {
            
 
             if (!checkYearPrint) {
-              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C </br>${year.year_GC}-G.C
-              <hr> <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
+              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C : ${year.year_GC}-G.C
+              <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
               </td>`;
             } else {
               table += ` <td class="border-0"></td>`;
@@ -544,7 +544,217 @@ $(document).ready(function () {
 
 
 
+      
+      
+      } else if (String(currentIndicator.type_of) === "quarterly") {
+        table += `
+        <table id="newTable" class="table table-bordered m-0 p-0">
+        <thead>
+          <tr class="text-center">
+          <th  style="width: 40px;"  class="vertical-text border">Year</th>
+          <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+
+
+
+        if(currentIndicator) {
+          let title_amharic = "";
+          if (!currentIndicator.title_AMH === null)
+            title_amharic = " - " + currentIndicator.title_AMH;
+
+          table += ` <th class="vertical-text border" ">
+                        <button type="button" name="btnAddIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn  horizontal-text btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                        ${currentIndicator.title_ENG} ${title_amharic}
+                        <div class="horizontal-text">
+                           <button type="button" name="btnDeleteIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                         </div>
+                      </th>`;
+
+          let childIndicatorList = (parent, space) => {
+            space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+            let status = false;
+
+            for (let indicator of data.indicators) {
+              if (
+                String(indicator.parent_id) === String(parent) &&
+                indicator.is_deleted == false
+              ) {
+                test = true;
+                table += ` <th class="vertical-text fw-normal border" ">
+                              <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn  horizontal-text btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                             ${space} ${indicator.title_ENG} ${title_amharic}
+                              <div class="horizontal-text">
+                                 <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                               </div>                
+                        </th>`;
+
+                childIndicatorList(indicator.id, String(space));
+              }
+            }
+          };
+
+          //Child List
+          for (let indicator of data.indicators) {
+            if (
+              String(indicator.parent_id) == String(currentIndicator.id) &&
+              indicator.is_deleted == false
+            ) {
+              test = true;
+              table += ` <th class="vertical-text fw-normal border" ">
+                              <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn  horizontal-text btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
+                              &nbsp;&nbsp; ${indicator.title_ENG} ${title_amharic}
+                              <div class="horizontal-text">
+                                 <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
+                               </div>
+                        </th>`;
+
+              childIndicatorList(indicator.id, " ");
+            }
+          }
+        }
+
+        table += `</tr>
+                   </thead>
+                <tbody>`;
+        
+         //year loop
+         for (let year of data.year) {
+          let checkYearPrint = false;
+
+
+          let checkActual = data.indicator_point.find((item) =>
+              String(item.for_indicator_id) == String(currentIndicator.id) &&
+              String(item.for_datapoint_id) == String(year.id)
+          );
+
+          let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
+
+          //month loop
+          for (let quarter of data.quarter) {
+            table += `
+            <tr class="text-center">`;
+           
+
+            if (!checkYearPrint) {
+              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C : ${year.year_GC}-G.C
+              <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
+              </td>`;
+            } else {
+              table += ` <td class="border-0"></td>`;
+            }
+
+            table += `                     
+            <td class="fw-bold " style="width: 22%;" >${quarter.title_AMH}: ${quarter.title_ENG}</td>`
+          
+
+
+
+            if(currentIndicator){
+              let checkParentHasChild = data.indicators.find((item) => String(item.parent_id) === String(currentIndicator.id) && !item.is_deleted);
+
+              let currentDataValue  = data.value.find((value)=> {
+                if(String(value.for_quarter_id) === String(quarter.id) && String(value.for_indicator_id) === String(currentIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
+                  return value
+                }
+              })
+
+               //Print Main Indicator Value
+              if(currentDataValue){
+                if(checkParentHasChild){
+                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${currentDataValue.value ? currentDataValue.value : ' - ' } </td>`;
+                }else {
+                  table += `<td class="p-0"><button id="${currentDataValue.id}" value="${currentDataValue.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${currentDataValue.value ? currentDataValue.value : ' - ' }</button></td>`;
+                }
+              }else{
+                if(checkParentHasChild){
+                  table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                }else {
+                  table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                }
+              }
+              
+
+                //Filter Only Child Indicator 
+                let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(currentIndicator.id))
+
+
+                //Child of Child
+                let childIndicatorDataValue = (parent)=>{
+                  let filterChild = data.indicators.filter((item) => String(item.parent_id) == String(parent) && item.is_deleted == false )
+                  if(filterChild){
+                    for(indicatorList of filterChild){
+
+                      valueData = data.value.find((value)=> {
+                        if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(indicatorList.id) && String(value.for_datapoint_id) === String(year.id)){
+                          return value
+                        }
+                      })
+
+                       let checkChildHasChild = data.indicators.find((item) => String(item.parent_id) === String(indicatorList.id) && !item.is_deleted);
+
+                        if(valueData){
+                          if(checkChildHasChild){
+                            table += `<td  style="width: 10%"; class="text-center fw-bold"> ${valueData.value ? valueData.value : ' - ' } </td>`;
+                          }else {
+                            table += `<td class="p-0"><button id="${valueData.id}" value="${valueData.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${valueData.value ? valueData.value : ' - ' }</button></td>`;
+                          }
+                        }else{
+                          if(checkChildHasChild){
+                            table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                          }else {
+                            table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                          }
+                        }
+                      childIndicatorDataValue(indicatorList.id)
+                    }
+                  }
+                }
+
+
+                //Child Data
+                for(let childIndicator of childIndicators){
+                  valueData = data.value.find((value)=> {
+                    if(String(value.for_quarter_id) === String(quarter.id) && String(value.for_indicator_id) === String(childIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
+                      return value
+                    }
+                  })
+
+                  
+                  let checkChildHasChild = data.indicators.find((item) => String(item.parent_id) === String(childIndicator.id) && !item.is_deleted);
+
+                  if(valueData){
+                    if(checkChildHasChild){
+                      table += `<td  style="width: 10%"; class="text-center fw-bold"> ${valueData.value ? valueData.value : ' - ' } </td>`;
+                    }else {
+                      table += `<td class="p-0"><button id="${valueData.id}" value="${valueData.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${valueData.value ? valueData.value : ' - ' }</button></td>`;
+                    }
+                  }else{
+                    if(checkChildHasChild){
+                      table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                    }else {
+                      table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${quarter.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                    }
+                  }
+
+
+                  //Call Child
+                  childIndicatorDataValue(childIndicator.id)
+
+                }
+              
+            }
+            table += `
+          </tr>`;
+
+            checkYearPrint = true;
+          }
+
+
+        }
+        table += `</tbody>`;
       }
+
+
+
       document.getElementById("tableTest").innerHTML = table;
 
       $(document).ready(function () {
@@ -577,6 +787,7 @@ $(document).ready(function () {
           let indicatorInput = document.getElementById("indicator_id");
           let dataPointInput = document.getElementById("data_point_id");
           let monthInput = document.getElementById('month_id')
+          let quarterInput = document.getElementById('quarter_id')
 
           try {
             target = target.split("-");
@@ -604,6 +815,22 @@ $(document).ready(function () {
                 indicatorInput.value = indicatorId;
                 dataPointInput.value = yearId;
                 monthInput.value = target[2];
+  
+                form2.style.display = "none";
+                form1.style.display = "block";
+              }else{
+                let value_id = eventButton.target.getAttribute("id");
+                let value = eventButton.target.getAttribute("value");
+                form1.style.display = "none";
+                form2.style.display = "block";
+                document.getElementById("data_value").value = value_id;
+                document.getElementById("id_value_form2").value = value;
+              }
+            }else if(String(currentIndicator.type_of)=='quarterly'){
+              if(yearId){
+                indicatorInput.value = indicatorId;
+                dataPointInput.value = yearId;
+                quarterInput.value = target[2];
   
                 form2.style.display = "none";
                 form1.style.display = "block";

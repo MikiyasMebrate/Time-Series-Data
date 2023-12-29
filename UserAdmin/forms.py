@@ -184,6 +184,9 @@ class dataListForm(forms.Form):
 
 #Value
 class ValueForm(forms.ModelForm):
+    value = forms.FloatField(required=True,widget=forms.Select(attrs={
+        'class' : 'form-control'
+    }))
     class Meta:
         model = DataValue
         fields = ('value',)
@@ -195,7 +198,7 @@ class ValueForm(forms.ModelForm):
         }
 
 class ValueForm2(forms.Form):
-    value2 = forms.CharField(required=True,widget=forms.Select(attrs={
+    value2 = forms.FloatField(required=True,widget=forms.Select(attrs={
         'class' : 'form-control'
     }))
 

@@ -176,7 +176,7 @@ class Measurement(models.Model):
         return self.get_full_path()
     
 class DataValue(models.Model):
-    value = models.CharField(max_length=50, blank=True ,null=True)
+    value = models.FloatField(blank=True ,null=True, max_length=40)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", related_name="datavalue_set", on_delete=models.SET_NULL, blank=True, null=True)
@@ -191,7 +191,8 @@ class DataValue(models.Model):
 
     def calculate_parent_value(self):
         try: 
-            if not self.for_month and self.for_datapoint:
+            #Year Type Data
+            if  (not self.for_month and self.for_datapoint) and (not self.for_quarter and self.for_datapoint) :
                main_parent = self.for_indicator.parent # get Parent of Indicator
                try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
                except:parent_data_value = None
@@ -208,7 +209,7 @@ class DataValue(models.Model):
                    except: 
                        None
                    
-               if parent_data_value is None:
+               if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
                    parent_data.value = sum
                    parent_data.for_indicator = main_parent
@@ -219,7 +220,8 @@ class DataValue(models.Model):
                    try: parent_data_value.save()
                    except: None
 
-            elif self.for_month:
+            #Month Type Data 
+            elif not self.for_quarter and self.for_datapoint :
                 main_parent = self.for_indicator.parent
                 try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint, for_month = self.for_month)
                 except:parent_data_value = None
@@ -235,18 +237,49 @@ class DataValue(models.Model):
                            None
                    except: 
                        None
-                if parent_data_value is None:
+                if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
                    parent_data.value = sum
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_month = self.for_month
                    parent_data.save()
+                elif parent_data_value is not None: 
+                   parent_data_value.value = sum
+                   try: parent_data_value.save()
+                   except: None
+
+            #Quarter Type Data
+            elif  not self.for_month and self.for_datapoint :
+                main_parent = self.for_indicator.parent
+                try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint, for_quarter = self.for_quarter)
+                except:parent_data_value = None
+                child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
+
+                sum = 0
+                for child in child_indicators:
+                   try: 
+                       child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_quarter = self.for_quarter)
+                       if(child_data_value.is_deleted == False):
+                           sum  = sum + int(child_data_value.value)
+                       else:
+                           None
+                   except: 
+                       None
+                if parent_data_value is None and main_parent is not None:
+                   parent_data = DataValue()
+                   parent_data.value = sum
+                   parent_data.for_indicator = main_parent
+                   parent_data.for_datapoint = self.for_datapoint
+                   parent_data.for_quarter = self.for_quarter
+                   parent_data.save()
                 else: 
                    parent_data_value.value = sum
                    try: parent_data_value.save()
                    except: None
+        
         except:
+            print('>>>>>>>>>Exxxx')
             None
 
 @receiver(post_save, sender=DataValue)
