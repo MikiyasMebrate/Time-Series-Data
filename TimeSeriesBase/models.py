@@ -280,7 +280,6 @@ class DataValue(models.Model):
                    except: None
         
         except:
-            print('>>>>>>>>>Exxxx')
             None
 
 @receiver(post_save, sender=DataValue)

@@ -10,6 +10,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+  
+
+
   <style>
     .scrollable {
       max-height: 500px;
@@ -25,17 +28,31 @@
       white-space: nowrap;
       width: 100%;
       text-align: center;
+      vertical-align: middle;
+      
       /* Add this line to center the text */
     }
+
+
+
 
     .horizontal-text {
       writing-mode: horizontal-tb;
       text-align: center;
       /* Add this line to center the text */
     }
+
+    {% if indicator.type_of == 'monthly'%}
+
+    {% endif %}
   </style>
 </head>
 
+{% comment %} table.dataTable th {
+  writing-mode: vertical-lr;
+  vertical-align: middle;
+  transform: rotate(180deg);
+} {% endcomment %}
 <body class="hold-transition sidebar-mini layout-fixed">
 
 
@@ -69,7 +86,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="removeIndicatorModalLabel">Add New Sub-Indicator</h5>
+          <h5 class="modal-title" id="removeIndicatorModalLabel">Remove Indicator</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form name="removeIndicator" method="post">
@@ -225,8 +242,7 @@
       </div>
     </div>
     <!--Title End-->
-
-
+    
     <section class="content">
       <div class="container-fluid">
         <div class="row">
@@ -238,7 +254,7 @@
                 + Add Data
               </button>
             </div>
-            <!--Add Data End-->
+
 
             <div class="col-4 p-0 m-0">
 
@@ -469,12 +485,18 @@ Highcharts.chart('container', {
           { width: "200px", targets: 0 },
         ],
         dom: "Bfrtip",
-        buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+        buttons: ["pageLength",
+                        {
+                             extend: 'excelHtml5',
+                            text: 'Save as Excel',
+                            customize: function( xlsx ) {
+                              var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                              $('row:nth-child(2) c', sheet).attr( 's', '54' );
+                            }
+                        }
+                    ]
       });
     });
-
-    
-
 
     //Chart
 

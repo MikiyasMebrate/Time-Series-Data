@@ -412,22 +412,6 @@ def data_list_detail(request, pk):
             value = DataValue.objects.filter(for_indicator = indicator, for_month = None, for_datapoint = year, is_deleted = False,).first()
             try: data_set.append(value.value)
             except: data_set.append('None')
-
-    
-
-
-
-
-                
-
-
-
-
-
-
-
-
-
     
 
     if request.method == 'POST':
