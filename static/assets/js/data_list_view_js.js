@@ -920,11 +920,11 @@ let filterData = () => {
                       transform: rotate(180deg);
                     }
                 </style>
-                  <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
+                  <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
                   <thead>
                     <tr class="text-center">
-                    <th  style="width: 40px;"  class="vertical-text border">Year</th>
-                    <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+                    <th class="vertical-text border">Year</th>
+                    <th class="vertical-text border">Month</th>`;
 
                   let filterIndicators = data.indicators.filter(
                     (item) =>
@@ -938,7 +938,7 @@ let filterData = () => {
                     if (!filterIndicator.title_AMH === null)
                       title_amharic = " - " + filterIndicator.title_AMH;
 
-                    table += ` <th class="vertical-text  border" ">
+                    table += ` <th class="vertical-text border" ">
                          <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
                          </th>`;
 
@@ -992,13 +992,13 @@ let filterData = () => {
                       <tr class="text-center">`;
 
                       if (!checkYearPrint) {
-                        table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                        table += `<td class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
                       } else {
                         table += ` <td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
                       }
 
                       table += `                     
-                      <td class="fw-bold" style="width: 22%;" >${month.month_AMH}: ${month.month_ENG}</td>`;
+                      <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
                       //Filter parent indicators
                       let indicatorsObject = data.indicators.filter(
@@ -1022,7 +1022,7 @@ let filterData = () => {
                         });
 
                         //Print Main Indicator Value
-                        table += `<td class="fw-bold"  style="width: 10%";> ${
+                        table += `<td class="fw-bold";> ${
                           currentDataValue ? currentDataValue.value : " - "
                         } </td>`;
 
@@ -1098,12 +1098,16 @@ let filterData = () => {
                     $("#newTable").DataTable({
                       retrieve: true,
                       ordering: false,
-                      scrollX: true,
+                      "initComplete": function (settings, json) {  
+                        $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
+                      },
+                      columnDefs: [
+                        { width: "900px", targets: 1 },
+                      ],
                       responsive: true,
                       paging: true,
                       searching: true,
                       orderNumber: true,
-                      columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
                       lengthMenu: [
                         [24, 50, 100, -1],
                         ["24 rows", "50 rows", "100 rows", "Show all"],
@@ -1124,6 +1128,9 @@ let filterData = () => {
                       dom: "Bfrtip",
                     });
                   });
+
+
+
                 };
 
                 //Type Quarter table
@@ -1315,17 +1322,20 @@ let filterData = () => {
                     $("#newTable").DataTable({
                       retrieve: true,
                       ordering: false,
-                      scrollX: true,
+                      "initComplete": function (settings, json) {  
+                        $("#DataTableID").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");            
+                      },
+                      columnDefs: [
+                        { width: "500px", targets: 1 },
+                      ],
                       responsive: true,
                       paging: true,
                       searching: true,
                       orderNumber: true,
-                      columnDefs: [{ width: "100%" }],
                       lengthMenu: [
                         [24, 50, 100, -1],
                         ["24 rows", "50 rows", "100 rows", "Show all"],
                       ],
-                      dom: "Bfrtip",
                       buttons: [
                         "pageLength",
                         {
@@ -1339,8 +1349,11 @@ let filterData = () => {
                         ,
                         "print",
                       ],
+                      dom: "Bfrtip",
                     });
                   });
+
+
                 };
 
                 if (String(indicatorSelectedType) == "yearly") {
@@ -1356,7 +1369,12 @@ let filterData = () => {
               });
 
               indicatorSelectedType = "yearly";
-              //End Indicator table
+              //End Indicator tabl
+
+
+
+
+
             });
           });
         });
