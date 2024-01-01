@@ -82,7 +82,7 @@ $(document).ready(function () {
       //Yearly
       if (String(currentIndicator.type_of) === "yearly") {
         table += `
-        <table id="newTable" class="table table-bordered m-0 p-0">
+        <table id="newTable" class="table table-bordered table-responsive m-0 p-0">
       <thead>
         <tr>
           <th class="ps-5 pe-5">Name</th>`;
@@ -360,7 +360,7 @@ $(document).ready(function () {
                     transform: rotate(180deg) !important;
                 }
                 </style>
-        <table id="newTable" class="table table-bordered m-0 p-0">
+        <table id="newTable" class="table table-bordered table-responsive m-0 p-0">
         <thead>
           <tr class="text-center">
           <th  style="width: 40px;"  class="vertical-text border">Year</th>
@@ -612,6 +612,27 @@ $(document).ready(function () {
           }
         }
         table += `</tbody>`;
+      
+        $(document).ready(function () {
+          $("#newTable").DataTable({
+            retrieve: true,
+            ordering: false,
+            "initComplete": function (settings, json) {  
+              $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
+            },
+            responsive: true,
+            paging: true,
+            searching: true,
+            orderNumber: true,
+            lengthMenu: [
+              [36, 72, 108, -1],
+              ["36 rows", "72 rows", "108 rows", "Show all"],
+            ],
+            buttons: ["pageLength"],
+            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            dom: "Bfrtip",
+          });
+        });
       } 
       
       //Quarterly 
@@ -624,7 +645,7 @@ $(document).ready(function () {
                     transform: rotate(180deg) !important;
                 }
                 </style>
-        <table id="newTable" class="table table-bordered m-0 p-0">
+        <table id="newTable" class="table table-responsive table-bordered m-0 p-0">
         <thead>
           <tr class="text-center">
           <th  style="width: 40px;"  class="vertical-text border">Year</th>
@@ -876,30 +897,34 @@ $(document).ready(function () {
           }
         }
         table += `</tbody>`;
+      
+        $(document).ready(function () {
+          $("#newTable").DataTable({
+            retrieve: true,
+            ordering: false,
+            "initComplete": function (settings, json) {  
+              $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
+            },
+            responsive: true,
+            paging: true,
+            searching: true,
+            orderNumber: true,
+            lengthMenu: [
+              [36, 72, 108, -1],
+              ["36 rows", "72 rows", "108 rows", "Show all"],
+            ],
+            buttons: ["pageLength"],
+            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            dom: "Bfrtip",
+          });
+        });
+
+
       }
 
       document.getElementById("tableTest").innerHTML = table;
 
-      $(document).ready(function () {
-        $("#newTable").DataTable({
-          retrieve: true,
-          ordering: false,
-          "initComplete": function (settings, json) {  
-            $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
-          },
-          responsive: true,
-          paging: true,
-          searching: true,
-          orderNumber: true,
-          lengthMenu: [
-            [36, 72, 108, -1],
-            ["36 rows", "72 rows", "108 rows", "Show all"],
-          ],
-          buttons: ["pageLength"],
-          columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
-          dom: "Bfrtip",
-        });
-      });
+      
 
       let btnIndicator = document.getElementsByName("btnIndicator");
 

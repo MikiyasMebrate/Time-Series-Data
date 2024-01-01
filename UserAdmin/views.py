@@ -385,17 +385,7 @@ def data_list_detail(request, pk):
 
     data_set = []
 
-    if indicator.type_of == 'monthly':
-        arr = []
-        for year in years:
-            for month in months:
-                value = DataValue.objects.filter(for_indicator = indicator, for_month = month, for_datapoint = year, is_deleted = False,).first()
-                if value is not None:
-                    date = datetime(int(value.for_datapoint.year_EC), int(value.for_month.number), 1)
-                    val = [[int(value.for_datapoint.year_EC), int(value.for_month.number), 1], value.value]
-                    arr.append(val)                
-        #data_set.append({'name' : indicator.title_ENG, 'data' : arr})
-    
+    if indicator.type_of == 'monthly':    
         for child in child_indicator:
             arr = []
             for year in years:
@@ -412,7 +402,7 @@ def data_list_detail(request, pk):
             value = DataValue.objects.filter(for_indicator = indicator, for_month = None, for_datapoint = year, is_deleted = False,).first()
             try: data_set.append(value.value)
             except: data_set.append('None')
-    
+        
 
     if request.method == 'POST':
         if 'addValueIndicator' in request.POST:

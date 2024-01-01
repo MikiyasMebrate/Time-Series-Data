@@ -614,28 +614,23 @@ let filterData = () => {
                       }
                     }
 
-                    selectAllIndicator.checked = false;
+                    
                     selectedIndictorId = []; // Reinitialized the Array
                     indicatorHtmlList.forEach((indicatorCheckBox) => {
                       indicatorCheckBox.addEventListener(
                         "change",
                         (eventIndicator) => {
-                          table = "";
+                          selectAllIndicator.checked = false;
                           displayApplyButton.style.display = "none";
                           if (
                             eventIndicator.target.checked &&
-                            !selectedIndictorId.includes(
-                              eventIndicator.target.value
-                            )
+                            !selectedIndictorId.includes(eventIndicator.target.value)
                           ) {
-                            selectedIndictorId.push(
-                              eventIndicator.target.value
-                            );
+                            selectedIndictorId.push(eventIndicator.target.value);
                           } else {
                             try {
-                              selectedIndictorId.pop(
-                                eventIndicator.target.value
-                              );
+                              let newSelectedIndicator = selectedIndictorId.filter((item) => item != eventIndicator.target.value) 
+                              selectedIndictorId = newSelectedIndicator
                             } catch {
                               null;
                             }
@@ -644,6 +639,8 @@ let filterData = () => {
                         }
                       );
                     });
+
+                    
                   });
                 });
               }
@@ -671,13 +668,14 @@ let filterData = () => {
                 }
               });
 
-              //Display Indicator into Table
+            
 
               // For Fist TIme Checked Indicator
               indicatorHtmlList.forEach((indicatorCheckBox) => {
                 indicatorCheckBox.addEventListener(
                   "change",
                   (eventIndicator) => {
+                    selectAllIndicator.checked = false;
                     displayApplyButton.style.display = "none";
                     if (
                       eventIndicator.target.checked &&
@@ -686,7 +684,8 @@ let filterData = () => {
                       selectedIndictorId.push(eventIndicator.target.value);
                     } else {
                       try {
-                        selectedIndictorId.pop(eventIndicator.target.value);
+                        let newSelectedIndicator = selectedIndictorId.filter((item) => item != eventIndicator.target.value) 
+                        selectedIndictorId = newSelectedIndicator
                       } catch {
                         null;
                       }
@@ -1359,8 +1358,6 @@ let filterData = () => {
 
               indicatorSelectedType = "yearly";
               //End Indicator tabl
-
-
 
 
 
