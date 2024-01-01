@@ -915,16 +915,16 @@ let filterData = () => {
                   table += `
                   <style>
                   table.dataTable th {
-                      writing-mode: vertical-lr;
-                      vertical-align: middle;
-                      transform: rotate(180deg);
-                    }
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
+                }
                 </style>
                   <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
                   <thead>
                     <tr class="text-center">
-                    <th class="vertical-text border">Year</th>
-                    <th class="vertical-text border">Month</th>`;
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Month</th>`;
 
                   let filterIndicators = data.indicators.filter(
                     (item) =>
@@ -969,7 +969,7 @@ let filterData = () => {
                       ) {
                         test = true;
                         table += `
-                            <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                            <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.title_ENG} </th>
                             `;
 
                         childIndicatorList(indicator.id, " ");
@@ -992,9 +992,9 @@ let filterData = () => {
                       <tr class="text-center">`;
 
                       if (!checkYearPrint) {
-                        table += `<td class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                        table += `<td class="border-bottom-0 fw-bold" "">${year[1]} E.C - ${year[2]} G.C</td>`;
                       } else {
-                        table += ` <td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
+                        table += `<td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
                       }
 
                       table += `                     
@@ -1096,24 +1096,19 @@ let filterData = () => {
 
                   $(document).ready(function () {
                     $("#newTable").DataTable({
+                      columnDefs: [{ width: 900, targets: 0 }],
                       retrieve: true,
                       ordering: false,
-                      "initComplete": function (settings, json) {  
-                        $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
-                      },
-                      columnDefs: [
-                        { width: "900px", targets: 1 },
-                      ],
                       responsive: true,
                       paging: true,
                       searching: true,
                       orderNumber: true,
                       lengthMenu: [
-                        [24, 50, 100, -1],
-                        ["24 rows", "50 rows", "100 rows", "Show all"],
+                        [36, 72, 108, -1],
+                        ["36 rows", "72 rows", "108 rows", "Show all"],
                       ],
                       buttons: [
-                        "pageLength",
+                        "pageLength","copy",
                         {
                           extend: "excelHtml5",
                           text: "Save as Excel",
@@ -1136,18 +1131,18 @@ let filterData = () => {
                 //Type Quarter table
                 let typeQuarterTable = () => {
                   table += `
-                                     <style>
-                     table.dataTable th {
-                         writing-mode: vertical-lr;
-                         vertical-align: middle;
-                         transform: rotate(180deg);
-                       }
+                       <style>
+                       table.dataTable th {
+                        writing-mode: vertical-lr !important;
+                        vertical-align: middle !important;
+                        transform: rotate(180deg) !important;
+                    }
                    </style>
-                  <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
+                  <table id="newTable" class="table table-bordered m-0 p-0">
                   <thead>
                     <tr class="text-center">
-                    <th  style="width: 40px;"  class="vertical-text border">Year</th>
-                    <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
                   let filterIndicators = data.indicators.filter(
                     (item) =>
@@ -1322,12 +1317,6 @@ let filterData = () => {
                     $("#newTable").DataTable({
                       retrieve: true,
                       ordering: false,
-                      "initComplete": function (settings, json) {  
-                        $("#DataTableID").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");            
-                      },
-                      columnDefs: [
-                        { width: "500px", targets: 1 },
-                      ],
                       responsive: true,
                       paging: true,
                       searching: true,
@@ -1337,7 +1326,7 @@ let filterData = () => {
                         ["24 rows", "50 rows", "100 rows", "Show all"],
                       ],
                       buttons: [
-                        "pageLength",
+                        "pageLength","copy",
                         {
                           extend: "excelHtml5",
                           text: "Save as Excel",

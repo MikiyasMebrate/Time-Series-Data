@@ -353,6 +353,13 @@ $(document).ready(function () {
       // Monthly
       else if (String(currentIndicator.type_of) === "monthly") {
         table += `
+        <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
+                }
+                </style>
         <table id="newTable" class="table table-bordered m-0 p-0">
         <thead>
           <tr class="text-center">
@@ -610,6 +617,13 @@ $(document).ready(function () {
       //Quarterly 
       else if (String(currentIndicator.type_of) === "quarterly") {
         table += `
+        <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
+                }
+                </style>
         <table id="newTable" class="table table-bordered m-0 p-0">
         <thead>
           <tr class="text-center">
@@ -870,7 +884,9 @@ $(document).ready(function () {
         $("#newTable").DataTable({
           retrieve: true,
           ordering: false,
-          scrollX: true,
+          "initComplete": function (settings, json) {  
+            $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
+          },
           responsive: true,
           paging: true,
           searching: true,
