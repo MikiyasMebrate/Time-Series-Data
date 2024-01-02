@@ -5,6 +5,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db import models
 from auditlog.registry import auditlog
+from decimal import Decimal
 
 
 
@@ -51,24 +52,8 @@ class Indicator(models.Model):
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True) 
 
 
-
-
-
-    def get_full_path(self):
-        full_path = [self.title_ENG]
-        k = self.parent
-        while k is not None:
-            full_path.append(k.title_ENG)
-            k = k.parent
-        return ' -> '.join(full_path[::-1])
-
     def __str__(self):
-        return self.title_ENG + "      ---- Deleted: " + str(self.is_deleted)
-
-
-
-
-
+        return self.title_ENG 
 
 
 class Indicator_Point(models.Model):
@@ -175,7 +160,7 @@ class DataValue(models.Model):
 
 
     def __str__(self) -> str:
-        return str(self.for_indicator)+" "+str(self.for_datapoint)
+        return str(self.for_indicator)
     
     
     def calculate_parent_value(self):
@@ -192,7 +177,7 @@ class DataValue(models.Model):
                    try: 
                        child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
                        if(child_data_value.is_deleted == False):
-                           sum  = sum + int(child_data_value.value)
+                           sum  = sum + Decimal(child_data_value.value)
                        else:
                            None
                    except: 
@@ -200,12 +185,12 @@ class DataValue(models.Model):
                    
                if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = sum
+                   parent_data.value = Decimal(sum)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.save()
                else: 
-                   parent_data_value.value = sum
+                   parent_data_value.value = round(sum, 3)
                    try: parent_data_value.save()
                    except: None
 
@@ -221,14 +206,14 @@ class DataValue(models.Model):
                    try: 
                        child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_month = self.for_month)
                        if(child_data_value.is_deleted == False):
-                           sum  = sum + int(child_data_value.value)
+                           sum  = sum + Decimal(child_data_value.value)
                        else:
                            None
                    except: 
                        None
                 if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = sum
+                   parent_data.value = Decimal(sum)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_month = self.for_month
@@ -250,14 +235,14 @@ class DataValue(models.Model):
                    try: 
                        child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_quarter = self.for_quarter)
                        if(child_data_value.is_deleted == False):
-                           sum  = sum + int(child_data_value.value)
+                           sum  = sum + Decimal(child_data_value.value)
                        else:
                            None
                    except: 
                        None
                 if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = sum
+                   parent_data.value = Decimal(sum)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_quarter = self.for_quarter
@@ -270,12 +255,12 @@ class DataValue(models.Model):
         except:
             None
 
-# @receiver(post_save, sender=DataValue)
-# def call_my_function(sender, instance, created, **kwargs):
-#     if created: 
-#         instance.calculate_parent_value()
-#     else:  
-#         instance.calculate_parent_value()
+@receiver(post_save, sender=DataValue)
+def call_my_function(sender, instance, created, **kwargs):
+    if created: 
+        instance.calculate_parent_value()
+    else:  
+        instance.calculate_parent_value()
 
 
 

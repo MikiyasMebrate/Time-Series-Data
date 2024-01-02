@@ -3,10 +3,6 @@ $(document).ready(function () {
   let pathID = urlPath.replace("/user-admin/data-list-detail/", "");
   let url = `/user-admin/json-indicator/${pathID}/`;
 
-        
-        
-
-
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
@@ -82,10 +78,10 @@ $(document).ready(function () {
       //Yearly
       if (String(currentIndicator.type_of) === "yearly") {
         table += `
-        <table id="newTable" class="table table-bordered table-responsive m-0 p-0">
+        <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
       <thead>
         <tr>
-          <th class="ps-5 pe-5">Name</th>`;
+          <th  style="padding-left: 150px !important;padding-right: 150px !important;" class="ps-5 pe-5">Name</th>`;
 
         for (let year of data.year) {
           let checkActual = data.indicator_point.find(
@@ -348,7 +344,30 @@ $(document).ready(function () {
             }
           }
         );
-      } 
+
+        $(document).ready(function () {
+          $("#newTable").DataTable({
+            retrieve: true,
+            ordering: false,
+            initComplete: function (settings, json) {
+              $("#DataTableID").wrap(
+                "<div style='overflow:auto; position:relative;'></div>"
+              );
+            },
+            responsive: true,
+            paging: true,
+            searching: true,
+            orderNumber: true,
+            lengthMenu: [
+              [36, 72, 108, -1],
+              ["36 rows", "72 rows", "108 rows", "Show all"],
+            ],
+            buttons: ["pageLength"],
+            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            dom: "Bfrtip",
+          });
+        });
+      }
 
       // Monthly
       else if (String(currentIndicator.type_of) === "monthly") {
@@ -360,11 +379,11 @@ $(document).ready(function () {
                     transform: rotate(180deg) !important;
                 }
                 </style>
-        <table id="newTable" class="table table-bordered table-responsive m-0 p-0">
+        <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
         <thead>
           <tr class="text-center">
-          <th  style="width: 40px;"  class="vertical-text border">Year</th>
-          <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+          <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+          <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
         if (currentIndicator) {
           let title_amharic = "";
@@ -405,7 +424,8 @@ $(document).ready(function () {
           //Child List
           for (let indicator of data.indicators) {
             if (
-              String(indicator.parent_id) == String(currentIndicator.id) && indicator.is_deleted == false
+              String(indicator.parent_id) == String(currentIndicator.id) &&
+              indicator.is_deleted == false
             ) {
               test = true;
               table += ` <th class="vertical-text fw-normal border" ">
@@ -455,8 +475,7 @@ $(document).ready(function () {
               } name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
               </td>`;
             } else {
-              table += ` <td class="border-0"><p style="display:none">${year.year_EC
-            }-E.C : ${year.year_GC}-G.C </p></td>`;
+              table += ` <td class="border-0"><p style="display:none">${year.year_EC}-E.C : ${year.year_GC}-G.C </p></td>`;
             }
 
             table += `                     
@@ -505,15 +524,16 @@ $(document).ready(function () {
 
               //Filter Only Child Indicator
               let childIndicators = data.indicators.filter(
-                (item) => String(item.parent_id) == String(currentIndicator.id) && !item.is_deleted
+                (item) =>
+                  String(item.parent_id) == String(currentIndicator.id) &&
+                  !item.is_deleted
               );
 
               //Child of Child
               let childIndicatorDataValue = (parent) => {
                 let filterChild = data.indicators.filter(
                   (item) =>
-                    String(item.parent_id) == String(parent) &&
-                    !item.is_deleted 
+                    String(item.parent_id) == String(parent) && !item.is_deleted
                 );
                 if (filterChild) {
                   for (indicatorList of filterChild) {
@@ -612,13 +632,15 @@ $(document).ready(function () {
           }
         }
         table += `</tbody>`;
-      
+
         $(document).ready(function () {
           $("#newTable").DataTable({
             retrieve: true,
             ordering: false,
-            "initComplete": function (settings, json) {  
-              $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
+            initComplete: function (settings, json) {
+              $("#DataTableID").wrap(
+                "<div style='overflow:auto; position:relative;'></div>"
+              );
             },
             responsive: true,
             paging: true,
@@ -633,9 +655,9 @@ $(document).ready(function () {
             dom: "Bfrtip",
           });
         });
-      } 
-      
-      //Quarterly 
+      }
+
+      //Quarterly
       else if (String(currentIndicator.type_of) === "quarterly") {
         table += `
         <style>
@@ -645,11 +667,11 @@ $(document).ready(function () {
                     transform: rotate(180deg) !important;
                 }
                 </style>
-        <table id="newTable" class="table table-responsive table-bordered m-0 p-0">
+        <table id="newTable" class="table table-responsive table-bordered m-0 p-0" style="width:100%;">
         <thead>
           <tr class="text-center">
-          <th  style="width: 40px;"  class="vertical-text border">Year</th>
-          <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+          <th style="padding-left: 100px !important;padding-right: 100px !important;"   class="vertical-text border">Year</th>
+          <th style="padding-left: 100px !important;padding-right: 100px !important;"   class="vertical-text border">Month</th>`;
 
         if (currentIndicator) {
           let title_amharic = "";
@@ -790,7 +812,9 @@ $(document).ready(function () {
 
               //Filter Only Child Indicator
               let childIndicators = data.indicators.filter(
-                (item) => String(item.parent_id) == String(currentIndicator.id) && !item.is_deleted
+                (item) =>
+                  String(item.parent_id) == String(currentIndicator.id) &&
+                  !item.is_deleted
               );
 
               //Child of Child
@@ -897,13 +921,15 @@ $(document).ready(function () {
           }
         }
         table += `</tbody>`;
-      
+
         $(document).ready(function () {
           $("#newTable").DataTable({
             retrieve: true,
             ordering: false,
-            "initComplete": function (settings, json) {  
-              $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");            
+            initComplete: function (settings, json) {
+              $("#DataTableID").wrap(
+                "<div style='overflow:auto; position:relative;'></div>"
+              );
             },
             responsive: true,
             paging: true,
@@ -918,13 +944,9 @@ $(document).ready(function () {
             dom: "Bfrtip",
           });
         });
-
-
       }
 
       document.getElementById("tableTest").innerHTML = table;
-
-      
 
       let btnIndicator = document.getElementsByName("btnIndicator");
 
@@ -1062,7 +1084,7 @@ $(document).ready(function () {
       $("#newTable").on("page.dt", function () {
         var pageInfo = $("#newTable").DataTable().page.info();
         localStorage.setItem("paginationState", JSON.stringify(pageInfo));
-        console.log('pageInfo')
+        console.log("pageInfo");
       });
 
       // Retrieve pagination state from local storage and set the table to the correct page on page load
@@ -1074,10 +1096,137 @@ $(document).ready(function () {
         }
       });
 
+      //Calculate Graph
 
+      if (currentIndicator.type_of == "yearly") {
+        //Filter Date, and values
+        let minYear = data.year[0].year_EC;
 
+        const data_set = data.year.map((year) => {
+          const value = data.value.find(
+            (value) =>
+              String(value.for_indicator_id) === String(currentIndicator.id) &&
+              value.for_month_id === null &&
+              String(value.for_datapoint_id) === String(year.id) &&
+              value.is_deleted == false
+          );
+          return value ? value.value : null;
+        });
 
+        Highcharts.chart("container", {
+          chart: {
+            type: "area",
+          },
+          title: {
+            text: `${currentIndicator.title_ENG}`,
+          },
+          xAxis: {
+            allowDecimals: false,
+            accessibility: {
+              rangeDescription: "Range: 1967 to 2015.",
+            },
+          },
+          tooltip: {
+            pointFormat: "{series.name}",
+          },
+          plotOptions: {
+            area: {
+              pointStart: parseInt(minYear),
+              marker: {
+                enabled: false,
+                symbol: "circle",
+                radius: 2,
+                states: {
+                  hover: {
+                    enabled: true,
+                  },
+                },
+              },
+            },
+          },
+
+          tooltip: {
+            pointFormat:
+              '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+            valueDecimals: 2,
+            split: true,
+          },
+          series: [
+            {
+              name: `${currentIndicator.title_ENG}`,
+              data: data_set,
+            },
+          ],
+        });
+      } else if (currentIndicator.type_of == "monthly") {
+        let childIndicator = data.indicators.filter(
+          (item) => String(item.parent_id) == String(currentIndicator.id)
+        );
+        let data_set = []
+        for (child of childIndicator) {
+          let arr = [];
+          for (year of data.year) {
+            for (month of data.month) {
+              let value = data.value.find(
+                (value) =>
+                  String(value.for_indicator_id) == String(child.id) &&
+                  value.for_month_id == String(month.id) &&
+                  String(value.for_datapoint_id) == String(year.id) &&
+                  value.is_deleted == false
+              );
+              if (value) {
+                arr.push([Date.UTC(parseInt(year.year_EC), parseInt(month.number), 1), parseInt(value.value)]);
+              }
+            }
+          }
+          data_set.push({'name' : child.title_ENG, 'data' : arr})
+        }
+
+        (async () => {
+          /**
+           * Create the chart when all data is loaded
+           * @return {undefined}
+           */
+          function createChart(series) {
+            Highcharts.stockChart("container", {
+              rangeSelector: {
+                selected: 4,
+              },
+
+              yAxis: {
+                labels: {
+                  format: "{#if (gt value 0)}+{/if}{value}%",
+                },
+                plotLines: [
+                  {
+                    value: 0,
+                    width: 2,
+                    color: "silver",
+                  },
+                ],
+              },
+
+              plotOptions: {
+                series: {
+                  label: {
+                    connectorAllowed: false,
+                  },
+                },
+              },
+
+              tooltip: {
+                pointFormat:
+                  '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+                valueDecimals: 2,
+                split: true,
+              },
+
+              series,
+            });
+          }
+          createChart(data_set);
+        })();
+      }
     })
     .catch((err) => console.log(err));
 });
-
