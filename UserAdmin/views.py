@@ -1217,3 +1217,27 @@ def restore_indicator(request, pk):
 
     messages.success(request, "Successfully Restored!")
     return HttpResponseRedirect(previous_page)
+
+def month_data(request, month_id):
+    indicator = Indicator.objects.get(pk=month_id)
+    months = Month.objects.all()
+    years = DataPoint.objects.all()
+
+    child_indicator = Indicator.objects.filter(parent=indicator)
+
+    data_set = []
+
+    if indicator.type_of == 'monthly':
+        for child in child_indicator:
+            arr = []
+            for year in years:
+                for month in months:
+                    value_child = DataValue.objects.filter(for_indicator=child, for_month=month, for_datapoint=year, is_deleted=False).first()
+                    if value_child is not None:
+                        date = datetime(int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1)
+                        val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
+                        arr.append(val)
+            data_set.append({'name': child.title_ENG, 'data': arr})
+            
+    # Return JSON response
+    return JsonResponse(data_set, safe=False)
