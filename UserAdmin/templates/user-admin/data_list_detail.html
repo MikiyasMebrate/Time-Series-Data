@@ -10,6 +10,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+  
+
+
   <style>
     .scrollable {
       max-height: 500px;
@@ -18,29 +21,35 @@
       /* enable horizontal scrolling */
     }
 
-    .vertical-text {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      text-orientation: sideways-right;
-      white-space: nowrap;
-      width: 100%;
-      text-align: center;
-      /* Add this line to center the text */
+    .ss{
+      padding-bottom: 700px;
     }
+
+
+
 
     .horizontal-text {
       writing-mode: horizontal-tb;
       text-align: center;
       /* Add this line to center the text */
     }
+
+    {% if indicator.type_of == 'monthly'%}
+
+    {% endif %}
   </style>
 </head>
 
+{% comment %} table.dataTable th {
+  writing-mode: vertical-lr;
+  vertical-align: middle;
+  transform: rotate(180deg);
+} {% endcomment %}
 <body class="hold-transition sidebar-mini layout-fixed">
 
 
   <!-- Add Sub Indicator  -->
-  <div class="modal fade" id="addIndicatorModal" tabindex="-1" aria-labelledby="addIndicatorModalLabel"
+  <div  class="modal fade" id="addIndicatorModal" tabindex="-1" aria-labelledby="addIndicatorModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -69,7 +78,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="removeIndicatorModalLabel">Add New Sub-Indicator</h5>
+          <h5 class="modal-title" id="removeIndicatorModalLabel">Remove Indicator</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form name="removeIndicator" method="post">
@@ -225,8 +234,7 @@
       </div>
     </div>
     <!--Title End-->
-
-
+    
     <section class="content">
       <div class="container-fluid">
         <div class="row">
@@ -238,7 +246,7 @@
                 + Add Data
               </button>
             </div>
-            <!--Add Data End-->
+
 
             <div class="col-4 p-0 m-0">
 
@@ -327,123 +335,6 @@
       </div>
     </div>
 
-<script>
-  // Data retrieved from https://www.vikjavev.no/ver/snjomengd
-let d = {{data_set | safe }}
-
-d.forEach((item, index, array) => {
-  if (item === "None") {
-    array[index] = null;
-  }
-});
-
-let yearData = d
-let datas = []
-
-{% if indicator.type_of == 'monthly'%}
-for(data of d){
-  let arr = []
-  for (value of data.data){
-    arr.push([Date.UTC(parseInt(value[0][0]) , parseInt(value[0][1])  , 1),parseInt(value[1])])
-  }
-  datas.push({name:data.name, data:arr})
-
-
-  //datas.push([Date.UTC(parseInt(data[0][0]) , parseInt(data[0][1])  , 1),parseInt(data[1])])
-}
-
-(async () => {
-
-
-/**
- * Create the chart when all data is loaded
- * @return {undefined}
- */
-function createChart(series) {
-
-    Highcharts.stockChart('container', {
-
-        rangeSelector: {
-            selected: 4
-        },
-
-        yAxis: {
-            labels: {
-                format: '{#if (gt value 0)}+{/if}{value}%'
-            },
-            plotLines: [{
-                value: 0,
-                width: 2,
-                color: 'silver'
-            }]
-        },
-
-        plotOptions: {
-        series: {
-            label: {
-                connectorAllowed: false
-            },
-        }
-    },
-
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
-            valueDecimals: 2,
-            split: true
-        },
-
-        series
-    });
-
-}
-createChart(datas);
-
-})();
-{% endif %}
-
-{% if indicator.type_of == 'yearly'%}
-// Data retrieved from https://fas.org/issues/nuclear-weapons/status-world-nuclear-forces/
-Highcharts.chart('container', {
-  chart: {
-      type: 'area'
-  },
-  title: {
-      text: '{{indicator.title_ENG}}'
-  },
-  xAxis: {
-      allowDecimals: false,
-      accessibility: {
-          rangeDescription: 'Range: 1940 to 2017.'
-      }
-  },
-  tooltip: {
-      pointFormat: '{series.name}'
-  },
-  plotOptions: {
-      area: {
-          pointStart: 1940,
-          marker: {
-              enabled: false,
-              symbol: 'circle',
-              radius: 2,
-              states: {
-                  hover: {
-                      enabled: true
-                  }
-              }
-          }
-      }
-  },
-  series: [ {
-      name: '{{indicator.title_ENG}}',
-      data: yearData
-  }]
-});
-
-
-{% endif %}
-
-</script>
   </div>
   <!--Body End-->
   {% include 'user-admin/include/footer.html' %}
@@ -469,22 +360,20 @@ Highcharts.chart('container', {
           { width: "200px", targets: 0 },
         ],
         dom: "Bfrtip",
-        buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+        buttons: ["pageLength",
+              {
+                   extend: 'excelHtml5',
+                  text: 'Save as Excel',
+                  customize: function( xlsx ) {
+                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    $('row:nth-child(2) c', sheet).attr( 's', '54' );
+                  }
+              }
+          ]
       });
     });
-
-    
-
-
-    //Chart
-
-
-
-
   </script>
-
-
-
+  
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
   <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
@@ -495,10 +384,6 @@ Highcharts.chart('container', {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
   <script src="{% static 'assets/js/data_list_detail.js'%}"></script>
-
-
-
-
 </body>
 
 </html>

@@ -1,271 +1,229 @@
-
 <!DOCTYPE html>
 
 {% load static %}
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DPMEs</title>
-    {% include 'user-admin/include/head.html'%}
-  </head>
 
-  <body class="hold-transition sidebar-mini layout-fixed" >
-    <div class="wrapper">
-      <!--Loading Start-->
-      <div class="preloader flex-column justify-content-center align-items-center">
-        <img
-          class="animation__shake"
-          src="{% static '/assets/image/mopd_logo_green.png' %}"
-          alt="AdminLTELogo"
-          height="300"
-          width="300"
-        />
-      </div>
-      <!--Loading End-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DPMEs</title>
+  {% include 'user-admin/include/head.html'%}
+  <!--High Chart-->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/series-label.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</head>
 
-      {% include 'user-admin/include/navbar.html'%}
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+    <!--Loading Start-->
+    <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__shake" src="{% static '/assets/image/mopd_logo_green.png' %}" alt="AdminLTELogo"
+        height="300" width="300" />
+    </div>
+    <!--Loading End-->
+
+    {% include 'user-admin/include/navbar.html'%}
+    {% include 'user-admin/include/sidebar.html'%}
 
 
-      {% include 'user-admin/include/sidebar.html'%}
 
+    <!--Body Start-->
+    <div class="content-wrapper">
+      <!-- TItle Start-->
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
 
-
-      <!--Body Start-->
-      <div class="content-wrapper">
-        <!-- TItle Start-->
-        <div class="content-header">
-          <div class="container-fluid">
-            <div class="row mb-2">
-              <div class="col-sm-6">
-               
-              </div>
             </div>
           </div>
         </div>
-        <!--Title End-->
+      </div>
+      <!--Title End-->
 
-        <section class="content">
-          <div class="container-fluid">
-            <!--Card Start-->
-            <div class="row">
-              <div class="col-lg-3 col-6">
-                <div class="small-box nav-link">
-                  <div class="inner">
-                    
-                   
-                    <p> <i class="bi bi-person-video3"></i>Total topic</p>
-                    <h3 class="text-info"><i class="bi bi-sliders"></i>{{size_topic}}<i class="bi bi-sliders"></i></h3>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="{% url 'user-admin-topic' %}" class="small-box-footer"
-                  >More info <i class="bi bi-arrow-down-circle-fill"></i></i
-                ></a>
-                </div>
-              </div>
-              <div class="col-lg-3 col-6">
-                <div class="small-box nav-link">
-                  <div class="inner">
-                    
-                   
-                    <p> <i class="bi bi-app-indicator"></i>Total Category</p>
-                    <h3 class="text-success"><i class="bi bi-sliders"></i>{{size_category}}<i class="bi bi-sliders"></i></h3>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="{% url 'user-admin-category' %}" class="small-box-footer"
-                  >More info <i class="bi bi-arrow-down-circle-fill"></i></i
-                ></a>
-                </div>
-              </div>
-              <div class="col-lg-3 col-6">
-                <div class="small-box nav-link">
-                  <div class="inner">
-                    
-                   
-                    <p> <i class="bi bi-list-nested"></i>Total indicator</p>
-                    <h3 class="text-secondary"><i class="bi bi-sliders"></i>{{size_indicator}}<i class="bi bi-sliders"></i></h3>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="{% url 'user-admin-indicators'%}" class="small-box-footer"
-                    >More info <i class="bi bi-arrow-down-circle-fill"></i></i
-                  ></a>
-                </div>
-              </div>
-              <div class="col-lg-3 col-6">
-                <div class="small-box nav-link">
-                  <div class="inner">
-                    
-                   
-                    <p> <i class="bi bi-buildings"></i></i>Total source</p>
-                    <h3 class="text-primary"><i class="bi bi-sliders"></i>{{size_source}}<i class="bi bi-sliders"></i></h3>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="{% url 'user-admin-source'%}" class="small-box-footer"
-                    >More info <i class="bi bi-arrow-down-circle-fill"></i></i
-                  ></a>
-                </div>
-              </div>
+      <section class="content">
+        <div class="container-fluid">
+          <h6 class="text-muted p-2">Dashboard</h6>
+          <!--Card Start-->
+          <div class="row">
 
+            <!--Card 1-->
+            <div class="col-md-6 col-xl-3 ">
+              <div class="small-box nav-link text-center">
+                <div class="inner">
+
+                  <h4 class="text-info"> <i class="bi bi-person-video3"></i>Total Topic</h4>
+                  <h3 class="text-info"><i class="bi bi-sliders"></i>{{size_topic}}<i class="bi bi-sliders"></i></h3>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-bag"></i>
+                </div>
+                <a href="{% url 'user-admin-topic' %}" class="small-box-footer text-info">More info <i
+                    class="bi bi-arrow-down-circle-fill"></i></i></a>
+              </div>
             </div>
-            <!--Card End-->
-            <div class="row">
-              <div class="col-6">
-                <div class="card ">
-                  <div class="card-header">
-                    <h3 class="card-title d-flex" >
-                      <i class="fas fa-chart-pie mr-1"></i>
-                      <p class='ml-1' id='chart_head_id'></p>
+
+            <!--Card 2-->
+            <div class="col-md-6 col-xl-3 ">
+              <div class="small-box nav-link text-center">
+                <div class="inner">
+
+
+                  <h4 class="text-success"> <i class="bi bi-app-indicator "></i>Total Category</h4>
+                  <h3 class="text-success"><i class="bi bi-sliders"></i>{{size_category}}<i class="bi bi-sliders"></i>
+                  </h3>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-bag"></i>
+                </div>
+                <a href="{% url 'user-admin-category' %}" class="small-box-footer">More info <i
+                    class="bi bi-arrow-down-circle-fill"></i></i></a>
+              </div>
+            </div>
+
+
+            <!--Card 3-->
+            <div class="col-md-6 col-xl-3 ">
+              <div class="small-box nav-link text-center">
+                <div class="inner">
+
+
+                  <h4 class="text-secondary"> <i class="bi bi-list-nested"></i>Total indicator</h4>
+                  <h3 class="text-secondary"><i class="bi bi-sliders"></i>{{size_indicator}}<i
+                      class="bi bi-sliders"></i></h3>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-bag"></i>
+                </div>
+                <a href="{% url 'user-admin-indicators'%}" class="small-box-footer text-secondary">More info <i
+                    class="bi bi-arrow-down-circle-fill"></i></i></a>
+              </div>
+            </div>
+
+            <!--Card 4-->
+            <div class="col-md-6 col-xl-3 ">
+              <div class="small-box nav-link text-center">
+                <div class="inner">
+
+
+                  <h4 class="text-primary"> <i class="bi bi-buildings"></i></i>Total source</p>
+                    <h3 class="text-primary"><i class="bi bi-sliders"></i>{{size_source}}<i class="bi bi-sliders"></i>
                     </h3>
-                  </div>
-                  <div class="d-flex justify-content-center align-items-center"> <p id="chart_indicator"></p></div>
-                  <div class="card-body">
-                    <div class="tab-content p-0">
-                      <div
-                        class="chart tab-pane active"
-                        id="revenue-chart"
-                        style="position: relative; height:440px"
-                      >
-                        <canvas
-                          id="revenue-chart-canvas"
-                          height="350"
-                          style="height: 350px"
-                        ></canvas>
-                      </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-
-
-                <div class="col-6">
-                  <!--Recent data Table Start-->
-                  <div class="card">
-                    
-  
-                    <!--Table Start-->
-                    <div class="card-body p-0">
-                      <table id="" class="table table-bordered m-0 p-0" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th class="ps-5 pe-5">Timestamp</th>
-                                <th>User</th>
-                                <th>Action</th>
-                                <th>Object</th>
-                                <th>Model</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        
-                          {% for entry in auditlog_entries %}
-                          <tr>
-                              <td>{{ entry.timestamp }}</td>
-                              {% if entry.actor.get_full_name %}
-                              <td class="fw-bold">{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
-                              {% else %}
-                             <td class="fw-bold"> Anonymous User  </td>
-                              {% endif %}
-                              {% if entry.action == 0 %}
-                                  <td class="fw-bold text-success">Created</td>
-                              {% elif entry.action == 1 %}
-                                  <td class="fw-bold text-warning">Updated</td>
-                              {% elif entry.action == 2 %}
-                                  <td class="fw-bold text-danger">Deleted</td>
-                              {% else %}
-                                  <td class="fw-bold text-primary">Other</td>
-                              {% endif %}
-                              <td>{{ entry.object_repr }}</td>
-                              <td>{{ entry.content_type.name }}</td>
-                          </tr>
-                      {% endfor %}
-                      
-        
-                        </tbody>
-                    </table>
-                    </div>
-                    
-  
-                  
-                
-                    <!--Table End-->
-                  </div>
-                  <!--Recent data Table End-->
+                <div class="icon">
+                  <i class="ion ion-bag"></i>
                 </div>
+                <a class="text-primary" href="{% url 'user-admin-source'%}" class="small-box-footer">More info <i
+                    class="bi bi-arrow-down-circle-fill "></i></i></a>
+              </div>
             </div>
 
           </div>
-        </section>
-      </div>
-      <!--Body End-->
+          <!--Card End-->
+
+          <!--Body Row Start-->
+          <div class="row">
+            <h6 class="text-muted p-2">Random Yearly Category</h6>
+           <!--Random Year Graph Start-->
+           <!--Year 1-->
+            <div class="col-lg-6">
+              <figure class="highcharts-figure">
+                <div id="containerYear1"></div>
+              </figure>
+            </div>
+
+            <!--Year 2-->
+            <div class="col-lg-6">
+              <figure class="highcharts-figure">
+                <div id="containerYear2"></div>
+              </figure>
+            </div>
+             <!--Random Year Graph End-->
+
+
+             <h6 class="text-muted p-2">Random Monthly Category</h6>
+             <!--Random Month Graph Start-->
+             <div class="col-12">
+              <figure class="highcharts-figure">
+                <div id="containerMonth1"></div>
+              </figure>
+            </div>
+             <!--Random Month Grapd End-->
+
+
+             <!--Last 5 Audit Start -->
+             <div class="col-12">
+              <h6 class="text-muted p-2">Recent Audits</h6>
+              <div class="table-responsive">
+                <table class="table bg-white " style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Timestamp</th>
+                      <th scope="col">User</th>
+                      <th scope="col">Action</th>
+                      <th scope="col">Object</th>
+                      <th scope="col">Model</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for entry in auditlog_entries %}
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>{{ entry.timestamp }}</td>
+                      <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
+                   {% if entry.action == 0 %}
+                       <td><span class="badge bg-success">Created</span></td>
+                   {% elif entry.action == 1 %}
+                       <td><span class="badge bg-warning">Updated</span></td>
+                   {% elif entry.action == 2 %}
+                       <td><span class="badge bg-danger">Deleted</span></td>
+                   {% else %}
+                      <td><span class="badge bg-info">Other</span></td>
+                   {% endif %}
+                   <td>{{ entry.object_repr | capfirst }}</td>
+                   <td>{{ entry.content_type.name | capfirst }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+             </div>
+             <!--Last 5 Audit End -->
+          </div>
+          <!--Body Row End-->
+
+        </div>
+      </section>
+    </div>
+    <!--Body End-->
 
 
 
     {% include 'user-admin/include/footer.html'%}
-    </div>
+  </div>
 
-    {% include 'user-admin/include/footer_js.html'%}
+  {% include 'user-admin/include/footer_js.html'%}
 
-    <!--Chart -->
-    <script src="{% static '/assets/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
-    <script src="{% static '/assets/plugins/chart.js/Chart.min.js' %}"></script>
-    <script src="{% static '/assets/plugins/jquery-knob/jquery.knob.min.js' %}"></script>
-    <script src="{% static '/assets/plugins/moment/moment.min.js' %}"></script>
-    <script src="{% static '/assets/plugins/daterangepicker/daterangepicker.js' %}"></script>
-    <script src="{% static '/assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
-    <script src="{% static '/assets/plugins/summernote/summernote-bs4.min.js' %}"></script>
-    <script src="{% static '/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
-    <script>
-      
-      $(document).ready(function () {
-        $("#tableIndicator").DataTable({
-          retrieve: false,
-          ordering: false,
-          scrollX: true,
-          responsive: true,
-          paging: true,
-          searching: true,
-          orderNumber: false,
-          columnDefs: [{ width: "100%" }],
-        });
+  <script>
+    $(document).ready(function () {
+      $("#tableIndicator").DataTable({
+        retrieve: false,
+        ordering: false,
+        scrollX: true,
+        responsive: true,
+        paging: true,
+        searching: true,
+        orderNumber: false,
+        columnDefs: [{ width: "100%" }],
       });
-    </script>
-    <script src="{% static 'assets/js/indicator_filter.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
-    
-    <!--Chart Data-->
-<script src="{% static 'assets/js/pages/dashboard.js' %}"></script>
-  </body>
-</html>
+    });
+  </script>
+  <script src="{% static 'assets/js/pages/dashboard1.js'%}"></script>
 
-
-</script>
-<script src="{% static 'assets/js/indicator_filter.js' %}"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
-<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
-
-<!--Chart Data-->
-<script src="{% static 'assets/js/pages/dashboard.js' %}"></script>
 </body>
+
 </html>

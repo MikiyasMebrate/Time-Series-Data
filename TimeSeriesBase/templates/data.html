@@ -260,8 +260,12 @@
                     </h2>
                     <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body scrollable" id="indicator_list_filter">
-                            <p class="text-danger">Please Select Category</p>
+                        <div class="accordion-body scrollable indicator_filter">
+                            <div id="indicator_list_filter_header">
+                                <p class="text-danger">Please Select Categories</p>
+                            </div>
+                            <div id="indicator_list_filter_select_all"></div>
+                            <div id="indicator_list_filter_body"></div>
                         </div>
                     </div>
                 </div>
@@ -355,52 +359,62 @@
                               <i class="fas fa-chart-pie mr-1"></i>
                               <p class="fw-bold fs-3 pl-1" id="titleForCatagory"></p>
                           </h3>
-                          <div class="card-tools">
-                              <ul class="nav nav-pills ml-auto">
-                                  <li class="nav-item">
-                                      <a class="nav-link active"  id="bar_btn" href="#bar-chart" data-toggle="tab">Bar</a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a class="nav-link" href="#series-chart" data-toggle="tab">Series</a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a class="nav-link" href="#line-chart" data-toggle="tab">Line</a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a class="nav-link" id='area' href="#area-chart" data-toggle="tab">Area</a>
-                                  </li>
-                              </ul>
-                          </div>
+                          <div class="card-header">
+                            <h3 class="card-title d-flex">
+                                <i class="fas fa-chart-pie mr-1"></i>
+                                <p class="fw-bold fs-3 pl-1" id="titleForCatagory"></p>
+                            </h3>
+                            <div class="card-tools">
+                                <ul class="nav nav-pills ml-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link active "  id="bar_btn" href="#bar-chart" data-toggle="tab">Bar</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link " id='series_btn' href="#series-chart"  data-toggle="tab">Series</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#line-chart" id='line_btn' data-toggle="tab">Line</a>
+                                    </li>
+                                    <li class="nav-item" id='main_area'>
+                                        <a class="nav-link" id='area' href="#area-chart"  data-toggle="tab">Area</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                       </div>
               
                       <div class="card-body">
-                          <div class="tab-content p-0">
-                               <label id='select_label' class='text-danger form-label fw-bold' for="indicatorDropdown ">Select Indicator to display indicator data</label>
-                               <select class='form-select indicatorDropdown mb-1'></select>
-                              <div class="chart tab-pane active " id="bar-chart" style="position: relative; height: 500px;">
-                                
-                                  <div id="bar-chart-canvas" height="300" style="height: 500px;"></div>
-                              </div>
-                              <div class="chart tab-pane" id="series-chart" style="position: relative; height: 500px;">
-                                  <div id="series-chart-canvas" height="300" style="height: 500px;"></div>
-                              </div>
-                              <div class="chart tab-pane" id="line-chart" style="position: relative; height: 500px;">
-                                  <div id="line-chart-canvas" height="300" style="height: 500px;"></div>
-                              </div>
-                              <div class="chart tab-pane" id="area-chart" style="position: relative; height: 500px;">
-                                  <figure class="highcharts-figure">
-                                      <div id="parent-container">
-                                          <div id="play-controls">
-                                              <button id="play-pause-button" class="fa fa-play" title="play"></button>
-                                              <input id="play-range" type="range" value="" min="" max="" />
-                                          </div>
-                                          <div id="area-chart-canvas" height="300" style="height: 500px;"></div>
-                                      </div>
-                                  </figure>
-                          
-                              </div>
-                          </div>
-                      </div>
+                        <div class="tab-content p-0">
+                             <label id='select_label' class='text-danger form-label fw-bold' for="indicatorDropdown ">Select Indicator to display indicator data</label>
+                             <select class='form-select indicatorDropdown mb-1' id='drop_first'></select>
+                             <select class='form-select indicatorDropdown1 mb-1' id='drop_two'></select>
+                             <select class='form-select datasetDropdown mb-1' id='drop' style='display:none'></select>
+                            <div class="chart tab-pane active " id="bar-chart" style="position: relative; height: 500px;">
+                                <div id="bar-chart-canvas"  style="height: 500px;"></div>
+                                <div id="bar-chart-canvas1"  style="height: 500px; display:none;"></div>
+                            </div>
+                            <div class="chart tab-pane" id="series-chart" style="position: relative; height: 500px;">
+                                <div id="series-chart-canvas" height="300" style="height: 500px;"></div>
+                                <div id="series-chart-canvas1" height="300" style="height: 500px; display:none;"></div>
+                            </div>
+                            <div class="chart tab-pane" id="line-chart" style="position: relative; height: 500px;">
+                                <div id="line-chart-canvas"  style="height: 500px;"></div>
+                                <div id="line-chart-canvas1"  style="height: 500px; display:none;"></div>
+                            </div>
+                            <div class="chart tab-pane" id="area-chart" style="position: relative; height: 500px; ">
+                                <figure class="highcharts-figure">
+                                    <div id="parent-container">
+                                        <div id="play-controls">
+                                            <button id="play-pause-button" class="fa fa-play" title="play"></button>
+                                            <input id="play-range" type="range" value="" min="" max="" />
+                                        </div>
+                                        <div id="area-chart-canvas" height="300" style="height: 500px;"></div>
+                                    </div>
+                                </figure>
+                        
+                            </div>
+                        </div>
+                    </div>
                   </div>
                   </div>
               </div>
@@ -415,6 +429,15 @@
 <!-- Button -->
 <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
+
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- datatable -->
 <script src="{% static 'assets/plugins/datatables/jquery.dataTables.min.js' %}"></script>

@@ -5,6 +5,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db import models
 from auditlog.registry import auditlog
+from decimal import Decimal
 
 
 
@@ -51,24 +52,8 @@ class Indicator(models.Model):
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True) 
 
 
-
-
-
-    def get_full_path(self):
-        full_path = [self.title_ENG]
-        k = self.parent
-        while k is not None:
-            full_path.append(k.title_ENG)
-            k = k.parent
-        return ' -> '.join(full_path[::-1])
-
     def __str__(self):
-        return self.title_ENG + "      ---- Deleted: " + str(self.is_deleted)
-
-
-
-
-
+        return self.title_ENG 
 
 
 class Indicator_Point(models.Model):
@@ -82,49 +67,37 @@ class Indicator_Point(models.Model):
 
 
 class DataPoint(models.Model):
-    year_EC = models.CharField(max_length=50, null=True, blank=True)
-    year_GC = models.CharField(max_length=50, null=True, blank=True)
+    year_EC = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    year_GC = models.CharField(max_length=50, null=True, blank=True, unique = True)
     is_interval = models.BooleanField(default=False)
     year_start_EC = models.CharField(max_length=50, null=True, blank=True)
     year_start_GC = models.CharField(max_length=50, null=True, blank=True)
     year_end_EC = models.CharField(max_length=50, null=True, blank=True)
     year_end_GC = models.CharField(max_length=50, null=True, blank=True)
-    months = models.ManyToManyField('Month', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    is_deleted =models.BooleanField(default=True)
+    is_deleted =models.BooleanField(default=False)
     
     
     class Meta:
         ordering = ['year_EC'] #Oldest First
         
-        
+
+    def save(self, *args, **kwargs):
+        self.year_GC = f'{str(int(self.year_EC )+ 7)}/{str(int(self.year_EC)+ 8)}'
+        super(DataPoint, self).save(*args, **kwargs)
+
+
     def __str__(self):
         if self.is_interval:
             return self.year_start_EC + " - " + self.year_end_EC + "E.C"
         else:
             return self.year_EC+" "+"E.C"
-        
-    def save(self, *args, **kwargs):
-        if not self.year_EC:
-            # Use the default year of the current day
-            current_year = datetime.now().year
-            current_month = datetime.now().month
+    
+    
 
-            # Adjust Ethiopian calendar year based on the overlap
-            if current_month <= 7:  # If it's before or in July, consider the overlap with the previous G.C year
-                ec_year = current_year - 8
-            else:
-                ec_year = current_year - 7
-
-            self.year_EC = ec_year
-
-            # Calculate Gregorian calendar years
-            gc_year_start = ec_year + 7
-            gc_year_end = ec_year + 8
-            self.year_GC = f"{gc_year_start}/{gc_year_end}"
-
-        super().save(*args, **kwargs)
+  
+      
 
 
 
@@ -187,7 +160,7 @@ class DataValue(models.Model):
 
 
     def __str__(self) -> str:
-        return str(self.for_indicator)+" "+str(self.for_datapoint)
+        return str(self.for_indicator)
     
     
     def calculate_parent_value(self):
@@ -204,7 +177,7 @@ class DataValue(models.Model):
                    try: 
                        child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
                        if(child_data_value.is_deleted == False):
-                           sum  = sum + int(child_data_value.value)
+                           sum  = sum + Decimal(child_data_value.value)
                        else:
                            None
                    except: 
@@ -212,12 +185,12 @@ class DataValue(models.Model):
                    
                if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = sum
+                   parent_data.value = Decimal(sum)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.save()
                else: 
-                   parent_data_value.value = sum
+                   parent_data_value.value = round(sum, 3)
                    try: parent_data_value.save()
                    except: None
 
@@ -233,14 +206,14 @@ class DataValue(models.Model):
                    try: 
                        child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_month = self.for_month)
                        if(child_data_value.is_deleted == False):
-                           sum  = sum + int(child_data_value.value)
+                           sum  = sum + Decimal(child_data_value.value)
                        else:
                            None
                    except: 
                        None
                 if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = sum
+                   parent_data.value = Decimal(sum)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_month = self.for_month
@@ -262,14 +235,14 @@ class DataValue(models.Model):
                    try: 
                        child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_quarter = self.for_quarter)
                        if(child_data_value.is_deleted == False):
-                           sum  = sum + int(child_data_value.value)
+                           sum  = sum + Decimal(child_data_value.value)
                        else:
                            None
                    except: 
                        None
                 if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = sum
+                   parent_data.value = Decimal(sum)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_quarter = self.for_quarter
@@ -280,7 +253,6 @@ class DataValue(models.Model):
                    except: None
         
         except:
-            print('>>>>>>>>>Exxxx')
             None
 
 @receiver(post_save, sender=DataValue)

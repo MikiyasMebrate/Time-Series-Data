@@ -378,57 +378,6 @@ def data_list_detail(request, pk):
     sub_indicator_form = SubIndicatorFormDetail()
     indicator = Indicator.objects.get(pk = pk)
     measurement_form = MeasurementSelectForm()
-    months = Month.objects.all()
-    years = DataPoint.objects.all()
-
-    child_indicator = Indicator.objects.filter(parent = indicator)
-
-    data_set = []
-
-    if indicator.type_of == 'monthly':
-        arr = []
-        for year in years:
-            for month in months:
-                value = DataValue.objects.filter(for_indicator = indicator, for_month = month, for_datapoint = year, is_deleted = False,).first()
-                if value is not None:
-                    date = datetime(int(value.for_datapoint.year_EC), int(value.for_month.number), 1)
-                    val = [[int(value.for_datapoint.year_EC), int(value.for_month.number), 1], value.value]
-                    arr.append(val)                
-        #data_set.append({'name' : indicator.title_ENG, 'data' : arr})
-    
-        for child in child_indicator:
-            arr = []
-            for year in years:
-                for month in months:
-                        value_child = DataValue.objects.filter(for_indicator = child, for_month = month, for_datapoint = year, is_deleted = False,).first()
-                        if value_child is not None:
-                            date = datetime(int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1)
-                            val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
-                            arr.append(val)
-            data_set.append({'name' : child.title_ENG, 'data' : arr})
-
-    elif indicator.type_of == 'yearly':
-        for year in years:
-            value = DataValue.objects.filter(for_indicator = indicator, for_month = None, for_datapoint = year, is_deleted = False,).first()
-            try: data_set.append(value.value)
-            except: data_set.append('None')
-
-    
-
-
-
-
-                
-
-
-
-
-
-
-
-
-
-    
 
     if request.method == 'POST':
         if 'addValueIndicator' in request.POST:
@@ -592,7 +541,6 @@ def data_list_detail(request, pk):
         'sub_indicator_form' : sub_indicator_form,
         'indicator' : indicator,
         'measurement_form' :measurement_form,
-        'data_set' : data_set
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 
@@ -1217,3 +1165,27 @@ def restore_indicator(request, pk):
 
     messages.success(request, "Successfully Restored!")
     return HttpResponseRedirect(previous_page)
+
+def month_data(request, month_id):
+    indicator = Indicator.objects.get(pk=month_id)
+    months = Month.objects.all()
+    years = DataPoint.objects.all()
+
+    child_indicator = Indicator.objects.filter(parent=indicator)
+
+    data_set = []
+
+    if indicator.type_of == 'monthly':
+        for child in child_indicator:
+            arr = []
+            for year in years:
+                for month in months:
+                    value_child = DataValue.objects.filter(for_indicator=child, for_month=month, for_datapoint=year, is_deleted=False).first()
+                    if value_child is not None:
+                        date = datetime(int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1)
+                        val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
+                        arr.append(val)
+            data_set.append({'name': child.title_ENG, 'data': arr})
+            
+    # Return JSON response
+    return JsonResponse(data_set, safe=False)

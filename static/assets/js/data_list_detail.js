@@ -64,8 +64,7 @@ $(document).ready(function () {
       let measurementHtml = document.getElementById("measurementOptionId");
       measurementHtml.innerHTML = measurementOptions;
 
-
-      //Assign Measurement 
+      //Assign Measurement
       try {
         document.getElementById("measurement_option_id_select").value =
           currentMeasurement.id;
@@ -75,13 +74,14 @@ $(document).ready(function () {
 
       let table = "";
 
-      //Check What Type Indicator is 
+      //Check What Type Indicator is
+      //Yearly
       if (String(currentIndicator.type_of) === "yearly") {
         table += `
-        <table id="newTable" class="table table-bordered m-0 p-0">
+        <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
       <thead>
         <tr>
-          <th class="ps-5 pe-5">Name</th>`;
+          <th  style="padding-left: 150px !important;padding-right: 150px !important;" class="ps-5 pe-5">Name</th>`;
 
         for (let year of data.year) {
           let checkActual = data.indicator_point.find(
@@ -89,10 +89,19 @@ $(document).ready(function () {
               String(item.for_indicator_id) == String(parentIndicator.id) &&
               String(item.for_datapoint_id) == String(year.id)
           );
-          let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
-         
+          let is_actual = checkActual
+            ? checkActual.is_actual
+              ? "Actual"
+              : "Not Actual"
+            : "No Data";
 
-          table += `<th style="font-size: small;" class = "text-center">${year.year_EC}-E.C </br>${year.year_GC}-G.C  <hr> <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button>   </th>`;
+          table += `<th style="font-size: small;" class = "text-center">${
+            year.year_EC
+          }-E.C </br>${year.year_GC}-G.C  <hr> <button id="${
+            checkActual ? checkActual.id : null
+          }" yearId = ${
+            year.id
+          } name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button>   </th>`;
         }
 
         table += `</tr>
@@ -335,18 +344,48 @@ $(document).ready(function () {
             }
           }
         );
-      
-      } else if (String(currentIndicator.type_of) === "monthly") {
+
+        $(document).ready(function () {
+          $("#newTable").DataTable({
+            retrieve: true,
+            ordering: false,
+            initComplete: function (settings, json) {
+              $("#DataTableID").wrap(
+                "<div style='overflow:auto; position:relative;'></div>"
+              );
+            },
+            responsive: true,
+            paging: true,
+            searching: true,
+            orderNumber: true,
+            lengthMenu: [
+              [36, 72, 108, -1],
+              ["36 rows", "72 rows", "108 rows", "Show all"],
+            ],
+            buttons: ["pageLength"],
+            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            dom: "Bfrtip",
+          });
+        });
+      }
+
+      // Monthly
+      else if (String(currentIndicator.type_of) === "monthly") {
         table += `
-        <table id="newTable" class="table table-bordered m-0 p-0">
+        <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
+                }
+                </style>
+        <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
         <thead>
           <tr class="text-center">
-          <th  style="width: 40px;"  class="vertical-text border">Year</th>
-          <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+          <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+          <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
-
-
-        if(currentIndicator) {
+        if (currentIndicator) {
           let title_amharic = "";
           if (!currentIndicator.title_AMH === null)
             title_amharic = " - " + currentIndicator.title_AMH;
@@ -405,158 +444,236 @@ $(document).ready(function () {
         table += `</tr>
                    </thead>
                 <tbody>`;
-        
-         //year loop
-         for (let year of data.year) {
+
+        //year loop
+        for (let year of data.year) {
           let checkYearPrint = false;
 
-
-          let checkActual = data.indicator_point.find((item) =>
+          let checkActual = data.indicator_point.find(
+            (item) =>
               String(item.for_indicator_id) == String(currentIndicator.id) &&
               String(item.for_datapoint_id) == String(year.id)
           );
 
-          let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
+          let is_actual = checkActual
+            ? checkActual.is_actual
+              ? "Actual"
+              : "Not Actual"
+            : "No Data";
 
           //month loop
           for (let month of data.month) {
             table += `
             <tr class="text-center">`;
-           
 
             if (!checkYearPrint) {
-              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C : ${year.year_GC}-G.C
-              <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
+              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${
+                year.year_EC
+              }-E.C : ${year.year_GC}-G.C
+              <button id="${checkActual ? checkActual.id : null}" yearId = ${
+                year.id
+              } name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
               </td>`;
             } else {
-              table += ` <td class="border-0"></td>`;
+              table += ` <td class="border-0"><p style="display:none">${year.year_EC}-E.C : ${year.year_GC}-G.C </p></td>`;
             }
 
             table += `                     
-            <td class="fw-bold " style="width: 22%;" >${month.month_AMH}: ${month.month_ENG}</td>`
-          
+            <td class="fw-bold " style="width: 22%;" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
+            if (currentIndicator) {
+              let checkParentHasChild = data.indicators.find(
+                (item) =>
+                  String(item.parent_id) === String(currentIndicator.id) &&
+                  !item.is_deleted
+              );
 
-
-            if(currentIndicator){
-              let checkParentHasChild = data.indicators.find((item) => String(item.parent_id) === String(currentIndicator.id) && !item.is_deleted);
-
-              let currentDataValue  = data.value.find((value)=> {
-                if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(currentIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
-                  return value
+              let currentDataValue = data.value.find((value) => {
+                if (
+                  String(value.for_month_id) === String(month.id) &&
+                  String(value.for_indicator_id) ===
+                    String(currentIndicator.id) &&
+                  String(value.for_datapoint_id) === String(year.id)
+                ) {
+                  return value;
                 }
-              })
+              });
 
-               //Print Main Indicator Value
-              if(currentDataValue){
-                if(checkParentHasChild){
-                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${currentDataValue.value ? currentDataValue.value : ' - ' } </td>`;
-                }else {
-                  table += `<td class="p-0"><button id="${currentDataValue.id}" value="${currentDataValue.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${currentDataValue.value ? currentDataValue.value : ' - ' }</button></td>`;
+              //Print Main Indicator Value
+              if (currentDataValue) {
+                if (checkParentHasChild) {
+                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                    currentDataValue.value ? currentDataValue.value : " - "
+                  } </td>`;
+                } else {
+                  table += `<td class="p-0"><button id="${
+                    currentDataValue.id
+                  }" value="${
+                    currentDataValue.value
+                  }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                    currentDataValue.value ? currentDataValue.value : " - "
+                  }</button></td>`;
                 }
-              }else{
-                if(checkParentHasChild){
+              } else {
+                if (checkParentHasChild) {
                   table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
-                }else {
+                } else {
                   table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                 }
               }
-              
 
-                //Filter Only Child Indicator 
-                let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(currentIndicator.id))
+              //Filter Only Child Indicator
+              let childIndicators = data.indicators.filter(
+                (item) =>
+                  String(item.parent_id) == String(currentIndicator.id) &&
+                  !item.is_deleted
+              );
 
+              //Child of Child
+              let childIndicatorDataValue = (parent) => {
+                let filterChild = data.indicators.filter(
+                  (item) =>
+                    String(item.parent_id) == String(parent) && !item.is_deleted
+                );
+                if (filterChild) {
+                  for (indicatorList of filterChild) {
+                    valueData = data.value.find((value) => {
+                      if (
+                        String(value.for_month_id) === String(month.id) &&
+                        String(value.for_indicator_id) ===
+                          String(indicatorList.id) &&
+                        String(value.for_datapoint_id) === String(year.id)
+                      ) {
+                        return value;
+                      }
+                    });
 
-                //Child of Child
-                let childIndicatorDataValue = (parent)=>{
-                  let filterChild = data.indicators.filter((item) => String(item.parent_id) == String(parent) && item.is_deleted == false )
-                  if(filterChild){
-                    for(indicatorList of filterChild){
+                    let checkChildHasChild = data.indicators.find(
+                      (item) =>
+                        String(item.parent_id) === String(indicatorList.id) &&
+                        !item.is_deleted
+                    );
 
-                      valueData = data.value.find((value)=> {
-                        if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(indicatorList.id) && String(value.for_datapoint_id) === String(year.id)){
-                          return value
-                        }
-                      })
-
-                       let checkChildHasChild = data.indicators.find((item) => String(item.parent_id) === String(indicatorList.id) && !item.is_deleted);
-
-                        if(valueData){
-                          if(checkChildHasChild){
-                            table += `<td  style="width: 10%"; class="text-center fw-bold"> ${valueData.value ? valueData.value : ' - ' } </td>`;
-                          }else {
-                            table += `<td class="p-0"><button id="${valueData.id}" value="${valueData.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${valueData.value ? valueData.value : ' - ' }</button></td>`;
-                          }
-                        }else{
-                          if(checkChildHasChild){
-                            table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
-                          }else {
-                            table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
-                          }
-                        }
-                      childIndicatorDataValue(indicatorList.id)
+                    if (valueData) {
+                      if (checkChildHasChild) {
+                        table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                          valueData.value ? valueData.value : " - "
+                        } </td>`;
+                      } else {
+                        table += `<td class="p-0"><button id="${
+                          valueData.id
+                        }" value="${
+                          valueData.value
+                        }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                          valueData.value ? valueData.value : " - "
+                        }</button></td>`;
+                      }
+                    } else {
+                      if (checkChildHasChild) {
+                        table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                      } else {
+                        table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                      }
                     }
+                    childIndicatorDataValue(indicatorList.id);
+                  }
+                }
+              };
+
+              //Child Data
+              for (let childIndicator of childIndicators) {
+                valueData = data.value.find((value) => {
+                  if (
+                    String(value.for_month_id) === String(month.id) &&
+                    String(value.for_indicator_id) ===
+                      String(childIndicator.id) &&
+                    String(value.for_datapoint_id) === String(year.id)
+                  ) {
+                    return value;
+                  }
+                });
+
+                let checkChildHasChild = data.indicators.find(
+                  (item) =>
+                    String(item.parent_id) === String(childIndicator.id) &&
+                    !item.is_deleted
+                );
+
+                if (valueData) {
+                  if (checkChildHasChild) {
+                    table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                      valueData.value ? valueData.value : " - "
+                    } </td>`;
+                  } else {
+                    table += `<td class="p-0"><button id="${
+                      valueData.id
+                    }" value="${
+                      valueData.value
+                    }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                      valueData.value ? valueData.value : " - "
+                    }</button></td>`;
+                  }
+                } else {
+                  if (checkChildHasChild) {
+                    table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                  } else {
+                    table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   }
                 }
 
-
-                //Child Data
-                for(let childIndicator of childIndicators){
-                  valueData = data.value.find((value)=> {
-                    if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(childIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
-                      return value
-                    }
-                  })
-
-                  
-                  let checkChildHasChild = data.indicators.find((item) => String(item.parent_id) === String(childIndicator.id) && !item.is_deleted);
-
-                  if(valueData){
-                    if(checkChildHasChild){
-                      table += `<td  style="width: 10%"; class="text-center fw-bold"> ${valueData.value ? valueData.value : ' - ' } </td>`;
-                    }else {
-                      table += `<td class="p-0"><button id="${valueData.id}" value="${valueData.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${valueData.value ? valueData.value : ' - ' }</button></td>`;
-                    }
-                  }else{
-                    if(checkChildHasChild){
-                      table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
-                    }else {
-                      table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
-                    }
-                  }
-
-
-                  //Call Child
-                  childIndicatorDataValue(childIndicator.id)
-
-                }
-              
+                //Call Child
+                childIndicatorDataValue(childIndicator.id);
+              }
             }
             table += `
           </tr>`;
 
             checkYearPrint = true;
           }
-
-
         }
         table += `</tbody>`;
 
+        $(document).ready(function () {
+          $("#newTable").DataTable({
+            retrieve: true,
+            ordering: false,
+            initComplete: function (settings, json) {
+              $("#DataTableID").wrap(
+                "<div style='overflow:auto; position:relative;'></div>"
+              );
+            },
+            responsive: true,
+            paging: true,
+            searching: true,
+            orderNumber: true,
+            lengthMenu: [
+              [36, 72, 108, -1],
+              ["36 rows", "72 rows", "108 rows", "Show all"],
+            ],
+            buttons: ["pageLength"],
+            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            dom: "Bfrtip",
+          });
+        });
+      }
 
-
-      
-      
-      } else if (String(currentIndicator.type_of) === "quarterly") {
+      //Quarterly
+      else if (String(currentIndicator.type_of) === "quarterly") {
         table += `
-        <table id="newTable" class="table table-bordered m-0 p-0">
+        <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
+                }
+                </style>
+        <table id="newTable" class="table table-responsive table-bordered m-0 p-0" style="width:100%;">
         <thead>
           <tr class="text-center">
-          <th  style="width: 40px;"  class="vertical-text border">Year</th>
-          <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+          <th style="padding-left: 100px !important;padding-right: 100px !important;"   class="vertical-text border">Year</th>
+          <th style="padding-left: 100px !important;padding-right: 100px !important;"   class="vertical-text border">Month</th>`;
 
-
-
-        if(currentIndicator) {
+        if (currentIndicator) {
           let title_amharic = "";
           if (!currentIndicator.title_AMH === null)
             title_amharic = " - " + currentIndicator.title_AMH;
@@ -615,169 +732,223 @@ $(document).ready(function () {
         table += `</tr>
                    </thead>
                 <tbody>`;
-        
-         //year loop
-         for (let year of data.year) {
+
+        //year loop
+        for (let year of data.year) {
           let checkYearPrint = false;
 
-
-          let checkActual = data.indicator_point.find((item) =>
+          let checkActual = data.indicator_point.find(
+            (item) =>
               String(item.for_indicator_id) == String(currentIndicator.id) &&
               String(item.for_datapoint_id) == String(year.id)
           );
 
-          let is_actual = checkActual ? (checkActual.is_actual ? "Actual" : "Not Actual") : "No Data";
+          let is_actual = checkActual
+            ? checkActual.is_actual
+              ? "Actual"
+              : "Not Actual"
+            : "No Data";
 
           //month loop
           for (let quarter of data.quarter) {
             table += `
             <tr class="text-center">`;
-           
 
             if (!checkYearPrint) {
-              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year.year_EC}-E.C : ${year.year_GC}-G.C
-              <button id="${checkActual ? checkActual.id : null }" yearId = ${year.id} name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
+              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${
+                year.year_EC
+              }-E.C : ${year.year_GC}-G.C
+              <button id="${checkActual ? checkActual.id : null}" yearId = ${
+                year.id
+              } name="btnEditIsActual" class="btn btn-sm btn-secondary fw-sm" data-bs-toggle="modal" data-bs-target="#isActualModal" > ${is_actual} </button> 
               </td>`;
             } else {
               table += ` <td class="border-0"></td>`;
             }
 
             table += `                     
-            <td class="fw-bold " style="width: 22%;" >${quarter.title_AMH}: ${quarter.title_ENG}</td>`
-          
+            <td class="fw-bold " style="width: 22%;" >${quarter.title_AMH}: ${quarter.title_ENG}</td>`;
 
+            if (currentIndicator) {
+              let checkParentHasChild = data.indicators.find(
+                (item) =>
+                  String(item.parent_id) === String(currentIndicator.id) &&
+                  !item.is_deleted
+              );
 
-
-            if(currentIndicator){
-              let checkParentHasChild = data.indicators.find((item) => String(item.parent_id) === String(currentIndicator.id) && !item.is_deleted);
-
-              let currentDataValue  = data.value.find((value)=> {
-                if(String(value.for_quarter_id) === String(quarter.id) && String(value.for_indicator_id) === String(currentIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
-                  return value
+              let currentDataValue = data.value.find((value) => {
+                if (
+                  String(value.for_quarter_id) === String(quarter.id) &&
+                  String(value.for_indicator_id) ===
+                    String(currentIndicator.id) &&
+                  String(value.for_datapoint_id) === String(year.id)
+                ) {
+                  return value;
                 }
-              })
+              });
 
-               //Print Main Indicator Value
-              if(currentDataValue){
-                if(checkParentHasChild){
-                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${currentDataValue.value ? currentDataValue.value : ' - ' } </td>`;
-                }else {
-                  table += `<td class="p-0"><button id="${currentDataValue.id}" value="${currentDataValue.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${currentDataValue.value ? currentDataValue.value : ' - ' }</button></td>`;
+              //Print Main Indicator Value
+              if (currentDataValue) {
+                if (checkParentHasChild) {
+                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                    currentDataValue.value ? currentDataValue.value : " - "
+                  } </td>`;
+                } else {
+                  table += `<td class="p-0"><button id="${
+                    currentDataValue.id
+                  }" value="${
+                    currentDataValue.value
+                  }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                    currentDataValue.value ? currentDataValue.value : " - "
+                  }</button></td>`;
                 }
-              }else{
-                if(checkParentHasChild){
+              } else {
+                if (checkParentHasChild) {
                   table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
-                }else {
+                } else {
                   table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                 }
               }
-              
 
-                //Filter Only Child Indicator 
-                let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(currentIndicator.id))
+              //Filter Only Child Indicator
+              let childIndicators = data.indicators.filter(
+                (item) =>
+                  String(item.parent_id) == String(currentIndicator.id) &&
+                  !item.is_deleted
+              );
 
+              //Child of Child
+              let childIndicatorDataValue = (parent) => {
+                let filterChild = data.indicators.filter(
+                  (item) =>
+                    String(item.parent_id) == String(parent) &&
+                    item.is_deleted == false
+                );
+                if (filterChild) {
+                  for (indicatorList of filterChild) {
+                    valueData = data.value.find((value) => {
+                      if (
+                        String(value.for_month_id) === String(month.id) &&
+                        String(value.for_indicator_id) ===
+                          String(indicatorList.id) &&
+                        String(value.for_datapoint_id) === String(year.id)
+                      ) {
+                        return value;
+                      }
+                    });
 
-                //Child of Child
-                let childIndicatorDataValue = (parent)=>{
-                  let filterChild = data.indicators.filter((item) => String(item.parent_id) == String(parent) && item.is_deleted == false )
-                  if(filterChild){
-                    for(indicatorList of filterChild){
+                    let checkChildHasChild = data.indicators.find(
+                      (item) =>
+                        String(item.parent_id) === String(indicatorList.id) &&
+                        !item.is_deleted
+                    );
 
-                      valueData = data.value.find((value)=> {
-                        if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(indicatorList.id) && String(value.for_datapoint_id) === String(year.id)){
-                          return value
-                        }
-                      })
-
-                       let checkChildHasChild = data.indicators.find((item) => String(item.parent_id) === String(indicatorList.id) && !item.is_deleted);
-
-                        if(valueData){
-                          if(checkChildHasChild){
-                            table += `<td  style="width: 10%"; class="text-center fw-bold"> ${valueData.value ? valueData.value : ' - ' } </td>`;
-                          }else {
-                            table += `<td class="p-0"><button id="${valueData.id}" value="${valueData.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${valueData.value ? valueData.value : ' - ' }</button></td>`;
-                          }
-                        }else{
-                          if(checkChildHasChild){
-                            table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
-                          }else {
-                            table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
-                          }
-                        }
-                      childIndicatorDataValue(indicatorList.id)
+                    if (valueData) {
+                      if (checkChildHasChild) {
+                        table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                          valueData.value ? valueData.value : " - "
+                        } </td>`;
+                      } else {
+                        table += `<td class="p-0"><button id="${
+                          valueData.id
+                        }" value="${
+                          valueData.value
+                        }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                          valueData.value ? valueData.value : " - "
+                        }</button></td>`;
+                      }
+                    } else {
+                      if (checkChildHasChild) {
+                        table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                      } else {
+                        table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                      }
                     }
+                    childIndicatorDataValue(indicatorList.id);
+                  }
+                }
+              };
+
+              //Child Data
+              for (let childIndicator of childIndicators) {
+                valueData = data.value.find((value) => {
+                  if (
+                    String(value.for_quarter_id) === String(quarter.id) &&
+                    String(value.for_indicator_id) ===
+                      String(childIndicator.id) &&
+                    String(value.for_datapoint_id) === String(year.id)
+                  ) {
+                    return value;
+                  }
+                });
+
+                let checkChildHasChild = data.indicators.find(
+                  (item) =>
+                    String(item.parent_id) === String(childIndicator.id) &&
+                    !item.is_deleted
+                );
+
+                if (valueData) {
+                  if (checkChildHasChild) {
+                    table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                      valueData.value ? valueData.value : " - "
+                    } </td>`;
+                  } else {
+                    table += `<td class="p-0"><button id="${
+                      valueData.id
+                    }" value="${
+                      valueData.value
+                    }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                      valueData.value ? valueData.value : " - "
+                    }</button></td>`;
+                  }
+                } else {
+                  if (checkChildHasChild) {
+                    table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                  } else {
+                    table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${quarter.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   }
                 }
 
-
-                //Child Data
-                for(let childIndicator of childIndicators){
-                  valueData = data.value.find((value)=> {
-                    if(String(value.for_quarter_id) === String(quarter.id) && String(value.for_indicator_id) === String(childIndicator.id) && String(value.for_datapoint_id) === String(year.id)){
-                      return value
-                    }
-                  })
-
-                  
-                  let checkChildHasChild = data.indicators.find((item) => String(item.parent_id) === String(childIndicator.id) && !item.is_deleted);
-
-                  if(valueData){
-                    if(checkChildHasChild){
-                      table += `<td  style="width: 10%"; class="text-center fw-bold"> ${valueData.value ? valueData.value : ' - ' } </td>`;
-                    }else {
-                      table += `<td class="p-0"><button id="${valueData.id}" value="${valueData.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${valueData.value ? valueData.value : ' - ' }</button></td>`;
-                    }
-                  }else{
-                    if(checkChildHasChild){
-                      table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
-                    }else {
-                      table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${quarter.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
-                    }
-                  }
-
-
-                  //Call Child
-                  childIndicatorDataValue(childIndicator.id)
-
-                }
-              
+                //Call Child
+                childIndicatorDataValue(childIndicator.id);
+              }
             }
             table += `
           </tr>`;
 
             checkYearPrint = true;
           }
-
-
         }
         table += `</tbody>`;
+
+        $(document).ready(function () {
+          $("#newTable").DataTable({
+            retrieve: true,
+            ordering: false,
+            initComplete: function (settings, json) {
+              $("#DataTableID").wrap(
+                "<div style='overflow:auto; position:relative;'></div>"
+              );
+            },
+            responsive: true,
+            paging: true,
+            searching: true,
+            orderNumber: true,
+            lengthMenu: [
+              [36, 72, 108, -1],
+              ["36 rows", "72 rows", "108 rows", "Show all"],
+            ],
+            buttons: ["pageLength"],
+            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            dom: "Bfrtip",
+          });
+        });
       }
-
-
 
       document.getElementById("tableTest").innerHTML = table;
 
-      $(document).ready(function () {
-        $("#newTable").DataTable({
-          retrieve: true,
-          ordering: false,
-          scrollX: true,
-          responsive: true,
-          paging: true,
-          searching: true,
-          orderNumber: true,
-          lengthMenu: [
-            [36, 72,108, -1],
-            ["36 rows", "72 rows", "108 rows", "Show all"],
-          ],
-          columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
-          dom: "Bfrtip",
-          buttons: ["pageLength", "excel", "csv", "pdf", "print"],
-        });
-      });
-
       let btnIndicator = document.getElementsByName("btnIndicator");
-
 
       btnIndicator.forEach((clickableButton) => {
         clickableButton.addEventListener("click", (eventButton) => {
@@ -786,39 +957,40 @@ $(document).ready(function () {
           let form2 = document.getElementById("form_2");
           let indicatorInput = document.getElementById("indicator_id");
           let dataPointInput = document.getElementById("data_point_id");
-          let monthInput = document.getElementById('month_id')
-          let quarterInput = document.getElementById('quarter_id')
+          let monthInput = document.getElementById("month_id");
+          let quarterInput = document.getElementById("quarter_id");
 
           try {
             target = target.split("-");
             let indicatorId = target[0];
             let yearId = target[1];
 
-            if(String(currentIndicator.type_of)=='yearly'){
-            if (yearId != undefined) {
-              indicatorInput.value = indicatorId;
-              dataPointInput.value = yearId;
+            if (String(currentIndicator.type_of) == "yearly") {
+              if (yearId != undefined) {
+                indicatorInput.value = indicatorId;
+                dataPointInput.value = yearId;
 
-              form2.style.display = "none";
-              form1.style.display = "block";
-            } else {
-              let value_id = eventButton.target.getAttribute("id");
-              let value = eventButton.target.getAttribute("value");
-              form1.style.display = "none";
-              form2.style.display = "block";
-              document.getElementById("data_value").value = value_id;
-              let setValue = (document.getElementById("id_value_form2").value =
-                value);
-            }
-            }else if(String(currentIndicator.type_of)=='monthly'){
-              if(yearId){
+                form2.style.display = "none";
+                form1.style.display = "block";
+              } else {
+                let value_id = eventButton.target.getAttribute("id");
+                let value = eventButton.target.getAttribute("value");
+                form1.style.display = "none";
+                form2.style.display = "block";
+                document.getElementById("data_value").value = value_id;
+                let setValue = (document.getElementById(
+                  "id_value_form2"
+                ).value = value);
+              }
+            } else if (String(currentIndicator.type_of) == "monthly") {
+              if (yearId) {
                 indicatorInput.value = indicatorId;
                 dataPointInput.value = yearId;
                 monthInput.value = target[2];
-  
+
                 form2.style.display = "none";
                 form1.style.display = "block";
-              }else{
+              } else {
                 let value_id = eventButton.target.getAttribute("id");
                 let value = eventButton.target.getAttribute("value");
                 form1.style.display = "none";
@@ -826,15 +998,15 @@ $(document).ready(function () {
                 document.getElementById("data_value").value = value_id;
                 document.getElementById("id_value_form2").value = value;
               }
-            }else if(String(currentIndicator.type_of)=='quarterly'){
-              if(yearId){
+            } else if (String(currentIndicator.type_of) == "quarterly") {
+              if (yearId) {
                 indicatorInput.value = indicatorId;
                 dataPointInput.value = yearId;
                 quarterInput.value = target[2];
-  
+
                 form2.style.display = "none";
                 form1.style.display = "block";
-              }else{
+              } else {
                 let value_id = eventButton.target.getAttribute("id");
                 let value = eventButton.target.getAttribute("value");
                 form1.style.display = "none";
@@ -907,6 +1079,154 @@ $(document).ready(function () {
           document.getElementById("indicatorYearId").value = selectedYearId;
         });
       });
+
+      // Save pagination state to local storage when the page changes
+      $("#newTable").on("page.dt", function () {
+        var pageInfo = $("#newTable").DataTable().page.info();
+        localStorage.setItem("paginationState", JSON.stringify(pageInfo));
+        console.log("pageInfo");
+      });
+
+      // Retrieve pagination state from local storage and set the table to the correct page on page load
+      $(document).ready(function () {
+        var savedPaginationState = localStorage.getItem("paginationState");
+        if (savedPaginationState) {
+          var pageInfo = JSON.parse(savedPaginationState);
+          $("#newTable").DataTable().page(pageInfo.page).draw(false);
+        }
+      });
+
+      //Calculate Graph
+
+      if (currentIndicator.type_of == "yearly") {
+        //Filter Date, and values
+        let minYear = data.year[0].year_EC;
+
+        const data_set = data.year.map((year) => {
+          const value = data.value.find(
+            (value) =>
+              String(value.for_indicator_id) === String(currentIndicator.id) &&
+              value.for_month_id === null &&
+              String(value.for_datapoint_id) === String(year.id) &&
+              value.is_deleted == false
+          );
+          return value ? value.value : null;
+        });
+
+        Highcharts.chart("container", {
+          chart: {
+            type: "area",
+          },
+          title: {
+            text: `${currentIndicator.title_ENG}`,
+          },
+          xAxis: {
+            allowDecimals: false,
+            accessibility: {
+              rangeDescription: "Range: 1967 to 2015.",
+            },
+          },
+          tooltip: {
+            pointFormat: "{series.name}",
+          },
+          plotOptions: {
+            area: {
+              pointStart: parseInt(minYear),
+              marker: {
+                enabled: false,
+                symbol: "circle",
+                radius: 2,
+                states: {
+                  hover: {
+                    enabled: true,
+                  },
+                },
+              },
+            },
+          },
+
+          tooltip: {
+            pointFormat:
+              '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+            valueDecimals: 2,
+            split: true,
+          },
+          series: [
+            {
+              name: `${currentIndicator.title_ENG}`,
+              data: data_set,
+            },
+          ],
+        });
+      } else if (currentIndicator.type_of == "monthly") {
+        let childIndicator = data.indicators.filter(
+          (item) => String(item.parent_id) == String(currentIndicator.id)
+        );
+        let data_set = []
+        for (child of childIndicator) {
+          let arr = [];
+          for (year of data.year) {
+            for (month of data.month) {
+              let value = data.value.find(
+                (value) =>
+                  String(value.for_indicator_id) == String(child.id) &&
+                  value.for_month_id == String(month.id) &&
+                  String(value.for_datapoint_id) == String(year.id) &&
+                  value.is_deleted == false
+              );
+              if (value) {
+                arr.push([Date.UTC(parseInt(year.year_EC), parseInt(month.number), 1), parseInt(value.value)]);
+              }
+            }
+          }
+          data_set.push({'name' : child.title_ENG, 'data' : arr})
+        }
+
+        (async () => {
+          /**
+           * Create the chart when all data is loaded
+           * @return {undefined}
+           */
+          function createChart(series) {
+            Highcharts.stockChart("container", {
+              rangeSelector: {
+                selected: 4,
+              },
+
+              yAxis: {
+                labels: {
+                  format: "{#if (gt value 0)}+{/if}{value}%",
+                },
+                plotLines: [
+                  {
+                    value: 0,
+                    width: 2,
+                    color: "silver",
+                  },
+                ],
+              },
+
+              plotOptions: {
+                series: {
+                  label: {
+                    connectorAllowed: false,
+                  },
+                },
+              },
+
+              tooltip: {
+                pointFormat:
+                  '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+                valueDecimals: 2,
+                split: true,
+              },
+
+              series,
+            });
+          }
+          createChart(data_set);
+        })();
+      }
     })
     .catch((err) => console.log(err));
 });
