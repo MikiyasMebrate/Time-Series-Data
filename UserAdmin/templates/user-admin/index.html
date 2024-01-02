@@ -8,6 +8,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DPMEs</title>
   {% include 'user-admin/include/head.html'%}
+  <!--High Chart-->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/series-label.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -20,8 +26,6 @@
     <!--Loading End-->
 
     {% include 'user-admin/include/navbar.html'%}
-
-
     {% include 'user-admin/include/sidebar.html'%}
 
 
@@ -47,7 +51,7 @@
           <div class="row">
 
             <!--Card 1-->
-            <div class="col-lg-3 col-6">
+            <div class="col-md-6 col-xl-3 ">
               <div class="small-box nav-link text-center">
                 <div class="inner">
 
@@ -63,7 +67,7 @@
             </div>
 
             <!--Card 2-->
-            <div class="col-lg-3 col-6">
+            <div class="col-md-6 col-xl-3 ">
               <div class="small-box nav-link text-center">
                 <div class="inner">
 
@@ -82,7 +86,7 @@
 
 
             <!--Card 3-->
-            <div class="col-lg-3 col-6">
+            <div class="col-md-6 col-xl-3 ">
               <div class="small-box nav-link text-center">
                 <div class="inner">
 
@@ -100,14 +104,14 @@
             </div>
 
             <!--Card 4-->
-            <div class="col-lg-3 col-6">
+            <div class="col-md-6 col-xl-3 ">
               <div class="small-box nav-link text-center">
                 <div class="inner">
 
 
                   <h4 class="text-primary"> <i class="bi bi-buildings"></i></i>Total source</p>
-                  <h3 class="text-primary"><i class="bi bi-sliders"></i>{{size_source}}<i class="bi bi-sliders"></i>
-                  </h3>
+                    <h3 class="text-primary"><i class="bi bi-sliders"></i>{{size_source}}<i class="bi bi-sliders"></i>
+                    </h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-bag"></i>
@@ -120,18 +124,77 @@
           </div>
           <!--Card End-->
 
-          <!--Random Year Graph Start-->
-          <h6 class="text-muted p-2">Random Yearly Indicator</h6>
-          <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/series-label.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+          <!--Body Row Start-->
+          <div class="row">
+            <h6 class="text-muted p-2">Random Yearly Category</h6>
+           <!--Random Year Graph Start-->
+           <!--Year 1-->
+            <div class="col-lg-6">
+              <figure class="highcharts-figure">
+                <div id="containerYear1"></div>
+              </figure>
+            </div>
 
-<figure class="highcharts-figure">
-    <div id="container"></div>
-</figure>
-          <!--Random Year Graph End-->
+            <!--Year 2-->
+            <div class="col-lg-6">
+              <figure class="highcharts-figure">
+                <div id="containerYear2"></div>
+              </figure>
+            </div>
+             <!--Random Year Graph End-->
+
+
+             <h6 class="text-muted p-2">Random Monthly Category</h6>
+             <!--Random Month Graph Start-->
+             <div class="col-12">
+              <figure class="highcharts-figure">
+                <div id="containerMonth1"></div>
+              </figure>
+            </div>
+             <!--Random Month Grapd End-->
+
+
+             <!--Last 5 Audit Start -->
+             <div class="col-12">
+              <h6 class="text-muted p-2">Recent Audits</h6>
+              <div class="table-responsive">
+                <table class="table bg-white " style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Timestamp</th>
+                      <th scope="col">User</th>
+                      <th scope="col">Action</th>
+                      <th scope="col">Object</th>
+                      <th scope="col">Model</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for entry in auditlog_entries %}
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>{{ entry.timestamp }}</td>
+                      <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
+                   {% if entry.action == 0 %}
+                       <td><span class="badge bg-success">Created</span></td>
+                   {% elif entry.action == 1 %}
+                       <td><span class="badge bg-warning">Updated</span></td>
+                   {% elif entry.action == 2 %}
+                       <td><span class="badge bg-danger">Deleted</span></td>
+                   {% else %}
+                      <td><span class="badge bg-info">Other</span></td>
+                   {% endif %}
+                   <td>{{ entry.object_repr | capfirst }}</td>
+                   <td>{{ entry.content_type.name | capfirst }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+             </div>
+             <!--Last 5 Audit End -->
+          </div>
+          <!--Body Row End-->
 
         </div>
       </section>
@@ -144,8 +207,8 @@
   </div>
 
   {% include 'user-admin/include/footer_js.html'%}
-  <script>
 
+  <script>
     $(document).ready(function () {
       $("#tableIndicator").DataTable({
         retrieve: false,
@@ -159,22 +222,8 @@
       });
     });
   </script>
-  <script src="{% static 'assets/js/indicator_filter.js' %}"></script>
+  <script src="{% static 'assets/js/pages/dashboard1.js'%}"></script>
 
-
-  <!--Chart Data-->
-  <script src="{% static 'assets/js/pages/dashboard.js' %}"></script>
-</body>
-
-</html>
-
-
-</script>
-<script src="{% static 'assets/js/indicator_filter.js' %}"></script>
-
-
-<!--Chart Data-->
-<script src="{% static 'assets/js/pages/dashboard.js' %}"></script>
 </body>
 
 </html>
