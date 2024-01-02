@@ -55,7 +55,6 @@ class Indicator(models.Model):
     def __str__(self):
         return self.title_ENG 
 
-
 class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
     for_datapoint = models.ForeignKey("DataPoint",on_delete=models.SET_NULL, null = True)
@@ -64,7 +63,6 @@ class Indicator_Point(models.Model):
     
     def __str__(self):
          return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual) + " Year: " + str(self.for_datapoint)
-
 
 class DataPoint(models.Model):
     year_EC = models.CharField(max_length=50, null=True, blank=True, unique=True)
@@ -94,13 +92,6 @@ class DataPoint(models.Model):
         else:
             return self.year_EC+" "+"E.C"
     
-    
-
-  
-      
-
-
-
 class Quarter(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
@@ -113,7 +104,6 @@ class Quarter(models.Model):
     def __str__(self):
         return self.title_AMH + " " + self.title_AMH
     
-
 class Month(models.Model):
     month_ENG = models.CharField(max_length=50)
     month_AMH = models.CharField(max_length=50)

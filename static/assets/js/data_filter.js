@@ -305,6 +305,17 @@ function filterData() {
       document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
       $('input[name="topic_lists"]').on('change', function (event) {
         var selectedTopicId = event.target.value;
+        document.getElementById("Year_list_filter").innerHTML =
+          ' <p class="text-danger">Please Select Indicator</p>';
+        document.getElementById(
+          "indicator_list_filter_header"
+        ).innerHTML =
+          ' <p class="text-danger">Please Select Category</p>';
+        document.getElementById("indicator_list_filter_body").innerHTML =
+          "";
+        document.getElementById("indicator_list_filter_select_all").innerHTML =
+          "";
+
 
         // Process categories
         catargoryCount = 0;
@@ -545,30 +556,24 @@ function filterData() {
                       selectMonthlyIndicator.join("");
                   }
                 }
+
+                // Unselect the 'Select All' button
                 selectAllIndicator.checked = false;
+                selectedIndictorId = []; // Reinitialized the Array
                 indicatorHtmlList.forEach((indicatorCheckBox) => {
                   indicatorCheckBox.addEventListener(
                     "change",
                     (eventIndicator) => {
-                      table = "";
-                      if (
-                        eventIndicator.target.checked &&
-                        !selectedIndictorId.includes(
-                          eventIndicator.target.value
-                        )
-                      ) {
-                        selectedIndictorId.push(
-                          eventIndicator.target.value
-                        );
+                      if (eventIndicator.target.checked) {
+                        selectedIndictorId.push(eventIndicator.target.value);
                       } else {
-                        try {
-                          selectedIndictorId.pop(
-                            eventIndicator.target.value
-                          );
-                        } catch {
-                          null;
-                        }
+                        selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
                       }
+
+                      // Update the 'Select All' checkbox state based on individual checkboxes
+                      selectedIndictorId.checked = indicatorHtmlList.length === selectedIndictorId.length;
+
+                      // Update the year checkboxes based on selected indicators
                       yearList();
                     }
                   );
@@ -670,18 +675,18 @@ function filterData() {
             //Type Year Table
             let typeYearTable = () => {
               table += `
-                  <table id="newTable" class="table table-bordered m-0 p-0">
-                  <thead>
-                    <tr>
-                      <th class="ps-5 pe-5">Name</th>`;
+                      <table id="newTable" class="table table-bordered m-0 p-0">
+                      <thead>
+                        <tr>
+                          <th class="ps-5 pe-5">Name</th>`;
               for (let i of yearTableList) {
                 table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
               }
 
               table += `</tr>
-                             </thead>
-                        <tbody>
-                  `;
+                                 </thead>
+                            <tbody>
+                      `;
 
               //let indicatorList = data.indicators.filter((item)=>String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false)
               data.indicators.map(
@@ -704,14 +709,14 @@ function filterData() {
 
                     //Table Row Start
                     table += `
-                      <tr>
-                        <td>
-                            <div class="row">
-                               <div class="col-10">
-                                 <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
-                               </div>
-                            </div>
-                        </td>`;
+                          <tr>
+                            <td>
+                                <div class="row">
+                                   <div class="col-10">
+                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                   </div>
+                                </div>
+                            </td>`;
 
                     for (j of yearTableList) {
                       let statusData = false;
@@ -748,14 +753,14 @@ function filterData() {
                           status = true;
                           //Table Row Start
                           table += `
-                      <tr>
-                        <td>
-                          <a>
-                            <h6 class="mb-1">
-                              <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
-                            </h6>
-                          </a>
-                        </td>`;
+                          <tr>
+                            <td>
+                              <a>
+                                <h6 class="mb-1">
+                                  <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
+                                </h6>
+                              </a>
+                            </td>`;
 
                           for (j of yearTableList) {
                             let statusData = false;
@@ -801,14 +806,14 @@ function filterData() {
 
                         //Table Row Start
                         table += `
-                    <tr>
-                      <td>
-                        <a>
-                          <h6 class="mb-1">
-                            <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
-                          </h6>
-                        </a>
-                      </td>`;
+                        <tr>
+                          <td>
+                            <a>
+                              <h6 class="mb-1">
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                              </h6>
+                            </a>
+                          </td>`;
 
                         for (j of yearTableList) {
                           let statusData = false;
@@ -850,7 +855,7 @@ function filterData() {
               );
 
               table += `</tbody>
-                  </table>`;
+                      </table>`;
 
               $(document).ready(function () {
                 $("#newTable").DataTable({
@@ -878,18 +883,18 @@ function filterData() {
             //Type Month table
             let typeMonthTable = () => {
               table += `
-              <style>
-              table.dataTable th {
-                  writing-mode: vertical-lr;
-                  vertical-align: middle;
-                  transform: rotate(180deg);
+                  <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
                 }
-            </style>
-              <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
-              <thead>
-                <tr class="text-center">
-                <th class="vertical-text border">Year</th>
-                <th class="vertical-text border">Month</th>`;
+                </style>
+                  <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
+                  <thead>
+                    <tr class="text-center">
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Month</th>`;
 
               let filterIndicators = data.indicators.filter(
                 (item) =>
@@ -904,8 +909,8 @@ function filterData() {
                   title_amharic = " - " + filterIndicator.title_AMH;
 
                 table += ` <th class="vertical-text border" ">
-                     <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
-                     </th>`;
+                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
+                         </th>`;
 
                 let childIndicatorList = (parent, space) => {
                   space += String("&nbsp;&nbsp;&nbsp;&nbsp");
@@ -918,8 +923,8 @@ function filterData() {
                     ) {
                       test = true;
                       table += `
-                          <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
-                          `;
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                              `;
 
                       childIndicatorList(indicator.id, String(space));
                     }
@@ -934,8 +939,8 @@ function filterData() {
                   ) {
                     test = true;
                     table += `
-                        <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                        `;
+                            <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                            `;
 
                     childIndicatorList(indicator.id, " ");
                   }
@@ -943,7 +948,7 @@ function filterData() {
               }
 
               table += `</tr>
-              </thead>`;
+                  </thead>`;
 
               table += `<tbody>`;
 
@@ -954,16 +959,16 @@ function filterData() {
                 //month loop
                 for (let month of data.month) {
                   table += `
-                  <tr class="text-center">`;
+                      <tr class="text-center">`;
 
                   if (!checkYearPrint) {
-                    table += `<td class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                    table += `<td class="border-bottom-0 fw-bold" "">${year[1]} E.C - ${year[2]} G.C</td>`;
                   } else {
-                    table += ` <td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
+                    table += `<td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
                   }
 
                   table += `                     
-                  <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
+                      <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
                   //Filter parent indicators
                   let indicatorsObject = data.indicators.filter(
@@ -1051,7 +1056,7 @@ function filterData() {
                     }
                   }
                   table += `
-                </tr>`;
+                    </tr>`;
 
                   checkYearPrint = true;
                 }
@@ -1060,21 +1065,19 @@ function filterData() {
 
               $(document).ready(function () {
                 $("#newTable").DataTable({
+                  columnDefs: [{ width: 900, targets: 0 }],
                   retrieve: true,
                   ordering: false,
-                  "initComplete": function (settings, json) {
-                    $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");
-                  },
                   responsive: true,
                   paging: true,
                   searching: true,
                   orderNumber: true,
                   lengthMenu: [
-                    [24, 50, 100, -1],
-                    ["24 rows", "50 rows", "100 rows", "Show all"],
+                    [36, 72, 108, -1],
+                    ["36 rows", "72 rows", "108 rows", "Show all"],
                   ],
                   buttons: [
-                    "pageLength",
+                    "pageLength", "copy",
                     {
                       extend: "excelHtml5",
                       text: "Save as Excel",
@@ -1097,18 +1100,18 @@ function filterData() {
             //Type Quarter table
             let typeQuarterTable = () => {
               table += `
-                                 <style>
-                 table.dataTable th {
-                     writing-mode: vertical-lr;
-                     vertical-align: middle;
-                     transform: rotate(180deg);
-                   }
-               </style>
-              <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
-              <thead>
-                <tr class="text-center">
-                <th  style="width: 40px;"  class="vertical-text border">Year</th>
-                <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+                       <style>
+                       table.dataTable th {
+                        writing-mode: vertical-lr !important;
+                        vertical-align: middle !important;
+                        transform: rotate(180deg) !important;
+                    }
+                   </style>
+                  <table id="newTable" class="table table-bordered m-0 p-0">
+                  <thead>
+                    <tr class="text-center">
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
               let filterIndicators = data.indicators.filter(
                 (item) =>
@@ -1123,8 +1126,8 @@ function filterData() {
                   title_amharic = " - " + filterIndicator.title_AMH;
 
                 table += ` <th class="vertical-text  border" ">
-                     <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
-                     </th>`;
+                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
+                         </th>`;
 
                 let childIndicatorList = (parent, space) => {
                   space += String("&nbsp;&nbsp;&nbsp;&nbsp");
@@ -1137,8 +1140,8 @@ function filterData() {
                     ) {
                       test = true;
                       table += `
-                          <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
-                          `;
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                              `;
 
                       childIndicatorList(indicator.id, String(space));
                     }
@@ -1153,8 +1156,8 @@ function filterData() {
                   ) {
                     test = true;
                     table += `
-                        <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                        `;
+                            <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                            `;
 
                     childIndicatorList(indicator.id, " ");
                   }
@@ -1162,7 +1165,7 @@ function filterData() {
               }
 
               table += `</tr>
-              </thead>`;
+                  </thead>`;
 
               table += `<tbody>`;
 
@@ -1173,7 +1176,7 @@ function filterData() {
                 //month loop
                 for (let quarter of data.quarter) {
                   table += `
-                  <tr class="text-center">`;
+                      <tr class="text-center">`;
 
                   if (!checkYearPrint) {
                     table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
@@ -1182,7 +1185,7 @@ function filterData() {
                   }
 
                   table += `                     
-                  <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
+                      <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
 
                   //Filter parent indicators
                   let indicatorsObject = data.indicators.filter(
@@ -1271,7 +1274,7 @@ function filterData() {
                     }
                   }
                   table += `
-                </tr>`;
+                    </tr>`;
 
                   checkYearPrint = true;
                 }
@@ -1282,9 +1285,6 @@ function filterData() {
                 $("#newTable").DataTable({
                   retrieve: true,
                   ordering: false,
-                  "initComplete": function (settings, json) {
-                    $("#DataTableID").wrap("<div style='overflow:auto;position:relative;'></div>");
-                  },
                   responsive: true,
                   paging: true,
                   searching: true,
@@ -1294,7 +1294,7 @@ function filterData() {
                     ["24 rows", "50 rows", "100 rows", "Show all"],
                   ],
                   buttons: [
-                    "pageLength",
+                    "pageLength", "copy",
                     {
                       extend: "excelHtml5",
                       text: "Save as Excel",
@@ -1365,24 +1365,32 @@ function filterData() {
                 let area_main = document.getElementById('main_area')
                 area_main.style.display = 'block'
                 const datasetDropdown = document.getElementById('drop');
-                datasetDropdown.style.display ='none'
+                datasetDropdown.style.display = 'none'
                 let incicator_drop1 = document.getElementById('drop_two')
                 incicator_drop1.style.display = 'none'
+                let incicator_drop3 = document.getElementById('drop_three')
+                incicator_drop3.style.display = 'none'
+                let datasetDropdown1 = document.getElementById('drop_second')
+                datasetDropdown1.style.display = 'none'
 
-              document.getElementById('bar-chart-canvas1').style.display = 'none'
-              document.getElementById('series-chart-canvas1').style.display = 'none'
-              document.getElementById('line-chart-canvas1').style.display = 'none'
+                document.getElementById('bar-chart-canvas1').style.display = 'none'
+                document.getElementById('series-chart-canvas1').style.display = 'none'
+                document.getElementById('line-chart-canvas1').style.display = 'none'
 
-              document.getElementById('bar-chart-canvas').style.display = 'block'
-              document.getElementById('series-chart-canvas').style.display = 'block'
-              document.getElementById('line-chart-canvas').style.display = 'block'
-              
-              // Clear existing charts
-              Highcharts.charts.forEach(chart => {
-              if (chart) {
-                  chart.destroy();
+                document.getElementById('bar-chart-canvas').style.display = 'block'
+                document.getElementById('series-chart-canvas').style.display = 'block'
+                document.getElementById('line-chart-canvas').style.display = 'block'
+
+                document.getElementById('bar-chart-canvas2').style.display = 'none'
+                document.getElementById('series-chart-canvas2').style.display = 'none'
+                document.getElementById('line-chart-canvas2').style.display = 'none'
+
+                // Clear existing charts
+                Highcharts.charts.forEach(chart => {
+                  if (chart) {
+                    chart.destroy();
                   }
-              });
+                });
 
                 // Add event listeners to all nav links
                 const navLinks = document.querySelectorAll('.nav-link');
@@ -1396,7 +1404,9 @@ function filterData() {
                       labelElement.style.display = isAreaNavLink ? 'none' : 'block';
                       selectElement.style.display = isAreaNavLink ? 'none' : 'block';
                     }
-                    datasetDropdown.style.display ='none'
+                    datasetDropdown.style.display = 'none'
+                    incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                   });
                 });
 
@@ -1452,12 +1462,12 @@ function filterData() {
 
 
                 console.log('indicators from yearly', indicators)
-               // Select all elements with the class "indicatorDropdown"
-                 const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
+                // Select all elements with the class "indicatorDropdown"
+                const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
 
                 // Iterate over each dropdown and update its options
                 dropdowns.forEach((dropdown) => {
-                  dropdown.innerHTML = ''; 
+                  dropdown.innerHTML = '';
                 })
                 dropdowns.forEach((dropdown, index) => {
                   dropdown.innerHTML = ''; // Clear existing options
@@ -1949,10 +1959,20 @@ function filterData() {
                 incicator_drop1.style.display = 'none'
                 let incicator_drop2 = document.getElementById('drop_two')
                 incicator_drop2.style.display = 'block'
+                let incicator_drop3 = document.getElementById('drop_three')
+                incicator_drop3.style.display = 'none'
+                let datasetDropdown1 = document.getElementById('drop_second')
+                datasetDropdown1.style.display = 'none'
+
+
 
                 document.getElementById('bar-chart-canvas').style.display = 'none'
                 document.getElementById('series-chart-canvas').style.display = 'none'
                 document.getElementById('line-chart-canvas').style.display = 'none'
+
+                document.getElementById('bar-chart-canvas2').style.display = 'none'
+                document.getElementById('series-chart-canvas2').style.display = 'none'
+                document.getElementById('line-chart-canvas2').style.display = 'none'
 
                 document.getElementById('bar-chart-canvas1').style.display = 'block'
                 document.getElementById('series-chart-canvas1').style.display = 'block'
@@ -1960,7 +1980,7 @@ function filterData() {
 
                 const navLinks = document.querySelectorAll('.nav-link');
                 const datasetDropdown = document.getElementById('drop');
-                datasetDropdown.style.display ='block'
+                datasetDropdown.style.display = 'block'
                 navLinks.forEach(navLink => {
                   navLink.addEventListener('click', function () {
                     // Toggle the visibility of the label and select elements
@@ -1973,10 +1993,13 @@ function filterData() {
                     }
                     // Show/hide the second dropdown based on the selected chart type
                     datasetDropdown.style.display = (this.id === 'bar_btn' || this.id === 'series_btn') ? 'block' : 'none';
-                    incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn' ) ? 'none' : 'none';
+                    incicator_drop2.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'block' : 'none';
+                    incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                   });
                 });
-              
+
 
                 // Process the data as needed
                 let chartData = [];
@@ -1995,22 +2018,22 @@ function filterData() {
 
                 console.log('indicators from month', indicators)
                 // Select all elements with the class "indicatorDropdown"
-                 const dropdowns = document.querySelectorAll(`.indicatorDropdown1`);
-                  dropdowns.forEach((dropdown, index) => {
-                    dropdown.innerHTML = ''; // Clear existing options
-                    indicators.forEach(({ id, title_ENG }, i) => {
-                      const option = document.createElement('option');
-                      option.value = id;
-                      option.text = title_ENG;
-                      dropdown.appendChild(option);
+                const dropdowns = document.querySelectorAll(`.indicatorDropdown1`);
+                dropdowns.forEach((dropdown, index) => {
+                  dropdown.innerHTML = ''; // Clear existing options
+                  indicators.forEach(({ id, title_ENG }, i) => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = title_ENG;
+                    dropdown.appendChild(option);
 
-                      // Set the first option as selected by default
-                      if (i === 0) {
-                        option.selected = true;
-                      }
-                    });
+                    // Set the first option as selected by default
+                    if (i === 0) {
+                      option.selected = true;
+                    }
                   });
-              
+                });
+
 
                 (async () => {
                   /**
@@ -2142,12 +2165,12 @@ function filterData() {
                   }
                   // Function to fetch and update data based on the selected indicator
                   async function updateChartData(selectedIndicator) {
-                      // Clear existing charts
-                      Highcharts.charts.forEach(chart => {
-                        if (chart) {
-                          chart.destroy();
-                        }
-                      });
+                    // Clear existing charts
+                    Highcharts.charts.forEach(chart => {
+                      if (chart) {
+                        chart.destroy();
+                      }
+                    });
                     // Use AJAX or fetch to get data from the server based on the selected indicator
                     const response = await fetch(`/user-admin/json-filter-month/${selectedIndicator}/`);
                     const data = await response.json();
@@ -2183,7 +2206,7 @@ function filterData() {
                   // Further check and update as needed
                   if (initialIndicator) {
                     updateChartData(initialIndicator);
-                  } 
+                  }
                   else {
                     console.error('Initial indicator is not valid or not set correctly.');
                     // Handle the situation where the initial indicator is not valid or not set correctly.
@@ -2199,9 +2222,374 @@ function filterData() {
 
                 })();
               }
-              //draw for quarter data
               else {
+                console.log('hello from quarterly');
+                console.log(indicatorSelectedType)
+                let area_main = document.getElementById('main_area')
+                area_main.style.display = 'none'
+                let incicator_drop1 = document.getElementById('drop_first')
+                incicator_drop1.style.display = 'none'
+                let datasetDropdown1 = document.getElementById('drop')
+                datasetDropdown1.style.display = 'none'
+                let incicator_drop2 = document.getElementById('drop_two')
+                incicator_drop2.style.display = 'none'
+                let incicator_drop3 = document.getElementById('drop_three')
+                incicator_drop3.style.display = 'block'
 
+
+
+                document.getElementById('bar-chart-canvas').style.display = 'none'
+                document.getElementById('series-chart-canvas').style.display = 'none'
+                document.getElementById('line-chart-canvas').style.display = 'none'
+
+                document.getElementById('bar-chart-canvas1').style.display = 'none'
+                document.getElementById('series-chart-canvas1').style.display = 'none'
+                document.getElementById('line-chart-canvas1').style.display = 'none'
+
+                document.getElementById('bar-chart-canvas2').style.display = 'block'
+                document.getElementById('series-chart-canvas2').style.display = 'block'
+                document.getElementById('line-chart-canvas2').style.display = 'block'
+
+
+
+                const navLinks = document.querySelectorAll('.nav-link');
+                const datasetDropdown = document.getElementById('drop_second');
+                datasetDropdown.style.display = 'block'
+                navLinks.forEach(navLink => {
+                  navLink.addEventListener('click', function () {
+                    // Toggle the visibility of the label and select elements
+                    if (labelElement && selectElement) {
+                      // Check if the clicked nav link is the "Area" nav link
+                      const isAreaNavLink = this.id === 'area';
+
+                      labelElement.style.display = isAreaNavLink ? 'none' : 'block';
+                      selectElement.style.display = isAreaNavLink ? 'none' : 'block';
+                    }
+                    // Show/hide the second dropdown based on the selected chart type
+                    datasetDropdown.style.display = (this.id === 'bar_btn' || this.id === 'series_btn') ? 'block' : 'none';
+                    incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'block' : 'none';
+                    incicator_drop2.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                  });
+                });
+
+
+                // Process the data as needed
+                let chartData = [];
+                let indicators = [];
+
+                // Filter indicators based on selectedIndictorId
+                let selectedIndicators = data.indicators.filter(({ id, for_category_id, is_deleted }) => {
+                  return String(for_category_id) === String(selectedCategoryId) &&
+                    selectedIndictorId.includes(String(id)) &&
+                    !is_deleted;
+                });
+
+                selectedIndicators.forEach(({ title_ENG, id }) => {
+                  indicators.push({ id, title_ENG });
+                });
+
+                console.log('indicators from quarter', indicators)
+                // Select all elements with the class "indicatorDropdown"
+                const dropdowns = document.querySelectorAll(`.indicatorDropdown2`);
+                dropdowns.forEach((dropdown, index) => {
+                  dropdown.innerHTML = ''; // Clear existing options
+                  indicators.forEach(({ id, title_ENG }, i) => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = title_ENG;
+                    dropdown.appendChild(option);
+
+                    // Set the first option as selected by default
+                    if (i === 0) {
+                      option.selected = true;
+                    }
+                  });
+                });
+
+
+                (async () => {
+                  /**
+                   * Create the chart when all data is loaded
+                   * @return {undefined}
+                   */
+                  async function bar_chart(indc_name, data, selectedname) {
+                    const datasetData1 = data.find(dataset => dataset.name === selectedname)?.data || [];
+                    // create the chart
+                    Highcharts.stockChart('bar-chart-canvas2', {
+                      chart: {
+                        alignTicks: false
+                      },
+                  
+                      rangeSelector: {
+                        selected: 1
+                      },
+                  
+                      title: {
+                        text: indc_name
+                      },
+                  
+                      plotOptions: {
+                        series: {
+                          tooltip: {
+                            formatter: function () {
+                              const point = this.points[0];
+                              const value = point.y;
+                              let quarter;
+                  
+                              switch (value) {
+                                case 1:
+                                  quarter = 'Quarter 1';
+                                  break;
+                                case 3:
+                                  quarter = 'Quarter 2';
+                                  break;
+                                case 6:
+                                  quarter = 'Quarter 3';
+                                  break;
+                                case 9:
+                                  quarter = 'Quarter 4';
+                                  break;
+                                default:
+                                  quarter = 'Unknown Quarter';
+                              }
+                  
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>
+                                      Quarter: ${quarter}`;
+                            },
+                            valueDecimals: 2,
+                            shared: true
+                          }
+                        }
+                      },
+                  
+                      series: [{
+                        type: 'column',
+                        name: selectedname,
+                        data: datasetData1,
+                        dataGrouping: {
+                          units: [[
+                            'week', // unit name
+                            [1] // allowed multiples
+                          ], [
+                            'month',
+                            [1, 2, 3, 4, 6]
+                          ]]
+                        }
+                      }]
+                    });
+                  }
+                  
+                  async function draw_line(selectedIndicator, chartData, selectedDataset) {
+                    const datasetData = chartData.find(dataset => dataset.name === selectedDataset)?.data || [];
+
+                    // Create the chart
+                    Highcharts.stockChart('series-chart-canvas2', {
+                      rangeSelector: {
+                        selected: 0
+                      },
+                      title: {
+                        text: selectedIndicator
+                      },
+                      tooltip: {
+                        style: {
+                          width: '200px'
+                        },
+                        valueDecimals: 4,
+                        shared: true
+                        ,formatter: function () {
+                          const point = this.points[0];
+                          const value = point.y;
+                          let quarter;
+  
+                          switch (value) {
+                            case 1:
+                              quarter = 'Quarter 1';
+                              break;
+                            case 3:
+                              quarter = 'Quarter 2';
+                              break;
+                            case 6:
+                              quarter = 'Quarter 3';
+                              break;
+                            case 9:
+                              quarter = 'Quarter 4';
+                              break;
+                            default:
+                              quarter = 'Unknown Quarter';
+                          }
+  
+                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>
+                Quarter: ${quarter}`;
+                        }
+  
+                      },
+                      yAxis: {
+                        title: {
+                          text: 'Exchange rate'
+                        }
+                      },
+                      series: [{
+                        name: selectedDataset,
+                        data: datasetData,
+                        id: 'dataseries'
+                      }]
+                    });
+
+                  }
+                  // Function to create the dataset dropdown
+                  function createDatasetDropdown(chartData) {
+                    const datasetDropdown = document.querySelector('.datasetDropdown1');
+                    console.log('hello')
+
+                    // Clear existing options
+                    datasetDropdown.innerHTML = '';
+
+                    // Add options based on the chartData
+                    chartData.forEach(dataset => {
+                      const option = document.createElement('option');
+                      option.value = dataset.name;
+                      option.text = dataset.name;
+                      datasetDropdown.appendChild(option);
+                    });
+
+                    // Trigger change event on the dataset dropdown to update the chart
+                    datasetDropdown.dispatchEvent(new Event('change'));
+                  }
+
+                  // Function to create the chart
+                  function createChart(series) {
+                    // Calling to create a new dropdown menu from the dataset names on a single indicator selected
+                    createDatasetDropdown(series);
+                    console.log('series', series);
+
+                    Highcharts.stockChart('line-chart-canvas2', {
+                      rangeSelector: {
+                        selected: 4
+                      },
+
+                      yAxis: {
+                        labels: {
+                          format: '{#if (gt value 0)}+{/if}{value}%'
+                        },
+                        plotLines: [{
+                          value: 0,
+                          width: 2,
+                          color: 'silver'
+                        }]
+                      },
+
+                      plotOptions: {
+                        series: {
+                          label: {
+                            connectorAllowed: false
+                          },
+                        }
+                      },
+
+                      tooltip: {
+                        formatter: function () {
+                          const point = this.points[0];
+                          const value = point.y;
+                          let quarter;
+
+                          switch (value) {
+                            case 1:
+                              quarter = 'Quarter 1';
+                              break;
+                            case 3:
+                              quarter = 'Quarter 2';
+                              break;
+                            case 6:
+                              quarter = 'Quarter 3';
+                              break;
+                            case 9:
+                              quarter = 'Quarter 4';
+                              break;
+                            default:
+                              quarter = 'Unknown Quarter';
+                          }
+
+                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>
+                Quarter: ${quarter}`;
+                        },
+                        valueDecimals: 2,
+                        shared: true
+                      },
+
+                      series
+                    });
+                  }
+
+
+                  // Function to fetch and update data based on the selected indicator
+                  async function updateChartData(selectedIndicator) {
+                    // Clear existing charts
+                    Highcharts.charts.forEach(chart => {
+                      if (chart) {
+                        chart.destroy();
+                      }
+                    });
+
+                    // Use AJAX or fetch to get data from the server based on the selected indicator
+                    const response = await fetch(`/user-admin/json-filter-quaarter/${selectedIndicator}/`);
+                    const data = await response.json();
+
+                    // Process the data as needed
+                    chartData = [];
+                    if (Array.isArray(data)) {
+                      data.forEach((category) => {
+                        let arr = [];
+                        category.data.forEach((dataPoint) => {
+                          arr.push({
+                            x: Date.UTC(dataPoint[0][0], dataPoint[0][1] - 1, dataPoint[0][2]),
+                            y: dataPoint[1],
+                            options: {
+                              quarter: dataPoint[0][1]
+                            }
+                          });
+                        });
+                        chartData.push({ name: category.name, data: arr });
+                      });
+                    } else {
+                      console.error('Invalid or missing data format in the response.');
+                    }
+
+                    // Call the createChart function with the updated data
+                    createChart(chartData);
+                  }
+
+
+
+                  // Event listener for dropdown change
+                  $('.indicatorDropdown2').change(function () {
+                    const selectedIndicator = $(this).val();
+                    $('.datasetDropdown1').prop('disabled', false);
+                    updateChartData(selectedIndicator);
+                  });
+
+                  // Initial load with the first indicator (assuming the first indicator is selected by default)
+                  const initialIndicator = $('.indicatorDropdown2').val();
+
+                  // Further check and update as needed
+                  if (initialIndicator) {
+                    updateChartData(initialIndicator);
+                  }
+                  else {
+                    console.error('Initial indicator is not valid or not set correctly.');
+                    // Handle the situation where the initial indicator is not valid or not set correctly.
+                  }
+
+                  // Event listener for dataset dropdown change
+                  $('.datasetDropdown1').change(function () {
+                    const selectedDataset = $(this).val();
+                    const selectedIndicator = $('.indicatorDropdown2').val();
+                    bar_chart(selectedIndicator, chartData, selectedDataset);
+                    draw_line(selectedIndicator, chartData, selectedDataset);
+                  });
+
+                })();
               }
             });
           });
