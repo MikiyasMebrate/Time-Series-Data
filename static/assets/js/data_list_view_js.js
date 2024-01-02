@@ -614,28 +614,23 @@ let filterData = () => {
                       }
                     }
 
-                    selectAllIndicator.checked = false;
-                    selectedIndictorId = [] // Reinitialized the Array
+                    
+                    selectedIndictorId = []; // Reinitialized the Array
                     indicatorHtmlList.forEach((indicatorCheckBox) => {
                       indicatorCheckBox.addEventListener(
                         "change",
                         (eventIndicator) => {
-                          table = "";
+                          selectAllIndicator.checked = false;
                           displayApplyButton.style.display = "none";
                           if (
                             eventIndicator.target.checked &&
-                            !selectedIndictorId.includes(
-                              eventIndicator.target.value
-                            )
+                            !selectedIndictorId.includes(eventIndicator.target.value)
                           ) {
-                            selectedIndictorId.push(
-                              eventIndicator.target.value
-                            );
+                            selectedIndictorId.push(eventIndicator.target.value);
                           } else {
                             try {
-                              selectedIndictorId.pop(
-                                eventIndicator.target.value
-                              );
+                              let newSelectedIndicator = selectedIndictorId.filter((item) => item != eventIndicator.target.value) 
+                              selectedIndictorId = newSelectedIndicator
                             } catch {
                               null;
                             }
@@ -644,6 +639,8 @@ let filterData = () => {
                         }
                       );
                     });
+
+                    
                   });
                 });
               }
@@ -671,13 +668,14 @@ let filterData = () => {
                 }
               });
 
-              //Display Indicator into Table
+            
 
               // For Fist TIme Checked Indicator
               indicatorHtmlList.forEach((indicatorCheckBox) => {
                 indicatorCheckBox.addEventListener(
                   "change",
                   (eventIndicator) => {
+                    selectAllIndicator.checked = false;
                     displayApplyButton.style.display = "none";
                     if (
                       eventIndicator.target.checked &&
@@ -686,7 +684,8 @@ let filterData = () => {
                       selectedIndictorId.push(eventIndicator.target.value);
                     } else {
                       try {
-                        selectedIndictorId.pop(eventIndicator.target.value);
+                        let newSelectedIndicator = selectedIndictorId.filter((item) => item != eventIndicator.target.value) 
+                        selectedIndictorId = newSelectedIndicator
                       } catch {
                         null;
                       }
@@ -699,8 +698,8 @@ let filterData = () => {
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
                 table = "";
-                let dataListViewTable = document.getElementById("list_table_view");
-                
+                let dataListViewTable =
+                  document.getElementById("list_table_view");
 
                 //Type Year Table
                 let typeYearTable = () => {
@@ -913,58 +912,69 @@ let filterData = () => {
                 //Type Month table
                 let typeMonthTable = () => {
                   table += `
-                  <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
+                  <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
+                }
+                </style>
+                  <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
                   <thead>
                     <tr class="text-center">
-                    <th  style="width: 40px;"  class="vertical-text border">Year</th>
-                    <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Month</th>`;
 
+                  let filterIndicators = data.indicators.filter(
+                    (item) =>
+                      String(item.for_category_id) ===
+                        String(selectedCategoryId) &&
+                      selectedIndictorId.includes(String(item.id)) &&
+                      item.is_deleted == false
+                  );
+                  for (filterIndicator of filterIndicators) {
+                    let title_amharic = "";
+                    if (!filterIndicator.title_AMH === null)
+                      title_amharic = " - " + filterIndicator.title_AMH;
 
-                   let filterIndicators =  data.indicators.filter((item) => String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false )
-                    for(filterIndicator of filterIndicators) {
-                        let title_amharic = "";
-                        if (!filterIndicator.title_AMH === null)
-                          title_amharic = " - " + filterIndicator.title_AMH;
-
-                        table += ` <th class="vertical-text  border" ">
+                    table += ` <th class="vertical-text border" ">
                          <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
                          </th>`;
 
-                        let childIndicatorList = (parent, space) => {
-                          space += String("&nbsp;&nbsp;&nbsp;&nbsp");
-                          let status = false;
+                    let childIndicatorList = (parent, space) => {
+                      space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                      let status = false;
 
-                          for (let indicator of data.indicators) {
-                            if (
-                              String(indicator.parent_id) === String(parent) &&
-                              indicator.is_deleted == false
-                            ) {
-                              test = true;
-                              table += `
+                      for (let indicator of data.indicators) {
+                        if (
+                          String(indicator.parent_id) === String(parent) &&
+                          indicator.is_deleted == false
+                        ) {
+                          test = true;
+                          table += `
                               <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
                               `;
 
-                              childIndicatorList(indicator.id, String(space));
-                            }
-                          }
-                        };
-                        //Child List
-                        for (let indicator of data.indicators) {
-                          if (
-                            String(indicator.parent_id) == String(filterIndicator.id) &&
-                            indicator.is_deleted == false
-                          ) {
-                            test = true;
-                            table += `
-                            <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                          childIndicatorList(indicator.id, String(space));
+                        }
+                      }
+                    };
+                    //Child List
+                    for (let indicator of data.indicators) {
+                      if (
+                        String(indicator.parent_id) ==
+                          String(filterIndicator.id) &&
+                        indicator.is_deleted == false
+                      ) {
+                        test = true;
+                        table += `
+                            <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.title_ENG} </th>
                             `;
 
-                            childIndicatorList(indicator.id, " ");
-                          }
-                        }
-                      
+                        childIndicatorList(indicator.id, " ");
+                      }
                     }
-                
+                  }
 
                   table += `</tr>
                   </thead>`;
@@ -981,167 +991,208 @@ let filterData = () => {
                       <tr class="text-center">`;
 
                       if (!checkYearPrint) {
-                        table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                        table += `<td class="border-bottom-0 fw-bold" "">${year[1]} E.C - ${year[2]} G.C</td>`;
                       } else {
-                        table += ` <td class="border-0"></td>`;
+                        table += `<td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
                       }
 
                       table += `                     
-                      <td class="fw-bold" style="width: 22%;" >${month.month_AMH}: ${month.month_ENG}</td>`
-                    
+                      <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
+                      //Filter parent indicators
+                      let indicatorsObject = data.indicators.filter(
+                        (item) =>
+                          String(item.for_category_id) ===
+                            String(selectedCategoryId) &&
+                          selectedIndictorId.includes(String(item.id)) &&
+                          item.is_deleted == false
+                      );
 
-                      //Filter parent indicators 
-                      let indicatorsObject = data.indicators.filter((item) => String(item.for_category_id) ===  String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) &&
-                      item.is_deleted == false )
-
-                      for(let indicatorObj of indicatorsObject){
-
-                        let currentDataValue  = data.value.find((item)=> {
-                          if(String(item.for_month_id) === String(month.id) && String(item.for_indicator_id) === String(indicatorObj.id) && String(item.for_datapoint_id) === String(year[0])){
-                            return item
+                      for (let indicatorObj of indicatorsObject) {
+                        let currentDataValue = data.value.find((item) => {
+                          if (
+                            String(item.for_month_id) === String(month.id) &&
+                            String(item.for_indicator_id) ===
+                              String(indicatorObj.id) &&
+                            String(item.for_datapoint_id) === String(year[0])
+                          ) {
+                            return item;
                           }
-                        })
-          
-                         //Print Main Indicator Value
-                         table+=`<td class="fw-bold"  style="width: 10%";> ${currentDataValue ? currentDataValue.value : ' - '} </td>`
+                        });
 
+                        //Print Main Indicator Value
+                        table += `<td class="fw-bold";> ${
+                          currentDataValue ? currentDataValue.value : " - "
+                        } </td>`;
 
+                        //Filter Only Child Indicator
+                        let childIndicators = data.indicators.filter(
+                          (item) =>
+                            String(item.parent_id) == String(indicatorObj.id) &&
+                            !item.is_deleted
+                        );
 
-
-
-                          //Filter Only Child Indicator 
-                          let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(indicatorObj.id))
-
-
-                          let childIndicatorDataValue = (parent)=>{
-                            let filterChild = data.indicators.filter((item) => String(item.parent_id) == String(parent) && item.is_deleted == false )
-                            if(filterChild){
-                              for(indicatorList of filterChild){
-                                valueData = data.value.find((value)=> {
-                                  if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(indicatorList.id) && String(value.for_datapoint_id) === String(year[0])){
-                                    return value
-                                  }
-                                })
-      
-                                if(valueData){
-                                  table+=`<td> ${valueData.value} </td>`
-                                }else{
-                                  table+=`<td> - </td>`
+                        let childIndicatorDataValue = (parent) => {
+                          let filterChild = data.indicators.filter(
+                            (item) =>
+                              String(item.parent_id) == String(parent) &&
+                              item.is_deleted == false
+                          );
+                          if (filterChild) {
+                            for (indicatorList of filterChild) {
+                              valueData = data.value.find((value) => {
+                                if (
+                                  String(value.for_month_id) ===
+                                    String(month.id) &&
+                                  String(value.for_indicator_id) ===
+                                    String(indicatorList.id) &&
+                                  String(value.for_datapoint_id) ===
+                                    String(year[0])
+                                ) {
+                                  return value;
                                 }
-                                childIndicatorDataValue(indicatorList.id)
+                              });
+
+                              if (valueData) {
+                                table += `<td> ${valueData.value} </td>`;
+                              } else {
+                                table += `<td> - </td>`;
                               }
+                              childIndicatorDataValue(indicatorList.id);
                             }
                           }
+                        };
 
-
-
-                          for(let childIndicator of childIndicators){
-                            valueData = data.value.find((value)=> {
-                              if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(childIndicator.id) && String(value.for_datapoint_id) === String(year[0])){
-                                return value
-                              }
-                            })
-  
-                            if(valueData){
-                              table+=`<td> ${valueData.value} </td>`
-                            }else{
-                              table+=`<td> - </td>`
+                        for (let childIndicator of childIndicators) {
+                          valueData = data.value.find((value) => {
+                            if (
+                              String(value.for_month_id) === String(month.id) &&
+                              String(value.for_indicator_id) ===
+                                String(childIndicator.id) &&
+                              String(value.for_datapoint_id) === String(year[0])
+                            ) {
+                              return value;
                             }
+                          });
 
-
-                            //Call Child
-                            childIndicatorDataValue(childIndicator.id)
-
+                          if (valueData) {
+                            table += `<td> ${valueData.value} </td>`;
+                          } else {
+                            table += `<td> - </td>`;
                           }
-                        
+
+                          //Call Child
+                          childIndicatorDataValue(childIndicator.id);
+                        }
                       }
                       table += `
                     </tr>`;
 
                       checkYearPrint = true;
                     }
-
-
                   }
                   table += `</tbody>`;
 
                   $(document).ready(function () {
                     $("#newTable").DataTable({
+                      columnDefs: [{ width: 900, targets: 0 }],
                       retrieve: true,
                       ordering: false,
-                      scrollX: true,
                       responsive: true,
                       paging: true,
                       searching: true,
                       orderNumber: true,
-                      columnDefs: [{ width: "100%" }],
                       lengthMenu: [
-                        [24, 50, 100, -1],
-                        ["24 rows", "50 rows", "100 rows", "Show all"],
+                        [36, 72, 108, -1],
+                        ["36 rows", "72 rows", "108 rows", "Show all"],
+                      ],
+                      buttons: [
+                        "pageLength","copy",
+                        {
+                          extend: "excelHtml5",
+                          text: "Save as Excel",
+                          customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets["sheet1.xml"];
+                            $("row:nth-child(2) c", sheet).attr("s", "54");
+                          },
+                        },
+                        ,
+                        "print",
                       ],
                       dom: "Bfrtip",
-                      buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                     });
                   });
-                };
 
+
+
+                };
 
                 //Type Quarter table
                 let typeQuarterTable = () => {
                   table += `
-                  <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
+                       <style>
+                       table.dataTable th {
+                        writing-mode: vertical-lr !important;
+                        vertical-align: middle !important;
+                        transform: rotate(180deg) !important;
+                    }
+                   </style>
+                  <table id="newTable" class="table table-bordered m-0 p-0">
                   <thead>
                     <tr class="text-center">
-                    <th  style="width: 40px;"  class="vertical-text border">Year</th>
-                    <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
+                  let filterIndicators = data.indicators.filter(
+                    (item) =>
+                      String(item.for_category_id) ===
+                        String(selectedCategoryId) &&
+                      selectedIndictorId.includes(String(item.id)) &&
+                      item.is_deleted == false
+                  );
+                  for (filterIndicator of filterIndicators) {
+                    let title_amharic = "";
+                    if (!filterIndicator.title_AMH === null)
+                      title_amharic = " - " + filterIndicator.title_AMH;
 
-                   let filterIndicators =  data.indicators.filter((item) => String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false )
-                    for(filterIndicator of filterIndicators) {
-                        let title_amharic = "";
-                        if (!filterIndicator.title_AMH === null)
-                          title_amharic = " - " + filterIndicator.title_AMH;
-
-                        table += ` <th class="vertical-text  border" ">
+                    table += ` <th class="vertical-text  border" ">
                          <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
                          </th>`;
 
-                        let childIndicatorList = (parent, space) => {
-                          space += String("&nbsp;&nbsp;&nbsp;&nbsp");
-                          let status = false;
+                    let childIndicatorList = (parent, space) => {
+                      space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                      let status = false;
 
-                          for (let indicator of data.indicators) {
-                            if (
-                              String(indicator.parent_id) === String(parent) &&
-                              indicator.is_deleted == false
-                            ) {
-                              test = true;
-                              table += `
+                      for (let indicator of data.indicators) {
+                        if (
+                          String(indicator.parent_id) === String(parent) &&
+                          indicator.is_deleted == false
+                        ) {
+                          test = true;
+                          table += `
                               <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
                               `;
 
-                              childIndicatorList(indicator.id, String(space));
-                            }
-                          }
-                        };
-                        //Child List
-                        for (let indicator of data.indicators) {
-                          if (
-                            String(indicator.parent_id) == String(filterIndicator.id) &&
-                            indicator.is_deleted == false
-                          ) {
-                            test = true;
-                            table += `
+                          childIndicatorList(indicator.id, String(space));
+                        }
+                      }
+                    };
+                    //Child List
+                    for (let indicator of data.indicators) {
+                      if (
+                        String(indicator.parent_id) ==
+                          String(filterIndicator.id) &&
+                        indicator.is_deleted == false
+                      ) {
+                        test = true;
+                        table += `
                             <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
                             `;
 
-                            childIndicatorList(indicator.id, " ");
-                          }
-                        }
-                      
+                        childIndicatorList(indicator.id, " ");
+                      }
                     }
-                
+                  }
 
                   table += `</tr>
                   </thead>`;
@@ -1164,82 +1215,100 @@ let filterData = () => {
                       }
 
                       table += `                     
-                      <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`
-                    
+                      <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
 
+                      //Filter parent indicators
+                      let indicatorsObject = data.indicators.filter(
+                        (item) =>
+                          String(item.for_category_id) ===
+                            String(selectedCategoryId) &&
+                          selectedIndictorId.includes(String(item.id)) &&
+                          item.is_deleted == false
+                      );
 
-                      //Filter parent indicators 
-                      let indicatorsObject = data.indicators.filter((item) => String(item.for_category_id) ===  String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) &&
-                      item.is_deleted == false )
-
-                      for(let indicatorObj of indicatorsObject){
-
-                        let currentDataValue  = data.value.find((item)=> {
-                          if(String(item.for_quarter_id) === String(quarter.id) && String(item.for_indicator_id) === String(indicatorObj.id) && String(item.for_datapoint_id) === String(year[0])){
-                            return item
+                      for (let indicatorObj of indicatorsObject) {
+                        let currentDataValue = data.value.find((item) => {
+                          if (
+                            String(item.for_quarter_id) ===
+                              String(quarter.id) &&
+                            String(item.for_indicator_id) ===
+                              String(indicatorObj.id) &&
+                            String(item.for_datapoint_id) === String(year[0])
+                          ) {
+                            return item;
                           }
-                        })
-          
-                         //Print Main Indicator Value
-                         table+=`<td class="fw-bold"  style="width: 10%";> ${currentDataValue ? currentDataValue.value : ' - '} </td>`
+                        });
 
+                        //Print Main Indicator Value
+                        table += `<td class="fw-bold"  style="width: 10%";> ${
+                          currentDataValue ? currentDataValue.value : " - "
+                        } </td>`;
 
+                        //Filter Only Child Indicator
+                        let childIndicators = data.indicators.filter(
+                          (item) =>
+                            String(item.parent_id) == String(indicatorObj.id)
+                        );
 
-
-
-                          //Filter Only Child Indicator 
-                          let childIndicators = data.indicators.filter((item)=> String(item.parent_id) == String(indicatorObj.id))
-
-
-                          let childIndicatorDataValue = (parent)=>{
-                            let filterChild = data.indicators.filter((item) => String(item.parent_id) == String(parent) && item.is_deleted == false )
-                            if(filterChild){
-                              for(indicatorList of filterChild){
-                                valueData = data.value.find((value)=> {
-                                  if(String(value.for_month_id) === String(month.id) && String(value.for_indicator_id) === String(indicatorList.id) && String(value.for_datapoint_id) === String(year[0])){
-                                    return value
-                                  }
-                                })
-      
-                                if(valueData){
-                                  table+=`<td> ${valueData.value} </td>`
-                                }else{
-                                  table+=`<td> - </td>`
+                        let childIndicatorDataValue = (parent) => {
+                          let filterChild = data.indicators.filter(
+                            (item) =>
+                              String(item.parent_id) == String(parent) &&
+                              item.is_deleted == false
+                          );
+                          if (filterChild) {
+                            for (indicatorList of filterChild) {
+                              valueData = data.value.find((value) => {
+                                if (
+                                  String(value.for_month_id) ===
+                                    String(month.id) &&
+                                  String(value.for_indicator_id) ===
+                                    String(indicatorList.id) &&
+                                  String(value.for_datapoint_id) ===
+                                    String(year[0])
+                                ) {
+                                  return value;
                                 }
-                                childIndicatorDataValue(indicatorList.id)
+                              });
+
+                              if (valueData) {
+                                table += `<td> ${valueData.value} </td>`;
+                              } else {
+                                table += `<td> - </td>`;
                               }
+                              childIndicatorDataValue(indicatorList.id);
                             }
                           }
+                        };
 
-
-
-                          for(let childIndicator of childIndicators){
-                            valueData = data.value.find((value)=> {
-                              if(String(value.for_quarter_id) === String(quarter.id) && String(value.for_indicator_id) === String(childIndicator.id) && String(value.for_datapoint_id) === String(year[0])){
-                                return value
-                              }
-                            })
-  
-                            if(valueData){
-                              table+=`<td> ${valueData.value} </td>`
-                            }else{
-                              table+=`<td> - </td>`
+                        for (let childIndicator of childIndicators) {
+                          valueData = data.value.find((value) => {
+                            if (
+                              String(value.for_quarter_id) ===
+                                String(quarter.id) &&
+                              String(value.for_indicator_id) ===
+                                String(childIndicator.id) &&
+                              String(value.for_datapoint_id) === String(year[0])
+                            ) {
+                              return value;
                             }
+                          });
 
-
-                            //Call Child
-                            childIndicatorDataValue(childIndicator.id)
-
+                          if (valueData) {
+                            table += `<td> ${valueData.value} </td>`;
+                          } else {
+                            table += `<td> - </td>`;
                           }
-                        
+
+                          //Call Child
+                          childIndicatorDataValue(childIndicator.id);
+                        }
                       }
                       table += `
                     </tr>`;
 
                       checkYearPrint = true;
                     }
-
-
                   }
                   table += `</tbody>`;
 
@@ -1247,20 +1316,32 @@ let filterData = () => {
                     $("#newTable").DataTable({
                       retrieve: true,
                       ordering: false,
-                      scrollX: true,
                       responsive: true,
                       paging: true,
                       searching: true,
                       orderNumber: true,
-                      columnDefs: [{ width: "100%" }],
                       lengthMenu: [
                         [24, 50, 100, -1],
                         ["24 rows", "50 rows", "100 rows", "Show all"],
                       ],
+                      buttons: [
+                        "pageLength","copy",
+                        {
+                          extend: "excelHtml5",
+                          text: "Save as Excel",
+                          customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets["sheet1.xml"];
+                            $("row:nth-child(2) c", sheet).attr("s", "54");
+                          },
+                        },
+                        ,
+                        "print",
+                      ],
                       dom: "Bfrtip",
-                      buttons: ["pageLength", "excel", "csv", "pdf", "print"],
                     });
                   });
+
+
                 };
 
                 if (String(indicatorSelectedType) == "yearly") {
@@ -1273,13 +1354,13 @@ let filterData = () => {
 
                 dataListViewTable.innerHTML = table;
                 table = "";
-
-                
-
               });
 
               indicatorSelectedType = "yearly";
-              //End Indicator table
+              //End Indicator tabl
+
+
+
             });
           });
         });

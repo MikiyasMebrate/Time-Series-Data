@@ -260,8 +260,12 @@
                     </h2>
                     <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body scrollable" id="indicator_list_filter">
-                            <p class="text-danger">Please Select Category</p>
+                        <div class="accordion-body scrollable indicator_filter">
+                            <div id="indicator_list_filter_header">
+                                <p class="text-danger">Please Select Categories</p>
+                            </div>
+                            <div id="indicator_list_filter_select_all"></div>
+                            <div id="indicator_list_filter_body"></div>
                         </div>
                     </div>
                 </div>
@@ -425,6 +429,15 @@
 <!-- Button -->
 <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
+
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- datatable -->
 <script src="{% static 'assets/plugins/datatables/jquery.dataTables.min.js' %}"></script>

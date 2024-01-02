@@ -82,49 +82,37 @@ class Indicator_Point(models.Model):
 
 
 class DataPoint(models.Model):
-    year_EC = models.CharField(max_length=50, null=True, blank=True)
-    year_GC = models.CharField(max_length=50, null=True, blank=True)
+    year_EC = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    year_GC = models.CharField(max_length=50, null=True, blank=True, unique = True)
     is_interval = models.BooleanField(default=False)
     year_start_EC = models.CharField(max_length=50, null=True, blank=True)
     year_start_GC = models.CharField(max_length=50, null=True, blank=True)
     year_end_EC = models.CharField(max_length=50, null=True, blank=True)
     year_end_GC = models.CharField(max_length=50, null=True, blank=True)
-    months = models.ManyToManyField('Month', blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    is_deleted =models.BooleanField(default=True)
+    is_deleted =models.BooleanField(default=False)
     
     
     class Meta:
         ordering = ['year_EC'] #Oldest First
         
-        
+
+    def save(self, *args, **kwargs):
+        self.year_GC = f'{str(int(self.year_EC )+ 7)}/{str(int(self.year_EC)+ 8)}'
+        super(DataPoint, self).save(*args, **kwargs)
+
+
     def __str__(self):
         if self.is_interval:
             return self.year_start_EC + " - " + self.year_end_EC + "E.C"
         else:
             return self.year_EC+" "+"E.C"
-        
-    def save(self, *args, **kwargs):
-        if not self.year_EC:
-            # Use the default year of the current day
-            current_year = datetime.now().year
-            current_month = datetime.now().month
+    
+    
 
-            # Adjust Ethiopian calendar year based on the overlap
-            if current_month <= 7:  # If it's before or in July, consider the overlap with the previous G.C year
-                ec_year = current_year - 8
-            else:
-                ec_year = current_year - 7
-
-            self.year_EC = ec_year
-
-            # Calculate Gregorian calendar years
-            gc_year_start = ec_year + 7
-            gc_year_end = ec_year + 8
-            self.year_GC = f"{gc_year_start}/{gc_year_end}"
-
-        super().save(*args, **kwargs)
+  
+      
 
 
 
@@ -280,15 +268,14 @@ class DataValue(models.Model):
                    except: None
         
         except:
-            print('>>>>>>>>>Exxxx')
             None
 
-@receiver(post_save, sender=DataValue)
-def call_my_function(sender, instance, created, **kwargs):
-    if created: 
-        instance.calculate_parent_value()
-    else:  
-        instance.calculate_parent_value()
+# @receiver(post_save, sender=DataValue)
+# def call_my_function(sender, instance, created, **kwargs):
+#     if created: 
+#         instance.calculate_parent_value()
+#     else:  
+#         instance.calculate_parent_value()
 
 
 
