@@ -1597,7 +1597,7 @@ function filterData() {
                         text: 'values'
                       },
                       labels: {
-                        format: '${text} B'
+                        format: '{text}'
                       }
                     },
                     tooltip: {
