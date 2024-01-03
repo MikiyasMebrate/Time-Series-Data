@@ -56,13 +56,13 @@
                 <div class="inner">
 
                   <h4 class="text-info"> <i class="bi bi-person-video3"></i>Total Topic</h4>
-                  <h3 class="text-info"><i class="bi bi-sliders"></i>{{size_topic}}<i class="bi bi-sliders"></i></h3>
+                  <h3 class="text-info">{{size_topic}}</h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-bag"></i>
                 </div>
                 <a href="{% url 'user-admin-topic' %}" class="small-box-footer text-info">More info <i
-                    class="bi bi-arrow-down-circle-fill"></i></i></a>
+                    class="bi bi-arrow-down-circle-fill"></i></a>
               </div>
             </div>
 
@@ -73,14 +73,14 @@
 
 
                   <h4 class="text-success"> <i class="bi bi-app-indicator "></i>Total Category</h4>
-                  <h3 class="text-success"><i class="bi bi-sliders"></i>{{size_category}}<i class="bi bi-sliders"></i>
+                  <h3 class="text-success">{{size_category}}
                   </h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-bag"></i>
                 </div>
                 <a href="{% url 'user-admin-category' %}" class="small-box-footer">More info <i
-                    class="bi bi-arrow-down-circle-fill"></i></i></a>
+                    class="bi bi-arrow-down-circle-fill"></i></a>
               </div>
             </div>
 
@@ -92,14 +92,13 @@
 
 
                   <h4 class="text-secondary"> <i class="bi bi-list-nested"></i>Total indicator</h4>
-                  <h3 class="text-secondary"><i class="bi bi-sliders"></i>{{size_indicator}}<i
-                      class="bi bi-sliders"></i></h3>
+                  <h3 class="text-secondary">{{size_indicator}}</h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-bag"></i>
                 </div>
                 <a href="{% url 'user-admin-indicators'%}" class="small-box-footer text-secondary">More info <i
-                    class="bi bi-arrow-down-circle-fill"></i></i></a>
+                    class="bi bi-arrow-down-circle-fill"></i></a>
               </div>
             </div>
 
@@ -110,14 +109,14 @@
 
 
                   <h4 class="text-primary"> <i class="bi bi-buildings"></i></i>Total source</p>
-                    <h3 class="text-primary"><i class="bi bi-sliders"></i>{{size_source}}<i class="bi bi-sliders"></i>
+                    <h3 class="text-primary">{{size_source}}
                     </h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-bag"></i>
                 </div>
-                <a class="text-primary" href="{% url 'user-admin-source'%}" class="small-box-footer">More info <i
-                    class="bi bi-arrow-down-circle-fill "></i></i></a>
+                <a href="{% url 'user-admin-source'%}" class="small-box-footer text-primary">More info <iclass="bi bi-arrow-down-circle-fill "><i
+                  class="bi bi-arrow-down-circle-fill"></i></a>
               </div>
             </div>
 
@@ -172,7 +171,7 @@
                   <tbody>
                     {% for entry in auditlog_entries %}
                     <tr>
-                      <th scope="row">1</th>
+                      <th scope="row">{{ forloop.counter }}</th>
                       <td>{{ entry.timestamp }}</td>
                       <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
                    {% if entry.action == 0 %}

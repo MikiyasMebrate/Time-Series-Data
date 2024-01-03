@@ -4,345 +4,325 @@ let filterData = () => {
   fetch("/user-admin/json")
     .then((response) => response.json())
     .then((data) => {
-      let excludedRandomNumbers = [];
+      let yearRandomDataChart = () => {
+      
+        let excludedRandomNumbers = [];
+        
+        //last 5 Year Data
+        let lastFiveYearData = []
 
-      function getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        let index = Math.floor(Math.random() * (max - min)) + min;
-        while (excludedRandomNumbers.includes(index)) {
-          index = Math.floor(Math.random() * (max - min)) + min;
-          excludedRandomNumbers.push(index);
+        function getRandomInt(min, max) {
+          min = Math.ceil(min);
+          max = Math.floor(max);
+          let index = Math.floor(Math.random() * (max - min)) + min;
+          while (excludedRandomNumbers.includes(index)) {
+            index = Math.floor(Math.random() * (max - min)) + min;
+            excludedRandomNumbers.push(index);
+          }
+          return index;
         }
-        return index;
-      }
 
-      let randomCategoryIndex1 = getRandomInt(0, data.categories.length);
-      let randomCategoryIndex2 = getRandomInt(0, data.categories.length);
+        let randomCategoryIndex1 = getRandomInt(0, data.categories.length);
+        let randomCategoryIndex2 = getRandomInt(0, data.categories.length);
 
-      //Random Category
-      let randomCategory = () => {
-        randomCategoryIndex1 = getRandomInt(0, data.categories.length);
-        return data.categories[randomCategoryIndex1];
-      };
+        //Random Category
+        let randomCategory = () => {
+          randomCategoryIndex1 = getRandomInt(0, data.categories.length);
+          return data.categories[randomCategoryIndex1];
+        };
 
-      let randomChoocedCategory = randomCategory();
+        let randomChoocedCategory = "";
 
-      let indicatorLists = data.indicators.filter(
-        (item) =>
-          String(item.for_category_id) == String(randomChoocedCategory.id) &&
-          item.type_of == "yearly"
-      );
+        let indicatorActualvalue = [];
+        let checkIndicatorValue = false;
 
-
-      let indicatorActualvalue = [];
-      let checkIndicatorValue = false;
-
-      while (checkIndicatorValue != true) {
-        //Indicaor
-        while (indicatorLists.length == 0) {
+        while (checkIndicatorValue != true) {
+          //Indicaor
+          indicatorActualvalue = [];
           randomChoocedCategory = randomCategory();
           indicatorLists = data.indicators.filter(
             (item) =>
               String(item.for_category_id) ==
                 String(randomChoocedCategory.id) && item.type_of == "yearly"
           );
-        }
 
-        //Value
-        for (indicator of indicatorLists) {
-          let val = [];
-          for (year of data.year) {
-            let value = data.value.find(
-              (value) =>
-                String(value.for_indicator_id) == String(indicator.id) &&
-                String(value.for_datapoint_id) == String(year.id) &&
-                value.for_month_id == null &&
-                value.for_quarter_id == null
+          while (indicatorLists.length == 0) {
+            randomChoocedCategory = randomCategory();
+            indicatorLists = data.indicators.filter(
+              (item) =>
+                String(item.for_category_id) ==
+                  String(randomChoocedCategory.id) && item.type_of == "yearly"
             );
-            value ? val.push(value.value) : val.push(null);
           }
-          indicatorActualvalue.push({ name: indicator.title_ENG, data: val });
+
+          //Value
+          for (indicator of indicatorLists) {
+            let val = [];
+            for (year of data.year) {
+              let value = data.value.find(
+                (value) =>
+                  String(value.for_indicator_id) == String(indicator.id) &&
+                  String(value.for_datapoint_id) == String(year.id) &&
+                  value.for_month_id == null &&
+                  value.for_quarter_id == null
+              );
+              value ? val.push(value.value) : val.push(null);
+            }
+            indicatorActualvalue.push({ name: indicator.title_ENG, data: val });
+          }
+
+          for (let i of indicatorActualvalue) {
+            let checkValue = i.data.filter((item) => item != null);
+            if (checkValue.length != 0) {
+              checkIndicatorValue = true;
+              break;
+            }
+          }
         }
 
-        for (let i of indicatorActualvalue) {
-          if(!i.data.includes(null)){
-            checkIndicatorValue = false;
-          }
+
+        for(let cut of indicatorActualvalue){
+          lastFiveYearData.push({name:cut.name, data:cut.data.slice(cut.data.length - 5, cut.data.length)})
         }
+        
 
-        checkIndicatorValue = true;
-      }
+        ///CHART
 
-      //Random Yearly Graph 1
-      Highcharts.chart("containerYear1", {
-        title: {
-          text: `${randomChoocedCategory.name_ENG}`,
-          align: "left",
-        },
-
-        subtitle: {
-          text: "Source: MOPD.",
-          align: "left",
-        },
-
-        yAxis: {
+        //Random Yearly Graph 1
+        Highcharts.chart("containerYear1", {
           title: {
-            text: "Values",
+            text: `${randomChoocedCategory.name_ENG}`,
+            align: "left",
           },
-        },
 
-        xAxis: {
-          accessibility: {
-            rangeDescription: "Range: 1967 to 2015",
+          subtitle: {
+            text: "Source: MOPD.",
+            align: "left",
           },
-        },
 
-        plotOptions: {
-          series: {
-            label: {
-              connectorAllowed: false,
+          yAxis: {
+            title: {
+              text: "Values",
             },
-            pointStart: 1967,
           },
-        },
 
-        series: indicatorActualvalue,
+          xAxis: {
+            accessibility: {
+              rangeDescription: "Range: 1967 to 2015",
+            },
+          },
 
-        responsive: {
-          rules: [
-            {
-              condition: {
-                maxWidth: 500,
+          plotOptions: {
+            series: {
+              label: {
+                connectorAllowed: false,
               },
-              chartOptions: {
-                legend: {
-                  layout: "horizontal",
-                  align: "center",
-                  verticalAlign: "bottom",
+              pointStart: parseInt(data.year[0].year_EC),
+            },
+          },
+
+          series: indicatorActualvalue,
+
+          responsive: {
+            rules: [
+              {
+                condition: {
+                  maxWidth: 500,
+                },
+                chartOptions: {
+                  legend: {
+                    layout: "horizontal",
+                    align: "center",
+                    verticalAlign: "bottom",
+                  },
                 },
               },
-            },
-          ],
+            ],
+          },
+        });
+
+
+                //Random Yearly Graph 2
+                Highcharts.chart("containerYear2", {
+                  title: {
+                    text: `${randomChoocedCategory.name_ENG} Last 5 Years`,
+                    align: "left",
+                  },
+        
+                  subtitle: {
+                    text: "Source: MOPD.",
+                    align: "left",
+                  },
+        
+                  yAxis: {
+                    title: {
+                      text: "Values",
+                    },
+                  },
+        
+                  xAxis: {
+                    accessibility: {
+                      rangeDescription: "Range: 1967 to 2015",
+                    },
+                  },
+        
+                  plotOptions: {
+                    series: {
+                      label: {
+                        connectorAllowed: false,
+                      },
+                      pointStart: parseInt(data.year[data.year.length-5].year_EC),
+                    },
+                  },
+        
+                  series: lastFiveYearData,
+        
+                  responsive: {
+                    rules: [
+                      {
+                        condition: {
+                          maxWidth: 500,
+                        },
+                        chartOptions: {
+                          legend: {
+                            layout: "horizontal",
+                            align: "center",
+                            verticalAlign: "bottom",
+                          },
+                        },
+                      },
+                    ],
+                  },
+                });
+      };
+
+
+      let monthRandomDataChart = () => {
+        let lastYear = data.year[data.year.length - 1]; // last Year
+        //Month Data
+      let monthlyValue = [];
+
+      //Month Data
+      let monthlyIndicator = data.indicators.filter(
+        (item) => item.type_of == "monthly"
+      );
+      let randomMonthlyIndicatorIndex1 = null;
+      let randomMonthlyIndicatorIndex2 = null;
+      let randomMonthlyIndicator1 = null;
+      let randomMonthlyIndicator2 = null;
+
+      //Find the right indicator which is the indicator shouldn't duplicated and is not deleted
+      do {
+        do {
+          randomMonthlyIndicatorIndex1 =
+            Math.floor(Math.random() * (monthlyIndicator.length - 0)) + 0;
+          randomMonthlyIndicatorIndex2 =
+            Math.floor(Math.random() * (monthlyIndicator.length - 0)) + 0;
+        } while (
+          String(randomMonthlyIndicatorIndex1) ==
+          String(randomMonthlyIndicatorIndex2)
+        );
+
+        randomMonthlyIndicator1 =
+          monthlyIndicator[randomMonthlyIndicatorIndex1];
+        randomMonthlyIndicator2 =
+          monthlyIndicator[randomMonthlyIndicatorIndex2];
+      } while (
+        randomMonthlyIndicator1.is_deleted == true ||
+        randomMonthlyIndicator2.is_deleted == true
+      );
+
+      let monthValue1 = [];
+      let monthValue2 = [];
+
+      for (month of data.month) {
+        let value1 = data.value.find(
+          (itemValue) =>
+            String(itemValue.for_indicator_id) ==
+              String(randomMonthlyIndicator1.id) &&
+            String(itemValue.for_month_id) == String(month.id) &&
+            String(itemValue.for_datapoint_id) == String(lastYear.id)
+        );
+        value1 ? monthValue1.push(value1.value) : monthValue1.push(null);
+
+        let value2 = data.value.find(
+          (itemValue) =>
+            String(itemValue.for_indicator_id) ==
+              String(randomMonthlyIndicator2.id) &&
+            String(itemValue.for_month_id) == String(month.id) &&
+            String(itemValue.for_datapoint_id) == String(lastYear.id)
+        );
+        value2 ? monthValue2.push(value2.value) : monthValue2.push(null);
+      }
+
+      monthlyValue.push(
+        { name: randomMonthlyIndicator1.title_ENG, data: monthValue1 },
+        { name: randomMonthlyIndicator2.title_ENG, data: monthValue2 }
+      );
+
+      //Random Month Graph
+      // Data retrieved https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature
+      Highcharts.chart("containerMonth1", {
+        chart: {
+          type: "spline",
         },
+        title: {
+          text: `${lastYear.year_EC} Yearly Random Data`,
+        },
+        subtitle: {
+          text: "Source: " + "MoPD",
+        },
+        xAxis: {
+          categories: [
+            "መስከረም",
+            "ጥቅምት",
+            "ኅዳር",
+            "ታኅሣሥ",
+            "ጥር",
+            "የካቲት",
+            "መጋቢት",
+            "ሚያዝያ",
+            "ግንቦት",
+            "ሰኔ",
+            "ሐምሌ",
+            "ነሐሴ",
+          ],
+          accessibility: {
+            description: "Months of the year",
+          },
+        },
+        yAxis: {
+          title: {
+            text: "Value",
+          },
+          labels: {
+            format: "{value}°",
+          },
+        },
+        tooltip: {
+          crosshairs: true,
+          shared: true,
+        },
+        plotOptions: {
+          spline: {
+            marker: {
+              radius: 4,
+              lineColor: "#666666",
+              lineWidth: 1,
+            },
+          },
+        },
+        series: monthlyValue,
       });
+      }
+
+
+      yearRandomDataChart()
+      monthRandomDataChart()
+
+      
     })
     .catch((err) => console.log(err));
 };
 
 filterData();
-
-//Random Yearly Graph 1
-Highcharts.chart("containerYear2", {
-  title: {
-    text: "U.S Solar Employment Growth",
-    align: "left",
-  },
-
-  subtitle: {
-    text: 'By Job Category. Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>.',
-    align: "left",
-  },
-
-  yAxis: {
-    title: {
-      text: "Values",
-    },
-  },
-
-  xAxis: {
-    accessibility: {
-      rangeDescription: "Range: 2010 to 2020",
-    },
-  },
-
-  plotOptions: {
-    series: {
-      label: {
-        connectorAllowed: false,
-      },
-      pointStart: 2010,
-    },
-  },
-
-  series: [
-    {
-      name: "Installation & Developers",
-      data: [
-        43934, 48656, 65165, 81827, 112143, 142383, 171533, 165174, 155157,
-        161454, 154610,
-      ],
-    },
-    {
-      name: "Manufacturing",
-      data: [
-        24916, 37941, 29742, 29851, 32490, 30282, 38121, 36885, 33726, 34243,
-        31050,
-      ],
-    },
-    {
-      name: "Sales & Distribution",
-      data: [
-        11744, 30000, 16005, 19771, 20185, 24377, 32147, 30912, 29243, 29213,
-        25663,
-      ],
-    },
-    {
-      name: "Operations & Maintenance",
-      data: [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        11164,
-        11218,
-        10077,
-      ],
-    },
-    {
-      name: "Other",
-      data: [
-        21908, 5548, 8105, 11248, 8989, 11816, 18274, 17300, 13053, 11906,
-        10073,
-      ],
-    },
-  ],
-
-  responsive: {
-    rules: [
-      {
-        condition: {
-          maxWidth: 500,
-        },
-        chartOptions: {
-          legend: {
-            layout: "horizontal",
-            align: "center",
-            verticalAlign: "bottom",
-          },
-        },
-      },
-    ],
-  },
-});
-
-//Random Month Graph
-// Data retrieved https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature
-Highcharts.chart("containerMonth1", {
-  chart: {
-    type: "spline",
-  },
-  title: {
-    text: "Monthly Average Temperature",
-  },
-  subtitle: {
-    text:
-      "Source: " +
-      '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
-      'target="_blank">Wikipedia.com</a>',
-  },
-  xAxis: {
-    categories: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    accessibility: {
-      description: "Months of the year",
-    },
-  },
-  yAxis: {
-    title: {
-      text: "Temperature",
-    },
-    labels: {
-      format: "{value}°",
-    },
-  },
-  tooltip: {
-    crosshairs: true,
-    shared: true,
-  },
-  plotOptions: {
-    spline: {
-      marker: {
-        radius: 4,
-        lineColor: "#666666",
-        lineWidth: 1,
-      },
-    },
-  },
-  series: [
-    {
-      name: "Tokyo",
-      marker: {
-        symbol: "square",
-      },
-      data: [
-        5.2,
-        5.7,
-        8.7,
-        13.9,
-        18.2,
-        21.4,
-        25.0,
-        {
-          y: 26.4,
-          marker: {
-            symbol: "url(https://www.highcharts.com/samples/graphics/sun.png)",
-          },
-          accessibility: {
-            description:
-              "Sunny symbol, this is the warmest point in the chart.",
-          },
-        },
-        22.8,
-        17.5,
-        12.1,
-        7.6,
-      ],
-    },
-    {
-      name: "Bergen",
-      marker: {
-        symbol: "diamond",
-      },
-      data: [
-        {
-          y: 1.5,
-          marker: {
-            symbol: "url(https://www.highcharts.com/samples/graphics/snow.png)",
-          },
-          accessibility: {
-            description:
-              "Snowy symbol, this is the coldest point in the chart.",
-          },
-        },
-        1.6,
-        3.3,
-        5.9,
-        10.5,
-        13.5,
-        14.5,
-        14.4,
-        11.5,
-        8.7,
-        4.7,
-        2.6,
-      ],
-    },
-  ],
-});
