@@ -155,7 +155,7 @@ function filterData() {
             `;
             }
           }
-        );
+        ).reverse();
 
         let selectYearAll = `
         <li>
@@ -669,6 +669,7 @@ function filterData() {
             $("#displayOptions a:nth-child(2)").removeClass("active");
 
             table = "";
+            yearTableList=yearTableList.reverse()
             let dataListViewTable =
               document.getElementById("list_table_view");
 
@@ -2316,54 +2317,57 @@ function filterData() {
                    */
                   async function bar_chart(indc_name, data, selectedname) {
                     const datasetData1 = data.find(dataset => dataset.name === selectedname)?.data || [];
+                    // Convert indc_name to a number (if it's a string)
+                    const selectedIndicatorId = parseInt(indc_name, 10);
+                    const selectedIndicatorObject = indicators.find(indicator => indicator.id === selectedIndicatorId);
+
                     // create the chart
                     Highcharts.stockChart('bar-chart-canvas2', {
                       chart: {
                         alignTicks: false
                       },
-                  
+
                       rangeSelector: {
                         selected: 1
                       },
-                  
+
                       title: {
-                        text: indc_name
+                        text: selectedIndicatorObject.title_ENG
                       },
-                  
-                      plotOptions: {
-                        series: {
-                          tooltip: {
-                            formatter: function () {
-                              const point = this.points[0];
-                              const value = point.y;
-                              let quarter;
-                  
-                              switch (value) {
-                                case 1:
-                                  quarter = 'Quarter 1';
-                                  break;
-                                case 3:
-                                  quarter = 'Quarter 2';
-                                  break;
-                                case 6:
-                                  quarter = 'Quarter 3';
-                                  break;
-                                case 9:
-                                  quarter = 'Quarter 4';
-                                  break;
-                                default:
-                                  quarter = 'Unknown Quarter';
-                              }
-                  
-                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>
-                                      Quarter: ${quarter}`;
-                            },
-                            valueDecimals: 2,
-                            shared: true
+                      tooltip: {
+                        style: {
+                          width: '200px'
+                        },
+                        valueDecimals: 4,
+                        shared: true
+                        , formatter: function () {
+                          const point = this.points[0];
+                          const value = point.point.options.quarter;
+                          let quarter;
+
+                          switch (value) {
+                            case 1:
+                              quarter = '1';
+                              break;
+                            case 3:
+                              quarter = '2';
+                              break;
+                            case 6:
+                              quarter = '3';
+                              break;
+                            case 9:
+                              quarter = '4';
+                              break;
+                            default:
+                              quarter = 'Unknown Quarter';
                           }
+
+                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.quarter}</b><br/>
+                Quarter: ${quarter}`;
                         }
+
                       },
-                  
+
                       series: [{
                         type: 'column',
                         name: selectedname,
@@ -2380,9 +2384,12 @@ function filterData() {
                       }]
                     });
                   }
-                  
+
                   async function draw_line(selectedIndicator, chartData, selectedDataset) {
                     const datasetData = chartData.find(dataset => dataset.name === selectedDataset)?.data || [];
+
+                    const selectedIndicatorId = parseInt(selectedIndicator, 10);
+                    const selectedIndicatorObject = indicators.find(indicator => indicator.id === selectedIndicatorId);
 
                     // Create the chart
                     Highcharts.stockChart('series-chart-canvas2', {
@@ -2390,7 +2397,7 @@ function filterData() {
                         selected: 0
                       },
                       title: {
-                        text: selectedIndicator
+                        text: selectedIndicatorObject.title_ENG
                       },
                       tooltip: {
                         style: {
@@ -2398,32 +2405,32 @@ function filterData() {
                         },
                         valueDecimals: 4,
                         shared: true
-                        ,formatter: function () {
+                        , formatter: function () {
                           const point = this.points[0];
-                          const value = point.y;
+                          const value = point.point.options.quarter;
                           let quarter;
-  
+
                           switch (value) {
                             case 1:
-                              quarter = 'Quarter 1';
+                              quarter = '1';
                               break;
                             case 3:
-                              quarter = 'Quarter 2';
+                              quarter = '2';
                               break;
                             case 6:
-                              quarter = 'Quarter 3';
+                              quarter = '3';
                               break;
                             case 9:
-                              quarter = 'Quarter 4';
+                              quarter = '4';
                               break;
                             default:
                               quarter = 'Unknown Quarter';
                           }
-  
-                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>
+
+                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.quarter}</b><br/>
                 Quarter: ${quarter}`;
                         }
-  
+
                       },
                       yAxis: {
                         title: {
@@ -2462,7 +2469,6 @@ function filterData() {
                   function createChart(series) {
                     // Calling to create a new dropdown menu from the dataset names on a single indicator selected
                     createDatasetDropdown(series);
-                    console.log('series', series);
 
                     Highcharts.stockChart('line-chart-canvas2', {
                       rangeSelector: {
@@ -2487,32 +2493,24 @@ function filterData() {
                           },
                         }
                       },
-
                       tooltip: {
                         formatter: function () {
                           const point = this.points[0];
-                          const value = point.y;
-                          let quarter;
+                          const quarter = point.point.options.quarter;
 
-                          switch (value) {
+
+                          switch (quarter) {
                             case 1:
-                              quarter = 'Quarter 1';
-                              break;
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter: 1`;
                             case 3:
-                              quarter = 'Quarter 2';
-                              break;
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  2`;
                             case 6:
-                              quarter = 'Quarter 3';
-                              break;
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  3`;
                             case 9:
-                              quarter = 'Quarter 4';
-                              break;
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  4`;
                             default:
-                              quarter = 'Unknown Quarter';
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter: Unknown Quarter`;
                           }
-
-                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>
-                Quarter: ${quarter}`;
                         },
                         valueDecimals: 2,
                         shared: true
@@ -2520,8 +2518,8 @@ function filterData() {
 
                       series
                     });
-                  }
 
+                  }
 
                   // Function to fetch and update data based on the selected indicator
                   async function updateChartData(selectedIndicator) {
@@ -2542,16 +2540,17 @@ function filterData() {
                       data.forEach((category) => {
                         let arr = [];
                         category.data.forEach((dataPoint) => {
+                          const quarterValue = dataPoint[0][1];
                           arr.push({
-                            x: Date.UTC(dataPoint[0][0], dataPoint[0][1] - 1, dataPoint[0][2]),
+                            x: Date.UTC(dataPoint[0][0], quarterValue - 1, dataPoint[0][2]),
                             y: dataPoint[1],
-                            options: {
-                              quarter: dataPoint[0][1]
-                            }
+                            quarter: quarterValue
                           });
                         });
                         chartData.push({ name: category.name, data: arr });
                       });
+
+
                     } else {
                       console.error('Invalid or missing data format in the response.');
                     }
@@ -2559,6 +2558,7 @@ function filterData() {
                     // Call the createChart function with the updated data
                     createChart(chartData);
                   }
+
 
 
 

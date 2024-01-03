@@ -95,6 +95,12 @@
 
                     <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
                         data-bs-parent="#accordionExample">
+                        <!-- Add these buttons for A-Z and Z-A sorting -->
+                        {% comment %} <div id="accessibility" class="d-flex mt-3">
+                            <input type="text" class="form-control me-2" id="filterDatabaseSearch" placeholder="Search...">
+                            <button class="btn btn-primary" id="sortAZDatabase">A-Z</button>
+                            <button class="btn btn-primary ms-2" id="sortZADatabase">Z-A</button>
+                          </div>                           {% endcomment %}
                         <div class="accordion-body scrollable" id='topic_list_filter'>
                             <!-- Add more options here -->
                             <p class="text-danger">Please Select Topic</p>
@@ -124,6 +130,10 @@
 
                     <div id="categoryOptions" class="accordion-collapse collapse" aria-labelledby="categoryHeader"
                         data-bs-parent="#accordionExample">
+                        {% comment %} <!-- Add these buttons for A-Z and Z-A sorting -->
+                        <input type="text" id="filterSearch" placeholder="Search...">
+                        <button class="btn btn-primary" id="sortAZ">Sort A-Z</button>
+                        <button class="btn btn-primary" id="sortZA">Sort Z-A</button> {% endcomment %}
                         <div class="accordion-body scrollable" id='category_list_filter'>
                             <p class="text-danger">Please Select Topic</p>
                         </div>
