@@ -854,11 +854,12 @@ def topic(request, topic_id=None):
             topic_instance = get_object_or_404(Topic, id=topic_id_from_post)
 
     # Initialize form with or without data
-    form = TopicForm(request.POST or None, instance=topic_instance)
+    form = TopicForm(instance=topic_instance)
+    formFile = TopicImportFileForm()
 
-    formFile = TopicImportFileForm(request.POST or None, request.FILES or None)
     if request.method == 'POST':
-        if 'topicForm' in request.POST:
+        if 'topicFormValue' in request.POST:
+            form = TopicForm(request.POST, instance=topic_instance)
             if form.is_valid():
                 obj = form.save(commit=False)
                 is_new_topic = obj.pk is None
@@ -871,7 +872,8 @@ def topic(request, topic_id=None):
             else:
                 messages.error(request, "Value exists or please try again!")
         
-        if 'fileTopic' in request.POST:
+        if 'fileTopicValue' in request.POST:
+            formFile = TopicImportFileForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
                 success, message = handle_uploaded_Topic_file(file)
@@ -883,6 +885,10 @@ def topic(request, topic_id=None):
     
             else:
                 messages.error(request, 'File not recognized')
+    else:
+        form = TopicForm()
+        formFile = TopicImportFileForm(request.POST or None, request.FILES or None)
+    
 
 
 
