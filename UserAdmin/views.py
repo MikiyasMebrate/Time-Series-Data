@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 from datetime import datetime, timezone
+from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file
+from tablib import Dataset
 
 @login_required(login_url='login')
 @admin_user_required
@@ -839,7 +841,7 @@ def delete_source(request,pk):
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
-    topics = Topic.objects.all()
+    topics = Topic.objects.filter(is_deleted = False)
 
     # If topic_id is provided, it's an update operation
     if topic_id:
@@ -854,21 +856,39 @@ def topic(request, topic_id=None):
     # Initialize form with or without data
     form = TopicForm(request.POST or None, instance=topic_instance)
 
+    formFile = TopicImportFileForm(request.POST or None, request.FILES or None)
     if request.method == 'POST':
-        if form.is_valid():
-            obj = form.save(commit=False)
-            is_new_topic = obj.pk is None
-            obj.save()
+        if 'topicForm' in request.POST:
+            if form.is_valid():
+                obj = form.save(commit=False)
+                is_new_topic = obj.pk is None
+                obj.save()
+    
+                success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
+                messages.success(request, success_message)
+    
+                return redirect('user-admin-topic')
+            else:
+                messages.error(request, "Value exists or please try again!")
+        
+        if 'fileTopic' in request.POST:
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Topic_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
-            success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
-            messages.success(request, success_message)
 
-            # Redirect to the same page if it's a new topic, otherwise, redirect with the topic_id
-            return redirect('user-admin-topic')
-        else:
-            messages.error(request, "Value exists or please try again!")
 
-    context = {'form': form, 'topics': topics, 'topic_id': topic_id}
+            
+
+    context = {'form': form, 'topics': topics, 'topic_id': topic_id, 'formFile' : formFile}
     return render(request, 'user-admin/topic.html', context=context)
 
 

@@ -1,5 +1,10 @@
 from django import forms
 from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
+class TopicImportFileForm(forms.Form):
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={
+        'class' : 'form-control'
+    }))
+
 
 class catagoryForm(forms.ModelForm):
     class Meta:
