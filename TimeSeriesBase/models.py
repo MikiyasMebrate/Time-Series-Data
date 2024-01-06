@@ -125,8 +125,6 @@ class Measurement(models.Model):
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     
-    def str(self):
-        return self.get_full_path()
 
     def get_full_path(self):
         full_path = [self.Amount_ENG]

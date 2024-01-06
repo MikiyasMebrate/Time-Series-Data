@@ -10,8 +10,9 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 from datetime import datetime, timezone
-from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file
+from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file, handle_uploaded_Measurement_file, handle_uploaded_Indicator_file
 from tablib import Dataset
+from django.http import JsonResponse
 
 @login_required(login_url='login')
 @admin_user_required
@@ -308,7 +309,7 @@ def json_measurement_byID(request, measurement_id=None):
     }
     return JsonResponse(context)
 
-from django.http import JsonResponse
+
 
 @login_required(login_url='login')
 def json(request):
@@ -586,7 +587,7 @@ def indicator(request):
             formFile = ImportFileForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
-                success, message = handle_uploaded_Category_file(file)
+                success, message = handle_uploaded_Indicator_file(file)
                 
                 if success:
                     messages.success(request, message)
@@ -645,7 +646,7 @@ def indicator_list(request, pk):
             formFile = ImportFileForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
-                success, message = handle_uploaded_Category_file(file)
+                success, message = handle_uploaded_Indicator_file(file)
                 
                 if success:
                     messages.success(request, message)
@@ -761,6 +762,8 @@ def delete_indicator(request,pk):
 def measurement(request):
     addMeasurementForm = MeasurementForm()
     editMeasurementForm = MeasurementForm()
+    addNewMeasurementForm = MeasurementForm()
+    formFile = ImportFileForm()
     if request.method == 'POST':
         if 'formAddMeasurement' in request.POST:
             addMeasurementForm = MeasurementForm(request.POST)
@@ -787,11 +790,35 @@ def measurement(request):
                 messages.success(request, 'Successfully Updated')
             else:
                 messages.error(request, 'Please Try Again!')
+        
+        if 'addNewMeasurementValue' in request.POST:
+            addNewMeasurementForm = MeasurementForm(request.POST)
+            if addNewMeasurementForm.is_valid():
+                addNewMeasurementForm.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request, 'Please Try Again!')
+        
+        if 'fileMeasurementFile' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Measurement_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
                 
     context = {
         'addMeasurementForm' : addMeasurementForm,
-        'editMeasurementForm' : editMeasurementForm
+        'editMeasurementForm' : editMeasurementForm,
+        'addNewMeasurementForm' : addNewMeasurementForm,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/measurement.html', context)
 
