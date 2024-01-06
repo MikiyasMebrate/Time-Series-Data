@@ -24,7 +24,7 @@ admin.site.register(models.Source)
 class searchIndicator(admin.ModelAdmin):
     search_fields = ['title_ENG', 'title_AMH']  # Replace field1 and field2 with the fields you want to enable search on
 
-admin.site.register(models.Indicator, searchIndicator)
+#admin.site.register(models.Indicator, searchIndicator)
 
 
 # Import Export 
@@ -86,7 +86,7 @@ class CategoryResource(resources.ModelResource):
         report_skipped = True
         exclude = ( 'id', 'created_at', 'is_deleted')
         import_id_fields = ('name_ENG', 'name_AMH','topic')
-        
+
 class CategoryAdmin(ImportExportModelAdmin):
     resource_classes = [CategoryResource]
 
@@ -109,3 +109,55 @@ def handle_uploaded_Category_file(file):
     
 
 
+#Indicator 
+class IndicatorResource(resources.ModelResource):    
+    for_category = fields.Field(
+        column_name='for_category',
+        attribute='for_category',
+        widget=ForeignKeyWidget(models.Category, field='name_ENG'),
+        saves_null_values = True,
+    )
+
+    parent = fields.Field(
+        column_name='parent',
+        attribute='parent',
+        widget=ForeignKeyWidget(models.Indicator, field='title_ENG'),
+        saves_null_values = True,
+    )
+
+    measurement = fields.Field(
+        column_name='measurement',
+        attribute='measurement',
+        widget=ForeignKeyWidget(models.Measurement, field='Amount_ENG'),
+        saves_null_values = True,
+    )
+    class Meta:
+        model = models.Indicator
+        exclude = ( 'id', 'created_at', 'is_deleted')
+        import_id_fields = ('title_ENG', 'title_AMH','parent','for_category', 'measurement', 'type_of')
+        export_order = ('parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
+        
+       
+
+
+class Indicatoradmin(ImportExportModelAdmin):
+    resource_classes = [IndicatorResource]
+
+
+def handle_uploaded_Indicator_file(file):
+    try:
+        resource  = IndicatorResource()
+        dataset = tablib.Dataset()
+
+        imported_data = dataset.load(file.read())
+        result = resource.import_data(imported_data, dry_run=True)
+        if not result.has_errors():
+            resource.import_data(dataset, dry_run=False)  # Actually import now
+            return True, f"Data imported successfully: {len(dataset)} records imported."
+        else:
+            return False, f"Error importing data: Please review your Dcoument."
+    except Exception as e:
+        return False, f"Error importing data: Please review your Document."
+    
+
+admin.site.register(models.Indicator, Indicatoradmin)

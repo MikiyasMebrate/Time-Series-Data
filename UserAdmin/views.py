@@ -39,33 +39,33 @@ def index(request):
 
     return render(request, 'user-admin/index.html', context)
 
-@login_required(login_url='login')
-@admin_user_required
-def indicator_list(request, pk):
-    category = Category.objects.get(pk = pk)
-    indicator_list = Indicator.objects.filter(for_category = category)
-    form = IndicatorForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            title_ENG = form.cleaned_data['title_ENG']
-            title_AMH = form.cleaned_data['title_AMH']
-            indicator_id = request.POST.get('indicator_Id')
+# @login_required(login_url='login')
+# @admin_user_required
+# def indicator_list(request, pk):
+#     category = Category.objects.get(pk = pk)
+#     indicator_list = Indicator.objects.filter(for_category = category)
+#     form = IndicatorForm(request.POST or None)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             title_ENG = form.cleaned_data['title_ENG']
+#             title_AMH = form.cleaned_data['title_AMH']
+#             indicator_id = request.POST.get('indicator_Id')
 
             
-            indicator_obj = Indicator.objects.get(id = indicator_id)
-            indicator_obj.title_AMH = title_AMH
-            indicator_obj.title_ENG = title_ENG
-            indicator_obj.save()
-            messages.success(request, 'Successfully Updated')
-        else:
-            messages.error(request, 'Please Try again! ')
+#             indicator_obj = Indicator.objects.get(id = indicator_id)
+#             indicator_obj.title_AMH = title_AMH
+#             indicator_obj.title_ENG = title_ENG
+#             indicator_obj.save()
+#             messages.success(request, 'Successfully Updated')
+#         else:
+#             messages.error(request, 'Please Try again! ')
 
-    context = {
-        'indicators' : indicator_list,
-        'category' : category,
-        'form' : form,
-    }
-    return render(request, 'user-admin/indicators.html', context)
+#     context = {
+#         'indicators' : indicator_list,
+#         'category' : category,
+#         'form' : form,
+#     }
+#     return render(request, 'user-admin/indicators.html', context)
     
 #Category
 @login_required(login_url='login')
@@ -572,16 +572,33 @@ def data_list_detail(request, pk):
 @admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
+    formFile = ImportFileForm()
     
     if request.method == 'POST':
-        if add_indicator.is_valid():
-            add_indicator.save()
-            messages.success(request, 'Successfully Added!')
-        else:
-            messages.error(request, 'Please Try Again!')
+        if 'formAddIndicator' in request.POST:
+            if add_indicator.is_valid():
+                add_indicator.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request, 'Please Try Again!')
+
+        if 'fileIndicatorFile' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Category_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
     
     context = {
         'add_indicator' : add_indicator,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -593,6 +610,7 @@ def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
     form = IndicatorForm(request.POST or None)
+    formFile = ImportFileForm()
     if request.method == "POST":
         if 'form_indicator_edit' in request.POST:
             form = IndicatorForm(request.POST)
@@ -622,12 +640,27 @@ def indicator_list(request, pk):
                 messages.success(request, 'Successfully Added!')
             else:
                 messages.error(request, 'Please Try again! ')
+        
+        if 'fileIndicatorFile' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Category_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
     context = {
         'indicators' : indicator_list,
         'category' : category,
         'form' : form,
         'add_indicator' : add_indicator,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
 
