@@ -14,7 +14,7 @@ from decimal import Decimal
 
 class Topic(models.Model):
     title_ENG = models.CharField(max_length=50)
-    title_AMH = models.CharField(max_length=50)
+    title_AMH = models.CharField(max_length=50, null = True)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
@@ -125,8 +125,6 @@ class Measurement(models.Model):
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     
-    def str(self):
-        return self.get_full_path()
 
     def get_full_path(self):
         full_path = [self.Amount_ENG]

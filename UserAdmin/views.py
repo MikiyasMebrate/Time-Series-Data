@@ -10,6 +10,9 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 from datetime import datetime, timezone
+from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file, handle_uploaded_Measurement_file, handle_uploaded_Indicator_file
+from tablib import Dataset
+from django.http import JsonResponse
 
 @login_required(login_url='login')
 @admin_user_required
@@ -37,40 +40,42 @@ def index(request):
 
     return render(request, 'user-admin/index.html', context)
 
-@login_required(login_url='login')
-@admin_user_required
-def indicator_list(request, pk):
-    category = Category.objects.get(pk = pk)
-    indicator_list = Indicator.objects.filter(for_category = category)
-    form = IndicatorForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            title_ENG = form.cleaned_data['title_ENG']
-            title_AMH = form.cleaned_data['title_AMH']
-            indicator_id = request.POST.get('indicator_Id')
+# @login_required(login_url='login')
+# @admin_user_required
+# def indicator_list(request, pk):
+#     category = Category.objects.get(pk = pk)
+#     indicator_list = Indicator.objects.filter(for_category = category)
+#     form = IndicatorForm(request.POST or None)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             title_ENG = form.cleaned_data['title_ENG']
+#             title_AMH = form.cleaned_data['title_AMH']
+#             indicator_id = request.POST.get('indicator_Id')
 
             
-            indicator_obj = Indicator.objects.get(id = indicator_id)
-            indicator_obj.title_AMH = title_AMH
-            indicator_obj.title_ENG = title_ENG
-            indicator_obj.save()
-            messages.success(request, 'Successfully Updated')
-        else:
-            messages.error(request, 'Please Try again! ')
+#             indicator_obj = Indicator.objects.get(id = indicator_id)
+#             indicator_obj.title_AMH = title_AMH
+#             indicator_obj.title_ENG = title_ENG
+#             indicator_obj.save()
+#             messages.success(request, 'Successfully Updated')
+#         else:
+#             messages.error(request, 'Please Try again! ')
 
-    context = {
-        'indicators' : indicator_list,
-        'category' : category,
-        'form' : form,
-    }
-    return render(request, 'user-admin/indicators.html', context)
+#     context = {
+#         'indicators' : indicator_list,
+#         'category' : category,
+#         'form' : form,
+#     }
+#     return render(request, 'user-admin/indicators.html', context)
     
 #Category
 @login_required(login_url='login')
 @admin_user_required
 def category(request, category_id=None):
     catagory = Category.objects.all()
-    
+    formFile = ImportFileForm()
+
+
     if request.method == 'POST':
         catagory_id_str = request.POST.get('catagory_Id', '')
         if catagory_id_str.isdigit():
@@ -85,15 +90,30 @@ def category(request, category_id=None):
             category_instance = None
             form = catagoryForm(request.POST)
 
-        if form.is_valid():
-            form.save()
-            if category_instance:
-                messages.success(request, "Category has been successfully updated!")
+        if 'addcatagory' in request.POST:
+            if form.is_valid():
+                form.save()
+                if category_instance:
+                    messages.success(request, "Category has been successfully updated!")
+                else:
+                    messages.success(request, "Category has been successfully added!")
+                return redirect('user-admin-category')
             else:
-                messages.success(request, "Category has been successfully added!")
-            return redirect('user-admin-category')
-        else:
-            messages.error(request, "Value exists or please try again!")
+                messages.error(request, "Value exists or please try again!")
+        
+        if 'fileCategoryValue' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Category_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
     else:
         # GET request or form is not valid, display the form
@@ -107,10 +127,12 @@ def category(request, category_id=None):
         else:
             # Adding a new category
             form = catagoryForm()
+            formFile = ImportFileForm()
             
     context = {
         'form': form,
-        'catagorys': catagory
+        'catagorys': catagory,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/categories.html', context=context)
 
@@ -287,7 +309,7 @@ def json_measurement_byID(request, measurement_id=None):
     }
     return JsonResponse(context)
 
-from django.http import JsonResponse
+
 
 @login_required(login_url='login')
 def json(request):
@@ -551,16 +573,33 @@ def data_list_detail(request, pk):
 @admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
+    formFile = ImportFileForm()
     
     if request.method == 'POST':
-        if add_indicator.is_valid():
-            add_indicator.save()
-            messages.success(request, 'Successfully Added!')
-        else:
-            messages.error(request, 'Please Try Again!')
+        if 'formAddIndicator' in request.POST:
+            if add_indicator.is_valid():
+                add_indicator.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request, 'Please Try Again!')
+
+        if 'fileIndicatorFile' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Indicator_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
     
     context = {
         'add_indicator' : add_indicator,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -572,6 +611,7 @@ def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
     form = IndicatorForm(request.POST or None)
+    formFile = ImportFileForm()
     if request.method == "POST":
         if 'form_indicator_edit' in request.POST:
             form = IndicatorForm(request.POST)
@@ -601,12 +641,27 @@ def indicator_list(request, pk):
                 messages.success(request, 'Successfully Added!')
             else:
                 messages.error(request, 'Please Try again! ')
+        
+        if 'fileIndicatorFile' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Indicator_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
     context = {
         'indicators' : indicator_list,
         'category' : category,
         'form' : form,
         'add_indicator' : add_indicator,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -707,6 +762,8 @@ def delete_indicator(request,pk):
 def measurement(request):
     addMeasurementForm = MeasurementForm()
     editMeasurementForm = MeasurementForm()
+    addNewMeasurementForm = MeasurementForm()
+    formFile = ImportFileForm()
     if request.method == 'POST':
         if 'formAddMeasurement' in request.POST:
             addMeasurementForm = MeasurementForm(request.POST)
@@ -733,11 +790,35 @@ def measurement(request):
                 messages.success(request, 'Successfully Updated')
             else:
                 messages.error(request, 'Please Try Again!')
+        
+        if 'addNewMeasurementValue' in request.POST:
+            addNewMeasurementForm = MeasurementForm(request.POST)
+            if addNewMeasurementForm.is_valid():
+                addNewMeasurementForm.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request, 'Please Try Again!')
+        
+        if 'fileMeasurementFile' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Measurement_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
                 
     context = {
         'addMeasurementForm' : addMeasurementForm,
-        'editMeasurementForm' : editMeasurementForm
+        'editMeasurementForm' : editMeasurementForm,
+        'addNewMeasurementForm' : addNewMeasurementForm,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/measurement.html', context)
 
@@ -839,7 +920,7 @@ def delete_source(request,pk):
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
-    topics = Topic.objects.all()
+    topics = Topic.objects.filter(is_deleted = False)
 
     # If topic_id is provided, it's an update operation
     if topic_id:
@@ -852,23 +933,47 @@ def topic(request, topic_id=None):
             topic_instance = get_object_or_404(Topic, id=topic_id_from_post)
 
     # Initialize form with or without data
-    form = TopicForm(request.POST or None, instance=topic_instance)
+    form = TopicForm(instance=topic_instance)
+    formFile = ImportFileForm()
 
     if request.method == 'POST':
-        if form.is_valid():
-            obj = form.save(commit=False)
-            is_new_topic = obj.pk is None
-            obj.save()
+        if 'topicFormValue' in request.POST:
+            form = TopicForm(request.POST, instance=topic_instance)
+            if form.is_valid():
+                obj = form.save(commit=False)
+                is_new_topic = obj.pk is None
+                obj.save()
+    
+                success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
+                messages.success(request, success_message)
+    
+                return redirect('user-admin-topic')
+            else:
+                messages.error(request, "Value exists or please try again!")
+        
+        if 'fileTopicValue' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Topic_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
+    else:
+        form = TopicForm()
+        formFile = ImportFileForm(request.POST or None, request.FILES or None)
+    
 
-            success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
-            messages.success(request, success_message)
 
-            # Redirect to the same page if it's a new topic, otherwise, redirect with the topic_id
-            return redirect('user-admin-topic')
-        else:
-            messages.error(request, "Value exists or please try again!")
 
-    context = {'form': form, 'topics': topics, 'topic_id': topic_id}
+            
+
+    context = {'form': form, 'topics': topics, 'topic_id': topic_id, 'formFile' : formFile}
     return render(request, 'user-admin/topic.html', context=context)
 
 
