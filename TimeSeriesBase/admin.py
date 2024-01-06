@@ -59,7 +59,7 @@ def handle_uploaded_Topic_file(file):
         else:
             return False, f"Error importing data: Please review your Dcoument."
     except Exception as e:
-        return False, f"Error importing data: {str(e)}"
+        return False, f"Error importing data: Please review your Document."
     
 
 
@@ -78,15 +78,34 @@ class CategoryResource(resources.ModelResource):
                pass
             else :
                topic_name = row["topic"]
-               models.Topic.objects.get_or_create(title_ENG=topic_name, defaults={"title_ENG": topic_name, "title_ENG":topic_name})
+               models.Topic.objects.get_or_create(title_ENG=topic_name, defaults={"title_ENG": topic_name, "title_AMH":topic_name})
     
     class Meta:
         model = models.Category
-    
-
-
-
+        skip_unchanged = True
+        report_skipped = True
+        exclude = ( 'id', 'created_at', 'is_deleted')
+        import_id_fields = ('name_ENG', 'name_AMH','topic')
+        
 class CategoryAdmin(ImportExportModelAdmin):
     resource_classes = [CategoryResource]
 
 admin.site.register(models.Category, CategoryAdmin)
+
+def handle_uploaded_Category_file(file):
+    try:
+        resource  = CategoryResource()
+        dataset = tablib.Dataset()
+
+        imported_data = dataset.load(file.read())
+        result = resource.import_data(imported_data, dry_run=True)
+        if not result.has_errors():
+            resource.import_data(dataset, dry_run=False)  # Actually import now
+            return True, f"Data imported successfully: {len(dataset)} records imported."
+        else:
+            return False, f"Error importing data: Please review your Dcoument."
+    except Exception as e:
+        return False, f"Error importing data: Please review your Document."
+    
+
+

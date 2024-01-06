@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 from datetime import datetime, timezone
-from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file
+from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file
 from tablib import Dataset
 
 @login_required(login_url='login')
@@ -72,7 +72,9 @@ def indicator_list(request, pk):
 @admin_user_required
 def category(request, category_id=None):
     catagory = Category.objects.all()
-    
+    formFile = ImportFileForm()
+
+
     if request.method == 'POST':
         catagory_id_str = request.POST.get('catagory_Id', '')
         if catagory_id_str.isdigit():
@@ -87,15 +89,30 @@ def category(request, category_id=None):
             category_instance = None
             form = catagoryForm(request.POST)
 
-        if form.is_valid():
-            form.save()
-            if category_instance:
-                messages.success(request, "Category has been successfully updated!")
+        if 'addcatagory' in request.POST:
+            if form.is_valid():
+                form.save()
+                if category_instance:
+                    messages.success(request, "Category has been successfully updated!")
+                else:
+                    messages.success(request, "Category has been successfully added!")
+                return redirect('user-admin-category')
             else:
-                messages.success(request, "Category has been successfully added!")
-            return redirect('user-admin-category')
-        else:
-            messages.error(request, "Value exists or please try again!")
+                messages.error(request, "Value exists or please try again!")
+        
+        if 'fileCategoryValue' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, message = handle_uploaded_Category_file(file)
+                
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+    
+            else:
+                messages.error(request, 'File not recognized')
 
     else:
         # GET request or form is not valid, display the form
@@ -109,10 +126,12 @@ def category(request, category_id=None):
         else:
             # Adding a new category
             form = catagoryForm()
+            formFile = ImportFileForm()
             
     context = {
         'form': form,
-        'catagorys': catagory
+        'catagorys': catagory,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/categories.html', context=context)
 
@@ -855,7 +874,7 @@ def topic(request, topic_id=None):
 
     # Initialize form with or without data
     form = TopicForm(instance=topic_instance)
-    formFile = TopicImportFileForm()
+    formFile = ImportFileForm()
 
     if request.method == 'POST':
         if 'topicFormValue' in request.POST:
@@ -873,7 +892,7 @@ def topic(request, topic_id=None):
                 messages.error(request, "Value exists or please try again!")
         
         if 'fileTopicValue' in request.POST:
-            formFile = TopicImportFileForm(request.POST, request.FILES )
+            formFile = ImportFileForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
                 success, message = handle_uploaded_Topic_file(file)
@@ -887,7 +906,7 @@ def topic(request, topic_id=None):
                 messages.error(request, 'File not recognized')
     else:
         form = TopicForm()
-        formFile = TopicImportFileForm(request.POST or None, request.FILES or None)
+        formFile = ImportFileForm(request.POST or None, request.FILES or None)
     
 
 
