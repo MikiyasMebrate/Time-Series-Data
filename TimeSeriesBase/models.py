@@ -13,8 +13,8 @@ from decimal import Decimal
 
 
 class Topic(models.Model):
-    title_ENG = models.CharField(max_length=50)
-    title_AMH = models.CharField(max_length=50, null = True)
+    title_ENG = models.CharField(max_length=300, unique = True)
+    title_AMH = models.CharField(max_length=300, null = True)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
@@ -24,8 +24,8 @@ class Topic(models.Model):
     
 
 class Category(models.Model):
-    name_ENG = models.CharField(max_length=50)
-    name_AMH = models.CharField(max_length=50)
+    name_ENG = models.CharField(max_length=300, unique = True)
+    name_AMH = models.CharField(max_length=300, unique = True)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)
@@ -42,8 +42,8 @@ data_point_type = [
 
 
 class Indicator(models.Model):
-    title_ENG = models.CharField(max_length=100) 
-    title_AMH = models.CharField(max_length=100 , null=True, blank=True)
+    title_ENG = models.CharField(max_length=300) 
+    title_AMH = models.CharField(max_length=300 , null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)

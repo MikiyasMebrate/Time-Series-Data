@@ -5,33 +5,35 @@ rel="stylesheet"
 />
 <!--Side NavBar Start-->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-  <a href="" class="brand-link pt-3 mt-3">
+  {% comment %} <a href="" class="brand-link pt-3 mt-3">
     <img
       src="{% static  'assets/image/EPCD-Logo-Final-White-NoBg-Hi-res.png' %}"
       alt="AdminLTE Logo"
       class="brand-image img-circle elevation-3"
     />
     <span class="brand-text active font-weight-light mb-2">Time Series Data</span>
-  </a>
+  </a> {% endcomment %}
 
   <div class="sidebar">
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
       <div class="info">
         
-            
+                   
        <div class="text-center">
-        <a href="{% url 'user-admin-index'%}">
-          <img class="img-circle  img-fluid  " width="4.1rem"  src="{% static 'assets/image/EPCD-Logo-Final-White-NoBg-Hi-res.png'%}"  alt="Profile Picture">
-          <div class="row justify-content-center text-white text-center m-0 p-0">
-            <div class="col-12">
-              <p class=" p-0 m-0 ">Welcome</p>
-            </div>
-            <div class="col-12">
-              <p class="text-white active ">{{request.user.first_name}} {{request.user.last_name}}</p>
-            </div>
+       <a href="{% url 'user-admin-index'%}">
+         <img class="img-circle  img-fluid  " width="4.1rem"  src="{% static 'assets/image/EPCD-Logo-Final-White-NoBg-Hi-res.png'%}"  alt="Profile Picture">
+         <div class="row justify-content-center text-white text-center m-0 p-0">
+          <div class="col-12">
+            <p class=" p-0 m-0 ">Welcome</p>
           </div>
-          </a>
-       </div>                   
+          <div class="col-12">
+            <p class="text-white active ">{{request.user.first_name}} {{request.user.last_name}}</p>
+          </div>
+         </div>
+        </a>
+       </div>                
+       
+        
       </div>
     </div>
 
@@ -80,7 +82,7 @@ rel="stylesheet"
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview">
+          <ul class="nav nav-treeview ms-3">
             <li class="nav-item">
               <a href="{% url 'user-admin-data-list'%}" class="nav-link {% if request.path == '/user-admin/data-list/' %}active{% endif %}">
                 <i class="bi bi-clipboard-data"></i>
@@ -143,7 +145,6 @@ rel="stylesheet"
         </li>
       </ul>
     </nav>
-    
   </div>
 </aside>
 <!--Side Navbar End-->
