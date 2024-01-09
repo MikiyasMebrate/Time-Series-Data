@@ -22,14 +22,15 @@
       <form name="restoretrash" method="post">
         {% csrf_token %}
         <div class="modal-body text-center fs-4">
-          <p>Are you sure you want to restore this topic?</p>
+            <p>Are you sure you want to restore this topic?</p>
         </div>
         <div class="modal-footer">
-          <input type="hidden" name="source_id" id="topic_id_input">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-danger" id="confirmRestore">Yes</button>
+            <input type="hidden" name="year_id" id="topic_id_input">  <!-- Change source_id to year_id -->
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-danger" id="confirmRestore">Yes</button>
         </div>
-      </form>
+    </form>
+    
     </div>
   </div>
 </div>
@@ -54,10 +55,10 @@
             <a class="nav-link ml-5 " href="{% url 'trash-category' %}"><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Categories</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link ml-5 active" href="{% url 'trash-source' %}" ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
+            <a class="nav-link ml-5" href="{% url 'trash-source' %}" ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link ml-5" href="{% url 'trash-year' %}" ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Year</a>
+            <a class="nav-link ml-5 active" href="{% url 'trash-year' %}" ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Year</a>
           </li>
         </ul>
         <hr>
@@ -94,24 +95,24 @@
                     <div class="row justify-content-center">
                       <div class="col-md-12">
                         <div class="table-responsive border p-3 shadow">
-                          <table id="deletdSourceTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
+                          <table id="deletdyearTable" class="table table-striped table-hover table-sm"  style="width: 100%;">
                             <thead >
                               <tr>
-                                <th>Name English</th>
-                                <th>Name Amharic</th>
+                                <th>Year E.C</th>
+                                <th>Year E.C</t>
                                 <th>Created Date</th>
                                 <th>Action</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {% for source in recycled_sources %}
+                              {% for year in recycled_year %}
                               <tr>
-                                <td>{{ source.title_ENG }}</td>
-                                <td>{{ source.title_AMH }}</td>
-                                <td>{{ source.created|date:'F d, Y' }}</td>
+                                <td>{{ year.year_EC }}</td>
+                                <td>{{ year.year_GC }}</td>
+                                <td>{{ year.created_at|date:'F d, Y' }}</td>
                                 <td>
                                   <div class="d-flex justify-content-around text-center">
-                                    <button type="button" name="trashRestore" data-item-id="{{ source.id }}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash">
+                                    <button type="button" name="trashRestore" data-item-id="{{ year.id }}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash">
                                       <i class="fas fa-trash-restore"></i>
                                     </button>
                                   </div>
@@ -153,27 +154,27 @@
           $(document).ready(function() {
             // Listen for button click and set topic_id value in the modal form
             $('.btn-outline-warning').on('click', function() {
-              var sourceId = $(this).data('item-id');
-              $('#restoreModaltrash form').attr('action', '{% url "trash-source" %}');
-              $('#restoreModaltrash form input[name="source_id"]').val(sourceId);
+              var yearId = $(this).data('item-id');
+              $('#restoreModaltrash form').attr('action', '{% url "trash-year" %}');
+              $('#restoreModaltrash form input[name="year_id"]').val(yearId);
             });
           });
         </script>
 
         <script>
-          $(document).ready(function () {
-    $("#deletdSourceTable")
-      .DataTable({
-        responsive: true,
-        lengthChange: true,
-        autoWidth: false,
-        buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
-      })
-      .buttons()
-      .container()
-      .appendTo("#deletdSourceTable_wrapper .col-md-6:eq(0)")
-  });
-</script>
+            $(document).ready(function () {
+             $("#deletdyearTable")
+            .DataTable({
+                 responsive: true,
+                 lengthChange: true,
+                 autoWidth: false,
+                 buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
+             })
+            .buttons()
+            .container()
+            .appendTo("#deletdyearTable_wrapper .col-md-6:eq(0)");
+            });   
+        </script>
         
         
   </body>

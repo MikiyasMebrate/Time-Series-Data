@@ -245,6 +245,25 @@ def json_filter_source(request):
     return JsonResponse({'sources': sources_data}) 
 
 @login_required(login_url='login')
+def json_filter_year(request):
+    Years = DataPoint.objects.all()
+
+    # Creating a list of dictionaries representing each source
+    Year_data = []
+    for Year in Years:
+        Year_data.append({
+            'id': Year.id,
+            'Year_EC': Year.year_EC,
+            'Year_GC': Year.year_GC,
+            'updated': Year.updated_at.isoformat(),
+            'created': Year.created_at.isoformat(),
+            'is_deleted': Year.is_deleted,
+        })
+
+    # Returning the list as JSON
+    return JsonResponse({'years': Year_data}) 
+
+@login_required(login_url='login')
 def json_filter_topic(request):
     topics = Topic.objects.all()
     topics_data = []
@@ -878,8 +897,6 @@ def source(request, source_id=None):
     }
     return render(request, 'user-admin/source.html', context=context)
 
-
-
 @login_required(login_url='login')
 @admin_user_required
 def source_detail(request, pk):
@@ -1032,7 +1049,7 @@ def delete_topic(request,pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
  
- 
+
 #Data Point 
 @login_required(login_url='login')
 @admin_user_required
@@ -1119,8 +1136,6 @@ def delete_data_point(request, pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
     
-
-
 #Month
 @login_required(login_url='login')
 @admin_user_required
@@ -1271,6 +1286,9 @@ def restore_indicator(request, pk):
     messages.success(request, "Successfully Restored!")
     return HttpResponseRedirect(previous_page)
 
+
+@login_required(login_url='login')
+@admin_user_required
 def month_data(request, month_id):
     indicator = Indicator.objects.get(pk=month_id)
     months = Month.objects.all()
@@ -1296,6 +1314,8 @@ def month_data(request, month_id):
     return JsonResponse(data_set, safe=False)
 
 
+@login_required(login_url='login')
+@admin_user_required
 def quarter_data(request, quarter_id):
     indicator = Indicator.objects.get(pk=quarter_id)
     quarters = Quarter.objects.all()
@@ -1341,9 +1361,99 @@ def quarter_data(request, quarter_id):
     return JsonResponse(data_set, safe=False)
 
 
+@login_required(login_url='login')
+@admin_user_required
+def year_add(request, year=None):
+    years = DataPoint.objects.all()  # Rename sources to years
 
+    if request.method == 'POST':
+        if 'year' in request.POST:
+            # Editing an existing year
+            year_instance = get_object_or_404(DataPoint, id=request.POST['year'])
+            form = YearForm(request.POST, instance=year_instance)
+        else:
+            # Adding a new year
+            form = YearForm(request.POST)
 
+        if form.is_valid():
+            form.save()
+            if 'year' in request.POST:
+                messages.success(request, "Year has been successfully updated!")
+            else:
+                messages.success(request, "Year has been successfully added!")
+            return redirect('user-admin-year')
+        else:
+            messages.error(request, "Value exists or please try again!")
 
+    else:
+        # GET request or form is not valid, display the form
+        if year:
+            # Editing an existing year, populate the form with existing data
+            year_instance = get_object_or_404(DataPoint, id=year)
+            form = YearForm(instance=year_instance)
+        else:
+            # Adding a new year
+            form = YearForm()
 
+    context = {
+        'form': form,
+        'years': years,  # Update sources to years
+    }
+    return render(request, 'user-admin/add_year.html', context=context)
 
+@login_required(login_url='login')
+@admin_user_required
+def delete_year(request,pk):
+    year = DataPoint.objects.get(pk=pk)
+    previous_page = request.META.get('HTTP_REFERER')
+    
+    # Soft delete the category
+    year.is_deleted = True
+    year.save()
 
+    # Optionally, you can soft delete related objects here if needed
+    
+    messages.success(request, "Successfully Deleted!")
+    return HttpResponseRedirect(previous_page)
+
+@login_required(login_url='login')
+@admin_user_required
+def year_detail(request, pk):
+    source = Source.objects.get(pk=pk)
+    
+    form = SourceForm(request.POST or None, instance=source)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('user-admin-source')
+        else:
+            messages.error(request, 'Value Exist or Please try Again!')
+    context = {
+        'form' : form,
+        'source' : source
+    }  
+    return render(request, 'user-admin/source_detail.html', context)
+
+@login_required(login_url='login')
+@admin_user_required
+def trash_year(request):
+    if request.method == 'POST':
+        year_id = request.POST.get('year_id')
+        print('year', year_id)
+        if year_id:
+            year = get_object_or_404(DataPoint, pk=year_id)
+            print('year',year)
+            year.is_deleted = False
+            year.save()
+            messages.success(request, 'Year restored successfully.')
+            return redirect('trash-year')
+        else:
+            messages.error(request, 'Failed to restore Year.')
+
+    recycled_year = DataPoint.objects.filter(is_deleted=True)
+    context = {'recycled_year': recycled_year}
+    return render(request, 'user-admin/trash_year.html', context)

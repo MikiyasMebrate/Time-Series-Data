@@ -7,6 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DPMEs</title>
+  <link rel="stylesheet" href="{% static 'assets/css/homepage.css' %}">
   {% include 'user-admin/include/head.html'%}
   <!--High Chart-->
   <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -109,8 +110,7 @@
 
 
                   <h4 class="text-primary"> <i class="bi bi-buildings"></i></i>Total source</p>
-                    <h3 class="text-primary">{{size_source}}
-                    </h3>
+                    <h3 class="text-primary">{{size_source}}</h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-bag"></i>
@@ -141,6 +141,29 @@
               </figure>
             </div>
              <!--Random Year Graph End-->
+
+            <!--Year 2-->
+            <div class="col-lg-6 ">
+              <div class="pt-4">
+                <figure class="highcharts-figure">
+                  <div class='mt-1' id="drilldown"></div>
+              </figure>
+              </div>
+            </div>
+
+                        <!--Year 2-->
+            <div class="col-lg-6">
+              <div id="outer-container">
+
+                <div class="controls d-flex justify-content-center pl-1 ">
+                  <button id="start">
+                    Start
+                  </button>
+                </div>
+                
+                <div id="live_data"></div>
+              </div>
+            </div>
 
 
              <h6 class="text-muted p-2">Random Monthly Category</h6>
@@ -207,6 +230,10 @@
 
   {% include 'user-admin/include/footer_js.html'%}
 
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
   <script>
     $(document).ready(function () {
       $("#tableIndicator").DataTable({

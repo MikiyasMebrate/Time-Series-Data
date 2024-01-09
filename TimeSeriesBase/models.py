@@ -22,7 +22,6 @@ class Topic(models.Model):
     def __str__(self):
         return self.title_ENG
     
-
 class Category(models.Model):
     name_ENG = models.CharField(max_length=50)
     name_AMH = models.CharField(max_length=50)
@@ -33,13 +32,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name_ENG
 
-
 data_point_type = [
     ('yearly', 'Yearly'),
     ('quarterly', 'Quarterly'),
     ('monthly', 'Monthly'),
 ]
-
 
 class Indicator(models.Model):
     title_ENG = models.CharField(max_length=100) 
@@ -250,8 +247,6 @@ def call_my_function(sender, instance, created, **kwargs):
     else:  
         instance.calculate_parent_value()
 
-
-
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
@@ -260,7 +255,6 @@ class Source(models.Model):
     is_deleted = models.BooleanField(default = False)
     def __str__(self):
         return self.title_ENG
-
 
 
 auditlog.register(Topic)

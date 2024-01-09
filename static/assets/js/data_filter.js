@@ -106,7 +106,6 @@ function updateFilterSelection() {
   }
   if (indicatorSelected === 0) {
     document.getElementById('search_attr3').style.display = 'none'
-    console.log('indicator selected', indicatorSelected)
     document.getElementById("Year_list_filter").innerHTML =
       ' <p class="text-danger">Please Select Indicator </p>';
     document.getElementById('yearAvailableBadge').innerHTML = 0;
@@ -458,7 +457,7 @@ function filterData() {
         // document.getElementById('search_attr').style.display = 'block'
         var selectedTopicId = event.target.value;
         document.getElementById("Year_list_filter").innerHTML =
-          ' <p class="text-danger">Please Select Indicator okk</p>';
+          ' <p class="text-danger">Please Select Indicator </p>';
         document.getElementById(
           "indicator_list_filter_header"
         ).innerHTML =
@@ -1321,6 +1320,10 @@ function filterData() {
                   ],
                   dom: "Bfrtip",
                   buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                  drawCallback: function (settings) {
+                    // Add color to columns (excluding first column) after each draw
+                    $("#newTable tbody tr td:not(:first-child)").css("background-color", "#f2f2f2");
+                  },
                 });
               });
             };
@@ -1534,6 +1537,10 @@ function filterData() {
                     ,
                     "print",
                   ],
+                  drawCallback: function (settings) {
+                    // Add color to columns (excluding first column) after each draw
+                    $("#newTable tbody tr td:not(:first-child):not(:nth-child(2))").css("background-color", "#f2f2f2")
+                  },
                   dom: "Bfrtip",
                 });
               });
@@ -1751,6 +1758,10 @@ function filterData() {
                     ,
                     "print",
                   ],
+                  drawCallback: function (settings) {
+                    // Add color to columns (excluding first column) after each draw
+                    $("#newTable tbody tr td:not(:first-child):not(:nth-child(2))").css("background-color", "#f2f2f2");
+                  },
                   dom: "Bfrtip",
                 });
               });
@@ -1768,6 +1779,7 @@ function filterData() {
 
             dataListViewTable.innerHTML = table;
             table = "";
+          
           });
 
           //End Indicator table
@@ -1796,15 +1808,11 @@ function filterData() {
 
             $(document).ready(function () {
               document.getElementById('titleForCatagory').innerHTML = theSelectedCatagory.name_ENG
-
               const labelElement = document.getElementById('select_label');
               const selectElement = document.querySelector('.indicatorDropdown');
-              console.log('indicator type', indicatorSelectedType)
 
 
               if (indicatorSelectedType === 'yearly') {
-                console.log('hello from yearly ')
-                console.log(indicatorSelectedType)
                 let area_main = document.getElementById('main_area')
                 area_main.style.display = 'block'
                 const datasetDropdown = document.getElementById('drop');
@@ -1904,7 +1912,7 @@ function filterData() {
                 };
 
 
-                console.log('indicators from yearly', indicators)
+
                 // Select all elements with the class "indicatorDropdown"
                 const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
 
@@ -2098,9 +2106,6 @@ function filterData() {
                   }
 
                   function update() {
-                    console.log('Update function called');
-                    console.log('alldata:', alldata);
-
                     if (!alldata || !alldata.length || !alldata[0] || !alldata[0].data) {
                       console.error('alldata, alldata[0], or alldata[0].data is undefined.');
                       return;
@@ -2190,7 +2195,6 @@ function filterData() {
                   }
 
                   function play(button) {
-                    console.log('Play function called');
                     // Reset slider at the end
                     if (input.value >= endYear) {
                       input.value = startYear;
@@ -2393,8 +2397,6 @@ function filterData() {
 
               }
               else if (indicatorSelectedType === 'monthly') {
-                console.log('hello from monthly');
-                console.log(indicatorSelectedType)
                 let area_main = document.getElementById('main_area')
                 area_main.style.display = 'none'
                 let incicator_drop1 = document.getElementById('drop_first')
@@ -2458,7 +2460,6 @@ function filterData() {
                   indicators.push({ id, title_ENG });
                 });
 
-                console.log('indicators from month', indicators)
                 // Select all elements with the class "indicatorDropdown"
                 const dropdowns = document.querySelectorAll(`.indicatorDropdown1`);
                 dropdowns.forEach((dropdown, index) => {
@@ -2549,7 +2550,6 @@ function filterData() {
                   // Function to create the dataset dropdown
                   function createDatasetDropdown(chartData) {
                     const datasetDropdown = document.querySelector('.datasetDropdown');
-                    console.log('hello')
 
                     // Clear existing options
                     datasetDropdown.innerHTML = '';
@@ -2665,8 +2665,6 @@ function filterData() {
                 })();
               }
               else {
-                console.log('hello from quarterly');
-                console.log(indicatorSelectedType)
                 let area_main = document.getElementById('main_area')
                 area_main.style.display = 'none'
                 let incicator_drop1 = document.getElementById('drop_first')
@@ -2732,7 +2730,6 @@ function filterData() {
                   indicators.push({ id, title_ENG });
                 });
 
-                console.log('indicators from quarter', indicators)
                 // Select all elements with the class "indicatorDropdown"
                 const dropdowns = document.querySelectorAll(`.indicatorDropdown2`);
                 dropdowns.forEach((dropdown, index) => {
@@ -2889,7 +2886,6 @@ function filterData() {
                   // Function to create the dataset dropdown
                   function createDatasetDropdown(chartData) {
                     const datasetDropdown = document.querySelector('.datasetDropdown1');
-                    console.log('hello')
 
                     // Clear existing options
                     datasetDropdown.innerHTML = '';

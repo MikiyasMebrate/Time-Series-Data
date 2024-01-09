@@ -112,6 +112,12 @@ rel="stylesheet"
               </a>
             </li>
             <li class="nav-item">
+              <a href="{% url 'user-admin-year'%}" class="nav-link {% if request.path == '/user-admin/year/' %}active{% endif %}">
+                <i class="bi bi-calendar-date"></i>
+                <p>Years</p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="{% url 'user-admin-source'%}" class="nav-link {% if request.path == '/user-admin/source/' %}active{% endif %}">
                 <i class="bi bi-buildings"></i>
                 <p>Sources</p>
