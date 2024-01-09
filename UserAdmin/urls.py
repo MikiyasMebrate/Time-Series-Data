@@ -12,11 +12,13 @@ urlpatterns = [
     path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),
     path('json-filter-catagory/', views.filter_catagory_json, name='json_filter_catagory'),
     path('json-filter-source/', views.json_filter_source, name='json_filter_source'),
+    path('json-filter-year/', views.json_filter_year, name='json_filter_year'),
     path('json-filter-measurement/', views.json_measurement, name='json_measurement'),
     # URL for fetching a specific measurement by ID
     path('json-filter-measurement/<int:measurement_id>/', views.json_measurement_byID, name='json_measurement_by_id'),
     path('json-filter-month/<int:month_id>/', views.month_data, name='json_month_by_id'),
-    
+    path('json-filter-quaarter/<int:quarter_id>/', views.quarter_data, name='json_month_by_id'),
+
     #Category
     path('category/', views.category, name="user-admin-category"),
     path('category/<int:pk>', views.catagory_detail, name="user-catagory-detail"),
@@ -51,6 +53,12 @@ urlpatterns = [
     path('source/<int:pk>', views.source_detail, name="user-source-detail"),
     path('source-delete/<int:pk>', views.delete_source, name='user-source-delete'),
 
+        #source
+    path('year/', views.year_add, name="user-admin-year"),
+    path('year/<int:pk>', views.year_detail, name="user-year-detail"),
+    path('year-delete/<int:pk>', views.delete_year, name='user-year-delete'),
+
+
     #topic
     path('topic/', views.topic, name="user-admin-topic"),
     path('topic/<int:pk>', views.topic_detail, name="user-topic-detail"),
@@ -63,6 +71,7 @@ urlpatterns = [
     path('trash-indicator/', views.trash_indicator, name="trash-indicator"),
     path('trash-category/', views.trash_category,name="trash-category"),
     path('trash-source/', views.trash_source, name='trash-source'),
+    path('trash-year/', views.trash_year, name='trash-year')
 
 ]
     

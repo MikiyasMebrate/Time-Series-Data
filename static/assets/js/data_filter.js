@@ -80,7 +80,37 @@ function updateFilterSelection() {
   indicatorSelected = $('input[name="indicator_lists"]:checked').length;
   yearSelected = $('input[name="yearListsCheckBox"]:checked').length;
 
-  // Update the UI or perform any other actions based on the counts
+  if (catargorySelected == 0) {
+    document.getElementById('search_attr1').style.display = 'none'
+    document.getElementById(
+      "indicator_list_filter_header"
+    ).innerHTML =
+      ' <p class="text-danger">Please Select Category</p>';
+    document.getElementById("indicator_list_filter_body").innerHTML =
+      "";
+    document.getElementById("indicator_list_filter_select_all").innerHTML =
+      "";
+  }
+  if (databaseSelected == 0) {
+    document.getElementById('search_attr').style.display = 'none'
+    document.getElementById("Year_list_filter").innerHTML =
+      ' <p class="text-danger">Please Select Indicator </p>';
+    document.getElementById(
+      "indicator_list_filter_header"
+    ).innerHTML =
+      ' <p class="text-danger">Please Select Category</p>';
+    document.getElementById("indicator_list_filter_body").innerHTML =
+      "";
+    document.getElementById("indicator_list_filter_select_all").innerHTML =
+      "";
+  }
+  if (indicatorSelected === 0) {
+    document.getElementById('search_attr3').style.display = 'none'
+    document.getElementById("Year_list_filter").innerHTML =
+      ' <p class="text-danger">Please Select Indicator </p>';
+    document.getElementById('yearAvailableBadge').innerHTML = 0;
+  }
+
   // Only update if the length is greater than 0 and the count has changed
   if (prevCatargoryCount !== catargorySelected || catargorySelected > 0) {
     document.getElementById('categorySelectedBadge').innerHTML = catargorySelected;
@@ -132,49 +162,84 @@ function filterData() {
       };
       //Return Selected Year
       let yearTableList = [];
+      let searchTermYear = "";
 
-      let yearList = () => {
-        yearTableList = [];
-        //Year list
-        let selectYear = data.year.map(
-          ({ id, year_EC, year_GC, is_interval }) => {
-            if (!is_interval) {
-              return `
-            <li>
+      //-------------------------- Function to create a filter item for year -----------------------------
+      // Function to update the year filter based on the search term
+      function updateYearFilter(searchTerm) {
+        searchTermYear = searchTerm;
+
+        // Check if there are no results and display a message
+        let yearListBody = document.getElementById('Year_list_filter');
+        let filteredYearCheckboxes = yearListBody.querySelectorAll('input[name="yearListsCheckBox"]:checked');
+
+        if (searchTerm === "" && filteredYearCheckboxes.length === 0) {
+          // If the search term is empty and there are no selected checkboxes, display recent year buttons
+          let recentYearButtonsStyle = searchTermYear ? 'display: none;' : '';
+          var viewRecentYear = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
+            '<div class="filter-submenu mb-2" style="' + recentYearButtonsStyle + '">' +
+            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
+            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button>' +
+            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button>' +
+            '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_20_year">20</button>' +
+            '</div>';
+          yearListBody.innerHTML = viewRecentYear;
+          // Call the yearList function to display all years
+          yearList();
+        } else {
+          // If there is a search term or selected checkboxes, call yearList function
+          yearList();
+        }
+      }
+
+      // Function to create an individual year checkbox
+      function createYearCheckbox(id, year_EC, year_GC) {
+        return `
+          <li>
             <div class="flex-grow-2 filter-submenu"">
-               <div class="row ">
-                  <div class="col-1"> 
-                       <input  type="checkbox" value=${id} name="yearListsCheckBox" id="yearList${id}">
-                  </div>
-                  <div class="col-11">
-                     <label class="form-label" for="yearList${id}" style="font-size: small;">${year_EC} E.C  - ${year_GC} G.C </label></div>
-                 </div>
+              <div class="row ">
+                <div class="col-1"> 
+                  <input type="checkbox" value=${id} name="yearListsCheckBox" id="yearList${id}">
+                </div>
+                <div class="col-11">
+                  <label class="form-label" for="yearList${id}" style="font-size: small;">${year_EC} E.C - ${year_GC} G.C</label>
+                </div>
               </div>
             </div>
           </li>
-            `;
-            }
+        `;
+      }
+      //--------------------------End of  Function to create a filter item for Topic -----------------------------
+      let yearList = () => {
+        yearTableList = [];
+        //Year list
+        let selectYear = data.year.map(({ id, year_EC, year_GC, is_interval }) => {
+          if (!is_interval && year_EC.toLowerCase().includes(searchTermYear.toLowerCase())) {
+            // Call your existing function to create the year checkbox
+            return createYearCheckbox(id, year_EC, year_GC);
           }
-        );
+        }).reverse();
 
         let selectYearAll = `
-        <li>
-          <div class="flex-grow-2 filter-submenu"">
-             <div class="row ">
+          <li>
+            <div class="flex-grow-2 filter-submenu"">
+              <div class="row ">
                 <div class="col-1"> 
-                     <input class='form-check' type="checkbox"  id="select_all_year_filter">
+                  <input class='form-check' type="checkbox"  id="select_all_year_filter">
                 </div>
                 <div class="col-11">
-                   <label class="form-label" for="select_all_year_filter" style="font-size: small;">Select All</label></div>
-               </div>
-               <hr>
+                  <label class="form-label" for="select_all_year_filter" style="font-size: small;">Select All</label></div>
+              </div>
+              <hr>
             </div>
-          </div>
-        </li>
+          </li>
         `;
 
-        var viewRecentYear = '<p class="m-0 mb-1 fw-bold">View Recent Year</p>' +
-          '<div class="filter-submenu mb-2">' +
+        // Check if the search term is empty to determine whether to hide the recent year buttons
+        let recentYearButtonsStyle = searchTermYear ? 'display: none;' : '';
+
+        var viewRecentYear = '<p class="m-0 mb-1 fw-bold" style="' + recentYearButtonsStyle + '">View Recent Year</p>' +
+          '<div class="filter-submenu mb-2" style="' + recentYearButtonsStyle + '">' +
           '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_5_year">5</button>' +
           '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_10_year">10</button>' +
           '  <button class="ms-1 btn btn-outline-primary text-primary bg-white" id="last_15_year">15</button>' +
@@ -188,26 +253,26 @@ function filterData() {
         let selectAllYear = document.getElementById("select_all_year_filter");
 
         selectAllYear.addEventListener("change", () => {
-          let yearListCheckAll =
-            document.getElementsByName("yearListsCheckBox");
+          let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
+        
           if (selectAllYear.checked) {
+            yearTableList = data.year
+              .filter(({ id, year_EC, year_GC, is_interval }) => {
+                return !is_interval && year_EC.toLowerCase().includes(searchTermYear.toLowerCase());
+              })
+              .map(({ id, year_EC, year_GC }) => [id, year_EC, year_GC]);
+        
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = true;
-              yearTableList = data.year.map(
-                ({ id, year_EC, year_GC, is_interval }) => {
-                  if (!is_interval) {
-                    return [id, year_EC, year_GC];
-                  }
-                }
-              );
             });
           } else {
+            yearTableList = [];
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = false;
-              yearTableList = [];
             });
           }
         });
+        
 
         let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
 
@@ -227,7 +292,6 @@ function filterData() {
             }).filter(Boolean);
           });
         });
-
 
         //Selected Year
         yearListCheckAll.forEach((yearCheckBox) => {
@@ -287,6 +351,13 @@ function filterData() {
         });
       };
 
+      // Event listener for the year search input
+      document.getElementById('filterYearSearch').addEventListener('input', function (event) {
+        var searchTerm = event.target.value;
+        updateYearFilter(searchTerm);
+      });
+
+
       // Process topics
       databaseCount = 0;
       var selectTopic = data.topics.map(function (topic) {
@@ -302,9 +373,99 @@ function filterData() {
 
       $('#topic_list_filter').html(selectTopic);
 
+      //-------------------------- Function to create a filter item for topic -----------------------------
+      // Function to create a filter item for topics
+      function createFilterItemTopic(topic) {
+        return '<div class="filter-submenu flex-grow-2">' +
+          '  <input type="radio" value="' + topic.id + '" name="topic_lists" id="topic_list' + topic.id + '">' +
+          '  <label for="topic_list' + topic.id + '" style="font-size: small;" class="mb-0">' + topic.title_ENG + ' - ' + topic.title_AMH + '</label>' +
+          '</div>';
+      }
+
+      function updateTopicBadge(count) {
+        document.getElementById('databaseAvailableBadge').innerHTML = count;
+      }
+
+      // Function to update the topics filter based on the search term
+      function updateFilterTopic(searchTerm) {
+        // Check if data.topics is defined and is an array
+        if (data.topics && Array.isArray(data.topics)) {
+          var filteredTopics = data.topics.filter(function (topic) {
+            return topic.is_deleted === false &&
+              (topic.title_ENG.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                topic.title_AMH.toLowerCase().includes(searchTerm.toLowerCase()));
+          });
+
+          var topicListBody = document.getElementById('topic_list_filter');
+
+          if (filteredTopics.length === 0) {
+            // Display a message indicating no data found
+            topicListBody.innerHTML = '<div class="filter-submenu flex-grow-2"><p class="text-info text-center">No data found</p></div>';
+          } else {
+            // Populate the list with filtered topics
+            var selectTopic = filteredTopics.map(createFilterItemTopic).join('');
+            topicListBody.innerHTML = selectTopic;
+          }
+
+          updateTopicBadge(filteredTopics.length);
+        } else {
+          console.error('Error: data.topics is not defined or is not an array');
+        }
+      }
+
+      // Function to sort Topics A-Z
+      function sortAZTopic() {
+        if (data && data.topics && Array.isArray(data.topics)) {
+          var sortedTopics = data.topics.filter(topic => topic.is_deleted === false)
+            .sort((a, b) => a.title_ENG.localeCompare(b.title_ENG));
+
+          var selectTopic = sortedTopics.map(createFilterItemTopic).join('');
+          document.getElementById('topic_list_filter').innerHTML = selectTopic;
+        } else {
+          console.error('Error: data.topics is not defined or is not an array');
+        }
+      }
+
+      // Function to sort Topics Z-A
+      function sortZATopic() {
+        if (data && data.topics && Array.isArray(data.topics)) {
+          var sortedTopics = data.topics.filter(topic => topic.is_deleted === false)
+            .sort((a, b) => b.title_ENG.localeCompare(a.title_ENG));
+
+          var selectTopic = sortedTopics.map(createFilterItemTopic).join('');
+          document.getElementById('topic_list_filter').innerHTML = selectTopic;
+        } else {
+          console.error('Error: data.topics is not defined or is not an array');
+        }
+      }
+      // Event listener for the search input
+      document.getElementById('filterDatabaseSearch').addEventListener('input', function (event) {
+        var searchTerm = event.target.value;
+        updateFilterTopic(searchTerm);
+        updateFilterSelection()
+      });
+      // Event listeners for sorting buttons
+      document.getElementById('sortAZDatabase').addEventListener('click', sortAZTopic);
+      document.getElementById('sortZADatabase').addEventListener('click', sortZATopic);
+
+      //--------------------------End of Function to create a filter item for topic -----------------------------
+
+
       document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
-      $('input[name="topic_lists"]').on('change', function (event) {
+      $(document).on('change', 'input[name="topic_lists"]', function (event) {
+        document.getElementById('serach_atrr').style.display = 'block'
+        // document.getElementById('search_attr').style.display = 'block'
         var selectedTopicId = event.target.value;
+        document.getElementById("Year_list_filter").innerHTML =
+          ' <p class="text-danger">Please Select Indicator </p>';
+        document.getElementById(
+          "indicator_list_filter_header"
+        ).innerHTML =
+          ' <p class="text-danger">Please Select Category</p>';
+        document.getElementById("indicator_list_filter_body").innerHTML =
+          "";
+        document.getElementById("indicator_list_filter_select_all").innerHTML =
+          "";
 
         // Process categories
         catargoryCount = 0;
@@ -319,17 +480,80 @@ function filterData() {
           return '';
         }).join('');
         document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
+
         $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
           updateFilterSelection();
         });
 
         $('#category_list_filter').html(selectCategory);
 
+        //-------------------------- Function to create a filter item for cataggory -----------------------------
+        function createFilterItem(category) {
+          return '<div class="filter-submenu">' +
+            '  <input type="radio" value="' + category.id + '" name="category_lists" id="category_list' + category.id + '">' +
+            '  <label class="form-label" for="category_list' + category.id + '" style="font-size: small;">' + category.name_ENG + ' - ' + category.name_AMH + '</label>' +
+            '</div>';
+        }
 
-        $('input[name="category_lists"]').on('change', function (eventCategory) {
+        // Function to update the filter based on the search term
+        function updateFilter(searchTerm) {
+          var filteredCategories = data.categories.filter(function (category) {
+            return String(category.topic_id) === String(selectedTopicId) &&
+              category.is_deleted === false &&
+              category.name_ENG.toLowerCase().includes(searchTerm.toLowerCase());
+          });
 
-          document.getElementById("Year_list_filter").innerHTML =
-            ' <p class="text-danger">Please Select Indicator</p>';
+          var categoryListBody = document.getElementById('category_list_filter');
+
+          if (filteredCategories.length === 0) {
+            // Display a message indicating no data found
+            categoryListBody.innerHTML = '<div class="filter-submenu"><p class="text-info text-center">No data found</p></div>';
+          } else {
+            // Populate the list with filtered categories
+            var selectCategory = filteredCategories.map(createFilterItem).join('');
+            categoryListBody.innerHTML = selectCategory;
+          }
+
+          updateFilterSelection();
+        }
+
+        // Function to sort categories A-Z
+        function sortAZ() {
+          var sortedCategories = data.categories
+            .filter(category => String(category.topic_id) === String(selectedTopicId) && category.is_deleted === false)
+            .sort((a, b) => a.name_ENG.localeCompare(b.name_ENG));
+
+          var selectCategory = sortedCategories.map(createFilterItem).join('');
+          document.getElementById('category_list_filter').innerHTML = selectCategory;
+          updateFilterSelection()
+        }
+
+        // Function to sort categories Z-A
+        function sortZA() {
+          var sortedCategories = data.categories
+            .filter(category => String(category.topic_id) === String(selectedTopicId) && category.is_deleted === false)
+            .sort((a, b) => b.name_ENG.localeCompare(a.name_ENG));
+
+          var selectCategory = sortedCategories.map(createFilterItem).join('');
+          document.getElementById('category_list_filter').innerHTML = selectCategory;
+          updateFilterSelection()
+        }
+
+        // Event listener for the search input
+        document.getElementById('filterSearch').addEventListener('input', function (event) {
+          var searchTerm = event.target.value;
+          updateFilter(searchTerm);
+          updateFilterSelection()
+        });
+
+        // Event listeners for sorting buttons
+        document.getElementById('sortAZ').addEventListener('click', sortAZ, updateFilterSelection);
+        document.getElementById('sortZA').addEventListener('click', sortZA, updateFilterSelection);
+
+        //--------------------------End of Function to create a filter item for catagory -----------------------------
+
+        $(document).on('change', 'input[name="category_lists"]', function (eventCategory) {
+          document.getElementById('search_attr1').style.display = 'block'
           document.getElementById(
             "indicator_list_filter_header"
           ).innerHTML =
@@ -429,23 +653,23 @@ function filterData() {
           );
 
           let indicator_type = ` 
-        <div class="row fw-bold" id=options_for_Type>
-             <div class="col">
-                Yr <span class="badge bg-danger">${selectYearIndicator.length}</span>:  <input type="radio"  checked name="indicator_type_input" value="yearly" id=""> 
-             </div>
-             <div class="col">
-                 Qr <span class="badge bg-danger">${selectQuarterlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="quarterly" id=""> 
-             </div>
-             <div class="col">
-                  Mon <span class="badge bg-danger">${selectMonthlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="monthly" id=""> 
-             </div>
-        </div>
+            <div class="row fw-bold" id=options_for_Type>
+                <div class="col">
+                    Yr <span class="badge bg-danger">${selectYearIndicator.length}</span>:  <input type="radio"  checked name="indicator_type_input" value="yearly" id=""> 
+                </div>
+                <div class="col">
+                    Qr <span class="badge bg-danger">${selectQuarterlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="quarterly" id=""> 
+                </div>
+                <div class="col">
+                      Mon <span class="badge bg-danger">${selectMonthlyIndicator.length}</span>:  <input type="radio" name="indicator_type_input" value="monthly" id=""> 
+                </div>
+            </div>
 
-        <hr class="pt-1">
-        `;
+            <hr class="pt-1">
+            `;
 
           let selectAll = `
-                  <li id="">
+                  <li id="select_all_ind">
                     <div class="flex-grow-2 filter-submenu"">
                        <div class="row ">
                           <div class="col-1"> 
@@ -478,15 +702,16 @@ function filterData() {
           indicatorHtmlSelectAll.innerHTML = selectAll;
           selectAllIndicator = document.getElementById("select_all");
 
-          if (
-            selectYearIndicator.length == 0 &&
-            selectQuarterlyIndicator.length == 0 &&
-            selectMonthlyIndicator.length == 0
-          ) {
+          if (selectYearIndicator.length == 0 && selectQuarterlyIndicator.length == 0 && selectMonthlyIndicator.length == 0) {
             indicatorHtmlHeader.innerHTML =
               '<p class="text-danger">Please select Another Category, No data Found! </p>';
             indicatorHtmlBody.innerHTML = "";
-          } else {
+            document.getElementById('search_attr1').style.display = 'none'
+            document.getElementById('select_all_ind').style.display = 'none'
+            document.getElementById('seriesAvailableBadge').innerHTML = 0;
+            updateFilterSelection()
+          }
+          else {
             indicatorHtmlHeader.innerHTML = indicator_type;
 
             if (selectYearIndicator.length == 0) {
@@ -545,36 +770,31 @@ function filterData() {
                       selectMonthlyIndicator.join("");
                   }
                 }
+
+                // Unselect the 'Select All' button
                 selectAllIndicator.checked = false;
+                selectedIndictorId = []; // Reinitialized the Array
                 indicatorHtmlList.forEach((indicatorCheckBox) => {
                   indicatorCheckBox.addEventListener(
                     "change",
                     (eventIndicator) => {
-                      table = "";
-                      if (
-                        eventIndicator.target.checked &&
-                        !selectedIndictorId.includes(
-                          eventIndicator.target.value
-                        )
-                      ) {
-                        selectedIndictorId.push(
-                          eventIndicator.target.value
-                        );
+                      if (eventIndicator.target.checked) {
+                        selectedIndictorId.push(eventIndicator.target.value);
                       } else {
-                        try {
-                          selectedIndictorId.pop(
-                            eventIndicator.target.value
-                          );
-                        } catch {
-                          null;
-                        }
+                        selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
                       }
+
+                      // Update the 'Select All' checkbox state based on individual checkboxes
+                      selectedIndictorId.checked = indicatorHtmlList.length === selectedIndictorId.length;
+
+                      // Update the year checkboxes based on selected indicators
                       yearList();
                     }
                   );
                 });
               });
             });
+
             if ($('input[name="category_lists"]:checked').length > 0) {
               let allIndicators = selectYearIndicator.concat(selectQuarterlyIndicator, selectMonthlyIndicator);
               indicatorcount = allIndicators.length;
@@ -585,32 +805,259 @@ function filterData() {
 
           }
 
+          // Event listener for the indicator type radio buttons
+          $(document).on('change', '#options_for_Type input[type="radio"]', function () {
+            updateFilterSelection();
+          });
+
+          // Function to update the indicator filter based on the search term and indicator type
+          function updateIndicatorFilter(searchTerm) {
+            var filteredIndicators = data.indicators.filter(function (indicator) {
+              return (
+                String(indicator.for_category_id) === String(selectedCategoryId) &&
+                indicator.is_deleted === false &&
+                indicator.title_ENG.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                String(indicator.type_of) === indicatorSelectedType
+              );
+            });
+
+            var selectIndicators = filteredIndicators.map(createIndicatorItem).join('');
+            document.getElementById('indicator_list_filter_body').innerHTML = selectIndicators;
+          }
+
+          //-------------------------- Function to create a filter item for Indicator -----------------------------
+          let searchTerm = ""; // Declare searchTerm globally
+
+          // Function to handle indicator type change
+          function handleIndicatorTypeChange(newType) {
+            // Clear the search input when the indicator type changes
+            document.getElementById('filterIndicatorSearch').value = "";
+
+            // Update the current indicator type
+            indicatorSelectedType = newType;
+
+            // Update the indicator filter based on the new type
+            updateIndicatorFilterAndUI(() => {
+              // Unselect the 'Select All' button
+              selectAllIndicator.checked = false;
+              selectedIndictorId = []; // Reinitialized the Array
+
+              indicatorHtmlList.forEach((indicatorCheckBox) => {
+                indicatorCheckBox.addEventListener("change", (eventIndicator) => {
+                  if (eventIndicator.target.checked) {
+                    selectedIndictorId.push(eventIndicator.target.value);
+                  } else {
+                    selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
+                  }
+
+                  // Update the 'Select All' checkbox state based on individual checkboxes
+                  selectAllIndicator.checked = indicatorHtmlList.length === selectedIndictorId.length;
+
+                  // Update the year checkboxes based on selected indicators
+                  yearList();
+                });
+              });
+              indicatorSelected = $('input[name="indicator_lists"]:checked').length;
+              if ($('input[name="category_lists"]:checked').length > 0) {
+                let allIndicators = selectYearIndicator.concat(selectQuarterlyIndicator, selectMonthlyIndicator);
+                indicatorcount = allIndicators.length;
+                document.getElementById('seriesAvailableBadge').innerHTML = indicatorcount;
+              } else {
+                document.getElementById('seriesAvailableBadge').innerHTML = 0;
+              }
+            });
+            updateFilterSelection();
+          }
+
+          // Function to update the indicator filter based on the search term and indicator type
+          function updateIndicatorFilter(searchTerm) {
+            // Clear the 'Select All' checkbox when performing a search
+            selectAllIndicator.checked = false;
+            selectedIndictorId = [];
+
+            var filteredIndicators = data.indicators.filter(function (indicator) {
+              return (
+                String(indicator.for_category_id) === String(selectedCategoryId) &&
+                indicator.is_deleted === false &&
+                indicator.title_ENG.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                String(indicator.type_of) === indicatorSelectedType
+              );
+            });
+
+            var indicatorListBody = document.getElementById('indicator_list_filter_body');
+
+            if (filteredIndicators.length === 0) {
+              // Display a message indicating no data found
+              indicatorListBody.innerHTML = '<li class="text-info text-center">No data found</li>';
+            } else {
+              // Populate the list with filtered indicators
+              var selectIndicators = filteredIndicators.map(createIndicatorItem).join('');
+              indicatorListBody.innerHTML = selectIndicators;
+            }
+
+            updateFilterSelection();
+            // Event listener for the 'Select All' checkbox
+            selectAllIndicator.addEventListener("change", () => {
+              document.getElementById('search_attr3').style.display = 'block'
+              if (selectAllIndicator.checked) {
+                indicatorListCheckAll.forEach((event) => {
+                  event.checked = true;
+                  if (!selectedIndictorId.includes(event.value)) {
+                    selectedIndictorId.push(event.value);
+                  }
+                });
+              } else {
+                indicatorListCheckAll.forEach((event) => {
+                  event.checked = false;
+                });
+                selectedIndictorId = []; // Clear the array when 'Select All' is unchecked
+              }
+
+              // Update the year checkboxes based on selected indicators
+              yearList();
+            });
+            indicatorHtmlList.forEach((indicatorCheckBox) => {
+              indicatorCheckBox.addEventListener(
+                "change",
+                (eventIndicator) => {
+                  document.getElementById('search_attr3').style.display = 'block'
+                  if (eventIndicator.target.checked) {
+                    selectedIndictorId.push(eventIndicator.target.value);
+                  } else {
+                    selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
+                  }
+
+                  // Update the 'Select All' checkbox state based on individual checkboxes
+                  selectedIndictorId.checked = indicatorHtmlList.length === selectedIndictorId.length;
+
+                  // Update the year checkboxes based on selected indicators
+                  yearList();
+                }
+              );
+            });
+          }
+
+          // Function to sort indicators A-Z
+          function sortAZIndicator() {
+            var sortedIndicators = data.indicators
+              .filter(indicator => String(indicator.for_category_id) === String(selectedCategoryId) && indicator.is_deleted === false)
+              .sort((a, b) => a.title_ENG.localeCompare(b.title_ENG));
+
+            var selectIndicators = sortedIndicators.map(createIndicatorItem).join('');
+            document.getElementById('indicator_list_filter_body').innerHTML = selectIndicators;
+            updateFilterSelection();
+            indicatorHtmlList.forEach((indicatorCheckBox) => {
+              indicatorCheckBox.addEventListener(
+                "change",
+                (eventIndicator) => {
+                  if (eventIndicator.target.checked) {
+                    selectedIndictorId.push(eventIndicator.target.value);
+                  } else {
+                    selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
+                  }
+
+                  // Update the 'Select All' checkbox state based on individual checkboxes
+                  selectedIndictorId.checked = indicatorHtmlList.length === selectedIndictorId.length;
+
+                  // Update the year checkboxes based on selected indicators
+                  yearList();
+                }
+              );
+            });
+          }
+
+          // Function to sort indicators Z-A
+          function sortZAIndicator() {
+            var sortedIndicators = data.indicators
+              .filter(indicator => String(indicator.for_category_id) === String(selectedCategoryId) && indicator.is_deleted === false)
+              .sort((a, b) => b.title_ENG.localeCompare(a.title_ENG));
+
+            var selectIndicators = sortedIndicators.map(createIndicatorItem).join('');
+            document.getElementById('indicator_list_filter_body').innerHTML = selectIndicators;
+            indicatorHtmlList.forEach((indicatorCheckBox) => {
+              indicatorCheckBox.addEventListener(
+                "change",
+                (eventIndicator) => {
+                  if (eventIndicator.target.checked) {
+                    selectedIndictorId.push(eventIndicator.target.value);
+                  } else {
+                    selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
+                  }
+
+                  // Update the 'Select All' checkbox state based on individual checkboxes
+                  selectedIndictorId.checked = indicatorHtmlList.length === selectedIndictorId.length;
+
+                  // Update the year checkboxes based on selected indicators
+                  yearList();
+                }
+              );
+            });
+            updateFilterSelection();
+          }
+          // Function to create an indicator filter item
+          function createIndicatorItem(indicator) {
+            let title_amharic = indicator.title_AMH ? " - " + indicator.title_AMH : "";
+            updateFilterSelection()
+            return `
+              <li>
+                  <div class="flex-grow-2 filter-submenu">
+                      <div class="row">
+                          <div class="col-1">
+                              <input type="checkbox" value=${indicator.id} name="indicator_lists" id="indicator_list${indicator.id}">
+                          </div>
+                          <div class="col-11">
+                              <label class="form-label" for="indicator_list${indicator.id}" style="font-size: small;">${indicator.title_ENG} ${title_amharic}</label>
+                          </div>
+                      </div>
+                  </div>
+              </li>`;
+          }
+          // Event listener for the indicator search input
+          document.getElementById('filterIndicatorSearch').addEventListener('input', function (event) {
+            var searchTerm = event.target.value;
+            updateIndicatorFilter(searchTerm);
+            updateFilterSelection();
+          });
+          // Event listeners for indicator type radio buttons
+          document.getElementById('options_for_Type').addEventListener('change', function (event) {
+            if (event.target.name === 'indicator_type_input') {
+              handleIndicatorTypeChange(event.target.value);
+            }
+            updateFilterSelection()
+          });
+          // Event listeners for sorting buttons for indicators
+          document.getElementById('sortAZIndicator').addEventListener('click', sortAZIndicator, updateFilterSelection);
+          document.getElementById('sortZAIndicator').addEventListener('click', sortZAIndicator, updateFilterSelection);
+
+          //--------------------------End of  Function to create a filter item for indicator -----------------------------
+
+          // Event listener for the 'Select All' checkbox
           selectAllIndicator.addEventListener("change", () => {
+            document.getElementById('search_attr3').style.display = 'block'
             if (selectAllIndicator.checked) {
               indicatorListCheckAll.forEach((event) => {
                 event.checked = true;
                 if (!selectedIndictorId.includes(event.value)) {
                   selectedIndictorId.push(event.value);
                 }
-                //Active apply Button
-                yearList();
               });
             } else {
               indicatorListCheckAll.forEach((event) => {
                 event.checked = false;
-                try {
-                  selectedIndictorId.pop(event.value);
-                } catch {
-                  null;
-                }
               });
+              selectedIndictorId = []; // Clear the array when 'Select All' is unchecked
             }
+
+            // Update the year checkboxes based on selected indicators
+            yearList();
           });
 
+          // Event listener for individual checkboxes
           indicatorHtmlList.forEach((indicatorCheckBox) => {
             indicatorCheckBox.addEventListener(
               "change",
               (eventIndicator) => {
+                document.getElementById('search_attr3').style.display = 'block'
                 if (eventIndicator.target.checked) {
                   selectedIndictorId.push(eventIndicator.target.value);
                 } else {
@@ -618,13 +1065,14 @@ function filterData() {
                 }
 
                 // Update the 'Select All' checkbox state based on individual checkboxes
-                selectedIndictorId.checked = indicatorHtmlList.length === selectedIndictorId.length;
+                selectAllIndicator.checked = indicatorHtmlList.length === selectedIndictorId.length;
 
                 // Update the year checkboxes based on selected indicators
                 yearList();
               }
             );
           });
+
 
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
             updateFilterSelection();
@@ -664,24 +1112,25 @@ function filterData() {
             $("#displayOptions a:nth-child(2)").removeClass("active");
 
             table = "";
+            yearTableList = yearTableList.reverse()
             let dataListViewTable =
               document.getElementById("list_table_view");
 
             //Type Year Table
             let typeYearTable = () => {
               table += `
-                  <table id="newTable" class="table table-bordered m-0 p-0">
-                  <thead>
-                    <tr>
-                      <th class="ps-5 pe-5">Name</th>`;
+                      <table id="newTable" class="table table-bordered m-0 p-0">
+                      <thead>
+                        <tr>
+                          <th class="ps-5 pe-5">Name</th>`;
               for (let i of yearTableList) {
                 table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
               }
 
               table += `</tr>
-                             </thead>
-                        <tbody>
-                  `;
+                                 </thead>
+                            <tbody>
+                      `;
 
               //let indicatorList = data.indicators.filter((item)=>String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false)
               data.indicators.map(
@@ -704,14 +1153,14 @@ function filterData() {
 
                     //Table Row Start
                     table += `
-                      <tr>
-                        <td>
-                            <div class="row">
-                               <div class="col-10">
-                                 <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
-                               </div>
-                            </div>
-                        </td>`;
+                          <tr>
+                            <td>
+                                <div class="row">
+                                   <div class="col-10">
+                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                   </div>
+                                </div>
+                            </td>`;
 
                     for (j of yearTableList) {
                       let statusData = false;
@@ -748,14 +1197,14 @@ function filterData() {
                           status = true;
                           //Table Row Start
                           table += `
-                      <tr>
-                        <td>
-                          <a>
-                            <h6 class="mb-1">
-                              <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
-                            </h6>
-                          </a>
-                        </td>`;
+                          <tr>
+                            <td>
+                              <a>
+                                <h6 class="mb-1">
+                                  <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
+                                </h6>
+                              </a>
+                            </td>`;
 
                           for (j of yearTableList) {
                             let statusData = false;
@@ -801,14 +1250,14 @@ function filterData() {
 
                         //Table Row Start
                         table += `
-                    <tr>
-                      <td>
-                        <a>
-                          <h6 class="mb-1">
-                            <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
-                          </h6>
-                        </a>
-                      </td>`;
+                        <tr>
+                          <td>
+                            <a>
+                              <h6 class="mb-1">
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                              </h6>
+                            </a>
+                          </td>`;
 
                         for (j of yearTableList) {
                           let statusData = false;
@@ -850,7 +1299,7 @@ function filterData() {
               );
 
               table += `</tbody>
-                  </table>`;
+                      </table>`;
 
               $(document).ready(function () {
                 $("#newTable").DataTable({
@@ -871,6 +1320,10 @@ function filterData() {
                   ],
                   dom: "Bfrtip",
                   buttons: ["pageLength", "excel", "csv", "pdf", "print"],
+                  drawCallback: function (settings) {
+                    // Add color to columns (excluding first column) after each draw
+                    $("#newTable tbody tr td:not(:first-child)").css("background-color", "#f2f2f2");
+                  },
                 });
               });
             };
@@ -878,18 +1331,18 @@ function filterData() {
             //Type Month table
             let typeMonthTable = () => {
               table += `
-              <style>
-              table.dataTable th {
-                  writing-mode: vertical-lr;
-                  vertical-align: middle;
-                  transform: rotate(180deg);
+                  <style>
+                  table.dataTable th {
+                    writing-mode: vertical-lr !important;
+                    vertical-align: middle !important;
+                    transform: rotate(180deg) !important;
                 }
-            </style>
-              <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
-              <thead>
-                <tr class="text-center">
-                <th class="vertical-text border">Year</th>
-                <th class="vertical-text border">Month</th>`;
+                </style>
+                  <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
+                  <thead>
+                    <tr class="text-center">
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Month</th>`;
 
               let filterIndicators = data.indicators.filter(
                 (item) =>
@@ -904,8 +1357,8 @@ function filterData() {
                   title_amharic = " - " + filterIndicator.title_AMH;
 
                 table += ` <th class="vertical-text border" ">
-                     <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
-                     </th>`;
+                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
+                         </th>`;
 
                 let childIndicatorList = (parent, space) => {
                   space += String("&nbsp;&nbsp;&nbsp;&nbsp");
@@ -918,8 +1371,8 @@ function filterData() {
                     ) {
                       test = true;
                       table += `
-                          <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
-                          `;
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                              `;
 
                       childIndicatorList(indicator.id, String(space));
                     }
@@ -934,8 +1387,8 @@ function filterData() {
                   ) {
                     test = true;
                     table += `
-                        <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                        `;
+                            <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                            `;
 
                     childIndicatorList(indicator.id, " ");
                   }
@@ -943,7 +1396,7 @@ function filterData() {
               }
 
               table += `</tr>
-              </thead>`;
+                  </thead>`;
 
               table += `<tbody>`;
 
@@ -954,16 +1407,16 @@ function filterData() {
                 //month loop
                 for (let month of data.month) {
                   table += `
-                  <tr class="text-center">`;
+                      <tr class="text-center">`;
 
                   if (!checkYearPrint) {
-                    table += `<td class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                    table += `<td class="border-bottom-0 fw-bold" "">${year[1]} E.C - ${year[2]} G.C</td>`;
                   } else {
-                    table += ` <td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
+                    table += `<td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
                   }
 
                   table += `                     
-                  <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
+                      <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
                   //Filter parent indicators
                   let indicatorsObject = data.indicators.filter(
@@ -1051,7 +1504,7 @@ function filterData() {
                     }
                   }
                   table += `
-                </tr>`;
+                    </tr>`;
 
                   checkYearPrint = true;
                 }
@@ -1060,21 +1513,19 @@ function filterData() {
 
               $(document).ready(function () {
                 $("#newTable").DataTable({
+                  columnDefs: [{ width: 900, targets: 0 }],
                   retrieve: true,
                   ordering: false,
-                  "initComplete": function (settings, json) {
-                    $("#DataTableID").wrap("<div style='overflow:auto; position:relative;'></div>");
-                  },
                   responsive: true,
                   paging: true,
                   searching: true,
                   orderNumber: true,
                   lengthMenu: [
-                    [24, 50, 100, -1],
-                    ["24 rows", "50 rows", "100 rows", "Show all"],
+                    [36, 72, 108, -1],
+                    ["36 rows", "72 rows", "108 rows", "Show all"],
                   ],
                   buttons: [
-                    "pageLength",
+                    "pageLength", "copy",
                     {
                       extend: "excelHtml5",
                       text: "Save as Excel",
@@ -1086,6 +1537,10 @@ function filterData() {
                     ,
                     "print",
                   ],
+                  drawCallback: function (settings) {
+                    // Add color to columns (excluding first column) after each draw
+                    $("#newTable tbody tr td:not(:first-child):not(:nth-child(2))").css("background-color", "#f2f2f2")
+                  },
                   dom: "Bfrtip",
                 });
               });
@@ -1097,18 +1552,18 @@ function filterData() {
             //Type Quarter table
             let typeQuarterTable = () => {
               table += `
-                                 <style>
-                 table.dataTable th {
-                     writing-mode: vertical-lr;
-                     vertical-align: middle;
-                     transform: rotate(180deg);
-                   }
-               </style>
-              <table id="newTable" class="table table-bordered m-0 p-0" style="width: 100%;">
-              <thead>
-                <tr class="text-center">
-                <th  style="width: 40px;"  class="vertical-text border">Year</th>
-                <th style="width: 40px;"  class="vertical-text border">Month</th>`;
+                       <style>
+                       table.dataTable th {
+                        writing-mode: vertical-lr !important;
+                        vertical-align: middle !important;
+                        transform: rotate(180deg) !important;
+                    }
+                   </style>
+                  <table id="newTable" class="table table-bordered m-0 p-0">
+                  <thead>
+                    <tr class="text-center">
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
               let filterIndicators = data.indicators.filter(
                 (item) =>
@@ -1123,8 +1578,8 @@ function filterData() {
                   title_amharic = " - " + filterIndicator.title_AMH;
 
                 table += ` <th class="vertical-text  border" ">
-                     <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
-                     </th>`;
+                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
+                         </th>`;
 
                 let childIndicatorList = (parent, space) => {
                   space += String("&nbsp;&nbsp;&nbsp;&nbsp");
@@ -1137,8 +1592,8 @@ function filterData() {
                     ) {
                       test = true;
                       table += `
-                          <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
-                          `;
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                              `;
 
                       childIndicatorList(indicator.id, String(space));
                     }
@@ -1153,8 +1608,8 @@ function filterData() {
                   ) {
                     test = true;
                     table += `
-                        <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                        `;
+                            <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                            `;
 
                     childIndicatorList(indicator.id, " ");
                   }
@@ -1162,7 +1617,7 @@ function filterData() {
               }
 
               table += `</tr>
-              </thead>`;
+                  </thead>`;
 
               table += `<tbody>`;
 
@@ -1173,7 +1628,7 @@ function filterData() {
                 //month loop
                 for (let quarter of data.quarter) {
                   table += `
-                  <tr class="text-center">`;
+                      <tr class="text-center">`;
 
                   if (!checkYearPrint) {
                     table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
@@ -1182,7 +1637,7 @@ function filterData() {
                   }
 
                   table += `                     
-                  <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
+                      <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
 
                   //Filter parent indicators
                   let indicatorsObject = data.indicators.filter(
@@ -1271,7 +1726,7 @@ function filterData() {
                     }
                   }
                   table += `
-                </tr>`;
+                    </tr>`;
 
                   checkYearPrint = true;
                 }
@@ -1282,9 +1737,6 @@ function filterData() {
                 $("#newTable").DataTable({
                   retrieve: true,
                   ordering: false,
-                  "initComplete": function (settings, json) {
-                    $("#DataTableID").wrap("<div style='overflow:auto;position:relative;'></div>");
-                  },
                   responsive: true,
                   paging: true,
                   searching: true,
@@ -1294,7 +1746,7 @@ function filterData() {
                     ["24 rows", "50 rows", "100 rows", "Show all"],
                   ],
                   buttons: [
-                    "pageLength",
+                    "pageLength", "copy",
                     {
                       extend: "excelHtml5",
                       text: "Save as Excel",
@@ -1306,6 +1758,10 @@ function filterData() {
                     ,
                     "print",
                   ],
+                  drawCallback: function (settings) {
+                    // Add color to columns (excluding first column) after each draw
+                    $("#newTable tbody tr td:not(:first-child):not(:nth-child(2))").css("background-color", "#f2f2f2");
+                  },
                   dom: "Bfrtip",
                 });
               });
@@ -1323,12 +1779,11 @@ function filterData() {
 
             dataListViewTable.innerHTML = table;
             table = "";
+          
           });
 
-
-          indicatorSelectedType = "yearly";
           //End Indicator table
-
+          indicatorSelectedType = "yearly";
 
           //make the second button in display-option div display chart when clicked
           $("#displayOptions a:nth-child(2)").click(function () {
@@ -1353,36 +1808,40 @@ function filterData() {
 
             $(document).ready(function () {
               document.getElementById('titleForCatagory').innerHTML = theSelectedCatagory.name_ENG
-
               const labelElement = document.getElementById('select_label');
               const selectElement = document.querySelector('.indicatorDropdown');
-              console.log('indicator type', indicatorSelectedType)
 
 
               if (indicatorSelectedType === 'yearly') {
-                console.log('hello from yearly ')
-                console.log(indicatorSelectedType)
                 let area_main = document.getElementById('main_area')
                 area_main.style.display = 'block'
                 const datasetDropdown = document.getElementById('drop');
-                datasetDropdown.style.display ='none'
+                datasetDropdown.style.display = 'none'
                 let incicator_drop1 = document.getElementById('drop_two')
                 incicator_drop1.style.display = 'none'
+                let incicator_drop3 = document.getElementById('drop_three')
+                incicator_drop3.style.display = 'none'
+                let datasetDropdown1 = document.getElementById('drop_second')
+                datasetDropdown1.style.display = 'none'
 
-              document.getElementById('bar-chart-canvas1').style.display = 'none'
-              document.getElementById('series-chart-canvas1').style.display = 'none'
-              document.getElementById('line-chart-canvas1').style.display = 'none'
+                document.getElementById('bar-chart-canvas1').style.display = 'none'
+                document.getElementById('series-chart-canvas1').style.display = 'none'
+                document.getElementById('line-chart-canvas1').style.display = 'none'
 
-              document.getElementById('bar-chart-canvas').style.display = 'block'
-              document.getElementById('series-chart-canvas').style.display = 'block'
-              document.getElementById('line-chart-canvas').style.display = 'block'
-              
-              // Clear existing charts
-              Highcharts.charts.forEach(chart => {
-              if (chart) {
-                  chart.destroy();
+                document.getElementById('bar-chart-canvas').style.display = 'block'
+                document.getElementById('series-chart-canvas').style.display = 'block'
+                document.getElementById('line-chart-canvas').style.display = 'block'
+
+                document.getElementById('bar-chart-canvas2').style.display = 'none'
+                document.getElementById('series-chart-canvas2').style.display = 'none'
+                document.getElementById('line-chart-canvas2').style.display = 'none'
+
+                // Clear existing charts
+                Highcharts.charts.forEach(chart => {
+                  if (chart) {
+                    chart.destroy();
                   }
-              });
+                });
 
                 // Add event listeners to all nav links
                 const navLinks = document.querySelectorAll('.nav-link');
@@ -1396,7 +1855,9 @@ function filterData() {
                       labelElement.style.display = isAreaNavLink ? 'none' : 'block';
                       selectElement.style.display = isAreaNavLink ? 'none' : 'block';
                     }
-                    datasetDropdown.style.display ='none'
+                    datasetDropdown.style.display = 'none'
+                    incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                   });
                 });
 
@@ -1451,13 +1912,13 @@ function filterData() {
                 };
 
 
-                console.log('indicators from yearly', indicators)
-               // Select all elements with the class "indicatorDropdown"
-                 const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
+
+                // Select all elements with the class "indicatorDropdown"
+                const dropdowns = document.querySelectorAll(`.indicatorDropdown`);
 
                 // Iterate over each dropdown and update its options
                 dropdowns.forEach((dropdown) => {
-                  dropdown.innerHTML = ''; 
+                  dropdown.innerHTML = '';
                 })
                 dropdowns.forEach((dropdown, index) => {
                   dropdown.innerHTML = ''; // Clear existing options
@@ -1532,7 +1993,7 @@ function filterData() {
                   };
 
 
-                  // ================================== second chart =================================
+                  // ================================== first chart =================================
                   const formatRevenue = [];
                   const chart = Highcharts.chart('area-chart-canvas', {
                     chart: {
@@ -1586,13 +2047,13 @@ function filterData() {
                         text: 'values'
                       },
                       labels: {
-                        format: '${text} B'
+                        format: '{text}'
                       }
                     },
                     tooltip: {
                       split: true,
                       headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
-                      pointFormat: '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+                      pointFormat: '{series.name}: <b>{point.y:,.1f} </b> ({point.percentage:.1f}%)',
                       crosshairs: true
                     },
                     plotOptions: {
@@ -1644,12 +2105,7 @@ function filterData() {
                     chart.sequenceTimer = undefined;
                   }
 
-                  // ...
-
                   function update() {
-                    console.log('Update function called');
-                    console.log('alldata:', alldata);
-
                     if (!alldata || !alldata.length || !alldata[0] || !alldata[0].data) {
                       console.error('alldata, alldata[0], or alldata[0].data is undefined.');
                       return;
@@ -1739,7 +2195,6 @@ function filterData() {
                   }
 
                   function play(button) {
-                    console.log('Play function called');
                     // Reset slider at the end
                     if (input.value >= endYear) {
                       input.value = startYear;
@@ -1799,7 +2254,7 @@ function filterData() {
                 function draw(chartdata) {
                   const dropdown = document.querySelector('.indicatorDropdown');
                   const selectedIndicatorName = dropdown.options[dropdown.selectedIndex].text;
-                  // ================================================ first chart =======================================
+                  // ================================================ second chart =======================================
                   Highcharts.chart('series-chart-canvas', {
                     chart: {
                       zoomType: 'x'
@@ -1880,6 +2335,7 @@ function filterData() {
                       verticalAlign: 'middle',
                     },
                     series: [{
+                      name: selectedIndicatorName,
                       data: chartdata.map(item => (item.y !== null ? item.y : 0)),
                     }],
                     responsive: {
@@ -1941,18 +2397,26 @@ function filterData() {
 
               }
               else if (indicatorSelectedType === 'monthly') {
-                console.log('hello from monthly');
-                console.log(indicatorSelectedType)
                 let area_main = document.getElementById('main_area')
                 area_main.style.display = 'none'
                 let incicator_drop1 = document.getElementById('drop_first')
                 incicator_drop1.style.display = 'none'
                 let incicator_drop2 = document.getElementById('drop_two')
                 incicator_drop2.style.display = 'block'
+                let incicator_drop3 = document.getElementById('drop_three')
+                incicator_drop3.style.display = 'none'
+                let datasetDropdown1 = document.getElementById('drop_second')
+                datasetDropdown1.style.display = 'none'
+
+
 
                 document.getElementById('bar-chart-canvas').style.display = 'none'
                 document.getElementById('series-chart-canvas').style.display = 'none'
                 document.getElementById('line-chart-canvas').style.display = 'none'
+
+                document.getElementById('bar-chart-canvas2').style.display = 'none'
+                document.getElementById('series-chart-canvas2').style.display = 'none'
+                document.getElementById('line-chart-canvas2').style.display = 'none'
 
                 document.getElementById('bar-chart-canvas1').style.display = 'block'
                 document.getElementById('series-chart-canvas1').style.display = 'block'
@@ -1960,7 +2424,7 @@ function filterData() {
 
                 const navLinks = document.querySelectorAll('.nav-link');
                 const datasetDropdown = document.getElementById('drop');
-                datasetDropdown.style.display ='block'
+                datasetDropdown.style.display = 'block'
                 navLinks.forEach(navLink => {
                   navLink.addEventListener('click', function () {
                     // Toggle the visibility of the label and select elements
@@ -1973,10 +2437,13 @@ function filterData() {
                     }
                     // Show/hide the second dropdown based on the selected chart type
                     datasetDropdown.style.display = (this.id === 'bar_btn' || this.id === 'series_btn') ? 'block' : 'none';
-                    incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn' ) ? 'none' : 'none';
+                    incicator_drop2.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'block' : 'none';
+                    incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                   });
                 });
-              
+
 
                 // Process the data as needed
                 let chartData = [];
@@ -1993,24 +2460,23 @@ function filterData() {
                   indicators.push({ id, title_ENG });
                 });
 
-                console.log('indicators from month', indicators)
                 // Select all elements with the class "indicatorDropdown"
-                 const dropdowns = document.querySelectorAll(`.indicatorDropdown1`);
-                  dropdowns.forEach((dropdown, index) => {
-                    dropdown.innerHTML = ''; // Clear existing options
-                    indicators.forEach(({ id, title_ENG }, i) => {
-                      const option = document.createElement('option');
-                      option.value = id;
-                      option.text = title_ENG;
-                      dropdown.appendChild(option);
+                const dropdowns = document.querySelectorAll(`.indicatorDropdown1`);
+                dropdowns.forEach((dropdown, index) => {
+                  dropdown.innerHTML = ''; // Clear existing options
+                  indicators.forEach(({ id, title_ENG }, i) => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = title_ENG;
+                    dropdown.appendChild(option);
 
-                      // Set the first option as selected by default
-                      if (i === 0) {
-                        option.selected = true;
-                      }
-                    });
+                    // Set the first option as selected by default
+                    if (i === 0) {
+                      option.selected = true;
+                    }
                   });
-              
+                });
+
 
                 (async () => {
                   /**
@@ -2084,7 +2550,6 @@ function filterData() {
                   // Function to create the dataset dropdown
                   function createDatasetDropdown(chartData) {
                     const datasetDropdown = document.querySelector('.datasetDropdown');
-                    console.log('hello')
 
                     // Clear existing options
                     datasetDropdown.innerHTML = '';
@@ -2142,12 +2607,12 @@ function filterData() {
                   }
                   // Function to fetch and update data based on the selected indicator
                   async function updateChartData(selectedIndicator) {
-                      // Clear existing charts
-                      Highcharts.charts.forEach(chart => {
-                        if (chart) {
-                          chart.destroy();
-                        }
-                      });
+                    // Clear existing charts
+                    Highcharts.charts.forEach(chart => {
+                      if (chart) {
+                        chart.destroy();
+                      }
+                    });
                     // Use AJAX or fetch to get data from the server based on the selected indicator
                     const response = await fetch(`/user-admin/json-filter-month/${selectedIndicator}/`);
                     const data = await response.json();
@@ -2183,7 +2648,7 @@ function filterData() {
                   // Further check and update as needed
                   if (initialIndicator) {
                     updateChartData(initialIndicator);
-                  } 
+                  }
                   else {
                     console.error('Initial indicator is not valid or not set correctly.');
                     // Handle the situation where the initial indicator is not valid or not set correctly.
@@ -2199,9 +2664,369 @@ function filterData() {
 
                 })();
               }
-              //draw for quarter data
               else {
+                let area_main = document.getElementById('main_area')
+                area_main.style.display = 'none'
+                let incicator_drop1 = document.getElementById('drop_first')
+                incicator_drop1.style.display = 'none'
+                let datasetDropdown1 = document.getElementById('drop')
+                datasetDropdown1.style.display = 'none'
+                let incicator_drop2 = document.getElementById('drop_two')
+                incicator_drop2.style.display = 'none'
+                let incicator_drop3 = document.getElementById('drop_three')
+                incicator_drop3.style.display = 'block'
 
+
+
+                document.getElementById('bar-chart-canvas').style.display = 'none'
+                document.getElementById('series-chart-canvas').style.display = 'none'
+                document.getElementById('line-chart-canvas').style.display = 'none'
+
+                document.getElementById('bar-chart-canvas1').style.display = 'none'
+                document.getElementById('series-chart-canvas1').style.display = 'none'
+                document.getElementById('line-chart-canvas1').style.display = 'none'
+
+                document.getElementById('bar-chart-canvas2').style.display = 'block'
+                document.getElementById('series-chart-canvas2').style.display = 'block'
+                document.getElementById('line-chart-canvas2').style.display = 'block'
+
+
+
+                const navLinks = document.querySelectorAll('.nav-link');
+                const datasetDropdown = document.getElementById('drop_second');
+                datasetDropdown.style.display = 'block'
+                navLinks.forEach(navLink => {
+                  navLink.addEventListener('click', function () {
+                    // Toggle the visibility of the label and select elements
+                    if (labelElement && selectElement) {
+                      // Check if the clicked nav link is the "Area" nav link
+                      const isAreaNavLink = this.id === 'area';
+
+                      labelElement.style.display = isAreaNavLink ? 'none' : 'block';
+                      selectElement.style.display = isAreaNavLink ? 'none' : 'block';
+                    }
+                    // Show/hide the second dropdown based on the selected chart type
+                    datasetDropdown.style.display = (this.id === 'bar_btn' || this.id === 'series_btn') ? 'block' : 'none';
+                    incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'block' : 'none';
+                    incicator_drop2.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                    datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                  });
+                });
+
+
+                // Process the data as needed
+                let chartData = [];
+                let indicators = [];
+
+                // Filter indicators based on selectedIndictorId
+                let selectedIndicators = data.indicators.filter(({ id, for_category_id, is_deleted }) => {
+                  return String(for_category_id) === String(selectedCategoryId) &&
+                    selectedIndictorId.includes(String(id)) &&
+                    !is_deleted;
+                });
+
+                selectedIndicators.forEach(({ title_ENG, id }) => {
+                  indicators.push({ id, title_ENG });
+                });
+
+                // Select all elements with the class "indicatorDropdown"
+                const dropdowns = document.querySelectorAll(`.indicatorDropdown2`);
+                dropdowns.forEach((dropdown, index) => {
+                  dropdown.innerHTML = ''; // Clear existing options
+                  indicators.forEach(({ id, title_ENG }, i) => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = title_ENG;
+                    dropdown.appendChild(option);
+
+                    // Set the first option as selected by default
+                    if (i === 0) {
+                      option.selected = true;
+                    }
+                  });
+                });
+
+
+                (async () => {
+                  /**
+                   * Create the chart when all data is loaded
+                   * @return {undefined}
+                   */
+                  async function bar_chart(indc_name, data, selectedname) {
+                    const datasetData1 = data.find(dataset => dataset.name === selectedname)?.data || [];
+                    // Convert indc_name to a number (if it's a string)
+                    const selectedIndicatorId = parseInt(indc_name, 10);
+                    const selectedIndicatorObject = indicators.find(indicator => indicator.id === selectedIndicatorId);
+
+                    // create the chart
+                    Highcharts.stockChart('bar-chart-canvas2', {
+                      chart: {
+                        alignTicks: false
+                      },
+
+                      rangeSelector: {
+                        selected: 1
+                      },
+
+                      title: {
+                        text: selectedIndicatorObject.title_ENG
+                      },
+                      tooltip: {
+                        style: {
+                          width: '200px'
+                        },
+                        valueDecimals: 4,
+                        shared: true
+                        , formatter: function () {
+                          const point = this.points[0];
+                          const value = point.point.options.quarter;
+                          let quarter;
+
+                          switch (value) {
+                            case 1:
+                              quarter = '1';
+                              break;
+                            case 3:
+                              quarter = '2';
+                              break;
+                            case 6:
+                              quarter = '3';
+                              break;
+                            case 9:
+                              quarter = '4';
+                              break;
+                            default:
+                              quarter = 'Unknown Quarter';
+                          }
+
+                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.quarter}</b><br/>
+                Quarter: ${quarter}`;
+                        }
+
+                      },
+
+                      series: [{
+                        type: 'column',
+                        name: selectedname,
+                        data: datasetData1,
+                        dataGrouping: {
+                          units: [[
+                            'week', // unit name
+                            [1] // allowed multiples
+                          ], [
+                            'month',
+                            [1, 2, 3, 4, 6]
+                          ]]
+                        }
+                      }]
+                    });
+                  }
+
+                  async function draw_line(selectedIndicator, chartData, selectedDataset) {
+                    const datasetData = chartData.find(dataset => dataset.name === selectedDataset)?.data || [];
+
+                    const selectedIndicatorId = parseInt(selectedIndicator, 10);
+                    const selectedIndicatorObject = indicators.find(indicator => indicator.id === selectedIndicatorId);
+
+                    // Create the chart
+                    Highcharts.stockChart('series-chart-canvas2', {
+                      rangeSelector: {
+                        selected: 0
+                      },
+                      title: {
+                        text: selectedIndicatorObject.title_ENG
+                      },
+                      tooltip: {
+                        style: {
+                          width: '200px'
+                        },
+                        valueDecimals: 4,
+                        shared: true
+                        , formatter: function () {
+                          const point = this.points[0];
+                          const value = point.point.options.quarter;
+                          let quarter;
+
+                          switch (value) {
+                            case 1:
+                              quarter = '1';
+                              break;
+                            case 3:
+                              quarter = '2';
+                              break;
+                            case 6:
+                              quarter = '3';
+                              break;
+                            case 9:
+                              quarter = '4';
+                              break;
+                            default:
+                              quarter = 'Unknown Quarter';
+                          }
+
+                          return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.quarter}</b><br/>
+                Quarter: ${quarter}`;
+                        }
+
+                      },
+                      yAxis: {
+                        title: {
+                          text: 'Exchange rate'
+                        }
+                      },
+                      series: [{
+                        name: selectedDataset,
+                        data: datasetData,
+                        id: 'dataseries'
+                      }]
+                    });
+
+                  }
+                  // Function to create the dataset dropdown
+                  function createDatasetDropdown(chartData) {
+                    const datasetDropdown = document.querySelector('.datasetDropdown1');
+
+                    // Clear existing options
+                    datasetDropdown.innerHTML = '';
+
+                    // Add options based on the chartData
+                    chartData.forEach(dataset => {
+                      const option = document.createElement('option');
+                      option.value = dataset.name;
+                      option.text = dataset.name;
+                      datasetDropdown.appendChild(option);
+                    });
+
+                    // Trigger change event on the dataset dropdown to update the chart
+                    datasetDropdown.dispatchEvent(new Event('change'));
+                  }
+
+                  // Function to create the chart
+                  function createChart(series) {
+                    // Calling to create a new dropdown menu from the dataset names on a single indicator selected
+                    createDatasetDropdown(series);
+
+                    Highcharts.stockChart('line-chart-canvas2', {
+                      rangeSelector: {
+                        selected: 4
+                      },
+
+                      yAxis: {
+                        labels: {
+                          format: '{#if (gt value 0)}+{/if}{value}%'
+                        },
+                        plotLines: [{
+                          value: 0,
+                          width: 2,
+                          color: 'silver'
+                        }]
+                      },
+
+                      plotOptions: {
+                        series: {
+                          label: {
+                            connectorAllowed: false
+                          },
+                        }
+                      },
+                      tooltip: {
+                        formatter: function () {
+                          const point = this.points[0];
+                          const quarter = point.point.options.quarter;
+
+
+                          switch (quarter) {
+                            case 1:
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter: 1`;
+                            case 3:
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  2`;
+                            case 6:
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  3`;
+                            case 9:
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  4`;
+                            default:
+                              return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter: Unknown Quarter`;
+                          }
+                        },
+                        valueDecimals: 2,
+                        shared: true
+                      },
+
+                      series
+                    });
+
+                  }
+
+                  // Function to fetch and update data based on the selected indicator
+                  async function updateChartData(selectedIndicator) {
+                    // Clear existing charts
+                    Highcharts.charts.forEach(chart => {
+                      if (chart) {
+                        chart.destroy();
+                      }
+                    });
+
+                    // Use AJAX or fetch to get data from the server based on the selected indicator
+                    const response = await fetch(`/user-admin/json-filter-quaarter/${selectedIndicator}/`);
+                    const data = await response.json();
+
+                    // Process the data as needed
+                    chartData = [];
+                    if (Array.isArray(data)) {
+                      data.forEach((category) => {
+                        let arr = [];
+                        category.data.forEach((dataPoint) => {
+                          const quarterValue = dataPoint[0][1];
+                          arr.push({
+                            x: Date.UTC(dataPoint[0][0], quarterValue - 1, dataPoint[0][2]),
+                            y: dataPoint[1],
+                            quarter: quarterValue
+                          });
+                        });
+                        chartData.push({ name: category.name, data: arr });
+                      });
+
+
+                    } else {
+                      console.error('Invalid or missing data format in the response.');
+                    }
+
+                    // Call the createChart function with the updated data
+                    createChart(chartData);
+                  }
+
+
+
+
+                  // Event listener for dropdown change
+                  $('.indicatorDropdown2').change(function () {
+                    const selectedIndicator = $(this).val();
+                    $('.datasetDropdown1').prop('disabled', false);
+                    updateChartData(selectedIndicator);
+                  });
+
+                  // Initial load with the first indicator (assuming the first indicator is selected by default)
+                  const initialIndicator = $('.indicatorDropdown2').val();
+
+                  // Further check and update as needed
+                  if (initialIndicator) {
+                    updateChartData(initialIndicator);
+                  }
+                  else {
+                    console.error('Initial indicator is not valid or not set correctly.');
+                    // Handle the situation where the initial indicator is not valid or not set correctly.
+                  }
+
+                  // Event listener for dataset dropdown change
+                  $('.datasetDropdown1').change(function () {
+                    const selectedDataset = $(this).val();
+                    const selectedIndicator = $('.indicatorDropdown2').val();
+                    bar_chart(selectedIndicator, chartData, selectedDataset);
+                    draw_line(selectedIndicator, chartData, selectedDataset);
+                  });
+
+                })();
               }
             });
           });

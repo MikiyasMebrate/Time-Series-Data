@@ -32,7 +32,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
         
-              <form method="post" id="form_indicator_edit">
+              <form method="post" name="form_indicator_edit" id="form_indicator_edit">
                 {% csrf_token %}
               <div class="modal-body">
                 <input type="number"  name="indicator_Id" id="id_indicator_id" style="display: none;">
@@ -92,6 +92,45 @@
             </div>
           </div>
         </div>
+
+
+    <!--Add Excel Data-->
+    <div class="modal fade" id="categoryExcel" tabindex="-1" aria-labelledby="categoryExcelLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="categoryExcelLabel">
+              New Indicator Registration
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method='POST' name="fileIndicatorFile" enctype="multipart/form-data">
+            <div class="modal-body">
+  
+              {% csrf_token %}
+              <p class="text-info">Click Download button to download sample Excel format. <a href="{% static 'SampleExcel/IndicatorSample.xlsx' %}" download="IndicatorSample.xlsx"
+                  class="btn btn-info">Download</a></p>
+  
+  
+              <div class="row justify-content-start mt-5">
+                <div class="col-12">
+                  <label for="">Add Excel</label>
+                  {{formFile.as_p}}
+  
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Cancel
+              </button>
+              <button type="submit" name="fileIndicatorFile" class="btn btn-primary">Add Indicator</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    </div>
 
           <!-- Add New Indicator  -->
   <div class="modal fade" id="addNewIndicatorModal" tabindex="-1" aria-labelledby="addNewIndicatorModalLabel"
@@ -233,6 +272,9 @@
             <!--Accordion End-->
             
             <div class="col-md-9">
+              {% if category %}
+              <p class="fs-2 text-center">{{category | capfirst}}</p>
+              {% endif %}
               <!--Add Data Start-->
               <div class="text-start">
                 <button
@@ -244,11 +286,12 @@
                 >
                   + Add New Indicator
                 </button>
+                <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#categoryExcel"
+                data-bs-whatever="@mdo">
+                <i class="bi bi-file-earmark-arrow-down"></i> Add Excel
+              </button>
               </div>
                <!--Add Data End-->
-               {% if category %}
-               <p class="fs-2 text-center">{{category | capfirst}}</p>
-               {% endif %}
               <!--Data List Start-->
                <!--Messages-->
             {% include 'user-admin/include/messages.html'%}

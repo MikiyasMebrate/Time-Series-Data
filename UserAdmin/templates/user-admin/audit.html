@@ -55,7 +55,13 @@
                             {% for entry in auditlog_entries %}
                             <tr>
                                 <td>{{ entry.timestamp }}</td>
-                                <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
+                                <td>
+                                    {% if entry.actor.get_full_name %}
+                                        {{ entry.actor.get_full_name }} ({{ entry.actor.username }})
+                                    {% else %}
+                                        System
+                                    {% endif %}
+                                </td>
                                 {% if entry.action == 0 %}
                                     <td class="fw-bold text-success">Created</td>
                                 {% elif entry.action == 1 %}
@@ -69,6 +75,7 @@
                                 <td>{{ entry.content_type.name }}</td>
                             </tr>
                         {% endfor %}
+                        
                         
           
                           </tbody>

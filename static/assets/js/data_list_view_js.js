@@ -40,8 +40,7 @@ let filterData = () => {
             `;
             }
           }
-        );
-
+        ).reverse();
         let selectYearAll = `
         <li>
           <div class="flex-grow-2 ">
@@ -97,10 +96,12 @@ let filterData = () => {
         });
 
         let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
+       
 
         //Select last 5 Year
         let lastFiveYear = document.getElementById("last_5_year");
         lastFiveYear.addEventListener("click", () => {
+
           for (let uncheck = 0; uncheck < yearListCheckAll.length; uncheck++) {
             try {
               yearListCheckAll[uncheck].checked = false;
@@ -116,14 +117,14 @@ let filterData = () => {
               null;
             }
             if (
-              !data.year[checkedYear].is_interval &&
+              !data.year[(data.year.length-1) - checkedYear].is_interval &&
               String(yearListCheckAll[checkedYear].value) ===
-                String(data.year[checkedYear].id)
+                String(data.year[(data.year.length-1) - checkedYear].id)
             ) {
               yearTableList.push([
-                data.year[checkedYear].id,
-                data.year[checkedYear].year_EC,
-                data.year[checkedYear].year_GC,
+                data.year[(data.year.length-1) - checkedYear].id,
+                data.year[(data.year.length-1) - checkedYear].year_EC,
+                data.year[(data.year.length-1) - checkedYear].year_GC,
               ]);
             }
           }
@@ -148,14 +149,14 @@ let filterData = () => {
               null;
             }
             if (
-              !data.year[checkedYear].is_interval &&
+              !data.year[(data.year.length-1) - checkedYear].is_interval &&
               String(yearListCheckAll[checkedYear].value) ===
-                String(data.year[checkedYear].id)
+                String(data.year[(data.year.length-1) - checkedYear].id)
             ) {
               yearTableList.push([
-                data.year[checkedYear].id,
-                data.year[checkedYear].year_EC,
-                data.year[checkedYear].year_GC,
+                data.year[(data.year.length-1) - checkedYear].id,
+                data.year[(data.year.length-1) - checkedYear].year_EC,
+                data.year[(data.year.length-1) - checkedYear].year_GC,
               ]);
             }
           }
@@ -181,14 +182,14 @@ let filterData = () => {
               null;
             }
             if (
-              !data.year[checkedYear].is_interval &&
+              !data.year[(data.year.length-1) - checkedYear].is_interval &&
               String(yearListCheckAll[checkedYear].value) ===
-                String(data.year[checkedYear].id)
+                String(data.year[(data.year.length-1) - checkedYear].id)
             ) {
               yearTableList.push([
-                data.year[checkedYear].id,
-                data.year[checkedYear].year_EC,
-                data.year[checkedYear].year_GC,
+                data.year[(data.year.length-1) - checkedYear].id,
+                data.year[(data.year.length-1) - checkedYear].year_EC,
+                data.year[(data.year.length-1) - checkedYear].year_GC,
               ]);
             }
           }
@@ -215,14 +216,14 @@ let filterData = () => {
             }
             try {
               if (
-                !data.year[checkedYear].is_interval &&
+                !data.year[(data.year.length-1) - checkedYear].is_interval &&
                 String(yearListCheckAll[checkedYear].value) ===
-                  String(data.year[checkedYear].id)
+                  String(data.year[(data.year.length-1) - checkedYear].id)
               ) {
                 yearTableList.push([
-                  data.year[checkedYear].id,
-                  data.year[checkedYear].year_EC,
-                  data.year[checkedYear].year_GC,
+                  data.year[(data.year.length-1) - checkedYear].id,
+                  data.year[(data.year.length-1) - checkedYear].year_EC,
+                  data.year[(data.year.length-1) - checkedYear].year_GC,
                 ]);
               }
             } catch {
@@ -287,8 +288,10 @@ let filterData = () => {
             //Sort Year by Ethiopian Calender
             yearTableList.sort((a, b) => (a[1] > b[1] ? 1 : -1));
           });
-        });
+        });  
       };
+
+      
 
       selectTopic = data.topics.map(
         ({ title_ENG, title_AMH, id, is_deleted }) => {
@@ -698,6 +701,7 @@ let filterData = () => {
               //Display Data with Apply Button
               displayApplyButton.addEventListener("click", () => {
                 table = "";
+                yearTableList = yearTableList.reverse()
                 let dataListViewTable =
                   document.getElementById("list_table_view");
 

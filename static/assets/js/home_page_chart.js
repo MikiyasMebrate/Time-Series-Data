@@ -53,44 +53,52 @@ $(function () {
         }
       }
 
-      function generateForIndicator1(indicatorId, data) {
+    function generateForIndicator1(indicatorId, data) {
+        values1 = [];
+        years1 = [];
+    
         // Filter the data for the selected indicator
         var indicatorData = data.value.filter(value => value.for_indicator_id === indicatorId);
-
+    
         indicatorData.forEach(entry => {
-          var datapointId = entry.for_datapoint_id;
-          var datapoint = getDataPointById(datapointId, data.year); // Assuming 'year' is the array containing DataPoint information
-          if (datapoint) {
-            values1.push(entry.value); // Limit value to a maximum length of 10
-            years1.push(datapoint.year_EC || datapoint.year_GC);
-          }
+            var datapointId = entry.for_datapoint_id;
+            var datapoint = getDataPointById(datapointId, data.year); // Assuming 'year' is the array containing DataPoint information
+            if (datapoint) {
+                values1.push(entry.value);
+                years1.push(datapoint.year_EC || datapoint.year_GC);
+            }
         });
-
-        // Reverse both the values and years arrays
-        values1 = values1.reverse();
-        years1 = years1.reverse();
+    
+        // Ensure unique years in the array
+        years1 = Array.from(new Set(years1));
+    
         // Draw the chart using the fetched data;
         drawLineChart(values1, years1);
-      }
-
-      function generateForIndicator2(indicatorId, data) {
+    }
+    
+    function generateForIndicator2(indicatorId, data) {
+        values2 = [];
+        years2 = [];
+    
         // Filter the data for the selected indicator
         var indicatorData = data.value.filter(value => value.for_indicator_id === indicatorId);
+    
         indicatorData.forEach(entry => {
-          var datapointId = entry.for_datapoint_id;
-          var datapoint = getDataPointById(datapointId, data.year); // Assuming 'year' is the array containing DataPoint information
-          if (datapoint) {
-            values2.push(entry.value); // Limit value to a maximum length of 10
-            years2.push(datapoint.year_EC || datapoint.year_GC);
-          }
+            var datapointId = entry.for_datapoint_id;
+            var datapoint = getDataPointById(datapointId, data.year); // Assuming 'year' is the array containing DataPoint information
+            if (datapoint) {
+                values2.push(entry.value);
+                years2.push(datapoint.year_EC || datapoint.year_GC);
+            }
         });
-
-        // Reverse both the values and years arrays
-        values2 = values2.reverse();
-        years2 = years2.reverse();
+    
+        // Ensure unique years in the array
+        years2 = Array.from(new Set(years2));
+    
         // Draw the chart using the fetched data
-        drawBarChart(values2, years2)
-      }
+        drawBarChart(values2, years2);
+    }  
+    
 
       function getDataPointById(datapointId, datapoints) {
         return datapoints.find(datapoint => datapoint.id === datapointId);

@@ -13,8 +13,8 @@ from decimal import Decimal
 
 
 class Topic(models.Model):
-    title_ENG = models.CharField(max_length=50)
-    title_AMH = models.CharField(max_length=50)
+    title_ENG = models.CharField(max_length=300, unique = True)
+    title_AMH = models.CharField(max_length=300, null = True)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
@@ -22,10 +22,9 @@ class Topic(models.Model):
     def __str__(self):
         return self.title_ENG
     
-
 class Category(models.Model):
-    name_ENG = models.CharField(max_length=50)
-    name_AMH = models.CharField(max_length=50)
+    name_ENG = models.CharField(max_length=300, unique = True)
+    name_AMH = models.CharField(max_length=300, unique = True)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)
@@ -33,17 +32,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name_ENG
 
-
 data_point_type = [
     ('yearly', 'Yearly'),
     ('quarterly', 'Quarterly'),
     ('monthly', 'Monthly'),
 ]
 
-
 class Indicator(models.Model):
-    title_ENG = models.CharField(max_length=100) 
-    title_AMH = models.CharField(max_length=100 , null=True, blank=True)
+    title_ENG = models.CharField(max_length=300) 
+    title_AMH = models.CharField(max_length=300 , null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
@@ -55,7 +52,6 @@ class Indicator(models.Model):
     def __str__(self):
         return self.title_ENG 
 
-
 class Indicator_Point(models.Model):
     is_actual = models.BooleanField()
     for_datapoint = models.ForeignKey("DataPoint",on_delete=models.SET_NULL, null = True)
@@ -64,7 +60,6 @@ class Indicator_Point(models.Model):
     
     def __str__(self):
          return str(self.for_indicator.title_ENG ) +  " Actual: " + str(self.is_actual) + " Year: " + str(self.for_datapoint)
-
 
 class DataPoint(models.Model):
     year_EC = models.CharField(max_length=50, null=True, blank=True, unique=True)
@@ -94,13 +89,6 @@ class DataPoint(models.Model):
         else:
             return self.year_EC+" "+"E.C"
     
-    
-
-  
-      
-
-
-
 class Quarter(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
@@ -113,7 +101,6 @@ class Quarter(models.Model):
     def __str__(self):
         return self.title_AMH + " " + self.title_AMH
     
-
 class Month(models.Model):
     month_ENG = models.CharField(max_length=50)
     month_AMH = models.CharField(max_length=50)
@@ -135,8 +122,6 @@ class Measurement(models.Model):
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     
-    def str(self):
-        return self.get_full_path()
 
     def get_full_path(self):
         full_path = [self.Amount_ENG]
@@ -262,8 +247,6 @@ def call_my_function(sender, instance, created, **kwargs):
     else:  
         instance.calculate_parent_value()
 
-
-
 class Source(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
@@ -272,7 +255,6 @@ class Source(models.Model):
     is_deleted = models.BooleanField(default = False)
     def __str__(self):
         return self.title_ENG
-
 
 
 auditlog.register(Topic)

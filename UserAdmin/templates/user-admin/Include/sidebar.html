@@ -10,7 +10,7 @@ rel="stylesheet"
   }
   </style>
 <!--Side NavBar Start-->
-<aside class="main-sidebar sidebar-dark-primary elevation-4 ">
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a href="" class="brand-link pt-3 mt-3">
     <img
       src="{% static  'assets/image/EPCD-Logo-Final-White-NoBg-Hi-res.png' %}"
@@ -18,7 +18,7 @@ rel="stylesheet"
       class="brand-image img-circle elevation-3"
     />
     <span class="brand-text active font-weight-light mb-2">Time Series Data</span>
-  </a>
+  </a> {% endcomment %}
 
   <div class="sidebar">
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -37,7 +37,13 @@ rel="stylesheet"
           </div>
          </div>
         </a>
-       </div>               
+       </div>                
+       
+       
+       
+       
+
+        
       </div>
     </div>
 
@@ -86,7 +92,7 @@ rel="stylesheet"
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview">
+          <ul class="nav nav-treeview ms-3">
             <li class="nav-item">
               <a href="{% url 'user-admin-data-list'%}" class="nav-link {% if request.path == '/user-admin/data-list/' %}active{% endif %}">
                 <i class="bi bi-clipboard-data ml-3"></i>
@@ -115,6 +121,12 @@ rel="stylesheet"
               <a href="{% url 'user-admin-measurement'%}" class="nav-link {% if request.path == '/user-admin/measurement/' %}active{% endif %}">
                 <i class="bi bi-cash-stack ml-3"></i>
                 <p>Measurements</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'user-admin-year'%}" class="nav-link {% if request.path == '/user-admin/year/' %}active{% endif %}">
+                <i class="bi bi-calendar-date"></i>
+                <p>Years</p>
               </a>
             </li>
             <li class="nav-item">

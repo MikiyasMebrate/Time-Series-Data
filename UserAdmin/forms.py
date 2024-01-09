@@ -1,6 +1,19 @@
 from django import forms
 from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
 
+class ImportFileIndicatorForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={
+        'class' : 'form-control'
+    }))
+
+class ImportFileForm(forms.Form):
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={
+        'class' : 'form-control'
+    }))
+
 class catagoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -48,7 +61,6 @@ class IndicatorForm(forms.ModelForm):
         # Override the queryset for the topic field
         self.fields['for_category'].queryset = Category.objects.filter(is_deleted=False)
 
-
 class SubIndicatorForm(forms.Form):
     title_ENG_add = forms.CharField(widget=forms.TextInput(attrs={
         'class' : 'form-control'
@@ -70,9 +82,6 @@ class SubIndicatorFormDetail(forms.ModelForm):
                 'class' : 'form-control'
             }),
         }
-
-
-
 
 class TopicForm(forms.ModelForm):
     class Meta:
@@ -100,6 +109,17 @@ class SourceForm(forms.ModelForm):
                 'title_AMH': forms.TextInput(attrs={
                     'class': 'form-control'
                 })
+        }
+
+class YearForm(forms.ModelForm):
+    class Meta:
+        model = DataPoint
+        fields = ('year_EC',)
+
+        widgets = {
+            'year_EC': forms.TextInput(attrs={
+                'class': 'form-control'
+            })
         }
 
 class MeasurementForm(forms.ModelForm):
@@ -151,7 +171,6 @@ class DataPointForm(forms.ModelForm):
             })
         }
         
-
 class dataListForm(forms.Form):
     topic = forms.ModelChoiceField(queryset=Topic.objects.all(),required=True,widget=forms.Select(attrs={
         'class' : 'form-control'
@@ -180,7 +199,6 @@ class dataListForm(forms.Form):
     source = forms.ModelChoiceField(required=False,queryset=Source.objects.all(),widget=forms.Select(attrs={
         'class' : 'form-select mt-2'
     }))
-
 
 #Value
 class ValueForm(forms.ModelForm):

@@ -4,175 +4,43 @@
   <head>
     <title>MoPD Analysis tool</title>
     <link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-  crossorigin="anonymous"
-/>
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous"/>
 <script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-  crossorigin="anonymous"
-></script>
-
+  crossorigin="anonymous">
+</script>
 
 <link href="{% static 'assets/image/mopd_logo_green.png' %}" rel="icon">
-
-
 <!--Icons -->
 <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 <link rel="stylesheet" href="{% static 'assets/css/ionicons.min.css' %} ">
   
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"
-    />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"/>
 
+<!--Datatable css-->
+<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome-free/css/all.min.css'%}"/>
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css'%}"/>
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css'%}"/>
+<link rel="stylesheet" href="{% static 'assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css'%}"/>
 
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/plugins/fontawesome-free/css/all.min.css'%}"
-    />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css'%}"
-    />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css'%}"
-    />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css'%}"
-    />
-
-    <link rel="stylesheet" href="{% static 'assets/css/preloader.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/meanmenu.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/jquery.fancybox.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/fontAwesome5Pro.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/elegantFont.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/default.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/one.css' %}">
-
-    <style>
-        #map {
-            height: 500px;
-        }
-        .loading {
-            margin-top: 10em;
-            text-align: center;
-            color: gray;
-        }
-        .bar {
-            border-right: 3px solid gray;
-            opacity: 0.7;
-            height: 16px;
-            margin-top: 5px;
-            margin-bottom: 1px;
-        }
-        .scrollable {
-            max-height: 250px;
-            overflow: auto;
-        }
-        .card-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .card {
-            background-color: white;
-            margin: auto;
-            /* set margin to auto to center the card horizontally */
-        }
-        #filterColumn {
-            border-right: 0.5px solid rgb(165, 161, 161);
-            display: flex;
-            flex-direction: column;
-        }
-        #dataColumn {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-        .form-check-input {
-            cursor: pointer;
-        }
-        .column {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            /* Create two columns */
-            gap: 1px;
-            /* Space between grid items */
-        }
-        .btn.active {
-            background-color: rgb(0, 119, 255);
-            ;
-            /* Replace with your desired color */
-        }
-        .year-options-accordion {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .check {
-            font-size: 13px;
-            color: rgb(0, 128, 55);
-            -webkit-text-stroke-width: 1.8px;
-            border: 2.7px solid;
-            border-radius: 50%;
-            padding-left: 1px;
-            padding-right: 1px;
-            opacity: 1;
-            background-color: rgb(255, 255, 255);
-        }
-        #play-controls {
-            max-width: 600px;
-            margin: 1em auto;
-        }
-        #container {
-            height: 600px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        #play-controls {
-            display: flex;
-            align-items: center;
-        }
-        .dt-buttons.btn-group button {
-            background-color: #2793b7; /* Set your desired Bootstrap color here */
-            color: #fff; /* Set text color */
-        }
-        .dt-buttons.btn-group button:hover {
-            background-color: #399fc2; /* Set your desired Bootstrap hover color here */
-        }
-        #play-pause-button {
-            width: 50px; /* Set a default width */
-            height: 50px;
-            cursor: pointer;
-            border: 1px solid rgba(2, 117, 255, 1);
-            border-radius: 25px;
-            color: white;
-            background-color: rgba(2, 117, 255, 1);
-            transition: background-color 250ms;
-        }
-        #play-pause-button:hover {
-            background-color: rgba(2, 117, 255, 0.5);
-        }
-        #play-range {
-            transform: translateY(2.5px);
-            flex-grow: 1; /* Take up remaining available space */
-            background: #f8f8f8;
-            margin-left: 10px; /* Add some margin between button and range input */
-        }
-  </style>
- 
+<!-- Web page css-->
+<link rel="stylesheet" href="{% static 'assets/css/preloader.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/meanmenu.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/jquery.fancybox.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/fontAwesome5Pro.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/elegantFont.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/default.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/one.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/datapage.css' %}">
 
 </head>
 
@@ -192,7 +60,7 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#databaseOptions" aria-expanded="false" aria-controls="databaseOptions">
                             <span class="d-flex align-items-center w-100">
-                                <strong class="me-auto">Database</strong>
+                                <strong class="me-auto">Topic</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
                                     <span class="badge rounded-pill bg-info ms-1" id="databaseAvailableBadge">0</span>
@@ -206,6 +74,16 @@
 
                     <div id="databaseOptions" class="accordion-collapse collapse" aria-labelledby="databaseHeader"
                         data-bs-parent="#accordionExample">
+                        <!-- Add these buttons for A-Z and Z-A sorting -->
+                          <div id="accessibility" class="d-flex row mt-2 ms-1">
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control h-100" id="filterDatabaseSearch" placeholder="Search...">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-info btn-sm" id="sortAZDatabase">A-Z</button>
+                                    <button class="btn btn-info btn-sm " id="sortZADatabase">Z-A</button>
+                                </div>
+                          </div>                           
                         <div class="accordion-body scrollable" id='topic_list_filter'>
                             <!-- Add more options here -->
                             <p class="text-danger">Please Select Topic</p>
@@ -235,6 +113,18 @@
 
                     <div id="categoryOptions" class="accordion-collapse collapse" aria-labelledby="categoryHeader"
                         data-bs-parent="#accordionExample">
+                        <div id="serach_atrr" style="display: none;">  
+                            <div class="row d-flex ms-1 mt-2">
+                                <div class="col-md-8">                            
+                                    <!-- Add these buttons for A-Z and Z-A sorting -->
+                                    <input type="text" id="filterSearch" class='form-control h-100' placeholder="Search...">
+                               </div>
+                                <div class="col-md-4">
+                                    <button class="btn  btn-sm btn-info" id="sortAZ">A-Z</button>
+                                    <button class="btn btn-info btn-sm " id="sortZA">Z-A</button> 
+                                </div>      
+                            </div>                 
+                        </div>
                         <div class="accordion-body scrollable" id='category_list_filter'>
                             <p class="text-danger">Please Select Topic</p>
                         </div>
@@ -247,7 +137,7 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#seriesOptions" aria-expanded="false" aria-controls="seriesOptions">
                             <span class="d-flex align-items-center w-100">
-                                <strong class="me-auto">Series</strong>
+                                <strong class="me-auto">Indicator</strong>
                                 <span class="d-flex align-items-center">
                                     <span class="">Available</span>
                                     <span class="badge rounded-pill bg-info ms-1" id="seriesAvailableBadge">0</span>
@@ -260,6 +150,18 @@
                     </h2>
                     <div id="seriesOptions" class="accordion-collapse collapse" aria-labelledby="seriesHeader"
                         data-bs-parent="#accordionExample">
+                        <!-- Add these buttons for A-Z and Z-A sorting -->
+                          <div id="search_attr1" style="display: none;" >
+                            <div class="d-flex row mt-2 ms-1" >
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control h-100" id="filterIndicatorSearch" placeholder="Search...">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-info btn-sm" id="sortAZIndicator">A-Z</button>
+                                    <button class="btn btn-info btn-sm " id="sortZAIndicator">Z-A</button>
+                                </div>
+                            </div>
+                          </div>    
                         <div class="accordion-body scrollable indicator_filter">
                             <div id="indicator_list_filter_header">
                                 <p class="text-danger">Please Select Categories</p>
@@ -288,6 +190,9 @@
                     </h2>
                     <div id="yearOptions" class="accordion-collapse collapse" aria-labelledby="yearHeader"
                         data-bs-parent="#accordionExample">
+                        <div class="m-2" id="search_attr3" style="display: none;">
+                            <input type="text" class="form-control h-100 w-100" id="filterYearSearch" placeholder="Search...">
+                        </div>
                         <div class="accordion-body scrollable " id='Year_list_filter'>
                             <p class="text-danger">Please Select Series</p>
                         </div>
@@ -297,7 +202,6 @@
           </div> <!-- end of col-md-4 -->
 
           <div class="col-md-8 col-sm-6 col-lg-8 pb-5 pt-1" id="dataColumn">
-
               <!-- Add disabled attribute to the display options buttons before the apply button is clicked -->
               <div id="displayOptions" class="d-flex justify-content-between align-items-end mb-2 flex-row-reverse">
                   <div class="d-flex">
@@ -309,15 +213,14 @@
                   <div class="form-check form-switch ms-3">
                       <input type="checkbox" class="form-check-input" role="switch" id="toggleButton">
                   </div>
-              </div>
-                   
+              </div>      
               <!-- Move the data display section below the filter selection card -->
               <div class="card-container" id='checkmark_card'>
                   <div class="card mt-3" style="width:300px;  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
                       <div class="card-body pe-5 ps-5">
                           <div id="filterSelections" class="d-flex flex-column">
                               <div class="filter-option-selection mb-2">
-                                  <span class="filter-option-label">Database:</span>
+                                  <span class="filter-option-label">Topic:</span>
                                   <span class="filter-option-checkmark" id="boot-icon1" ></span>
                               </div>
                               <div class="filter-option-selection mb-2">
@@ -325,7 +228,7 @@
                                   <span class="filter-option-checkmark " id="boot-icon2"></span>
                               </div>
                               <div class="filter-option-selection mb-2">
-                                  <span class="filter-option-label">Series:</span>
+                                  <span class="filter-option-label">Indicator:</span>
                                   <span class="filter-option-checkmark" id="boot-icon3"></span>
                               </div>
                               <div class="filter-option-selection mb-2">
@@ -342,7 +245,7 @@
               
 
               <!-- Add this code to move the data display section below the filter selection card -->
-              <div id="dataDisplay" class="data-display container">
+              <div id="dataDisplay" class="data-display container-fluid">
                   <div id="table-container">
               <!--Data List Start-->
               <div class="card" id='table_card' style="display: none;">
@@ -355,10 +258,6 @@
                     <!-- Add chart here -->
                     <div class="card" id='chart_display' style="display:none;">
                       <div class="card-header">
-                          <h3 class="card-title d-flex">
-                              <i class="fas fa-chart-pie mr-1"></i>
-                              <p class="fw-bold fs-3 pl-1" id="titleForCatagory"></p>
-                          </h3>
                           <div class="card-header">
                             <h3 class="card-title d-flex">
                                 <i class="fas fa-chart-pie mr-1"></i>
@@ -386,20 +285,39 @@
                       <div class="card-body">
                         <div class="tab-content p-0">
                              <label id='select_label' class='text-danger form-label fw-bold' for="indicatorDropdown ">Select Indicator to display indicator data</label>
+                             <!--to handle for the first drop down for the yaer -->
                              <select class='form-select indicatorDropdown mb-1' id='drop_first'></select>
+                             <!--to handle for the first drop down for the month -->
                              <select class='form-select indicatorDropdown1 mb-1' id='drop_two'></select>
+                             <!--to handle for the first drop down for the quarter -->
+                             <select class='form-select indicatorDropdown2 mb-1' id='drop_three'></select>
+                             <!--to handle for the second drop down for the month -->
                              <select class='form-select datasetDropdown mb-1' id='drop' style='display:none'></select>
+                             <!--to handle for the second drop down for the quarter -->
+                             <select class='form-select datasetDropdown1 mb-1' id='drop_second' style='display:none'></select>
                             <div class="chart tab-pane active " id="bar-chart" style="position: relative; height: 500px;">
+                                <!--to handle for chart the year -->
                                 <div id="bar-chart-canvas"  style="height: 500px;"></div>
+                                <!--to handle for chart the month -->
                                 <div id="bar-chart-canvas1"  style="height: 500px; display:none;"></div>
+                                <!--to handle for chart the quarter -->
+                                <div id="bar-chart-canvas2"  style="height: 500px; display:none;"></div>
                             </div>
                             <div class="chart tab-pane" id="series-chart" style="position: relative; height: 500px;">
+                                <!--to handle for chart the year -->
                                 <div id="series-chart-canvas" height="300" style="height: 500px;"></div>
+                                <!--to handle for chart the month -->
                                 <div id="series-chart-canvas1" height="300" style="height: 500px; display:none;"></div>
+                                <!--to handle for chart the quarter -->
+                                <div id="series-chart-canvas2" height="300" style="height: 500px; display:none;"></div>
                             </div>
                             <div class="chart tab-pane" id="line-chart" style="position: relative; height: 500px;">
+                                <!--to handle for chart the year -->
                                 <div id="line-chart-canvas"  style="height: 500px;"></div>
+                                <!--to handle for chart the month -->
                                 <div id="line-chart-canvas1"  style="height: 500px; display:none;"></div>
+                                <!--to handle for chart the quarter -->
+                                <div id="line-chart-canvas2"  style="height: 500px; display:none;"></div>
                             </div>
                             <div class="chart tab-pane" id="area-chart" style="position: relative; height: 500px; ">
                                 <figure class="highcharts-figure">
@@ -425,19 +343,17 @@
      {% include "includes/footer.html" %} 
     {% include "includes/footer_js.html" %} 
 </div>
+
 <script src="{% static 'assets/js/data_filter.js' %}"></script>
 <!-- Button -->
 <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-
-
+<!-- Stock  chart js-->
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
 
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- datatable -->
 <script src="{% static 'assets/plugins/datatables/jquery.dataTables.min.js' %}"></script>
@@ -451,9 +367,7 @@
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
 <script src="{% static 'assets/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
 
-
 <!-- chart -->
- <script src="https://code.highcharts.com/highcharts.js"></script>
  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
  <script src="https://code.highcharts.com/modules/annotations.js"></script>
  <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -461,12 +375,5 @@
  <script src="https://code.highcharts.com/modules/export-data.js"></script>
  <script src="https://code.highcharts.com/modules/drilldown.js"></script>
        
-
-
-
-  </script>
-
-
   </body>
- 
 </html>
