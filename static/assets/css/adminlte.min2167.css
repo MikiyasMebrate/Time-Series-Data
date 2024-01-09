@@ -14008,34 +14008,9 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
     padding-left: .5rem;
     padding-right: .5rem;
     padding-top: 0;
-    scrollbar-color: #a9a9a9 transparent;
-    scrollbar-width: none
+   
 }
 
-.sidebar::-webkit-scrollbar-thumb {
-    background-color: #a9a9a9
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background-color: transparent
-}
-
-.sidebar::-webkit-scrollbar-corner {
-    background-color: transparent
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 0
-}
-
-.sidebar:hover {
-    scrollbar-width: thin
-}
-
-.sidebar:hover::-webkit-scrollbar {
-    width: .5rem;
-    height: .5rem
-}
 
 .brand-link.border-bottom-0~.sidebar {
     height: calc(100% - 3.5rem)
