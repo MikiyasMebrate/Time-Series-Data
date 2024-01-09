@@ -14,6 +14,8 @@ urlpatterns = [
     path('json-filter-source/', views.json_filter_source, name='json_filter_source'),
     path('json-filter-year/', views.json_filter_year, name='json_filter_year'),
     path('json-filter-measurement/', views.json_measurement, name='json_measurement'),
+    path('json-filter-random/', views.json_random, name='json_random'),
+    path('json-filter-drill/', views.json_filter_drilldown, name='json_drill'),
     # URL for fetching a specific measurement by ID
     path('json-filter-measurement/<int:measurement_id>/', views.json_measurement_byID, name='json_measurement_by_id'),
     path('json-filter-month/<int:month_id>/', views.month_data, name='json_month_by_id'),

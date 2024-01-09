@@ -14,6 +14,10 @@ from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, hand
 from tablib import Dataset
 from django.http import JsonResponse
 from django.db.models import Max
+from django.db.models import Count
+import random
+from decimal import Decimal
+
 
 @login_required(login_url='login')
 @admin_user_required
@@ -356,8 +360,40 @@ def json(request):
     }
     return JsonResponse(context)
 
+def json_random(request):
+    # Fetch all categories
+    categories = Category.objects.all()
 
+    # Choose a random category
+    random_category = None
+    while not random_category:
+        random_category = random.choice(categories)
+        
+        # Fetch parent indicators for the selected category
+        parent_indicators = Indicator.objects.filter(for_category=random_category, parent=None)
+
+        # Fetch year data for the selected category and parent indicators
+        year_data = DataValue.objects.filter(for_indicator__in=parent_indicators, is_deleted=False).exclude(for_datapoint__year_EC__isnull=True).values('for_indicator__title_ENG', 'for_datapoint__year_EC', 'value')
+
+        # Check if there are any parent indicators with associated non-null year and value data
+        if not any(year_data):
+            random_category = None
+
+    # Convert data to a dictionary with indicator names as keys
+    indicators_data = {ind['for_indicator__title_ENG']: [] for ind in year_data}
+
+    # Populate the dictionary with year and value data
+    for data_point in year_data:
+        # Check if the year is not null before adding it to the response
+        if data_point['for_datapoint__year_EC'] is not None:
+            indicators_data[data_point['for_indicator__title_ENG']].append({
+                'year': data_point['for_datapoint__year_EC'],
+                'value': float(data_point['value'])
+            })
     
+    # Directly return the indicators_data dictionary
+    return JsonResponse(indicators_data)
+
 
 #Data List
 @login_required(login_url='login')
@@ -1377,3 +1413,50 @@ def json_filter_year(request):
         return JsonResponse({'success': True, 'new_year': new_year})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
+def json_filter_drilldown(request):
+    # Calculate topic counts
+    topics = Topic.objects.annotate(category_count=Count('category'))
+    topic_data = {
+        "name": "Topic",
+        "colorByPoint": True,
+        "data": [
+            {
+                "name": topic.title_ENG,
+                "y": topic.category_count,
+                "drilldown": topic.title_ENG
+            } for topic in topics
+        ]
+    }
+
+    # Calculate category and indicator counts
+    drilldown = {}
+    series_data = []
+    for topic in topics:
+        categories = Category.objects.filter(topic=topic)
+        category_data = []
+        for category in categories:
+            # Count related indicators for each category
+            indicator_count = Indicator.objects.filter(for_category=category, children__isnull=True).count()
+
+            # Add category and related indicator count to the category_data
+            category_data.append([
+                category.name_ENG,
+                indicator_count
+            ])
+
+        series_data.append({
+            "name": topic.title_ENG,
+            "id": topic.title_ENG,
+            "data": category_data
+        }) 
+
+    drilldown = series_data
+
+    return JsonResponse({
+        "topic_data": topic_data,
+        "drilldown": drilldown
+    })
+
+def json_chart_data(request):
+    return json_filter_drilldown(request)
