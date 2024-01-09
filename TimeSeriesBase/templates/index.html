@@ -152,15 +152,19 @@
             <section class="services__area-2 mt--120 pt-270 pb-140 p-relative" data-background="{% static "assets/img/bg/wave-bg-2.png" %}">
                 <div class="container">
                     <div class="row no-gutters">
+                        {%for s in Category_value %}
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
                             <div class="services__item services__item-2 mb-30 transition-3 white-bg wow fadeInUp" data-wow-delay=".2s">
                                 <div class="services__icon mb-35">
                                     <img src="{% static "assets/img/icon/services/services-2.png" %}" alt="services">
                                 </div>
                                 <div class="services__content services__content-2">
-                                 
-                                    <h3><a href="{% url "data" %}">Capital Expenditure</a></h3>
-                                    <p>Domestic indirect taxes</p>
+                                   
+                                    <h3><a>{{s.for_category}}</a></h3>
+
+                                    <p>{{s.title_ENG}}
+                                   
+                                    
                                     <i class="fas fa-database"></i>
              
                                     <a href="#" class="small-box-footer">
@@ -169,48 +173,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                            <div class="services__item services__item-2 mb-30 transition-3 white-bg wow fadeInUp" data-wow-delay=".4s">
-                                <div class="services__icon mb-35">
-                                    <img src="{% static "assets/img/icon/services/services-2.png" %}" alt="services">
-                                </div>
-                                <div class="services__content services__content-2">
-                                    <h3><a href="{% url "data" %}">Recurrent Expenditure</a></h3>
-                                    <p>Urban land lease fee</p>
-                                    <i class="fas fa-database"></i>
-             
-                                   
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                            <div class="services__item services__item-2 mb-30 transition-3 white-bg wow fadeInUp" data-wow-delay=".6s">
-                                <div class="services__icon mb-35">
-                                    <img src="{% static "assets/img/icon/services/services-2.png" %}" alt="services">
-                                </div>
-                                <div class="services__content services__content-2">
-                                    <h3><a href="{% url "data" %}">Revenu
-                                        <br>/ትርፍ</a></h3>
-                                    <p>Income and profits tax</p>
-                                    <i class="fas fa-database"></i>
-                                   
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                            <div class="services__item services__item-2 mb-30 transition-3 white-bg wow fadeInUp" data-wow-delay=".8s">
-                                <div class="services__icon mb-35">
-                                    <img src="{% static "assets/img/icon/services/services-2.png" %}" alt="services">
-                                </div>
-                                <div class="services__content services__content-2">
-                                    <h3><a href="{% url "data" %}">Knowledge<br>/እውቀት</a></h3>
-                                    <p>Rural land use fee</p>
-                                    <i class="fas fa-database"></i>
-                                   
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                      {% endfor %}
+                                        </div>
                     <div class="about__area-2 pt-130">
                         <div class="row">
                             <div class="col-xl-7 col-lg-6">
@@ -244,7 +208,35 @@
                 </div>
             </section>
             <!-- services area end -->
-            
+            <section class="services__area-2 mt--120 pt-270 pb-140 p-relative" data-background="{% static "assets/img/bg/wave-bg-2.png" %}">
+                <div class="container">
+                    <div id="carouselExample" class="carousel slide">
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <img src="{% static "assets/image/s5.png" %}" class="d-block w-100" alt="...">
+                          </div>
+                          <div class="carousel-item">
+                            <img src="{% static "assets/image/s6.png" %}" class="d-block w-100" alt="...">
+                          </div>
+                          <div class="carousel-item">
+                            <img src="{% static "assets/image/s7.png" %}" class="d-block w-100" alt="...">
+                          </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" ></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" ></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                  
+                </div>
+            </section>
+            <section>
+                
+              </section>
             <!-- services area start -->
             <section>
 
@@ -312,8 +304,7 @@
                 </div>
 
               </section>
-
-
+           
         </main>
 
         

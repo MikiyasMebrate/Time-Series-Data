@@ -53,10 +53,8 @@ urlpatterns = [
     path('source/<int:pk>', views.source_detail, name="user-source-detail"),
     path('source-delete/<int:pk>', views.delete_source, name='user-source-delete'),
 
-        #source
+    #year
     path('year/', views.year_add, name="user-admin-year"),
-    path('year/<int:pk>', views.year_detail, name="user-year-detail"),
-    path('year-delete/<int:pk>', views.delete_year, name='user-year-delete'),
 
 
     #topic
@@ -71,7 +69,6 @@ urlpatterns = [
     path('trash-indicator/', views.trash_indicator, name="trash-indicator"),
     path('trash-category/', views.trash_category,name="trash-category"),
     path('trash-source/', views.trash_source, name='trash-source'),
-    path('trash-year/', views.trash_year, name='trash-year')
 
 ]
     

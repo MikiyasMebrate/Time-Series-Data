@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file, handle_uploaded_Measurement_file, handle_uploaded_Indicator_file
 from tablib import Dataset
 from django.http import JsonResponse
+from django.db.models import Max
 
 @login_required(login_url='login')
 @admin_user_required
@@ -243,25 +244,6 @@ def json_filter_source(request):
 
     # Returning the list as JSON
     return JsonResponse({'sources': sources_data}) 
-
-@login_required(login_url='login')
-def json_filter_year(request):
-    Years = DataPoint.objects.all()
-
-    # Creating a list of dictionaries representing each source
-    Year_data = []
-    for Year in Years:
-        Year_data.append({
-            'id': Year.id,
-            'Year_EC': Year.year_EC,
-            'Year_GC': Year.year_GC,
-            'updated': Year.updated_at.isoformat(),
-            'created': Year.created_at.isoformat(),
-            'is_deleted': Year.is_deleted,
-        })
-
-    # Returning the list as JSON
-    return JsonResponse({'years': Year_data}) 
 
 @login_required(login_url='login')
 def json_filter_topic(request):
@@ -777,7 +759,6 @@ def delete_indicator(request,pk):
     return HttpResponseRedirect(previous_page)
 
        
-
 @login_required(login_url='login')
 @admin_user_required
 def measurement(request):
@@ -1051,7 +1032,6 @@ def delete_topic(request,pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
  
-
 #Data Point 
 @login_required(login_url='login')
 @admin_user_required
@@ -1367,95 +1347,29 @@ def quarter_data(request, quarter_id):
 @admin_user_required
 def year_add(request, year=None):
     years = DataPoint.objects.all()  # Rename sources to years
-
-    if request.method == 'POST':
-        if 'year' in request.POST:
-            # Editing an existing year
-            year_instance = get_object_or_404(DataPoint, id=request.POST['year'])
-            form = YearForm(request.POST, instance=year_instance)
-        else:
-            # Adding a new year
-            form = YearForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            if 'year' in request.POST:
-                messages.success(request, "Year has been successfully updated!")
-            else:
-                messages.success(request, "Year has been successfully added!")
-            return redirect('user-admin-year')
-        else:
-            messages.error(request, "Value exists or please try again!")
-
-    else:
-        # GET request or form is not valid, display the form
-        if year:
-            # Editing an existing year, populate the form with existing data
-            year_instance = get_object_or_404(DataPoint, id=year)
-            form = YearForm(instance=year_instance)
-        else:
-            # Adding a new year
-            form = YearForm()
+    # Fetch the largest year from the DataPoint model
+    largest_year = DataPoint.objects.aggregate(Max('year_EC'))['year_EC__max'] or 0
 
     context = {
-        'form': form,
+        'largest_year': largest_year,
         'years': years,  # Update sources to years
     }
     return render(request, 'user-admin/add_year.html', context=context)
 
 @login_required(login_url='login')
 @admin_user_required
-def delete_year(request,pk):
-    year = DataPoint.objects.get(pk=pk)
-    previous_page = request.META.get('HTTP_REFERER')
-    
-    # Soft delete the category
-    year.is_deleted = True
-    year.save()
+def json_filter_year(request):
+    try:
+        # Determine the largest year from the DataPoint model
+        largest_year_instance = DataPoint.objects.latest('year_EC')
+        largest_year = int(largest_year_instance.year_EC)
 
-    # Optionally, you can soft delete related objects here if needed
-    
-    messages.success(request, "Successfully Deleted!")
-    return HttpResponseRedirect(previous_page)
+        # Calculate the next year
+        new_year = largest_year + 1
 
-@login_required(login_url='login')
-@admin_user_required
-def year_detail(request, pk):
-    source = Source.objects.get(pk=pk)
-    
-    form = SourceForm(request.POST or None, instance=source)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
-            messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-source')
-        else:
-            messages.error(request, 'Value Exist or Please try Again!')
-    context = {
-        'form' : form,
-        'source' : source
-    }  
-    return render(request, 'user-admin/source_detail.html', context)
+        # Create a new DataPoint instance with the next year
+        DataPoint.objects.create(year_EC=str(new_year))
 
-@login_required(login_url='login')
-@admin_user_required
-def trash_year(request):
-    if request.method == 'POST':
-        year_id = request.POST.get('year_id')
-        print('year', year_id)
-        if year_id:
-            year = get_object_or_404(DataPoint, pk=year_id)
-            print('year',year)
-            year.is_deleted = False
-            year.save()
-            messages.success(request, 'Year restored successfully.')
-            return redirect('trash-year')
-        else:
-            messages.error(request, 'Failed to restore Year.')
-
-    recycled_year = DataPoint.objects.filter(is_deleted=True)
-    context = {'recycled_year': recycled_year}
-    return render(request, 'user-admin/trash_year.html', context)
+        return JsonResponse({'success': True, 'new_year': new_year})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

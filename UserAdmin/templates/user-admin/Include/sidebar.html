@@ -3,6 +3,12 @@
 href="  https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
 rel="stylesheet"
 />
+<style>
+  .brand-link {
+      max-width: 100%; /* Limit the maximum width */
+      overflow: hidden; /* Hide any content that exceeds the width */
+  }
+  </style>
 <!--Side NavBar Start-->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a href="" class="brand-link pt-3 mt-3">
@@ -16,9 +22,7 @@ rel="stylesheet"
 
   <div class="sidebar">
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="info">
-        
-                   
+      <div class="info">           
        <div class="text-center">
        <a href="{% url 'user-admin-index'%}">
          <img class="img-circle  img-fluid  " width="4.1rem"  src="{% static 'assets/image/EPCD-Logo-Final-White-NoBg-Hi-res.png'%}"  alt="Profile Picture">
@@ -32,7 +36,6 @@ rel="stylesheet"
          </div>
         </a>
        </div>                
-       
         
       </div>
     </div>
@@ -85,31 +88,31 @@ rel="stylesheet"
           <ul class="nav nav-treeview ms-3">
             <li class="nav-item">
               <a href="{% url 'user-admin-data-list'%}" class="nav-link {% if request.path == '/user-admin/data-list/' %}active{% endif %}">
-                <i class="bi bi-clipboard-data"></i>
+                <i class="bi bi-clipboard-data ml-3"></i>
                 <p>List View</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'user-admin-topic'%}" class="nav-link {% if request.path == '/user-admin/topic/' %}active{% endif %}">
-                <i class="bi bi-person-video3"></i>
+                <i class="bi bi-person-video3 ml-3"></i>
                 <p>Topic</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'user-admin-category'%}" class="nav-link {% if request.path == '/user-admin/category/' %}active{% endif %}">
-                <i class="bi bi-list-nested"></i>
+                <i class="bi bi-list-nested ml-3"></i>
                 <p>Categories</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'user-admin-indicators'%}" class="nav-link {% if request.path == '/user-admin/indicators/' %}active{% endif %}">
-                <i class="bi bi-app-indicator"></i>
+                <i class="bi bi-app-indicator ml-3"></i>
                 <p>Indicators</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'user-admin-measurement'%}" class="nav-link {% if request.path == '/user-admin/measurement/' %}active{% endif %}">
-                <i class="bi bi-cash-stack"></i>
+                <i class="bi bi-cash-stack ml-3"></i>
                 <p>Measurements</p>
               </a>
             </li>
@@ -121,7 +124,7 @@ rel="stylesheet"
             </li>
             <li class="nav-item">
               <a href="{% url 'user-admin-source'%}" class="nav-link {% if request.path == '/user-admin/source/' %}active{% endif %}">
-                <i class="bi bi-buildings"></i>
+                <i class="bi bi-buildings ml-3"></i>
                 <p>Sources</p>
               </a>
             </li>           

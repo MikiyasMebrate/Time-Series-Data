@@ -151,49 +151,6 @@ let updateSource = () => {
     });
 };
 
-// Function to update year information
-let updateYear = () => {
-  // Fetch year data from the server
-  fetch("/user-admin/json-filter-year/")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // Get all elements with the name "EditSource"
-      let btnEdityear = document.getElementsByName("Edityear");
-      btnEdityear.forEach((edityear) => {
-        edityear.addEventListener("click", () => {
-            let yearID = edityear.id;
-            console.log(yearID)
-
-            let yearEC = $("#form_year_edit #id_year_EC");
-            let yearIdInput = $("#form_year_edit #id_year_id");
-
-            let selectedyear = data.years.find(
-                (year) => String(year.id) === String(yearID)
-            );
-
-            if (yearEC && yearIdInput && selectedyear) {
-                yearEC.val(selectedyear.Year_EC);
-                yearIdInput.val(yearID);
-
-                $("#editModalyear").modal("show");
-            } else {
-                console.error("Error: Could not find elements or selected source.");
-            }
-        });
-      });
-    })
-    .catch((error) => {
-      console.error("Fetch error:", error);
-    });
-};
-
-// Call the update function when the document is ready
-document.addEventListener("DOMContentLoaded", updateYear);
 
 let btndeletecatagory = () =>{
         //remove catagory
@@ -223,20 +180,6 @@ let btndeletetopic = () =>{
 document.addEventListener("DOMContentLoaded", btndeletetopic);
 
 
-let btndeleteyear = () =>{
-      //remove topic
-      let btnDelete = document.getElementsByName("yearDelete");
-      btnDelete.forEach((deleteyear)=>{
-        deleteyear.addEventListener('click', ()=>{
-          let approveAnchor = document.getElementById('forRemoveyear')
-          console.log(deleteyear.id)
-          approveAnchor.setAttribute('href', `/user-admin/year-delete/${deleteyear.id}`)
-        })
-      })
-    }
-  // Call the function when the document is ready
-document.addEventListener("DOMContentLoaded", btndeleteyear);
-
 let btndeletesource = () =>{
       //remove source
       let btnDelete = document.getElementsByName("deleteSource");
@@ -260,9 +203,7 @@ parentContainer.addEventListener("click", (event) => {
   updateTopic();
   updateCategory();
   updateSource();
-  updateYear()
   btndeletecatagory();
   btndeletetopic();
   btndeletesource();
-  btndeleteyear()
 });
