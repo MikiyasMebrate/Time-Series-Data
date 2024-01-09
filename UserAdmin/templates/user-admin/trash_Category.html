@@ -56,9 +56,6 @@
           <li class="nav-item">
             <a class="nav-link ml-5" href="{% url 'trash-source' %}" ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Sources</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link ml-5" href="{% url 'trash-year' %}" ><span id="boot-icon" class="bi bi-trash" style="font-size:1rem"></span>Year</a>
-          </li>
         </ul>
         <hr>
         {% include "user-admin/include/messages.html" %}
@@ -112,7 +109,7 @@
                                   <td>{{ catagory.created_at|date:'F d, Y' }}</td>
                                   <td>
                                     <div class="d-flex justify-content-around text-center">
-                                      <button type="button" name="trashRestore" data-item-type="category" data-item-id="{{ category.id }}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash">
+                                      <button type="button" name="trashRestore" data-item-type="category" data-item-id="{{ catagory.id }}" class="btn btn-outline-warning border-0 pt-1 pb-1" data-bs-toggle="modal" data-bs-target="#restoreModaltrash" title="Restore trash">
                                         <i class="fas fa-trash-restore"></i>
                                       </button>
                                   </td>
@@ -154,9 +151,9 @@
           $(document).ready(function() {
             // Listen for button click and set topic_id value in the modal form
             $('.btn-outline-warning').on('click', function() {
-              var CatagoryId = $(this).data('item-id');
+              var catagory_Id = $(this).data('item-id');
               $('#restoreModaltrash form').attr('action', '{% url "trash-category" %}');
-              $('#restoreModaltrash form input[name="catagory_Id"]').val(CatagoryId);
+              $('#restoreModaltrash form input[name="catagory_Id"]').val(catagory_Id);
             });
           });
         </script>
@@ -172,11 +169,8 @@
               })
               .buttons()
               .container()
-              .appendTo("#" + tableId + "_wrapper .col-md-6:eq(0)");
+              .appendTo("deletedcatagoryTable_wrapper .col-md-6:eq(0)")
           });
-        </script>
-        
-        
-        
+        </script>      
   </body>
 </html>

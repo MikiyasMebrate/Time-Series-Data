@@ -1161,14 +1161,15 @@ def trash_indicator(request):
 def trash_category(request):
     if request.method == 'POST':
         catagory_Id = request.POST.get('catagory_Id')
+        print(catagory_Id)
         if catagory_Id:
-            category = get_object_or_404(Source, pk=catagory_Id)
+            category = get_object_or_404(Category, pk=catagory_Id)
             category.is_deleted = False
             category.save()
-            messages.success(request, 'Source restored successfully.')
-            return redirect('trash-source')
+            messages.success(request, 'Catagory restored successfully.')
+            return redirect('trash-category')
         else:
-            messages.error(request, 'Failed to restore Source.')
+            messages.error(request, 'Failed to restore Catagory.')
 
     recycled_categories = Category.objects.filter(is_deleted=True)
     context = {
@@ -1369,6 +1370,9 @@ def json_filter_year(request):
 
         # Create a new DataPoint instance with the next year
         DataPoint.objects.create(year_EC=str(new_year))
+        
+        # Adding a message for success
+        messages.success(request, 'Year added successfully!')
 
         return JsonResponse({'success': True, 'new_year': new_year})
     except Exception as e:
