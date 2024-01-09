@@ -70,7 +70,7 @@ class CategoryResource(resources.ModelResource):
         widget=ForeignKeyWidget(models.Topic, field='title_ENG'),
         saves_null_values = True,
         )
-        
+
 
     def before_import_row(self, row, **kwargs):
             if row.get('topic') is None:
@@ -81,8 +81,8 @@ class CategoryResource(resources.ModelResource):
     
     class Meta:
         model = models.Category
-        skip_unchanged = True
         report_skipped = True
+        skip_unchanged = True
         exclude = ( 'id', 'created_at', 'is_deleted')
         import_id_fields = ('name_ENG', 'name_AMH','topic')
 
@@ -96,8 +96,16 @@ def handle_uploaded_Category_file(file):
         resource  = CategoryResource()
         dataset = tablib.Dataset()
 
+
         imported_data = dataset.load(file.read())
-        result = resource.import_data(imported_data, dry_run=True)
+        new_data_set = []
+        for i, row in enumerate(imported_data.dict):
+            if row['topic'] == 'Education':
+                new_data_set.append((row['name_ENG'],  row['name_AMH'],'Development'))
+
+        dataset = tablib.Dataset(*new_data_set, headers=['name_ENG', 'name_AMH', 'topic'])
+        result = resource.import_data(dataset, dry_run=True)
+        
         if not result.has_errors():
             resource.import_data(dataset, dry_run=False)  # Actually import now
             return True, f"Data imported successfully: {len(dataset)} records imported."
@@ -108,7 +116,7 @@ def handle_uploaded_Category_file(file):
     
 
 
-#Indicator 
+#Indicator   
 class IndicatorResource(resources.ModelResource):    
     for_category = fields.Field(
         column_name='for_category',
@@ -116,11 +124,11 @@ class IndicatorResource(resources.ModelResource):
         widget=ForeignKeyWidget(models.Category, field='name_ENG'),
         saves_null_values = True,
     )
-
+    
     parent = fields.Field(
         column_name='parent',
         attribute='parent',
-        widget=ForeignKeyWidget(models.Indicator, field='title_ENG'),
+        widget=ForeignKeyWidget(models.Indicator, field='id'),
         saves_null_values = True,
     )
 
@@ -130,35 +138,106 @@ class IndicatorResource(resources.ModelResource):
         widget=ForeignKeyWidget(models.Measurement, field='Amount_ENG'),
         saves_null_values = True,
     )
+    def after_import_row(self, row, row_result, row_number=None, **kwargs):
+        return row_result.object_id
+
     class Meta:
         model = models.Indicator
-        skip_unchanged = True
         report_skipped = True
-        exclude = ( 'id', 'created_at', 'is_deleted')
-        import_id_fields = ('title_ENG', 'title_AMH','parent','for_category', 'measurement', 'type_of')
+        skip_unchanged = True
+        exclude = ( 'created_at', 'is_deleted')
+        fields = ('id', 'title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
+        import_id_fields = ('parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
         export_order = ('parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
-        
-       
+    
 
+    
 
 class Indicatoradmin(ImportExportModelAdmin):
     resource_classes = [IndicatorResource]
 
 
-def handle_uploaded_Indicator_file(file):
+def handle_uploaded_Indicator_file(file, category):
     try:
+        def filterParent(item):
+            if item['parent'] == None:
+                return item
+            
+
+        def filterChild(itemParent, itemChild):
+           if itemChild['parent'] == itemParent:
+               return itemChild
+           
+
+  
         resource  = IndicatorResource()
         dataset = tablib.Dataset()
 
+
         imported_data = dataset.load(file.read())
-        result = resource.import_data(imported_data, dry_run=True)
-        if not result.has_errors():
-            resource.import_data(dataset, dry_run=False)  # Actually import now
-            return True, f"Data imported successfully: {len(dataset)} records imported."
-        else:
-            return False, f"Error importing data: Please review your Dcoument."
+        count_successfully_imported = 0
+        
+            
+        indicator_list = []
+        for row in imported_data.dict:
+            if row['parent'] == None and row['title_ENG'] != None :
+                indicator_list.append({'parent':row['parent'], 'title_ENG':row['title_ENG'],  'title_AMH':row['title_AMH'],'for_category':category.name_ENG,'measurement': row['measurement'],'type_of':row['type_of']})
+            elif row['parent'] != None:
+                indicator_list.append({'parent':row['parent'], 'title_ENG':row['title_ENG'],  'title_AMH':row['title_AMH'],'for_category':None,'measurement': None,'type_of':None})
+        
+        parentIndicator = list(filter(lambda parent_item: filterParent(parent_item), indicator_list ))
+
+        #Child 
+        def filterChildIndicator(parent_id, parent_name):
+            childIndicator = filter(lambda child_item : filterChild(parent_name, child_item), indicator_list )
+            childIndicator =  list(childIndicator)
+
+            if len(childIndicator) != 0:
+                for child in childIndicator:
+                    test = models.Indicator.objects.filter(title_ENG = child['title_ENG'], parent = parent_id )
+                   
+
+                    
+                    data = (parent_id, child['title_ENG'],  child['title_AMH'],None, None,None)
+                    child_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
+                    result = resource.import_data(child_dataset, dry_run=True)
+                    
+                    
+                    if not result.has_errors():
+                       resource.import_data(child_dataset, dry_run=False)  # Actually import now             
+                       parent_Child_id  = models.Indicator.objects.latest('id').id
+                       filterChildIndicator(parent_Child_id, child['title_ENG'])
+                    else:
+                         print('has error')
+                    
+
+        #Parent 
+        for parent in parentIndicator:
+            data = (parent['parent'], parent['title_ENG'],  parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
+            parent_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
+            result = resource.import_data(parent_dataset, dry_run=True)
+
+            #Check if the indicator exist     
+            test = models.Indicator.objects.filter(title_ENG = parent['title_ENG'], for_category = category.id, parent = None).first()
+            if test != None:
+                
+                filterChildIndicator(test.id, parent['title_ENG'])
+            elif not result.has_errors():
+               resource.import_data(parent_dataset, dry_run=False)  # Actually import now  
+               
+               count_successfully_imported = count_successfully_imported + 1 
+               parent_id  = models.Indicator.objects.latest('id').id
+               print('After',parent_id)
+               filterChildIndicator(parent_id, parent['title_ENG'])
+        indicator_list = []
+        return True, f"Data imported successfully: {count_successfully_imported} records imported."
+
     except Exception as e:
+        indicator_list = []
+        print(f"An exception occurred: {e}")
         return False, f"Error importing data: Please review your Document."
+    
+
     
 
 admin.site.register(models.Indicator, Indicatoradmin)

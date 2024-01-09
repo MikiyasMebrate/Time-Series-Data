@@ -1,6 +1,14 @@
 from django import forms
 from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
 
+class ImportFileIndicatorForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={
+        'class' : 'form-control'
+    }))
+
 class ImportFileForm(forms.Form):
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={
         'class' : 'form-control'

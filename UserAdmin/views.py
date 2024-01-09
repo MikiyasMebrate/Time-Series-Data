@@ -592,7 +592,7 @@ def data_list_detail(request, pk):
 @admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
-    formFile = ImportFileForm()
+    formFile = ImportFileIndicatorForm()
     
     if request.method == 'POST':
         if 'formAddIndicator' in request.POST:
@@ -603,10 +603,11 @@ def indicator(request):
                 messages.error(request, 'Please Try Again!')
 
         if 'fileIndicatorFile' in request.POST:
-            formFile = ImportFileForm(request.POST, request.FILES )
+            formFile = ImportFileIndicatorForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
-                success, message = handle_uploaded_Indicator_file(file)
+                category = formFile.cleaned_data['category']
+                success, message = handle_uploaded_Indicator_file(file, category)
                 
                 if success:
                     messages.success(request, message)
@@ -630,7 +631,7 @@ def indicator_list(request, pk):
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
     form = IndicatorForm(request.POST or None)
-    formFile = ImportFileForm()
+    formFile = ImportFileIndicatorForm()
     if request.method == "POST":
         if 'form_indicator_edit' in request.POST:
             form = IndicatorForm(request.POST)
@@ -662,10 +663,11 @@ def indicator_list(request, pk):
                 messages.error(request, 'Please Try again! ')
         
         if 'fileIndicatorFile' in request.POST:
-            formFile = ImportFileForm(request.POST, request.FILES )
+            formFile = ImportFileIndicatorForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
-                success, message = handle_uploaded_Indicator_file(file)
+                category = formFile.cleaned_data['category']
+                success, message = handle_uploaded_Indicator_file(file, category)
                 
                 if success:
                     messages.success(request, message)
