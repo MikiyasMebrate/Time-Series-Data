@@ -209,25 +209,53 @@
             </section>
             <!-- services area end -->
             <section class="services__area-2 mt--120 pt-270 pb-140 p-relative" data-background="{% static "assets/img/bg/wave-bg-2.png" %}">
+                <div class="section__title section__title-3 mb-60 center">
+                    <h2 class="wow fadeInUp text-center" data-wow-delay=".4s"> Our web application</h2>
+                </div>
                 <div class="container">
-                    <div id="carouselExample" class="carousel slide">
+                    <div id="carouselExampleDark" class="carousel carousel-dark slide">
+                        <div class="carousel-indicators">
+                          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                          <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                        </div>
                         <div class="carousel-inner">
-                          <div class="carousel-item active">
-                            <img src="{% static "assets/image/s5.png" %}" class="d-block w-100" alt="...">
+                          <div class="carousel-item active" data-bs-interval="10000">
+                            <img src="{% static "assets/image/i1.png" %}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                              <h5>analysis data</h5>
+                              <p>to choose the data that need to be displayed</p>
+                            </div>
+                          </div>
+                          <div class="carousel-item" data-bs-interval="2000">
+                            <img src="{% static "assets/image/i2.png" %}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                              <h5>choose and filter out</h5>
+                              <p>o choose the data that need to be displayed using selecting</p>
+                            </div>
                           </div>
                           <div class="carousel-item">
-                            <img src="{% static "assets/image/s6.png" %}" class="d-block w-100" alt="...">
+                            <img src="{% static "assets/image/i3.png" %}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                              <h5>table</h5>
+                              <p>choose the data that need to be displayed table.</p>
+                            </div>
                           </div>
                           <div class="carousel-item">
-                            <img src="{% static "assets/image/s7.png" %}" class="d-block w-100" alt="...">
+                            <img src="{% static "assets/image/i4.png" %}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                              <h5>graphs</h5>
+                              <p>choose the data that need to be displayed graph,bar for table.</p>
+                            </div>
                           </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" ></span>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" ></span>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="visually-hidden">Next</span>
                         </button>
                       </div>
