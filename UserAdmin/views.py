@@ -1460,3 +1460,5 @@ def json_filter_drilldown(request):
 
 def json_chart_data(request):
     return json_filter_drilldown(request)
+
+# def json_filter_month(request):

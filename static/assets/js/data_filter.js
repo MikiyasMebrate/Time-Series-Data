@@ -1811,6 +1811,10 @@ function filterData() {
               const labelElement = document.getElementById('select_label');
               const selectElement = document.querySelector('.indicatorDropdown');
 
+              let years = []
+              yearTableList.forEach((element) => {
+                  years.push(parseInt(element[1]))
+              });
 
               if (indicatorSelectedType === 'yearly') {
                 let area_main = document.getElementById('main_area')
@@ -1884,7 +1888,7 @@ function filterData() {
                     for (let k of data.value) {
                       if (String(j[0]) === String(k.for_datapoint_id) && String(id) === String(k.for_indicator_id)) {
                         indicatorData.data.push({
-                          x: `${j[1]}-E.C ${j[2]}-G.C`,
+                          x: `${j[1]}-E.C`,
                           y: parseFloat(k.value)
                         });
                         statusData = false;
@@ -1895,7 +1899,7 @@ function filterData() {
                     }
                     if (statusData) {
                       indicatorData.data.push({
-                        x: `${j[1]}-E.C ${j[2]}-G.C`,
+                        x: `${j[1]}-E.C`,
                         y: null
                       });
                     }
@@ -2483,8 +2487,9 @@ function filterData() {
                    * Create the chart when all data is loaded
                    * @return {undefined}
                    */
-                  async function bar_chart(indc_name, data, selectedname,) {
-                    const datasetData1 = data.find(dataset => dataset.name === selectedname)?.data || [];
+                  async function bar_chart(indc_name, chartdata, selectedname,) {
+                    const datasetData1 = chartdata.find(dataset => dataset.name === selectedname)?.data || [];
+                    const indi_Name = data.indicators.find((item) => String(item.id) === String(indc_name) )
                     // create the chart
                     Highcharts.stockChart('bar-chart-canvas1', {
                       chart: {
@@ -2496,7 +2501,7 @@ function filterData() {
                       },
 
                       title: {
-                        text: indc_name
+                        text: indi_Name.title_ENG
                       },
 
                       series: [{
@@ -2518,7 +2523,7 @@ function filterData() {
 
                   async function draw_line(selectedIndicator, chartData, selectedDataset) {
                     const datasetData = chartData.find(dataset => dataset.name === selectedDataset)?.data || [];
-
+                    const indi_Name = data.indicators.find((item) => String(item.id) === String(selectedIndicator) )
                     // Create the chart
                     Highcharts.stockChart('series-chart-canvas1', {
                       rangeSelector: {
@@ -2540,7 +2545,7 @@ function filterData() {
                         }
                       },
                       series: [{
-                        name: selectedDataset,
+                        name: indi_Name.title_ENG,
                         data: datasetData,
                         id: 'dataseries'
                       }]
@@ -2607,6 +2612,7 @@ function filterData() {
                   }
                   // Function to fetch and update data based on the selected indicator
                   async function updateChartData(selectedIndicator) {
+                    
                     // Clear existing charts
                     Highcharts.charts.forEach(chart => {
                       if (chart) {
@@ -2616,21 +2622,24 @@ function filterData() {
                     // Use AJAX or fetch to get data from the server based on the selected indicator
                     const response = await fetch(`/user-admin/json-filter-month/${selectedIndicator}/`);
                     const data = await response.json();
-
                     // Process the data as needed
                     chartData = [];
                     if (Array.isArray(data)) {
                       data.forEach((category) => {
                         let arr = [];
                         category.data.forEach((dataPoint) => {
-                          arr.push([Date.UTC(dataPoint[0][0], dataPoint[0][1] - 1, dataPoint[0][2]), dataPoint[1]]);
-                        });
+                          const dataPointYear = parseInt(dataPoint[0][0]);
+                          
+                          if (years.includes(dataPointYear)) {
+                              arr.push([Date.UTC(dataPoint[0][0], dataPoint[0][1] - 1, dataPoint[0][2]), dataPoint[1]]);
+                          }
+                      });                      
                         chartData.push({ name: category.name, data: arr });
                       });
+                      
                     } else {
                       console.error('Invalid or missing data format in the response.');
                     }
-
                     // Call the createChart function with the updated data
                     createChart(chartData);
                   }
