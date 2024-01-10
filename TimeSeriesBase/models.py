@@ -35,7 +35,7 @@ data_point_type = [
 ]
 
 class Indicator(models.Model):
-    title_ENG = models.CharField(max_length=300) 
+    title_ENG = models.CharField(max_length=300, unique = True ) 
     title_AMH = models.CharField(max_length=300 , null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

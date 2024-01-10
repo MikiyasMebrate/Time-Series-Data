@@ -99,13 +99,10 @@ def handle_uploaded_Category_file(file):
 
         imported_data = dataset.load(file.read())
         new_data_set = []
-        for i, row in enumerate(imported_data.dict):
-            if row['topic'] == 'Education':
-                new_data_set.append((row['name_ENG'],  row['name_AMH'],'Development'))
-
+        for row in imported_data.dict:
+            new_data_set.append((row['name_ENG'],  row['name_AMH'],row['topic']))
         dataset = tablib.Dataset(*new_data_set, headers=['name_ENG', 'name_AMH', 'topic'])
         result = resource.import_data(dataset, dry_run=True)
-        
         if not result.has_errors():
             resource.import_data(dataset, dry_run=False)  # Actually import now
             return True, f"Data imported successfully: {len(dataset)} records imported."
@@ -188,35 +185,31 @@ def handle_uploaded_Indicator_file(file, category):
         parentIndicator = list(filter(lambda parent_item: filterParent(parent_item), indicator_list ))
 
         #Child 
-        def filterChildIndicator(parent_id, parent_name):
+        def filterChildIndicator(parent_id, parent_name, main_parent_name):
             childIndicator = filter(lambda child_item : filterChild(parent_name, child_item), indicator_list )
             childIndicator =  list(childIndicator)
 
             if len(childIndicator) != 0:
                 for child in childIndicator:
                     test = models.Indicator.objects.filter(title_ENG = child['title_ENG'], parent = parent_id )
-                   
-
-                    
-                    data = (parent_id, child['title_ENG'],  child['title_AMH'],None, None,None)
+                                       
+                    data = (parent_id, f'{child['title_ENG']} ({main_parent_name})' ,child['title_AMH'],None, None,None)
                     child_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
                     result = resource.import_data(child_dataset, dry_run=True)
-                    
                     
                     if not result.has_errors():
                        resource.import_data(child_dataset, dry_run=False)  # Actually import now             
                        parent_Child_id  = models.Indicator.objects.latest('id').id
-                       filterChildIndicator(parent_Child_id, child['title_ENG'])
+                       filterChildIndicator(parent_Child_id, child['title_ENG'], main_parent_name)
                     else:
                          print('has error')
                     
 
         #Parent 
         for parent in parentIndicator:
-            data = (parent['parent'], parent['title_ENG'],  parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
+            data = (parent['parent'], f'{parent['title_ENG']} ({category.name_ENG})',  parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
             parent_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
             result = resource.import_data(parent_dataset, dry_run=True)
-
             #Check if the indicator exist     
             test = models.Indicator.objects.filter(title_ENG = parent['title_ENG'], for_category = category.id, parent = None).first()
             if test != None:
@@ -224,18 +217,15 @@ def handle_uploaded_Indicator_file(file, category):
                 filterChildIndicator(test.id, parent['title_ENG'])
             elif not result.has_errors():
                resource.import_data(parent_dataset, dry_run=False)  # Actually import now  
-               
+              
                count_successfully_imported = count_successfully_imported + 1 
                parent_id  = models.Indicator.objects.latest('id').id
-               print('After',parent_id)
-               filterChildIndicator(parent_id, parent['title_ENG'])
-        indicator_list = []
+               filterChildIndicator(parent_id, parent['title_ENG'], parent['title_ENG'])
         return True, f"Data imported successfully: {count_successfully_imported} records imported."
 
     except Exception as e:
-        indicator_list = []
         print(f"An exception occurred: {e}")
-        return False, f"Error importing data: Please review your Document."
+        return False, f"Error importing data: Please review your Document. {e}"
     
 
     
