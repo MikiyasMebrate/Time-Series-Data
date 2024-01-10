@@ -10,7 +10,7 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-:root {
+ :root {
     --blue: #007bff;
     --indigo: #6610f2;
     --purple: #6f42c1;
@@ -4732,8 +4732,7 @@ input[type=submit].btn-block {
 
 .nav-link {
     display: block;
-    padding: .5rem 1rem;
-    
+    padding: .5rem 1rem
 }
 
 .nav-link:focus,
@@ -14009,9 +14008,34 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
     padding-left: .5rem;
     padding-right: .5rem;
     padding-top: 0;
-   
+    scrollbar-color: #a9a9a9 transparent;
+    scrollbar-width: none
 }
 
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #a9a9a9
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: transparent
+}
+
+.sidebar::-webkit-scrollbar-corner {
+    background-color: transparent
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 0
+}
+
+.sidebar:hover {
+    scrollbar-width: thin
+}
+
+.sidebar:hover::-webkit-scrollbar {
+    width: .5rem;
+    height: .5rem
+}
 
 .brand-link.border-bottom-0~.sidebar {
     height: calc(100% - 3.5rem)
@@ -15693,8 +15717,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
     .sidebar-mini.sidebar-collapse .main-sidebar,
     .sidebar-mini.sidebar-collapse .main-sidebar::before {
         margin-left: 0;
-        width: 4.6rem;
-        
+        width: 4.6rem
     }
 
     .sidebar-mini.sidebar-collapse .main-sidebar .user-panel .image {
@@ -16299,8 +16322,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .sidebar-collapse.sidebar-mini .main-sidebar .nav-sidebar .nav-link,
 .sidebar-collapse.sidebar-mini-md .main-sidebar .nav-sidebar .nav-link,
 .sidebar-collapse.sidebar-mini-xs .main-sidebar .nav-sidebar .nav-link {
-    width: 3.6rem;
-    padding:inherit;
+    width: 3.6rem
 }
 
 .sidebar-collapse.sidebar-mini .main-sidebar .nav-sidebar.nav-flat .nav-link,
@@ -16695,8 +16717,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .main-sidebar .logo-xs,
 .sidebar .nav-link p,
 .sidebar .user-panel .info {
-    transition: margin-left .3s linear, opacity .3s ease, visibility .3s ease;
-    padding: 10px;
+    transition: margin-left .3s linear, opacity .3s ease, visibility .3s ease
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -17212,8 +17233,7 @@ body.text-sm .control-sidebar {
 
 .nav-tabs.flex-column.nav-tabs-right .nav-link:focus,
 .nav-tabs.flex-column.nav-tabs-right .nav-link:hover {
-    border-color: #e9ecef #e9ecef #e9ecef transparent;
-   
+    border-color: #e9ecef #e9ecef #e9ecef transparent
 }
 
 .nav-tabs.flex-column.nav-tabs-right .nav-item.show .nav-link,
