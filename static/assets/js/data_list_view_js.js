@@ -900,12 +900,12 @@ let filterData = () => {
                       searching: true,
                       orderNumber: true,
                       lengthMenu: [
-                        [10, 25, 50, -1],
-                        ["10 rows", "25 rows", "50 rows", "Show all"],
+                        [25, 50, 100, -1],
+                        ["25 rows", "50 rows", "100 rows", "Show all"],
                       ],
                       columnDefs: [
                         { width: "100%" },
-                        { width: "200px", targets: 0 },
+                        { width: "330px", targets: 0 },
                       ],
                       dom: "Bfrtip",
                       buttons: ["pageLength", "excel", "csv", "pdf", "print"],

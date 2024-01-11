@@ -1,11 +1,34 @@
 from django import forms
 from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
 
+
+data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+
+
 class ImportFileIndicatorForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), widget=forms.Select(attrs={
         'class' : 'form-select'
     }))
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={
+        'class' : 'form-control'
+    }))
+
+class ImportFileForm(forms.Form):
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={
+        'class' : 'form-control'
+    }))
+
+
+
+class ImportFileIndicatorAddValueForm(forms.Form):
+    type_of_data = forms.ChoiceField(required=True, choices=data_point_type, widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
+    file = forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={
         'class' : 'form-control'
     }))
 
@@ -30,36 +53,39 @@ class catagoryForm(forms.ModelForm):
         # Override the queryset for the topic field
         self.fields['topic'].queryset = Topic.objects.filter(is_deleted=False)
 
-class IndicatorForm(forms.ModelForm):
+class IndicatorForm(forms.Form):
     data_point_type = [
     ('yearly', 'Yearly'),
     ('quarterly', 'Quarterly'),
     ('monthly', 'Monthly'),
 ]
+    title_ENG = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    }))
+    title_AMH = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    })) 
+    for_category = forms.ModelChoiceField(queryset=Category.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Category"}))
     type_of = forms.CharField(required=True, widget=forms.Select(choices=data_point_type,attrs={
         'class' : 'form-select'
     }))
-    for_category = forms.ModelChoiceField(queryset=Category.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Category"}))
 
-    class Meta:
-        
-        model = Indicator
-        fields =  ('title_ENG', 'title_AMH', 'for_category', 'type_of')
-        
-        widgets = {
-            'title_ENG' : forms.TextInput(attrs={
-                'class' : 'form-control'
-            }),
-            'title_AMH' : forms.TextInput(attrs={
-                'class' : 'form-control'
-            }),
-            'for_category': forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Category"}),
-            'type_of': forms.Select(attrs={'class': 'form-select','data-placeholder' : "Select Type"}),
-        }
-    def init(self, *args, **kwargs):
-        super(IndicatorForm, self).init(*args, **kwargs)
-        # Override the queryset for the topic field
-        self.fields['for_category'].queryset = Category.objects.filter(is_deleted=False)
+
+
+class IndicatorSubForm(forms.Form):
+    data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+    title_ENG = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    }))
+    title_AMH = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    })) 
+
+
 
 class SubIndicatorForm(forms.Form):
     title_ENG_add = forms.CharField(widget=forms.TextInput(attrs={

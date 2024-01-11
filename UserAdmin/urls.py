@@ -23,7 +23,6 @@ urlpatterns = [
 
     #Category
     path('category/', views.category, name="user-admin-category"),
-    path('category/<int:pk>', views.catagory_detail, name="user-catagory-detail"),
     path('category-delete/<int:pk>', views.delete_category, name='user-catagory-delete'),
     
     #Data List
@@ -38,7 +37,6 @@ urlpatterns = [
     
    
    #Data-Point
-    path('data-point/', views.data_point, name="user-admin-data-point"),
     path('data-point-detail/<int:pk>', views.data_point_detail, name="user-admin-data-point-detail"),
     path('data-point-delete/<int:pk>', views.delete_data_point, name="user-admin-data-point-delete"),
     

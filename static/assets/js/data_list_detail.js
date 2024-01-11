@@ -81,7 +81,7 @@ $(document).ready(function () {
         <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
       <thead>
         <tr>
-          <th  style="padding-left: 150px !important;padding-right: 150px !important;" class="ps-5 pe-5">Name</th>`;
+          <th  style="padding-left: 270px !important;padding-right: 270px !important;" class="ps-5 pe-5">Name</th>`;
 
         for (let year of data.year) {
           let checkActual = data.indicator_point.find(
@@ -363,7 +363,7 @@ $(document).ready(function () {
               ["36 rows", "72 rows", "108 rows", "Show all"],
             ],
             buttons: ["pageLength"],
-            columnDefs: [{ width: "100%" }, { width: "300px", targets: 0 }],
+            columnDefs: [{ width: "100%" }],
             dom: "Bfrtip",
           });
         });

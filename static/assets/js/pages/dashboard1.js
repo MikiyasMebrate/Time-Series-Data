@@ -295,7 +295,7 @@ let filterData = () => {
               text: "Value",
             },
             labels: {
-              format: "{value}°",
+              format: "{value}",
             },
           },
           tooltip: {
@@ -543,7 +543,6 @@ function initializeChart() {
     })
   });
 }
-
 
 
 

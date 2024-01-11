@@ -44,19 +44,12 @@
                 
                 <div class="mt-2">
                   {{editIndicator.title_AMH.label}}
-                {{editIndicator.title_AMH}}
-                </div>
-
-                <div class="mt-2" id="id_category_option">
-                  {{editIndicator.for_category.label}}
-                {{editIndicator.for_category}}
-                </div>
-
-                
+                  {{editIndicator.title_AMH}}
+                </div>                
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="form_indicator_edit" class="btn btn-primary">Save changes</button>
+                <button type="submit" name="editSubIndicatorForm" form="form_indicator_edit" class="btn btn-primary">Save changes</button>
               </div>
             </form>
         
@@ -112,7 +105,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" form="formAddIndicator" class="btn btn-primary">Save changes</button>
+          <button type="submit" name="addSubIndicatorForm" form="formAddIndicator" class="btn btn-primary">Save changes</button>
         </div>
       </form>
     </div>
@@ -131,7 +124,6 @@
             <div class="col-10">
               {% include 'user-admin/include/messages.html'%}
               <div id="tableTest" class="mt-5">
-
               </div>
             </div>
           </div>

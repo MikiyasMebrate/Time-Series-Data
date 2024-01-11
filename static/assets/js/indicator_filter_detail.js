@@ -200,7 +200,6 @@ $(document).ready(function () {
         btnSubIndicatorEdit.forEach((editIndicator) => {
           editIndicator.addEventListener("click", () => {
             let indicatorId = editIndicator.id;
-            category.style.display = "none";
 
             let selectedIndicator = data.indicators.find(
               (indicator) => String(indicator.id) == String(indicatorId)
@@ -212,6 +211,7 @@ $(document).ready(function () {
 
             titleEnglish.value = selectedIndicator.title_ENG;
             titleAmharic.value = selectedIndicator.title_AMH;
+
             document.getElementById("id_indicator_id").value = indicatorId;
           });
         });

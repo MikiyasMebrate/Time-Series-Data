@@ -35,7 +35,7 @@ data_point_type = [
 ]
 
 class Indicator(models.Model):
-    title_ENG = models.CharField(max_length=300) 
+    title_ENG = models.CharField(max_length=300, unique = True ) 
     title_AMH = models.CharField(max_length=300 , null=True, blank=True)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,7 +67,6 @@ class DataPoint(models.Model):
     year_end_GC = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    is_deleted =models.BooleanField(default=False)
     
     
     class Meta:
@@ -143,6 +142,10 @@ class DataValue(models.Model):
     def __str__(self) -> str:
         return str(self.for_indicator)
     
+    def save(self, *args, **kwargs):
+        self.value = round(self.value,1)
+        super(DataValue, self).save(*args, **kwargs)
+    
     
     def calculate_parent_value(self):
         try: 
@@ -166,12 +169,12 @@ class DataValue(models.Model):
                    
                if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = Decimal(sum)
+                   parent_data.value = round(sum,1)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.save()
                else: 
-                   parent_data_value.value = round(sum, 3)
+                   parent_data_value.value = round(sum, 1)
                    try: parent_data_value.save()
                    except: None
 
@@ -194,13 +197,13 @@ class DataValue(models.Model):
                        None
                 if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = Decimal(sum)
+                   parent_data.value = round(sum,1)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_month = self.for_month
                    parent_data.save()
                 elif parent_data_value is not None: 
-                   parent_data_value.value = sum
+                   parent_data_value.value = round(sum,1)
                    try: parent_data_value.save()
                    except: None
 
@@ -223,13 +226,13 @@ class DataValue(models.Model):
                        None
                 if parent_data_value is None and main_parent is not None:
                    parent_data = DataValue()
-                   parent_data.value = Decimal(sum)
+                   parent_data.value = round(sum,1)
                    parent_data.for_indicator = main_parent
                    parent_data.for_datapoint = self.for_datapoint
                    parent_data.for_quarter = self.for_quarter
                    parent_data.save()
                 else: 
-                   parent_data_value.value = sum
+                   parent_data_value.value = round(sum,1)
                    try: parent_data_value.save()
                    except: None
         

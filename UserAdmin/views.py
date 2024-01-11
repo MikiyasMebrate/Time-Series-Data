@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
 from datetime import datetime, timezone
-from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file, handle_uploaded_Measurement_file, handle_uploaded_Indicator_file
+from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file, handle_uploaded_Measurement_file, handle_uploaded_Indicator_file, handle_uploaded_DataValue_file
 from tablib import Dataset
 from django.http import JsonResponse
 from django.db.models import Max
@@ -22,7 +22,7 @@ from decimal import Decimal
 @login_required(login_url='login')
 @admin_user_required
 def audit_log_list(request):
-    auditlog_entries = LogEntry.objects.all()
+    auditlog_entries = LogEntry.objects.filter()[:2000]
     return render(request, 'user-admin/audit.html', {'auditlog_entries': auditlog_entries})
 
 
@@ -44,34 +44,6 @@ def index(request):
     }
 
     return render(request, 'user-admin/index.html', context)
-
-# @login_required(login_url='login')
-# @admin_user_required
-# def indicator_list(request, pk):
-#     category = Category.objects.get(pk = pk)
-#     indicator_list = Indicator.objects.filter(for_category = category)
-#     form = IndicatorForm(request.POST or None)
-#     if request.method == "POST":
-#         if form.is_valid():
-#             title_ENG = form.cleaned_data['title_ENG']
-#             title_AMH = form.cleaned_data['title_AMH']
-#             indicator_id = request.POST.get('indicator_Id')
-
-            
-#             indicator_obj = Indicator.objects.get(id = indicator_id)
-#             indicator_obj.title_AMH = title_AMH
-#             indicator_obj.title_ENG = title_ENG
-#             indicator_obj.save()
-#             messages.success(request, 'Successfully Updated')
-#         else:
-#             messages.error(request, 'Please Try again! ')
-
-#     context = {
-#         'indicators' : indicator_list,
-#         'category' : category,
-#         'form' : form,
-#     }
-#     return render(request, 'user-admin/indicators.html', context)
     
 #Category
 @login_required(login_url='login')
@@ -353,33 +325,26 @@ def json_random(request):
 @login_required(login_url='login')
 @admin_user_required
 def data_list(request):
-    form = dataListForm(request.POST or None)
+    formFile = ImportFileIndicatorAddValueForm()
     if request.method == 'POST':
-        if form.is_valid():
-            topic = form.cleaned_data['topic']
-            category = form.cleaned_data['category']
-            is_interval = form.cleaned_data['is_interval']
-            year = form.cleaned_data['year']
-            indicator = form.cleaned_data['indicator']
-            is_actual = form.cleaned_data['is_actual']
-            type = form.cleaned_data['type']
-            value = form.cleaned_data['value']
-            source  = form.cleaned_data['source']
-            
-            check = DataValue.objects.filter(for_indicator = indicator, for_datapoint=year)
-            if check.exists():
-                return HttpResponse('The Data Already Added')
-            else:
-                i = DataValue.objects.create(value=value, for_datapoint=year, for_indicator=indicator)
-                i.for_source.add(source)
-                
-                messages.success(request, 'Successfully Added!')
-                return  HttpResponse('Successfully Added!')
-        else:
-            return  HttpResponse('error!')
+        if 'fileDataPointValue' in request.POST:
+                formFile = ImportFileIndicatorAddValueForm(request.POST, request.FILES )
+                if formFile.is_valid():
+                    file = request.FILES['file']
+                    type_of_data = formFile.cleaned_data['type_of_data']
+                    success, message = handle_uploaded_DataValue_file(file, type_of_data)
+                    
+                    if success:
+                        messages.success(request, message)
+                    else:
+                        messages.error(request, message)
+        
+                else:
+                    messages.error(request, 'File not recognized')
+
             
     context = {
-        'form' : form
+        'formFile' : formFile
     }
     return render(request, 'user-admin/data_list_view.html', context)
 
@@ -601,10 +566,10 @@ def indicator_list(request, pk):
     add_indicator = IndicatorForm()
     category = Category.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = category)
-    form = IndicatorForm(request.POST or None)
+    form = IndicatorForm()
     formFile = ImportFileIndicatorForm()
     if request.method == "POST":
-        if 'form_indicator_edit' in request.POST:
+        if 'form_indicator_edit_dynamic' in request.POST:
             form = IndicatorForm(request.POST)
             if form.is_valid():
                 title_ENG = form.cleaned_data['title_ENG']
@@ -613,25 +578,37 @@ def indicator_list(request, pk):
                 type_of_obj = form.cleaned_data['type_of']
                 indicator_id = request.POST.get('indicator_Id')
     
-                indicator_obj = Indicator.objects.get(id = indicator_id)
-                indicator_obj.title_AMH = title_AMH
-                indicator_obj.title_ENG = title_ENG
-                indicator_obj.for_category = category_obj
-                indicator_obj.type_of = type_of_obj
-                indicator_obj.save()
+                Indicator.objects.filter(id = indicator_id).update(title_AMH = title_AMH,title_ENG = title_ENG,for_category = category_obj, type_of = type_of_obj)
                 form = IndicatorForm()
                 messages.success(request, 'Successfully Updated')
             else:
-                messages.error(request, 'Please Try Again')
+                error_messages = ''
+                for field, errors in form.errors.items():
+                    print(field, errors)
+                messages.error(request, f'Please Try Again, {error_messages}')
 
         if 'formAddIndicator' in request.POST:
             add_indicator = IndicatorForm(request.POST)
             if add_indicator.is_valid():
-                add_indicator.save()
-                add_indicator = IndicatorForm()
-                messages.success(request, 'Successfully Added!')
+                title_ENG = add_indicator.cleaned_data['title_ENG']
+                title_AMH = add_indicator.cleaned_data['title_AMH']
+                category_obj = add_indicator.cleaned_data['for_category']
+                type_of_obj = add_indicator.cleaned_data['type_of']
+
+                obj = Indicator()
+                obj.title_AMH = title_AMH
+                obj.title_ENG = title_ENG
+                obj.for_category = category_obj
+                obj.type_of = type_of_obj
+                
+                try:
+                    obj.save()
+                    add_indicator = IndicatorForm()
+                    messages.success(request, 'Successfully Added!')
+                except:
+                    messages.error(request, 'Please Try again! Indicator Exist.')
             else:
-                messages.error(request, 'Please Try again! ')
+                messages.error(request, 'Please Try again! or May the Indicator Exist.')
         
         if 'fileIndicatorFile' in request.POST:
             formFile = ImportFileIndicatorForm(request.POST, request.FILES )
@@ -662,36 +639,44 @@ def indicator_list(request, pk):
 def indicator_detail(request, pk):
     indicator = Indicator.objects.get(pk = pk)
     indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
-    editIndicator = IndicatorForm(request.POST or None)
-    addIndicator  = SubIndicatorForm(request.POST or None)
+    editIndicator = IndicatorSubForm()
+    addIndicator  = SubIndicatorForm()
 
     if request.method == 'POST':
-        if editIndicator.is_valid():
-            indicator_id = request.POST.get('indicator_Id')
-            indicator_title_AMH = editIndicator.cleaned_data['title_AMH']
-            indicator_title_ENG = editIndicator.cleaned_data['title_ENG']
-            try:
-                indicator_obj  = Indicator.objects.get(pk = indicator_id)
-                indicator_obj.title_AMH = indicator_title_AMH
-                indicator_obj.title_ENG = indicator_title_ENG
-                indicator_obj.save()
-                messages.success(request, 'Successfully Updated!')
-            except:
-                messages.error(request, 'Please Try Again!')
-        elif addIndicator.is_valid():
-            parent_id = request.POST.get('addNewIndicator')
-            indicator_title_AMH = addIndicator.cleaned_data['title_AMH_add']
-            indicator_title_ENG = addIndicator.cleaned_data['title_ENG_add']
-            try:
-                parent_obj = Indicator.objects.get(pk = parent_id)
-                new_indicator = Indicator()
-                new_indicator.title_AMH = indicator_title_AMH
-                new_indicator.title_ENG = indicator_title_ENG
-                new_indicator.parent = parent_obj
-                new_indicator.save()
-                messages.success(request, 'Successfully Added!')
-            except:
-                messages.error(request, 'Please Try Again!')
+        if 'editSubIndicatorForm' in request.POST:
+            editIndicator = IndicatorSubForm(request.POST)
+            if editIndicator.is_valid():
+                indicator_id = request.POST.get('indicator_Id')
+                indicator_title_AMH = editIndicator.cleaned_data['title_AMH']
+                indicator_title_ENG = editIndicator.cleaned_data['title_ENG']
+                try:
+                    indicator_obj  = Indicator.objects.get(pk = indicator_id)
+                    indicator_obj.title_AMH = indicator_title_AMH.strip()
+                    indicator_obj.title_ENG = indicator_title_ENG.strip()
+                    indicator_obj.save()
+                    messages.success(request, 'Successfully Updated!')
+                except:
+                    messages.error(request, 'Please Try Again!')
+        if 'addSubIndicatorForm' in request.POST:
+            addIndicator  = SubIndicatorForm(request.POST)
+            if addIndicator.is_valid():
+                parent_id = request.POST.get('addNewIndicator')
+                indicator_title_AMH = addIndicator.cleaned_data['title_AMH_add']
+                indicator_title_ENG = addIndicator.cleaned_data['title_ENG_add']
+                try:
+                    parent_obj = Indicator.objects.get(pk = parent_id)
+                    new_indicator = Indicator()
+                    new_indicator.title_AMH = indicator_title_AMH
+                    new_indicator.title_ENG = indicator_title_ENG
+                    new_indicator.parent = parent_obj
+                    new_indicator.save()
+                    messages.success(request, 'Successfully Added!')
+                except:
+                    messages.error(request, 'Please Try Again!')
+       
+        
+
+
     context = {
         'indicators' : indicator_list,
         'category' : category,
@@ -699,7 +684,7 @@ def indicator_detail(request, pk):
         'indicator' : indicator,
         'addIndicator' : addIndicator
     }
-    return render(request, 'user-admin/location_detail.html', context)
+    return render(request, 'user-admin/indicator_detail.html', context)
 
 @login_required(login_url='login')
 @admin_user_required
@@ -1000,41 +985,7 @@ def delete_topic(request,pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
  
-#Data Point 
-@login_required(login_url='login')
-@admin_user_required
-def data_point(request):
-    data_points = DataPoint.objects.all()
-    form = DataPointForm(request.POST or None)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            obj = form.save(commit=False)
-            check_interval = form.cleaned_data['is_interval']
-            
-            if(check_interval):
-                year_et_start = form.cleaned_data['year_start_EC']
-                year_et_end = form.cleaned_data['year_end_EC']
-                
-                obj.year_start_GC = f'{str(int(year_et_start) + 7)}/{str(int(year_et_start) + 8)}'
-                obj.year_end_GC =  f'{str(int(year_et_end) + 7)}/{str(int(year_et_end) + 8)}'
-            else:
-                year_ec = form.cleaned_data['year_EC']
-                obj.year_GC = f'{str(int(year_ec )+ 7)}/{str(int(year_ec)+ 8)}'
-            
-            
-            obj.save()
-            form = DataPointForm()
-            messages.success(request, 'Successfully Created')
-        else:
-            messages.error(request, 'Value Exist or Please Try Again!')
-    
-    context = {
-        'form' : form,
-        'data_points' : data_points 
-    }
-    return render(request, 'user-admin/data_point.html', context)     
-       
+     
 @login_required(login_url='login')
 @admin_user_required
 def data_point_detail(request, pk):
@@ -1315,10 +1266,9 @@ def quarter_data(request, quarter_id):
 @login_required(login_url='login')
 @admin_user_required
 def year_add(request, year=None):
-    years = DataPoint.objects.all()  # Rename sources to years
+    years = DataPoint.objects.all() # Rename sources to years
     # Fetch the largest year from the DataPoint model
     largest_year = DataPoint.objects.aggregate(Max('year_EC'))['year_EC__max'] or 0
-
     context = {
         'largest_year': largest_year,
         'years': years,  # Update sources to years

@@ -100,14 +100,11 @@
                   </thead>
                   <tbody>
                     {% for year in years%}
-                    {% if year.is_deleted == False  %}
                     <tr>
                       <td> {{year.year_EC }}</td>
                       <td> {{year.year_GC }}</td>
                       <td> {{year.created_at | date:'F d, Y' }}</td>
                     </tr>
-                    {% endif %}
-
                     {% endfor %}
                   </tbody>
                 </table>
