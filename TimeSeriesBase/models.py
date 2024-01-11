@@ -9,7 +9,7 @@ from decimal import Decimal
 
 
 class Topic(models.Model):
-    title_ENG = models.CharField(max_length=300)
+    title_ENG = models.CharField(max_length=300, unique = True)
     title_AMH = models.CharField(max_length=300, null = True)
     updated =  models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

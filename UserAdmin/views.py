@@ -523,39 +523,39 @@ def data_list_detail(request, pk):
     return render(request, 'user-admin/data_list_detail.html', context)
 
 
-#Indicator 
 @login_required(login_url='login')
 @admin_user_required
 def indicator(request):
     add_indicator = IndicatorForm(request.POST or None)
     formFile = ImportFileIndicatorForm()
-    
+
     if request.method == 'POST':
         if 'formAddIndicator' in request.POST:
             if add_indicator.is_valid():
-                add_indicator.save()
+                # Create an instance of the Indicator model and save it
+                indicator_instance = add_indicator.save(commit=False)
+                indicator_instance.save()
                 messages.success(request, 'Successfully Added!')
             else:
                 messages.error(request, 'Please Try Again!')
 
         if 'fileIndicatorFile' in request.POST:
-            formFile = ImportFileIndicatorForm(request.POST, request.FILES )
+            formFile = ImportFileIndicatorForm(request.POST, request.FILES)
             if formFile.is_valid():
                 file = request.FILES['file']
                 category = formFile.cleaned_data['category']
                 success, message = handle_uploaded_Indicator_file(file, category)
-                
+
                 if success:
                     messages.success(request, message)
                 else:
                     messages.error(request, message)
-    
             else:
                 messages.error(request, 'File not recognized')
-    
+
     context = {
-        'add_indicator' : add_indicator,
-        'formFile' : formFile
+        'add_indicator': add_indicator,
+        'formFile': formFile
     }
     return render(request, 'user-admin/indicators.html', context)
 
