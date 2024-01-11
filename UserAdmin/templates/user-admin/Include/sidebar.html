@@ -11,7 +11,7 @@ rel="stylesheet"
   
   </style>
 <!--Side NavBar Start-->
-<aside class="main-sidebar sidebar-dark-primary elevation-4" >
+<aside class="main-sidebar sidebar-dark-primary elevation-4 ">
   <a href="" class="brand-link pt-3 mt-3">
     <img
       src="{% static  'assets/image/EPCD-Logo-Final-White-NoBg-Hi-res.png' %}"
@@ -86,7 +86,7 @@ rel="stylesheet"
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview ms-3">
+          <ul class="nav nav-treeview ms-1">
             <li class="nav-item">
               <a href="{% url 'user-admin-data-list'%}" class="nav-link {% if request.path == '/user-admin/data-list/' %}active{% endif %}">
                 <i class="bi bi-clipboard-data ml-1"></i>
@@ -99,7 +99,7 @@ rel="stylesheet"
                 <p>Topic</p>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item ">
               <a href="{% url 'user-admin-category'%}" class="nav-link {% if request.path == '/user-admin/category/' %}active{% endif %}">
                 <i class="bi bi-list-nested ml-1"></i>
                 <p>Categories</p>

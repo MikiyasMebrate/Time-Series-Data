@@ -8,22 +8,12 @@ from . import models
 from import_export.formats.base_formats import XLS
 import tablib
 # Register your models here.
-#admin.site.register(models.Topic)
-#admin.site.register(models.Category)
 admin.site.register(models.Indicator_Point)
 admin.site.register(models.DataPoint)
 admin.site.register(models.Quarter)
 admin.site.register(models.Month)
-admin.site.register(models.DataValue)
 admin.site.register(models.Source)
 
-
-
-# Search 
-class searchIndicator(admin.ModelAdmin):
-    search_fields = ['title_ENG', 'title_AMH']  # Replace field1 and field2 with the fields you want to enable search on
-
-#admin.site.register(models.Indicator, searchIndicator)
 
 
 # Import Export 
@@ -152,6 +142,7 @@ class IndicatorResource(resources.ModelResource):
 
 class Indicatoradmin(ImportExportModelAdmin):
     resource_classes = [IndicatorResource]
+    search_fields = ['title_ENG', 'title_AMH']
 
 
 def handle_uploaded_Indicator_file(file, category):
@@ -193,7 +184,7 @@ def handle_uploaded_Indicator_file(file, category):
                 for child in childIndicator:
                     test = models.Indicator.objects.filter(title_ENG = child['title_ENG'], parent = parent_id )
                                        
-                    data = (parent_id, f'{child['title_ENG']} ({main_parent_name})' ,child['title_AMH'],None, None,None)
+                    data = (parent_id,f'{child['title_ENG'].strip()} ({main_parent_name.strip()})' ,child['title_AMH'],None, None,None)
                     child_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
                     result = resource.import_data(child_dataset, dry_run=True)
                     
@@ -207,14 +198,13 @@ def handle_uploaded_Indicator_file(file, category):
 
         #Parent 
         for parent in parentIndicator:
-            data = (parent['parent'], f'{parent['title_ENG']} ({category.name_ENG})',  parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
+            data = (parent['parent'],f'{parent['title_ENG'].strip()} ({category.name_ENG.strip()})',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
             parent_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
             result = resource.import_data(parent_dataset, dry_run=True)
             #Check if the indicator exist     
             test = models.Indicator.objects.filter(title_ENG = parent['title_ENG'], for_category = category.id, parent = None).first()
             if test != None:
-                
-                filterChildIndicator(test.id, parent['title_ENG'])
+                filterChildIndicator(test.id, parent['title_ENG'].strip())
             elif not result.has_errors():
                resource.import_data(parent_dataset, dry_run=False)  # Actually import now  
               
@@ -273,3 +263,121 @@ def handle_uploaded_Measurement_file(file):
     
 
 admin.site.register(models.Measurement, MeasurementAdmin)
+
+
+
+#Value
+#Measurement  
+class DataValueResource(resources.ModelResource):    
+    for_indicator = fields.Field(
+        column_name='for_indicator',
+        attribute='for_indicator',
+        widget=ForeignKeyWidget(models.Indicator, field='title_ENG'),
+        saves_null_values = True,
+    ) 
+    
+
+    for_datapoint = fields.Field(
+        column_name='for_datapoint',
+        attribute='for_datapoint',
+        widget=ForeignKeyWidget(models.DataPoint, field='year_EC'),
+        saves_null_values = True,
+    )
+
+    for_quarter = fields.Field(
+        column_name='for_quarter',
+        attribute='for_quarter',
+        widget=ForeignKeyWidget(models.Quarter, field='title_ENG'),
+        saves_null_values = True,
+    )
+
+    for_month = fields.Field(
+        column_name='for_month',
+        attribute='for_month',
+        widget=ForeignKeyWidget(models.Month, field='number'),
+        saves_null_values = True,
+    )
+
+    class Meta:
+        model = models.DataValue
+        skip_unchanged = True
+        report_skipped = True
+        exclude = ( 'id', 'is_deleted','for_source')
+        fields = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
+        import_id_fields = ('for_datapoint', 'for_quarter', 'for_month', 'value', 'for_indicator')
+        export_order = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
+        
+
+class DataValueAdmin(ImportExportModelAdmin):
+    resource_classes = [DataValueResource]
+
+
+def handle_uploaded_DataValue_file(file, type_of_data):
+    if type_of_data == 'yearly':
+        try:
+            resource  = DataValueResource()
+            dataset = tablib.Dataset()
+            imported_data = dataset.load(file.read())
+    
+            data_set = []
+            for item in imported_data.dict:
+                for i, key in enumerate(list(item.keys())):
+                    if i != 0:
+                         data_set.append((item['for_indicator'].strip(), key, None, None,  round(item[key], 1) if item[key] else 0 ))
+    
+            data_set_table = tablib.Dataset(*data_set, headers=['for_indicator', 'for_datapoint', 'for_quarter', 'for_month','value'])
+            result = resource.import_data(data_set_table, dry_run=True)
+            if not result.has_errors():
+                resource.import_data(data_set_table, dry_run=False)  # Actually import now
+                return True, f"Data imported successfully: {len(dataset)} records imported."
+            else:
+                return False, f"Error importing data: Please review your Dcoument. {result.row_errors()}"
+        except Exception as e:
+            return False, f"Error importing data: Please review your Document. {e}"
+   
+    elif type_of_data == 'monthly':
+        try:    
+            resource  = DataValueResource()
+            dataset = tablib.Dataset()
+            imported_data = dataset.load(file.read())
+    
+            data_set = []
+            for item in imported_data.dict:
+                for i, key in enumerate(list(item.keys())):
+                    if i != 0 and i != 1:
+                        data_set.append((item['Year'], item['Month'] ,key.strip(),item[key] if item[key] else 0  ))
+    
+            data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_month','for_indicator', 'value'])
+            result = resource.import_data(data_set_table, dry_run=True)
+            if not result.has_errors():
+                resource.import_data(data_set_table, dry_run=False)  # Actually import now
+                return True, f"Data imported successfully: {len(dataset)} records imported."
+            else:
+                return False, f"Error importing data: Please review your Dcoument."
+        except Exception as e:
+            return False, f"Error importing data: Please review your Document. {e}"
+
+    elif type_of_data == 'quarterly':
+        try:    
+            resource  = DataValueResource()
+            dataset = tablib.Dataset()
+            imported_data = dataset.load(file.read())
+    
+            data_set = []
+            for item in imported_data.dict:
+                for i, key in enumerate(list(item.keys())):
+                    if i != 0 and i != 1:
+                        data_set.append((item['Year'], item['Quarter'] ,key.strip(),item[key] if item[key] else 0  ))
+    
+            data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_quarter','for_indicator', 'value'])
+            result = resource.import_data(data_set_table, dry_run=True)
+            if not result.has_errors():
+                resource.import_data(data_set_table, dry_run=False)  # Actually import now
+                return True, f"Data imported successfully: {len(dataset)} records imported."
+            else:
+                return False, f"Error importing data: Please review your Dcoument."
+        except Exception as e:
+            return False, f"Error importing data: Please review your Document. {e}"
+    
+
+admin.site.register(models.DataValue, DataValueAdmin)
