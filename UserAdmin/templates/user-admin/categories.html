@@ -179,7 +179,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for catagory in catagorys%}
+                  {% for catagory in catagories%}
                   {% if catagory.is_deleted == False %}
                   <tr>
                     <td> {{catagory.name_ENG }}</td>
@@ -196,6 +196,7 @@
                           data-bs-target="#editModalcatagory" data-bs-toggle="modal" data-bs-target="#addIndicatorModal"
                           class="btn btn-outline-warning border-0  pt-1 pb-1" data-bs-toggle="tooltip"
                           data-bs-placement="bottom" title="Edit catagory "><i class="fas fa-pen"></i></button>
+
                         <button id={{catagory.id}} name='catgorydelete' type="button" class="btn  m-0 p-0 text-center"
                           data-bs-toggle="modal" data-bs-target="#removeCatagoryModal" data-bs-whatever="@mdo">
                           <i class="fas ms-3  text-danger fa-trash"></i>

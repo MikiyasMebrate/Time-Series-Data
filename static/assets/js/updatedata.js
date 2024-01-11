@@ -9,8 +9,8 @@ let updateCategory = () => {
       return response.json();
     })
     .then((data) => {
-      // Get all elements with the name "EditCategory"
-      let btnEditCategory = document.querySelectorAll("[name='EditCategory']");
+      // Get all elements with the name "EditCategory""
+       let btnEditCategory = document.querySelectorAll("[name='EditCategory']");
 
       // Add click event listener to each "EditCategory" button
       btnEditCategory.forEach((editCategory) => {
@@ -54,10 +54,8 @@ let updateCategory = () => {
       console.error("Fetch error:", error);
     });
 };
-
 // Call the function when the document is ready
 document.addEventListener("DOMContentLoaded", updateCategory);
-
 
 // Function to update topic information
 let updateTopic = () => {
@@ -80,13 +78,14 @@ let updateTopic = () => {
           let topicId = edittopic.id;
 
           // Select relevant form elements using jQuery
-          let titleEnglish = $("#form_topic_edit #id_title_ENG");
-          let titleAmharic = $("#form_topic_edit #id_title_AMH");
+          let titleEnglish = $("form[name='topicFormValue'] #id_title_ENG");
+          let titleAmharic = $("form[name='topicFormValue'] #id_title_AMH");
 
           // Find the selected topic in the fetched data
           let selectedTopic = data.topics.find(
             (topic) => String(topic.id) === String(topicId)
           );
+          console.log(selectedTopic)
 
           // Check if all necessary elements and data are available
           if (titleEnglish && titleAmharic && selectedTopic) {
@@ -96,6 +95,7 @@ let updateTopic = () => {
 
             // Set the topic ID in a hidden field for form submission
             $("#id_topic_id").val(topicId);
+            
           } else {
             console.error("Error: Could not find elements or selected topic.");
           }

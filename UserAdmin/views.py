@@ -76,92 +76,67 @@ def index(request):
 #Category
 @login_required(login_url='login')
 @admin_user_required
-def category(request, category_id=None):
-    catagory = Category.objects.all()
-    formFile = ImportFileForm()
-
+def category(request, catagory_id=None):
+    catagories = Category.objects.all()
 
     if request.method == 'POST':
-        catagory_id_str = request.POST.get('catagory_Id', '')
-        if catagory_id_str.isdigit():
-            try:
-                category_instance = get_object_or_404(Category, id=int(catagory_id_str))
-                form = catagoryForm(request.POST, instance=category_instance)
-            except Http404 as e:
-                messages.error(request, "Invalid category ID provided.")
-                return redirect('user-admin-category')
+        if 'catagory_Id' in request.POST:
+            # Editing an existing source
+            catagory_instance = get_object_or_404(Category, id=request.POST['catagory_Id'])
+            form = catagoryForm(request.POST, instance=catagory_instance)
         else:
-            # Adding a new category, set category_id to None
-            category_instance = None
+            # Adding a new source
             form = catagoryForm(request.POST)
 
-        if 'addcatagory' in request.POST:
-            if form.is_valid():
-                form.save()
-                if category_instance:
-                    messages.success(request, "Category has been successfully updated!")
-                else:
-                    messages.success(request, "Category has been successfully added!")
-                return redirect('user-admin-category')
+        if form.is_valid():
+            form.save()
+            if 'catagory_Id' in request.POST:
+                messages.success(request, "Source has been successfully updated!")
             else:
-                messages.error(request, "Value exists or please try again!")
-        
-        if 'fileCategoryValue' in request.POST:
-            formFile = ImportFileForm(request.POST, request.FILES )
-            if formFile.is_valid():
-                file = request.FILES['file']
-                success, message = handle_uploaded_Category_file(file)
-                
-                if success:
-                    messages.success(request, message)
-                else:
-                    messages.error(request, message)
-    
-            else:
-                messages.error(request, 'File not recognized')
+                messages.success(request, "Source has been successfully added!")
+            return redirect('user-admin-category')
+        else:
+            messages.error(request, "Value exists or please try again!")
 
     else:
         # GET request or form is not valid, display the form
-        if category_id:
-            try:
-                category_instance = get_object_or_404(Category, id=category_id)
-                form = catagoryForm(instance=category_instance)
-            except Http404 as e:
-                messages.error(request, "Invalid category ID provided.")
-                return redirect('user-admin-category')
+        if catagory_id:
+            # Editing an existing source, populate the form with existing data
+            catagory_instance = get_object_or_404(Topic, id=catagory_id)
+            form = catagoryForm(instance=catagory_instance)
         else:
-            # Adding a new category
+            # Adding a new source
             form = catagoryForm()
-            formFile = ImportFileForm()
-            
+
     context = {
         'form': form,
-        'catagorys': catagory,
-        'formFile' : formFile
+        'catagories': catagories,
     }
     return render(request, 'user-admin/categories.html', context=context)
-
 
 @login_required(login_url='login')
 @admin_user_required
 def catagory_detail(request, pk):
-    catagory = Category.objects.get(pk=pk)
-    form = catagoryForm(request.POST or None, instance=catagory)
-    
+    catagory = get_object_or_404(Category, pk=pk)
+
     if request.method == 'POST':
+        form = catagoryForm(request.POST, instance=catagory)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.save()
             form.save_m2m()
             messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-category')
+            return redirect('user-admin-category')  # Redirect to category listing page or detail page
         else:
-            messages.error(request, 'Value Exist or Please try Again!')
+            messages.error(request, 'Value exists or please try again!')
+    else:
+        form = catagoryForm(instance=catagory)
+
     context = {
-        'form' : form,
-        'catagorys' : catagory
+        'form': form,
+        'catagory': catagory,
     }  
-    return render(request, 'user-admin/catagories_detail.html', context)
+    return render(request, 'user-admin/categories.html', context)
 
 @login_required(login_url='login')
 @admin_user_required
@@ -177,8 +152,6 @@ def delete_category(request, pk):
     
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
-
-
 
 #JSON
 @login_required(login_url='login')
@@ -250,24 +223,6 @@ def json_filter_source(request):
     return JsonResponse({'sources': sources_data}) 
 
 @login_required(login_url='login')
-def json_filter_topic(request):
-    topics = Topic.objects.all()
-    topics_data = []
-    for topic in topics:
-        topics_data.append({
-            'id': topic.id,
-            'title_ENG': topic.title_ENG,
-            'title_AMH': topic.title_AMH,
-            'user': topic.user.username if topic.user else None,
-            'updated': topic.updated.isoformat(),
-            'created': topic.created.isoformat(),
-            'is_deleted': topic.is_deleted,
-        })
-
-    # Returning the list as JSON
-    return JsonResponse({'topics': topics_data})
-
-@login_required(login_url='login')
 def filter_catagory_json(request):
     category_data = list(Category.objects.all().values())
     
@@ -313,7 +268,6 @@ def json_measurement_byID(request, measurement_id=None):
         'measurements': measurements
     }
     return JsonResponse(context)
-
 
 
 @login_required(login_url='login')
@@ -603,7 +557,6 @@ def data_list_detail(request, pk):
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 
-       
 
 #Indicator 
 @login_required(login_url='login')
@@ -874,7 +827,6 @@ def delete_measurement(request, pk):
     except: 
         messages.error(request, 'Please Try Again!')
 
-
 #Source
 @login_required(login_url='login')
 @admin_user_required
@@ -956,62 +908,42 @@ def delete_source(request,pk):
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
-    topics = Topic.objects.filter(is_deleted = False)
-
-    # If topic_id is provided, it's an update operation
-    if topic_id:
-        topic_instance = get_object_or_404(Topic, pk=topic_id)
-    else:
-        # If it's not an update operation, check if the topic_Id is present in the POST data
-        topic_instance = None
-        topic_id_from_post = request.POST.get('topic_Id')
-        if topic_id_from_post:
-            topic_instance = get_object_or_404(Topic, id=topic_id_from_post)
-
-    # Initialize form with or without data
-    form = TopicForm(instance=topic_instance)
-    formFile = ImportFileForm()
+    Topics = Topic.objects.all()
 
     if request.method == 'POST':
-        if 'topicFormValue' in request.POST:
+        if 'topic_Id' in request.POST:
+            # Editing an existing source
+            topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
             form = TopicForm(request.POST, instance=topic_instance)
-            if form.is_valid():
-                obj = form.save(commit=False)
-                is_new_topic = obj.pk is None
-                obj.save()
-    
-                success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
-                messages.success(request, success_message)
-    
-                return redirect('user-admin-topic')
+        else:
+            # Adding a new source
+            form = TopicForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            if 'topic_Id' in request.POST:
+                messages.success(request, "Source has been successfully updated!")
             else:
-                messages.error(request, "Value exists or please try again!")
-        
-        if 'fileTopicValue' in request.POST:
-            formFile = ImportFileForm(request.POST, request.FILES )
-            if formFile.is_valid():
-                file = request.FILES['file']
-                success, message = handle_uploaded_Topic_file(file)
-                
-                if success:
-                    messages.success(request, message)
-                else:
-                    messages.error(request, message)
-    
-            else:
-                messages.error(request, 'File not recognized')
+                messages.success(request, "Source has been successfully added!")
+            return redirect('user-admin-topic')
+        else:
+            messages.error(request, "Value exists or please try again!")
+
     else:
-        form = TopicForm()
-        formFile = ImportFileForm(request.POST or None, request.FILES or None)
-    
+        # GET request or form is not valid, display the form
+        if topic_id:
+            # Editing an existing source, populate the form with existing data
+            topic_instance = get_object_or_404(Topic, id=topic_id)
+            form = TopicForm(instance=topic_instance)
+        else:
+            # Adding a new source
+            form = TopicForm()
 
-
-
-            
-
-    context = {'form': form, 'topics': topics, 'topic_id': topic_id, 'formFile' : formFile}
+    context = {
+        'form': form,
+        'topics': Topics
+    }
     return render(request, 'user-admin/topic.html', context=context)
-
 
 @login_required(login_url='login')
 def json_filter_topic(request):
@@ -1457,8 +1389,3 @@ def json_filter_drilldown(request):
         "topic_data": topic_data,
         "drilldown": drilldown
     })
-
-def json_chart_data(request):
-    return json_filter_drilldown(request)
-
-# def json_filter_month(request):
