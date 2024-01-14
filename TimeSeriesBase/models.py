@@ -20,7 +20,7 @@ class Topic(models.Model):
     
 class Category(models.Model):
     name_ENG = models.CharField(max_length=300, unique = True)
-    name_AMH = models.CharField(max_length=300, unique = True)
+    name_AMH = models.CharField(max_length=300, null = True)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)

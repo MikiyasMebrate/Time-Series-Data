@@ -113,8 +113,6 @@
                     class="bi bi-arrow-down-circle-fill"></i></a>
               </div>
             </div>
-          
-           
 
           </div>
           <!--Card End-->
@@ -131,8 +129,6 @@
            </div>
             <!--Random Month Grapd End-->
 
-
-            
             <h6 class="text-muted p-2">Random Yearly Category</h6>
            <!--Random Year Graph Start-->
            <!--Year 1-->
@@ -150,35 +146,27 @@
             </div>
              <!--Random Year Graph End-->
              
-
-             
-
+             <h6 class="text-muted p-2">Topic catagory and indicator count</h6>
             <!--Year 2-->
-            <div class="col-lg-6 ">
+            <div class="col-12 ">
               <div class="pt-4">
                 <figure class="highcharts-figure">
                   <div class='mt-1' id="drilldown"></div>
               </figure>
               </div>
             </div>
-
-                        <!--Year 2-->
-            <div class="col-lg-6">
-              <div id="outer-container">
+            <h6 class="text-muted p-2">Random Catagory indicator Data</h6>
+            <!--Year 2-->
+            <div class="col-12">
+              
 
                 <div class="controls d-flex justify-content-center pl-1 ">
-                  <button id="start">
-                    Start
-                  </button>
+                  <button type="button" id="start" class="btn btn-success">Start</button> 
                 </div>
                 
                 <div id="live_data"></div>
-              </div>
+              
             </div>
-
-
-
-
 
              <!--Last 5 Audit Start -->
              <div class="col-12">
@@ -252,7 +240,7 @@
       });
     });
   </script>
-  <script src="{% static 'assets/js/pages/dashboard1.js'%}"></script>
+  {% comment %} <script src="{% static 'assets/js/pages/dashboard1.js'%}"></script> {% endcomment %}
 
 </body>
 

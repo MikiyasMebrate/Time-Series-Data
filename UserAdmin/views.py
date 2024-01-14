@@ -526,10 +526,10 @@ def data_list_detail(request, pk):
 @login_required(login_url='login')
 @admin_user_required
 def indicator(request):
-    add_indicator = IndicatorForm(request.POST or None)
-    formFile = ImportFileIndicatorForm()
-
     if request.method == 'POST':
+        add_indicator = IndicatorForm(request.POST)
+        formFile = ImportFileIndicatorForm()
+
         if 'formAddIndicator' in request.POST:
             if add_indicator.is_valid():
                 # Create an instance of the Indicator model and save it
@@ -552,6 +552,10 @@ def indicator(request):
                     messages.error(request, message)
             else:
                 messages.error(request, 'File not recognized')
+
+    else:
+        add_indicator = IndicatorForm()
+        formFile = ImportFileIndicatorForm()
 
     context = {
         'add_indicator': add_indicator,
@@ -836,7 +840,6 @@ def source(request, source_id=None):
             return redirect('user-admin-source')
         else:
             messages.error(request, "Value exists or please try again!")
-
     else:
         # GET request or form is not valid, display the form
         if source_id:

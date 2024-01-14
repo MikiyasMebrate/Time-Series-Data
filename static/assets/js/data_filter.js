@@ -9,11 +9,15 @@ let yearSelected = 0;
 let isdatatable = 0;
 let yearcount = 0;
 let theSelectedCatagory;
-
-
+let yearTableList = [];
+let tmpData 
 
 function updateFilterSelection() {
   var isFilterSelected = true;
+  console.log('called' )
+  $(".card").show();
+  // Hide data display section by default
+  $(".data-display").hide();
   var applyButtonExists = $('#applyButton').length > 0;
 
   // Check if at least one filter submenu is selected from each filter option
@@ -129,6 +133,44 @@ function updateFilterSelection() {
   }
 }
 
+function updateCheckboxes() {
+  let yearCheckboxes = document.getElementsByName("yearListsCheckBox");
+  // Clear existing entries in yearTableList
+  yearTableList = [];
+
+  let checkedYears = [];
+
+  yearCheckboxes.forEach((checkbox, index) => {
+    let yearData = tmpData.year.find((y) => y.id.toString() === checkbox.value);
+    if (yearData && !yearData.is_interval) {
+      // Check if the checkbox falls within the slider range
+      let checkboxValue = (index / (yearCheckboxes.length - 1)) * 100;
+      let sliderValue1 = parseInt(document.getElementById("value1").innerText);
+      let sliderValue2 = parseInt(document.getElementById("value2").innerText);
+      let isCheckboxInSliderRange = checkboxValue >= sliderValue1 && checkboxValue <= sliderValue2;
+
+      // Update the checked status of the checkbox
+      checkbox.checked = isCheckboxInSliderRange;
+
+      // Add checked years to the array
+      if (checkbox.checked) {
+        checkedYears.push(yearData.year_EC);
+        yearTableList.push([yearData.id, yearData.year_EC, yearData.year_GC]);
+      }
+    }
+  });
+
+  // Find the minimum and maximum checked years
+  let minYear = checkedYears.length > 0 ? Math.min(...checkedYears) : 0;
+  let maxYear = checkedYears.length > 0 ? Math.max(...checkedYears) : 0;
+
+  // Update the displayed year range
+  document.getElementById("min-price").innerText = minYear;
+  document.getElementById("max-price").innerText = maxYear;
+}
+
+
+
 //make datatable
 $(function () {
   $('#table').DataTable({
@@ -143,12 +185,15 @@ $(function () {
 });
 
 
+
+
 function filterData() {
   $.ajax({
     url: "/user-admin/json/",
     type: "GET",
     dataType: "json",
     success: function (data) {
+      tmpData = data
       let table = "";
       let indicatorSelectedType = "yearly";
       let indicatorHtmlSelectAll = document.getElementById(
@@ -160,9 +205,10 @@ function filterData() {
       let displayBlock = (element) => {
         element.style.display = "block";
       };
+      
       //Return Selected Year
-      let yearTableList = [];
       let searchTermYear = "";
+
 
       //-------------------------- Function to create a filter item for year -----------------------------
       // Function to update the year filter based on the search term
@@ -209,6 +255,7 @@ function filterData() {
           </li>
         `;
       }
+
       //--------------------------End of  Function to create a filter item for Topic -----------------------------
       let yearList = () => {
         yearTableList = [];
@@ -254,25 +301,26 @@ function filterData() {
 
         selectAllYear.addEventListener("change", () => {
           let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
-        
+
           if (selectAllYear.checked) {
             yearTableList = data.year
               .filter(({ id, year_EC, year_GC, is_interval }) => {
                 return !is_interval && year_EC.toLowerCase().includes(searchTermYear.toLowerCase());
               })
               .map(({ id, year_EC, year_GC }) => [id, year_EC, year_GC]);
-        
+
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = true;
             });
-          } else {
+          }
+          else {
             yearTableList = [];
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = false;
             });
           }
         });
-        
+
 
         let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
 
@@ -1779,7 +1827,7 @@ function filterData() {
 
             dataListViewTable.innerHTML = table;
             table = "";
-          
+
           });
 
           //End Indicator table
@@ -1813,7 +1861,7 @@ function filterData() {
 
               let years = []
               yearTableList.forEach((element) => {
-                  years.push(parseInt(element[1]))
+                years.push(parseInt(element[1]))
               });
 
               if (indicatorSelectedType === 'yearly') {
@@ -2489,7 +2537,7 @@ function filterData() {
                    */
                   async function bar_chart(indc_name, chartdata, selectedname,) {
                     const datasetData1 = chartdata.find(dataset => dataset.name === selectedname)?.data || [];
-                    const indi_Name = data.indicators.find((item) => String(item.id) === String(indc_name) )
+                    const indi_Name = data.indicators.find((item) => String(item.id) === String(indc_name))
                     // create the chart
                     Highcharts.stockChart('bar-chart-canvas1', {
                       chart: {
@@ -2523,7 +2571,7 @@ function filterData() {
 
                   async function draw_line(selectedIndicator, chartData, selectedDataset) {
                     const datasetData = chartData.find(dataset => dataset.name === selectedDataset)?.data || [];
-                    const indi_Name = data.indicators.find((item) => String(item.id) === String(selectedIndicator) )
+                    const indi_Name = data.indicators.find((item) => String(item.id) === String(selectedIndicator))
                     // Create the chart
                     Highcharts.stockChart('series-chart-canvas1', {
                       rangeSelector: {
@@ -2612,7 +2660,7 @@ function filterData() {
                   }
                   // Function to fetch and update data based on the selected indicator
                   async function updateChartData(selectedIndicator) {
-                    
+
                     // Clear existing charts
                     Highcharts.charts.forEach(chart => {
                       if (chart) {
@@ -2629,14 +2677,14 @@ function filterData() {
                         let arr = [];
                         category.data.forEach((dataPoint) => {
                           const dataPointYear = parseInt(dataPoint[0][0]);
-                          
+
                           if (years.includes(dataPointYear)) {
-                              arr.push([Date.UTC(dataPoint[0][0], dataPoint[0][1] - 1, dataPoint[0][2]), dataPoint[1]]);
+                            arr.push([Date.UTC(dataPoint[0][0], dataPoint[0][1] - 1, dataPoint[0][2]), dataPoint[1]]);
                           }
-                      });                      
+                        });
                         chartData.push({ name: category.name, data: arr });
                       });
-                      
+
                     } else {
                       console.error('Invalid or missing data format in the response.');
                     }

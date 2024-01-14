@@ -266,75 +266,83 @@ admin.site.register(models.Measurement, MeasurementAdmin)
 
 
 
-#Value
-#Measurement  
+# Measurement
+# Value
 class DataValueResource(resources.ModelResource):    
     for_indicator = fields.Field(
         column_name='for_indicator',
         attribute='for_indicator',
         widget=ForeignKeyWidget(models.Indicator, field='title_ENG'),
-        saves_null_values = True,
+        saves_null_values=True,
     ) 
     
-
     for_datapoint = fields.Field(
         column_name='for_datapoint',
         attribute='for_datapoint',
         widget=ForeignKeyWidget(models.DataPoint, field='year_EC'),
-        saves_null_values = True,
+        saves_null_values=True,
     )
 
     for_quarter = fields.Field(
         column_name='for_quarter',
         attribute='for_quarter',
         widget=ForeignKeyWidget(models.Quarter, field='title_ENG'),
-        saves_null_values = True,
+        saves_null_values=True,
     )
 
     for_month = fields.Field(
         column_name='for_month',
         attribute='for_month',
         widget=ForeignKeyWidget(models.Month, field='number'),
-        saves_null_values = True,
+        saves_null_values=True,
     )
 
     class Meta:
         model = models.DataValue
         skip_unchanged = True
         report_skipped = True
-        exclude = ( 'id', 'is_deleted','for_source')
-        fields = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
+        exclude = ('id', 'is_deleted', 'for_source')
+        fields = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value',)
         import_id_fields = ('for_datapoint', 'for_quarter', 'for_month', 'value', 'for_indicator')
-        export_order = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
-        
+        export_order = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value',)
 
 class DataValueAdmin(ImportExportModelAdmin):
-    resource_classes = [DataValueResource]
+    resource_class = DataValueResource
+
 
 
 def handle_uploaded_DataValue_file(file, type_of_data):
     if type_of_data == 'yearly':
         try:
-            resource  = DataValueResource()
+            resource = DataValueResource()
             dataset = tablib.Dataset()
             imported_data = dataset.load(file.read())
-    
+
             data_set = []
             for item in imported_data.dict:
                 for i, key in enumerate(list(item.keys())):
                     if i != 0:
-                         data_set.append((item['for_indicator'].strip(), key, None, None,  round(item[key], 1) if item[key] else 0 ))
-    
-            data_set_table = tablib.Dataset(*data_set, headers=['for_indicator', 'for_datapoint', 'for_quarter', 'for_month','value'])
+                        data_set.append((item['for_indicator'].strip(), key, None, None, round(item[key], 1) if item[key] else 0))
+
+            data_set_table = tablib.Dataset(*data_set, headers=['for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)
             if not result.has_errors():
                 resource.import_data(data_set_table, dry_run=False)  # Actually import now
                 return True, f"Data imported successfully: {len(dataset)} records imported."
             else:
-                return False, f"Error importing data: Please review your Dcoument. {result.row_errors()}"
+                # Existing code to print result.row_errors()
+                print(result.row_errors())
+
+                # Add the following code to print detailed error messages
+                for index, errors in result.row_errors():
+                    print(f"Row {index} errors:")
+                    for error in errors:
+                        print(f"- {error.error}")
+                return False, f"Error importing data: Please review your Document. {result.row_errors()}"
+
         except Exception as e:
             return False, f"Error importing data: Please review your Document. {e}"
-   
+    
     elif type_of_data == 'monthly':
         try:    
             resource  = DataValueResource()
@@ -378,6 +386,7 @@ def handle_uploaded_DataValue_file(file, type_of_data):
                 return False, f"Error importing data: Please review your Dcoument."
         except Exception as e:
             return False, f"Error importing data: Please review your Document. {e}"
+        
     
 
 admin.site.register(models.DataValue, DataValueAdmin)
