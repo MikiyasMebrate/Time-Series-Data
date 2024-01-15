@@ -10,11 +10,58 @@ let isdatatable = 0;
 let yearcount = 0;
 let theSelectedCatagory;
 let yearTableList = [];
-let tmpData 
+let tmpData
+let reset
 
-function updateFilterSelection() {
+function resetFilters() {
+  // Reset the checkboxes
+  $('input[name="yearListsCheckBox"]').prop('checked', false);
+
+  // Reset the slider values
+  document.getElementById("value1").innerText = 0;
+  document.getElementById("value2").innerText = 1;
+
+  // Reset the slider range
+  var slider = document.getElementById("slider-distance");
+  if (slider) {
+    // Set the initial values of the slider
+    slider.value = 0;
+
+    // Trigger the 'input' event to update the slider and its associated elements
+    var inputEvent = new Event('input', {
+      bubbles: true,
+      cancelable: true,
+    });
+    slider.dispatchEvent(inputEvent);
+
+    // Reset the CSS styles of the slider manually
+    var rangeElement = slider.querySelector('.range');
+    var thumbElements = slider.querySelectorAll('.thumb');
+    var signEelemnts = slider.querySelectorAll('.sign');
+    var inv1 = document.getElementById('inverse-left')
+    var inv2 = document.getElementById('inverse-right')
+    document.getElementById('in1').value = 0
+    document.getElementById('in2').value = 1
+
+    if (rangeElement && thumbElements.length === 2) {
+      rangeElement.style.left = '0%';
+      rangeElement.style.right = '99%';
+      thumbElements[0].style.left = '0%';
+      thumbElements[1].style.left = '1%';
+      signEelemnts[0].style.left = '0%'
+      signEelemnts[1].style.left = '1%'
+      inv1.style.width = '70%'
+      inv2.style.width = '70%'
+    }
+  }
+
+  // Reset the price values
+  document.getElementById("min-price").innerText = 0;
+  document.getElementById("max-price").innerText = 0;
+}
+
+function updateFilterSelection(reset = false) {
   var isFilterSelected = true;
-  console.log('called' )
   $(".card").show();
   // Hide data display section by default
   $(".data-display").hide();
@@ -26,7 +73,12 @@ function updateFilterSelection() {
     var filterOptionName = filterOption.find('strong').text();
     var filterSubmenu = filterOption.find('.filter-submenu');
 
-
+    // Check if reset is requested, and reset filters
+    if (reset) {
+      resetFilters();
+      reset = false
+      return;
+    }
 
     // Check if at least one checkbox or radio button is checked in the filter submenu
     var filterOptionSelection = $('#filterSelections .filter-option-selection:contains("' + filterOptionName + '")');
@@ -44,7 +96,7 @@ function updateFilterSelection() {
 
   // Create and append new apply button to the #button div if all filters are selected and the button doesn't exist
   if (isFilterSelected && !applyButtonExists) {
-    var applyButton = $('<button>').attr('id', 'applyButton').addClass('btn btn-info text-white mt-3').text('Apply');
+    var applyButton = $('<button>').attr('id', 'applyButton').addClass('btn text-white mt-3').text('Apply').css('background-color', '#009b77');
     $('#button').append(applyButton);
   }
 
@@ -97,6 +149,7 @@ function updateFilterSelection() {
   }
   if (databaseSelected == 0) {
     document.getElementById('search_attr').style.display = 'none'
+    reset = true
     document.getElementById("Year_list_filter").innerHTML =
       ' <p class="text-danger">Please Select Indicator </p>';
     document.getElementById(
@@ -109,6 +162,7 @@ function updateFilterSelection() {
       "";
   }
   if (indicatorSelected === 0) {
+    reset = true
     document.getElementById('search_attr3').style.display = 'none'
     document.getElementById("Year_list_filter").innerHTML =
       ' <p class="text-danger">Please Select Indicator </p>';
@@ -169,8 +223,6 @@ function updateCheckboxes() {
   document.getElementById("max-price").innerText = maxYear;
 }
 
-
-
 //make datatable
 $(function () {
   $('#table').DataTable({
@@ -205,7 +257,7 @@ function filterData() {
       let displayBlock = (element) => {
         element.style.display = "block";
       };
-      
+
       //Return Selected Year
       let searchTermYear = "";
 
@@ -300,6 +352,7 @@ function filterData() {
         let selectAllYear = document.getElementById("select_all_year_filter");
 
         selectAllYear.addEventListener("change", () => {
+          reset = false
           let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
 
           if (selectAllYear.checked) {
@@ -309,9 +362,12 @@ function filterData() {
               })
               .map(({ id, year_EC, year_GC }) => [id, year_EC, year_GC]);
 
+            //reversing the years
+            yearTableList.reverse()
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = true;
             });
+
           }
           else {
             yearTableList = [];
@@ -325,6 +381,7 @@ function filterData() {
         let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
 
         document.querySelectorAll('#last_5_year, #last_10_year, #last_15_year, #last_20_year').forEach(function (button) {
+          reset = false
           button.addEventListener('click', function () {
             var yearsToShow = parseInt(this.textContent, 10);
             var yearCheckboxes = document.querySelectorAll('input[name="yearListsCheckBox"]');
@@ -339,6 +396,7 @@ function filterData() {
               return yearData && !yearData.is_interval ? [yearData.id, yearData.year_EC, yearData.year_GC] : null;
             }).filter(Boolean);
           });
+          yearTableList.reverse()
         });
 
         //Selected Year
@@ -394,8 +452,8 @@ function filterData() {
             }
             //Sort Year by Ethiopian Calender
             yearTableList.sort((a, b) => (a[1] > b[1] ? 1 : -1));
-          });
 
+          });
         });
       };
 
@@ -490,7 +548,7 @@ function filterData() {
       document.getElementById('filterDatabaseSearch').addEventListener('input', function (event) {
         var searchTerm = event.target.value;
         updateFilterTopic(searchTerm);
-        updateFilterSelection()
+        updateFilterSelection(reset)
       });
       // Event listeners for sorting buttons
       document.getElementById('sortAZDatabase').addEventListener('click', sortAZTopic);
@@ -501,6 +559,7 @@ function filterData() {
 
       document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
       $(document).on('change', 'input[name="topic_lists"]', function (event) {
+        reset = true
         document.getElementById('serach_atrr').style.display = 'block'
         // document.getElementById('search_attr').style.display = 'block'
         var selectedTopicId = event.target.value;
@@ -528,10 +587,6 @@ function filterData() {
           return '';
         }).join('');
         document.getElementById('categoryAvailableBadge').innerHTML = catargoryCount
-
-        $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-          updateFilterSelection();
-        });
 
         $('#category_list_filter').html(selectCategory);
 
@@ -562,7 +617,7 @@ function filterData() {
             categoryListBody.innerHTML = selectCategory;
           }
 
-          updateFilterSelection();
+          updateFilterSelection(reset);
         }
 
         // Function to sort categories A-Z
@@ -573,7 +628,7 @@ function filterData() {
 
           var selectCategory = sortedCategories.map(createFilterItem).join('');
           document.getElementById('category_list_filter').innerHTML = selectCategory;
-          updateFilterSelection()
+          updateFilterSelection(reset)
         }
 
         // Function to sort categories Z-A
@@ -584,14 +639,14 @@ function filterData() {
 
           var selectCategory = sortedCategories.map(createFilterItem).join('');
           document.getElementById('category_list_filter').innerHTML = selectCategory;
-          updateFilterSelection()
+          updateFilterSelection(reset)
         }
 
         // Event listener for the search input
         document.getElementById('filterSearch').addEventListener('input', function (event) {
           var searchTerm = event.target.value;
           updateFilter(searchTerm);
-          updateFilterSelection()
+          updateFilterSelection(reset)
         });
 
         // Event listeners for sorting buttons
@@ -601,6 +656,7 @@ function filterData() {
         //--------------------------End of Function to create a filter item for catagory -----------------------------
 
         $(document).on('change', 'input[name="category_lists"]', function (eventCategory) {
+          reset = true
           document.getElementById('search_attr1').style.display = 'block'
           document.getElementById(
             "indicator_list_filter_header"
@@ -652,9 +708,6 @@ function filterData() {
                 </li>
                   `
                   );
-                  $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-                    updateFilterSelection();
-                  });
                 } else if (String(type_of) == "quarterly") {
                   selectQuarterlyIndicator.push(
                     `
@@ -672,9 +725,6 @@ function filterData() {
                 </li>
                   `
                   );
-                  $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-                    updateFilterSelection();
-                  });
                 } else if (String(type_of) == "monthly") {
                   selectMonthlyIndicator.push(
                     `
@@ -694,11 +744,13 @@ function filterData() {
                   );
                 }
               }
-              $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-                updateFilterSelection();
-              });
+
             }
           );
+          //needed
+          $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
+            updateFilterSelection(reset);
+          });
 
           let indicator_type = ` 
             <div class="row fw-bold" id=options_for_Type>
@@ -751,13 +803,14 @@ function filterData() {
           selectAllIndicator = document.getElementById("select_all");
 
           if (selectYearIndicator.length == 0 && selectQuarterlyIndicator.length == 0 && selectMonthlyIndicator.length == 0) {
+            reset = true
             indicatorHtmlHeader.innerHTML =
               '<p class="text-danger">Please select Another Category, No data Found! </p>';
             indicatorHtmlBody.innerHTML = "";
             document.getElementById('search_attr1').style.display = 'none'
             document.getElementById('select_all_ind').style.display = 'none'
             document.getElementById('seriesAvailableBadge').innerHTML = 0;
-            updateFilterSelection()
+            updateFilterSelection(reset = true)
           }
           else {
             indicatorHtmlHeader.innerHTML = indicator_type;
@@ -774,16 +827,14 @@ function filterData() {
             let selectedIndicatorType = document.getElementsByName(
               "indicator_type_input"
             );
-            $(document).on('change', '#options_for_Type input[type="radio"]', function () {
-              updateFilterSelection();
-            });
+
 
             selectedIndicatorType.forEach((type) => {
               type.addEventListener("change", () => {
                 table = "";
                 document.getElementById("Year_list_filter").innerHTML =
                   ' <p class="text-danger">Please Select Indicator</p>';
-
+                reset = true
                 if (String(type.value) == "yearly") {
                   indicatorSelectedType = "yearly";
                   if (selectYearIndicator.length == 0) {
@@ -852,11 +903,6 @@ function filterData() {
             }
 
           }
-
-          // Event listener for the indicator type radio buttons
-          $(document).on('change', '#options_for_Type input[type="radio"]', function () {
-            updateFilterSelection();
-          });
 
           // Function to update the indicator filter based on the search term and indicator type
           function updateIndicatorFilter(searchTerm) {
@@ -1064,7 +1110,6 @@ function filterData() {
           document.getElementById('filterIndicatorSearch').addEventListener('input', function (event) {
             var searchTerm = event.target.value;
             updateIndicatorFilter(searchTerm);
-            updateFilterSelection();
           });
           // Event listeners for indicator type radio buttons
           document.getElementById('options_for_Type').addEventListener('change', function (event) {
@@ -1123,7 +1168,6 @@ function filterData() {
 
 
           $(document).on('change', '.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]', function () {
-            updateFilterSelection();
             if (indicatorSelected > 0) {
               document.getElementById('yearAvailableBadge').innerHTML = data.year.length;
             } else {
@@ -1132,6 +1176,7 @@ function filterData() {
           });
 
           if ($('input[name="category_lists"]:checked').length == 0) {
+            reset = true
             document.querySelector('.indicator_filter').innerHTML = ' <p class="text-danger">Please Select Category</p>';
             document.getElementById('Year_list_filter').innerHTML = ' <p class="text-danger">Please Select Indicator</p>'
           }
@@ -3120,6 +3165,7 @@ $(document).ready(function () {
     $("#filterColumn").toggleClass("d-none");
     $("#dataColumn").toggleClass("col-md-8 col-lg-12");
   });
+
   //make the first button in display-option div display table when clicked
   $("#displayOptions a:nth-child(1)").click(function () {
     // Show table
@@ -3168,24 +3214,19 @@ $(document).ready(function () {
 
   });
 
-  // Add event listener to map button to be active color
-  $("#mapbutton").click(function () {
-    // Show chart
-    $(".data-display #map").show();
+  // // Add event listener to map button to be active color
+  // $("#mapbutton").click(function () {
+  //   // Show chart
+  //   $(".data-display #map").show();
 
-    // Hide table
-    $(".data-display #chart").hide();
-    $(".data-display #table-container").hide();
+  //   // Hide table
+  //   $(".data-display #chart").hide();
+  //   $(".data-display #table-container").hide();
 
-    // Set chart button active
-    $("#mapbutton").addClass("active");
-    $("#chartButton").removeClass("active");
-    $("#tableButton").removeClass("active");
-  });
+  //   // Set chart button active
+  //   $("#mapbutton").addClass("active");
+  //   $("#chartButton").removeClass("active");
+  //   $("#tableButton").removeClass("active");
+  // });
 
-
-
-  $('.filter-submenu input[type="checkbox"], .filter-submenu input[type="radio"]').on('change', function () {
-    updateFilterSelection();
-  });
 });
