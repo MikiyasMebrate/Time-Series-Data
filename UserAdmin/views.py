@@ -231,10 +231,11 @@ def json_measurement_byID(request, measurement_id=None):
             # Return a 404 response if the measurement with the given ID is not found
             return JsonResponse({'error': 'Measurement not found'}, status=404)
 
-        # Return the specific measurement
-        return JsonResponse({'measurement': measurement})
+        # Include the measurement value in curly braces in the JSON response
+        measurement_value = f"{{measurement: {measurement}}}"
+        return JsonResponse({'measurement': measurement_value})
 
-    # If no measurement_id is provided, return the list of all measurements
+    # If no measurement_id is provided, return the list of all measurements without including measurement value
     measurements = list(Measurement.objects.all().values())
     context = {
         'measurements': measurements

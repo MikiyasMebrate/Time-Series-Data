@@ -38,8 +38,8 @@ function resetFilters() {
     var rangeElement = slider.querySelector('.range');
     var thumbElements = slider.querySelectorAll('.thumb');
     var signEelemnts = slider.querySelectorAll('.sign');
-    var inv1 = document.getElementById('inverse-left')
-    var inv2 = document.getElementById('inverse-right')
+    var inv1 = document.querySelector('.inverse-left')
+    var inv2 = document.querySelector('.inverse-right')
     document.getElementById('in1').value = 0
     document.getElementById('in2').value = 1
 
@@ -61,6 +61,7 @@ function resetFilters() {
 }
 
 function updateFilterSelection(reset = false) {
+  console.log('called')
   var isFilterSelected = true;
   $(".card").show();
   // Hide data display section by default
@@ -213,6 +214,7 @@ function updateCheckboxes() {
       }
     }
   });
+  
 
   // Find the minimum and maximum checked years
   let minYear = checkedYears.length > 0 ? Math.min(...checkedYears) : 0;
@@ -361,9 +363,7 @@ function filterData() {
                 return !is_interval && year_EC.toLowerCase().includes(searchTermYear.toLowerCase());
               })
               .map(({ id, year_EC, year_GC }) => [id, year_EC, year_GC]);
-
-            //reversing the years
-            yearTableList.reverse()
+            yearTableList = yearTableList.reverse()
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = true;
             });
@@ -396,7 +396,7 @@ function filterData() {
               return yearData && !yearData.is_interval ? [yearData.id, yearData.year_EC, yearData.year_GC] : null;
             }).filter(Boolean);
           });
-          yearTableList.reverse()
+   
         });
 
         //Selected Year
@@ -560,6 +560,7 @@ function filterData() {
       document.getElementById('databaseAvailableBadge').innerHTML = databaseCount
       $(document).on('change', 'input[name="topic_lists"]', function (event) {
         reset = true
+        updateFilterSelection(reset)
         document.getElementById('serach_atrr').style.display = 'block'
         // document.getElementById('search_attr').style.display = 'block'
         var selectedTopicId = event.target.value;
@@ -656,6 +657,7 @@ function filterData() {
         //--------------------------End of Function to create a filter item for catagory -----------------------------
 
         $(document).on('change', 'input[name="category_lists"]', function (eventCategory) {
+          updateFilterSelection()
           reset = true
           document.getElementById('search_attr1').style.display = 'block'
           document.getElementById(
@@ -930,36 +932,7 @@ function filterData() {
             // Update the current indicator type
             indicatorSelectedType = newType;
 
-            // Update the indicator filter based on the new type
-            updateIndicatorFilterAndUI(() => {
-              // Unselect the 'Select All' button
-              selectAllIndicator.checked = false;
-              selectedIndictorId = []; // Reinitialized the Array
 
-              indicatorHtmlList.forEach((indicatorCheckBox) => {
-                indicatorCheckBox.addEventListener("change", (eventIndicator) => {
-                  if (eventIndicator.target.checked) {
-                    selectedIndictorId.push(eventIndicator.target.value);
-                  } else {
-                    selectedIndictorId = selectedIndictorId.filter(id => id !== eventIndicator.target.value);
-                  }
-
-                  // Update the 'Select All' checkbox state based on individual checkboxes
-                  selectAllIndicator.checked = indicatorHtmlList.length === selectedIndictorId.length;
-
-                  // Update the year checkboxes based on selected indicators
-                  yearList();
-                });
-              });
-              indicatorSelected = $('input[name="indicator_lists"]:checked').length;
-              if ($('input[name="category_lists"]:checked').length > 0) {
-                let allIndicators = selectYearIndicator.concat(selectQuarterlyIndicator, selectMonthlyIndicator);
-                indicatorcount = allIndicators.length;
-                document.getElementById('seriesAvailableBadge').innerHTML = indicatorcount;
-              } else {
-                document.getElementById('seriesAvailableBadge').innerHTML = 0;
-              }
-            });
             updateFilterSelection();
           }
 
@@ -1217,7 +1190,7 @@ function filterData() {
                         <tr>
                           <th class="ps-5 pe-5">Name</th>`;
               for (let i of yearTableList) {
-                table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+                table += `<th style="font-size: small; class="white-space: nowrap;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
               }
 
               table += `</tr>
@@ -1233,6 +1206,7 @@ function filterData() {
                   id,
                   for_category_id,
                   is_deleted,
+                  Amount_ENG,
                 }) => {
                   if (
                     String(for_category_id) ===
@@ -1240,17 +1214,23 @@ function filterData() {
                     selectedIndictorId.includes(String(id)) &&
                     is_deleted == false
                   ) {
+                    console.log()
                     let title_amharic = "";
                     if (!title_AMH === null)
                       title_amharic = " - " + title_AMH;
 
+                      let measure = "";
+                      if (Amount_ENG !== null && Amount_ENG !== undefined) {
+                        measure = "(" + Amount_ENG + ")";
+                      }
+
                     //Table Row Start
                     table += `
                           <tr>
-                            <td>
+                            <td  style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 <div class="row">
                                    <div class="col-10">
-                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                     <p style="font-size: small;" white-space: nowrap; class="d-block fw-bold text-dark">${title_ENG} ${title_amharic} <span class="measurement-text" style="color: red;">${measure}</span></p>
                                    </div>
                                 </div>
                             </td>`;
@@ -1291,10 +1271,10 @@ function filterData() {
                           //Table Row Start
                           table += `
                           <tr>
-                            <td>
+                            <td style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                               <a>
                                 <h6 class="mb-1">
-                                  <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
+                                  <p style="font-size: small;" class="d-block white-space: nowrap; text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </p>
                                 </h6>
                               </a>
                             </td>`;
@@ -1344,10 +1324,10 @@ function filterData() {
                         //Table Row Start
                         table += `
                         <tr>
-                          <td>
+                          <td style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <a>
                               <h6 class="mb-1">
-                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                                <p style="font-size: small;" class="d-block white-space: nowrap; text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </p>
                               </h6>
                             </a>
                           </td>`;
@@ -1449,8 +1429,14 @@ function filterData() {
                 if (!filterIndicator.title_AMH === null)
                   title_amharic = " - " + filterIndicator.title_AMH;
 
+                let measure = "";
+                if (filterIndicator.Amount_ENG !== null){
+                  measure = "(" + filterIndicator.Amount_ENG  + ")";
+                }
+                
+
                 table += ` <th class="vertical-text border" ">
-                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
+                         <p " class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
                          </th>`;
 
                 let childIndicatorList = (parent, space) => {
@@ -1670,8 +1656,14 @@ function filterData() {
                 if (!filterIndicator.title_AMH === null)
                   title_amharic = " - " + filterIndicator.title_AMH;
 
+                  let measure = "";
+                  if (filterIndicator.Amount_ENG !== null){
+                    measure = "(" + filterIndicator.Amount_ENG + ")";
+                  }
+                   
+  
                 table += ` <th class="vertical-text  border" ">
-                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}</a>
+                         <p" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
                          </th>`;
 
                 let childIndicatorList = (parent, space) => {

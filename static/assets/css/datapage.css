@@ -484,3 +484,7 @@
   -ms-box-sizing: border-box;
   box-sizing: border-box;
 }
+
+.measurement-text {
+  color: red; /* or any other color you want */
+}

@@ -23,12 +23,14 @@ from django.contrib.auth import authenticate, login
 from django.utils.encoding import force_bytes, smart_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
-from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.urls import reverse_lazy
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+
 
 User = get_user_model()
 
@@ -37,26 +39,35 @@ def forget_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
+            validate_email(email)  # Validate email format
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, 'User with this email does not exist.')
             return redirect('forget_password')
+        except ValidationError:
+            messages.error(request, 'Invalid email format.')
+            return redirect('forget_password')
 
-        # Generate token and uidb64
-        token = default_token_generator.make_token(user)
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        try:
+            # Generate token and uidb64
+            token = default_token_generator.make_token(user)
+            uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
 
-        # Generate reset URL
-        reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
-        reset_url = request.build_absolute_uri(reset_url)
-        print(reset_url)
+            # Generate reset URL
+            reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
+            reset_url = request.build_absolute_uri(reset_url)
+            print(reset_url)
 
-        subject = 'Reset Your Password'
-        message = f'Click the link below to reset your password:\n\n{reset_url}'
-        send_mail(subject, message, 'habtamutesfaye.com@gmail.com', [user.email])
+            subject = 'Reset Your Password'
+            message = f'Click the link below to reset your password:\n\n{reset_url}'
+            send_mail(subject, message, 'habtamutesfaye.com@gmail.com', [user.email])
 
-        messages.success(request, 'Password reset link has been sent to your email.')
-        return redirect('forget_password')
+            messages.success(request, 'Password reset link has been sent to your email.')
+            return redirect('forget_password')
+        except Exception as e:
+            # Handle network-related errors
+            messages.error(request, 'An error occurred while sending the reset password link. Please try again later.')
+            print(f'Error sending email: {e}')
 
     return render(request, 'forget_pass.html')
 
