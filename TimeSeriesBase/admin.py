@@ -7,6 +7,9 @@ from import_export.admin import ImportExportModelAdmin #Admin
 from . import models
 from import_export.formats.base_formats import XLS
 import tablib
+from bs4 import BeautifulSoup
+
+
 # Register your models here.
 admin.site.register(models.Indicator_Point)
 admin.site.register(models.DataPoint)
@@ -26,7 +29,7 @@ class TopicResource(resources.ModelResource):
         report_skipped = True
         exclude = ( 'id', 'updated', 'created', 'is_deleted')
         import_id_fields = ('title_ENG', 'title_AMH',)
-        
+
 
     
 class TopicAdmin(ImportExportModelAdmin):
@@ -41,15 +44,16 @@ def handle_uploaded_Topic_file(file):
         dataset = tablib.Dataset()
 
         imported_data = dataset.load(file.read())
-        result = resource.import_data(imported_data, dry_run=True)
+        result = resource.import_data(imported_data, dry_run=True, collect_failed_rows = True)
+        
         if not result.has_errors():
-            resource.import_data(dataset, dry_run=False)  # Actually import now
-            return True, f"Data imported successfully: {len(dataset)} records imported."
+            return True, imported_data, result
         else:
-            return False, f"Error importing data: Please review your Dcoument."
+            return False, imported_data, result
     except Exception as e:
-        return False, f"Error importing data: Please review your Document."
-    
+         return False, imported_data, result
+
+
 
 
 #Category 
@@ -94,16 +98,20 @@ def handle_uploaded_Category_file(file):
         dataset = tablib.Dataset(*new_data_set, headers=['name_ENG', 'name_AMH', 'topic'])
         result = resource.import_data(dataset, dry_run=True)
         if not result.has_errors():
-            resource.import_data(dataset, dry_run=False)  # Actually import now
-            return True, f"Data imported successfully: {len(dataset)} records imported."
+            return True, dataset, result
         else:
-            return False, f"Error importing data: Please review your Dcoument."
+            return False, dataset, result
     except Exception as e:
-        return False, f"Error importing data: Please review your Document."
+        return False, '', ''
     
-
+        
 
 #Indicator   
+import datetime
+
+# Get the current date and time
+current_datetime = datetime.datetime.now()
+
 class IndicatorResource(resources.ModelResource):    
     for_category = fields.Field(
         column_name='for_category',
@@ -119,23 +127,26 @@ class IndicatorResource(resources.ModelResource):
         saves_null_values = True,
     )
 
+    def before_save_instance(self, instance, using_transactions, dry_run):
+        instance.created_at =  datetime.datetime.now()
+
+
+
     measurement = fields.Field(
         column_name='measurement',
         attribute='measurement',
         widget=ForeignKeyWidget(models.Measurement, field='Amount_ENG'),
         saves_null_values = True,
     )
-    def after_import_row(self, row, row_result, row_number=None, **kwargs):
-        return row_result.object_id
 
     class Meta:
         model = models.Indicator
         report_skipped = True
         skip_unchanged = True
-        exclude = ( 'created_at', 'is_deleted')
-        fields = ('id', 'title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
+        fields = ('id','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
+        exclude = ( 'created_at', 'is_deleted', 'composite_key' )
         import_id_fields = ('parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
-        export_order = ('parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
+        export_order = ('id','parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
     
 
     
@@ -146,13 +157,18 @@ class Indicatoradmin(ImportExportModelAdmin):
 
 
 def handle_uploaded_Indicator_file(file, category):
-    try:
         def filterParent(item):
+            '''
+            filter parent Items
+            '''
             if item['parent'] == None:
                 return item
             
 
         def filterChild(itemParent, itemChild):
+           '''
+           filter Child Items
+           '''
            if itemChild['parent'] == itemParent:
                return itemChild
            
@@ -164,7 +180,7 @@ def handle_uploaded_Indicator_file(file, category):
 
         imported_data = dataset.load(file.read())
         count_successfully_imported = 0
-        
+        total_data = []
             
         indicator_list = []
         for row in imported_data.dict:
@@ -176,47 +192,57 @@ def handle_uploaded_Indicator_file(file, category):
         parentIndicator = list(filter(lambda parent_item: filterParent(parent_item), indicator_list ))
 
         #Child 
-        def filterChildIndicator(parent_id, parent_name, main_parent_name):
+        global current_id 
+        current_id = 0
+        def filterChildIndicator(parent_id, parent_name):
+            global current_id
             childIndicator = filter(lambda child_item : filterChild(parent_name, child_item), indicator_list )
             childIndicator =  list(childIndicator)
 
             if len(childIndicator) != 0:
-                for child in childIndicator:
-                    test = models.Indicator.objects.filter(title_ENG = child['title_ENG'], parent = parent_id )
-                                       
-                    data = (parent_id,f'{child['title_ENG'].strip()} ({main_parent_name.strip()})' ,child['title_AMH'],None, None,None)
+                for child in childIndicator:                    
+                    data = (parent_id,f'{child['title_ENG'].strip()}' ,child['title_AMH'],None, None,None)
                     child_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
                     result = resource.import_data(child_dataset, dry_run=True)
-                    
                     if not result.has_errors():
-                       resource.import_data(child_dataset, dry_run=False)  # Actually import now             
-                       parent_Child_id  = models.Indicator.objects.latest('id').id
-                       filterChildIndicator(parent_Child_id, child['title_ENG'], main_parent_name)
+                        current_id = int(current_id) + 1
+                        total_data.append(((int(current_id), parent_id,f'{child['title_ENG'].strip()}' ,child['title_AMH'],None, None,None)))
+                        filterChildIndicator(int(current_id), child['title_ENG'])
                     else:
-                         print('has error')
-                    
-
-        #Parent 
+                        current_id = int(current_id) + 1
+                        total_data.append((current_id, parent_id,f'{child['title_ENG'].strip()}' ,child['title_AMH'],None, None,None))
+                        filterChildIndicator(int(current_id), child['title_ENG'])
+                             
+                
+        #Parent  
         for parent in parentIndicator:
-            data = (parent['parent'],f'{parent['title_ENG'].strip()} ({category.name_ENG.strip()})',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
+            data = (parent['parent'],f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
             parent_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
             result = resource.import_data(parent_dataset, dry_run=True)
-            #Check if the indicator exist     
-            test = models.Indicator.objects.filter(title_ENG = parent['title_ENG'], for_category = category.id, parent = None).first()
-            if test != None:
-                filterChildIndicator(test.id, parent['title_ENG'].strip())
-            elif not result.has_errors():
-               resource.import_data(parent_dataset, dry_run=False)  # Actually import now  
-              
-               count_successfully_imported = count_successfully_imported + 1 
-               parent_id  = models.Indicator.objects.latest('id').id
-               filterChildIndicator(parent_id, parent['title_ENG'], parent['title_ENG'])
-        return True, f"Data imported successfully: {count_successfully_imported} records imported."
+            if not result.has_errors():
+                for row_result in result:
+                    get_id = ("%d" % (row_result.object_id))
+                parent_id = get_id
+                if current_id == 0:
+                    current_id = int(current_id) + int(parent_id)
+                else:
+                    current_id = int(current_id) + 1
+                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of']))
+                filterChildIndicator(current_id, parent['title_ENG'])
+            else:
+                current_id = int(current_id) + 1
+                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of']))
+                filterChildIndicator(int(current_id), parent['title_ENG'])
 
-    except Exception as e:
-        print(f"An exception occurred: {e}")
-        return False, f"Error importing data: Please review your Document. {e}"
-    
+        
+
+        #Return the data
+        data_set = tablib.Dataset(*total_data, headers=['id','parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
+        print(data_set)
+        result = resource.import_data(data_set, dry_run=True)
+        return True,data_set, result
+
+
 
     
 
@@ -254,97 +280,65 @@ def handle_uploaded_Measurement_file(file):
         imported_data = dataset.load(file.read())
         result = resource.import_data(imported_data, dry_run=True)
         if not result.has_errors():
-            resource.import_data(dataset, dry_run=False)  # Actually import now
-            return True, f"Data imported successfully: {len(dataset)} records imported."
+            return True, imported_data, result
         else:
-            return False, f"Error importing data: Please review your Dcoument."
+            return False,imported_data, result
     except Exception as e:
-        return False, f"Error importing data: Please review your Document."
+        return False, '', ''
     
 
 admin.site.register(models.Measurement, MeasurementAdmin)
 
 
 
-# Measurement
-# Value
+#Value
 class DataValueResource(resources.ModelResource):    
     for_indicator = fields.Field(
         column_name='for_indicator',
         attribute='for_indicator',
-        widget=ForeignKeyWidget(models.Indicator, field='title_ENG'),
-        saves_null_values=True,
+        widget=ForeignKeyWidget(models.Indicator, field='composite_key'),
+        saves_null_values = True,
     ) 
     
+
     for_datapoint = fields.Field(
         column_name='for_datapoint',
         attribute='for_datapoint',
         widget=ForeignKeyWidget(models.DataPoint, field='year_EC'),
-        saves_null_values=True,
+        saves_null_values = True,
     )
 
     for_quarter = fields.Field(
         column_name='for_quarter',
         attribute='for_quarter',
         widget=ForeignKeyWidget(models.Quarter, field='title_ENG'),
-        saves_null_values=True,
+        saves_null_values = True,
     )
 
     for_month = fields.Field(
         column_name='for_month',
         attribute='for_month',
         widget=ForeignKeyWidget(models.Month, field='number'),
-        saves_null_values=True,
+        saves_null_values = True,
     )
 
     class Meta:
         model = models.DataValue
         skip_unchanged = True
         report_skipped = True
-        exclude = ('id', 'is_deleted', 'for_source')
-        fields = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value',)
+        exclude = ( 'id', 'is_deleted','for_source')
+        fields = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
         import_id_fields = ('for_datapoint', 'for_quarter', 'for_month', 'value', 'for_indicator')
-        export_order = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value',)
+        export_order = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
+        
 
 class DataValueAdmin(ImportExportModelAdmin):
-    resource_class = DataValueResource
-
+    resource_classes = [DataValueResource]
 
 
 def handle_uploaded_DataValue_file(file, type_of_data):
     if type_of_data == 'yearly':
         try:
-            resource = DataValueResource()
-            dataset = tablib.Dataset()
-            imported_data = dataset.load(file.read())
-
-            data_set = []
-            for item in imported_data.dict:
-                for i, key in enumerate(list(item.keys())):
-                    if i != 0:
-                        data_set.append((item['for_indicator'].strip(), key, None, None, round(item[key], 1) if item[key] else 0))
-
-            data_set_table = tablib.Dataset(*data_set, headers=['for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value'])
-            result = resource.import_data(data_set_table, dry_run=True)
-            if not result.has_errors():
-                resource.import_data(data_set_table, dry_run=False)  # Actually import now
-                return True, f"Data imported successfully: {len(dataset)} records imported."
-            else:
-                # Existing code to print result.row_errors()
-                print(result.row_errors())
-
-                # Add the following code to print detailed error messages
-                for index, errors in result.row_errors():
-                    print(f"Row {index} errors:")
-                    for error in errors:
-                        print(f"- {error.error}")
-                return False, f"Error importing data: Please review your Document. {result.row_errors()}"
-
-        except Exception as e:
-            return False, f"Error importing data: Please review your Document. {e}"
-    
-    elif type_of_data == 'monthly':
-        try:    
             resource  = DataValueResource()
             dataset = tablib.Dataset()
             imported_data = dataset.load(file.read())
@@ -352,18 +346,33 @@ def handle_uploaded_DataValue_file(file, type_of_data):
             data_set = []
             for item in imported_data.dict:
                 for i, key in enumerate(list(item.keys())):
-                    if i != 0 and i != 1:
-                        data_set.append((item['Year'], item['Month'] ,key.strip(),item[key] if item[key] else 0  ))
+                    if i != 0:
+                         data_set.append((item['for_indicator'].lstrip(), key, None, None,  round(item[key], 1) if item[key] else 0 ))
     
+            data_set_table = tablib.Dataset(*data_set, headers=['for_indicator', 'for_datapoint', 'for_quarter', 'for_month','value'])
+            print(data_set_table)
+            result = resource.import_data(data_set_table, dry_run=True)
+            return True, data_set_table, result
+        except Exception as e:
+            return False, '', ''
+   
+    elif type_of_data == 'monthly':
+        try:
+            resource  = DataValueResource()
+            dataset = tablib.Dataset()
+            imported_data = dataset.load(file.read())
+            data_set = []
+            for item in imported_data.dict:
+                for i, key in enumerate(list(item.keys())):
+                    if i != 0 and i != 1:
+                        data_set.append((item['year'], item['month'] ,key.strip(),item[key] if item[key] else 0  ))
+           
             data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_month','for_indicator', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)
-            if not result.has_errors():
-                resource.import_data(data_set_table, dry_run=False)  # Actually import now
-                return True, f"Data imported successfully: {len(dataset)} records imported."
-            else:
-                return False, f"Error importing data: Please review your Dcoument."
+        
+            return True, data_set_table, result
         except Exception as e:
-            return False, f"Error importing data: Please review your Document. {e}"
+            return False, '', ''
 
     elif type_of_data == 'quarterly':
         try:    
@@ -379,14 +388,38 @@ def handle_uploaded_DataValue_file(file, type_of_data):
     
             data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_quarter','for_indicator', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)
-            if not result.has_errors():
-                resource.import_data(data_set_table, dry_run=False)  # Actually import now
-                return True, f"Data imported successfully: {len(dataset)} records imported."
-            else:
-                return False, f"Error importing data: Please review your Dcoument."
+            return True, data_set_table, result
         except Exception as e:
-            return False, f"Error importing data: Please review your Document. {e}"
-        
+            return False, '', ''
     
 
 admin.site.register(models.DataValue, DataValueAdmin)
+
+
+
+
+###Confirm 
+def confirm_file(imported_data, type):
+    print(imported_data)
+    try:
+        print('---->',imported_data)
+        if type == 'topic':
+            resource  = TopicResource()
+        elif type == 'category':
+            resource = CategoryResource()
+        elif type == 'measuremennt':
+            resource = MeasurementResource()
+        elif type == 'indicator':
+            resource = IndicatorResource()
+        elif type == 'data_value':
+            resource = DataValueResource()
+        result = resource.import_data(imported_data, dry_run=True, collect_failed_rows = True)
+        
+        if not result.has_errors():
+            resource.import_data(imported_data, dry_run=False)  # Actually import now
+            return True, f"Data imported successfully: {len(imported_data)} records imported."
+        else:
+            return False, f"Error importing data: Please review your Dcoument."
+    except Exception as e:
+         return False, f"Error importing data: Please review your Document."
+        
