@@ -19,7 +19,7 @@
         <h5 class="modal-title" id="restoreModaltrashLabel">Restore Topic</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" action="{% url 'trash-topic' %}">
+      <form method="post" name='topicFormValue' action="{% url 'trash-topic' %}">
         {% csrf_token %}
         <div class="modal-body text-center fs-4">
           <p>Are you sure you want to restore this topic?</p>
