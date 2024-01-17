@@ -20,7 +20,7 @@ class Topic(models.Model):
     
 class Category(models.Model):
     name_ENG = models.CharField(max_length=300, unique = True)
-    name_AMH = models.CharField(max_length=300, null = True)
+    name_AMH = models.CharField(max_length=300, unique = True)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)
@@ -35,8 +35,9 @@ data_point_type = [
 ]
 
 class Indicator(models.Model):
-    title_ENG = models.CharField(max_length=300, unique = True ) 
+    title_ENG = models.CharField(max_length=300) 
     title_AMH = models.CharField(max_length=300 , null=True, blank=True)
+    composite_key = models.CharField(max_length=300)
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
@@ -45,8 +46,13 @@ class Indicator(models.Model):
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True) 
 
 
+    def save(self, *args, **kwargs):
+        self.composite_key = str(self.title_ENG.replace(" ","")) +  str(self.id)
+        super(Indicator, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.title_ENG 
+    
 
 class Indicator_Point(models.Model):
     is_actual = models.BooleanField()

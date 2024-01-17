@@ -301,8 +301,10 @@ let filterData = () => {
             return `
               <li>
               <div class="flex-grow-2">
-                 <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                 <p>
+                  <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
                   <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                  </p>
                 </div>
             </li>
               `;
@@ -711,7 +713,9 @@ let filterData = () => {
                       <table id="newTable" class="table table-bordered m-0 p-0">
                       <thead>
                         <tr>
-                          <th class="ps-5 pe-5">Name</th>`;
+                          <th class="ps-5 pe-5">Name</th>
+                          <th class="ps-5 pe-5">Reference Key</th>`;
+                          
                   for (let i of yearTableList) {
                     table += `<th style="font-size: small;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
                   }
@@ -727,6 +731,7 @@ let filterData = () => {
                       title_ENG,
                       title_AMH,
                       id,
+                      composite_key,
                       for_category_id,
                       is_deleted,
                     }) => {
@@ -747,6 +752,13 @@ let filterData = () => {
                                 <div class="row">
                                    <div class="col-10">
                                      <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${title_ENG} ${title_amharic}</a>
+                                   </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row">
+                                   <div class="col-10">
+                                     <a href="/user-admin/data-list-detail/${id}" style="font-size: small;" class="d-block fw-bold text-dark">${composite_key}</a>
                                    </div>
                                 </div>
                             </td>`;
@@ -791,6 +803,13 @@ let filterData = () => {
                               <a>
                                 <h6 class="mb-1">
                                   <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </a>
+                                </h6>
+                              </a>
+                            </td>
+                            <td>
+                              <a>
+                                <h6 class="mb-1">
+                                  <a style="font-size: small;" class="d-block text-dark fw-normal ps-2 ">${i.composite_key} </a>
                                 </h6>
                               </a>
                             </td>`;
@@ -844,6 +863,13 @@ let filterData = () => {
                             <a>
                               <h6 class="mb-1">
                                 <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </a>
+                              </h6>
+                            </a>
+                          </td>
+                          <td>
+                            <a>
+                              <h6 class="mb-1">
+                                <a style="font-size: small;" class="d-block text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.composite_key}  </a>
                               </h6>
                             </a>
                           </td>`;
@@ -906,6 +932,7 @@ let filterData = () => {
                       columnDefs: [
                         { width: "100%" },
                         { width: "330px", targets: 0 },
+                        { width: "330px", targets: 1 },
                       ],
                       dom: "Bfrtip",
                       buttons: ["pageLength", "excel", "csv", "pdf", "print"],

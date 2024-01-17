@@ -1,5 +1,5 @@
 
-from django.shortcuts import get_object_or_404, render, HttpResponse, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import Http404, JsonResponse,HttpResponseRedirect
 from django.contrib import messages
 from TimeSeriesBase.models import *
@@ -9,14 +9,14 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import *
 from auditlog.models import LogEntry
-from datetime import datetime, timezone
-from TimeSeriesBase.admin import TopicResource, handle_uploaded_Topic_file, handle_uploaded_Category_file, handle_uploaded_Measurement_file, handle_uploaded_Indicator_file, handle_uploaded_DataValue_file
-from tablib import Dataset
+from datetime import datetime
+from TimeSeriesBase.admin import *
 from django.http import JsonResponse
 from django.db.models import Max
 from django.db.models import Count
 import random
-from decimal import Decimal
+import json as toJSON
+import tablib
 
 
 @login_required(login_url='login')
@@ -48,67 +48,81 @@ def index(request):
 #Category
 @login_required(login_url='login')
 @admin_user_required
-def category(request, catagory_id=None):
-    catagories = Category.objects.all()
+def category(request, category_id=None):
+    catagory = Category.objects.all()
+    formFile = ImportFileForm()
+
 
     if request.method == 'POST':
-        if 'catagory_Id' in request.POST:
-            # Editing an existing source
-            catagory_instance = get_object_or_404(Category, id=request.POST['catagory_Id'])
-            form = catagoryForm(request.POST, instance=catagory_instance)
+        catagory_id_str = request.POST.get('catagory_Id', '')
+        if catagory_id_str.isdigit():
+            try:
+                category_instance = get_object_or_404(Category, id=int(catagory_id_str))
+                form = catagoryForm(request.POST, instance=category_instance)
+            except Http404 as e:
+                messages.error(request, "Invalid category ID provided.")
+                return redirect('user-admin-category')
         else:
-            # Adding a new source
+            # Adding a new category, set category_id to None
+            category_instance = None
             form = catagoryForm(request.POST)
 
-        if form.is_valid():
-            form.save()
-            if 'catagory_Id' in request.POST:
-                messages.success(request, "Source has been successfully updated!")
+        global imported_data_global
+        if 'addcatagory' in request.POST:
+            if form.is_valid():
+                form.save()
+                if category_instance:
+                    messages.success(request, "Category has been successfully updated!")
+                else:
+                    messages.success(request, "Category has been successfully added!")
+                return redirect('user-admin-category')
             else:
-                messages.success(request, "Source has been successfully added!")
-            return redirect('user-admin-category')
-        else:
-            messages.error(request, "Value exists or please try again!")
+                messages.error(request, "Value exists or please try again!")
+        
+        elif 'fileCategoryValue' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, imported_data,result = handle_uploaded_Category_file(file)
+                imported_data_global = imported_data
+                context = {
+                        'result' : result
+                        }
+                return render(request, 'user-admin/import_preview.html', context=context)
+    
+            else:
+                messages.error(request, 'File not recognized')
+        elif 'confirm_data_form' in request.POST:
+            print('Confiremed!')
+            success, message = confirm_file(imported_data_global, 'category')
+            if success:
+                messages.success(request, message)
+            else:
+                messages.error(request,message)
 
     else:
         # GET request or form is not valid, display the form
-        if catagory_id:
-            # Editing an existing source, populate the form with existing data
-            catagory_instance = get_object_or_404(Topic, id=catagory_id)
-            form = catagoryForm(instance=catagory_instance)
+        if category_id:
+            try:
+                category_instance = get_object_or_404(Category, id=category_id)
+                form = catagoryForm(instance=category_instance)
+            except Http404 as e:
+                messages.error(request, "Invalid category ID provided.")
+                return redirect('user-admin-category')
         else:
-            # Adding a new source
+            # Adding a new category
             form = catagoryForm()
-
+            formFile = ImportFileForm()
+            
     context = {
         'form': form,
-        'catagories': catagories,
+        'catagories': catagory,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/categories.html', context=context)
 
-@login_required(login_url='login')
-@admin_user_required
-def catagory_detail(request, pk):
-    catagory = get_object_or_404(Category, pk=pk)
 
-    if request.method == 'POST':
-        form = catagoryForm(request.POST, instance=catagory)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-category')  # Redirect to category listing page or detail page
-        else:
-            messages.error(request, 'Value exists or please try again!')
-    else:
-        form = catagoryForm(instance=catagory)
 
-    context = {
-        'form': form,
-        'catagory': catagory,
-    }  
-    return render(request, 'user-admin/categories.html', context)
 
 @login_required(login_url='login')
 @admin_user_required
@@ -242,6 +256,24 @@ def json_measurement_byID(request, measurement_id=None):
     }
     return JsonResponse(context)
 
+@login_required(login_url='login')
+def json_filter_topic(request):
+    topics = Topic.objects.all()
+    
+    # Creating a list of dictionaries representing each topic
+    topics_data = []
+    for topic in topics:
+        topics_data.append({
+            'id': topic.id,
+            'title_ENG': topic.title_ENG,
+            'title_AMH': topic.title_AMH,
+            'updated': topic.updated.isoformat(),
+            'created': topic.created.isoformat(),
+            'is_deleted': topic.is_deleted,
+        })
+
+    # Returning the list as JSON
+    return JsonResponse({'topics': topics_data})
 
 @login_required(login_url='login')
 def json(request):
@@ -321,33 +353,105 @@ def json_random(request):
     # Directly return the indicators_data dictionary
     return JsonResponse(indicators_data)
 
+@login_required(login_url='login')
+@admin_user_required
+def quarter_data(request, quarter_id):
+    indicator = Indicator.objects.get(pk=quarter_id)
+    quarters = Quarter.objects.all()
+    years = DataPoint.objects.all()
 
+    child_indicator = Indicator.objects.filter(parent=indicator)
+
+    data_set = []
+
+    if indicator.type_of == 'quarterly':
+        for child in child_indicator:
+            arr = []
+            for year in years:
+                for quarter in quarters:
+                    value_child = DataValue.objects.filter(
+                        for_indicator=child,
+                        for_quarter=quarter,
+                        for_datapoint=year,
+                        is_deleted=False
+                    ).first()
+
+                    if value_child is not None and value_child.value is not None:
+                        # Map the quarter to perspective months
+                        quarter_to_month = {'Q1': 1, 'Q2': 3, 'Q3': 6, 'Q4': 9}
+                        start_month = quarter_to_month[quarter.title_ENG]
+                        start_date = 1  # You may adjust this as needed
+
+                        val = [
+                            [
+                                int(value_child.for_datapoint.year_EC),
+                                start_month,
+                                start_date
+                            ],
+                            value_child.value
+                        ]
+                        arr.append(val)
+
+            # Append data only if there is non-empty and non-null data
+            if arr:
+                data_set.append({'name': child.title_ENG, 'data': arr})
+
+    # Return JSON response
+    return JsonResponse(data_set, safe=False)
+
+@login_required(login_url='login')
+@admin_user_required
+def json_filter_year(request):
+    try:
+        # Determine the largest year from the DataPoint model
+        largest_year_instance = DataPoint.objects.latest('year_EC')
+        largest_year = int(largest_year_instance.year_EC)
+
+        # Calculate the next year
+        new_year = largest_year + 1
+
+        # Create a new DataPoint instance with the next year
+        DataPoint.objects.create(year_EC=str(new_year))
+        
+        # Adding a message for success
+        messages.success(request, 'Year added successfully!')
+
+        return JsonResponse({'success': True, 'new_year': new_year})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+#Data List
 #Data List
 @login_required(login_url='login')
 @admin_user_required
 def data_list(request):
+    global imported_data_global
     formFile = ImportFileIndicatorAddValueForm()
     if request.method == 'POST':
-        if 'fileDataPointValue' in request.POST:
-                formFile = ImportFileIndicatorAddValueForm(request.POST, request.FILES )
-                if formFile.is_valid():
-                    file = request.FILES['file']
-                    type_of_data = formFile.cleaned_data['type_of_data']
-                    success, message = handle_uploaded_DataValue_file(file, type_of_data)
-                    
-                    if success:
-                        messages.success(request, message)
-                    else:
-                        messages.error(request, message)
-        
-                else:
-                    messages.error(request, 'File not recognized')
+        formFile = ImportFileIndicatorAddValueForm(request.POST, request.FILES )
+        if formFile.is_valid():
+                file = request.FILES['file']
+                type_of_data = formFile.cleaned_data['type_of_data']
+                success, imported_data,result = handle_uploaded_DataValue_file(file, type_of_data)
+                imported_data_global = imported_data
+                context = {
+                        'result' : result
+                        }
+                return render(request, 'user-admin/import_preview.html', context=context)
+    
+        elif 'confirm_data_form' in request.POST:
+            success, message = confirm_file(imported_data_global, 'data_value')
+            if success:
+                messages.success(request, message)
+            else:
+                messages.error(request,message)
 
             
     context = {
         'formFile' : formFile
     }
     return render(request, 'user-admin/data_list_view.html', context)
+
 
 @login_required(login_url='login')
 @admin_user_required
@@ -523,48 +627,96 @@ def data_list_detail(request, pk):
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 
+    
+def json_filter_drilldown(request):
+    # Calculate topic counts
+    topics = Topic.objects.annotate(category_count=Count('category'))
+    topic_data = {
+        "name": "Topic",
+        "colorByPoint": True,
+        "data": [
+            {
+                "name": topic.title_ENG,
+                "y": topic.category_count,
+                "drilldown": topic.title_ENG
+            } for topic in topics
+        ]
+    }
 
+    # Calculate category and indicator counts
+    drilldown = {}
+    series_data = []
+    for topic in topics:
+        categories = Category.objects.filter(topic=topic)
+        category_data = []
+        for category in categories:
+            # Count related indicators for each category
+            indicator_count = Indicator.objects.filter(for_category=category, children__isnull=True).count()
+
+            # Add category and related indicator count to the category_data
+            category_data.append([
+                category.name_ENG,
+                indicator_count
+            ])
+
+        series_data.append({
+            "name": topic.title_ENG,
+            "id": topic.title_ENG,
+            "data": category_data
+        }) 
+
+    drilldown = series_data
+
+    return JsonResponse({
+        "topic_data": topic_data,
+        "drilldown": drilldown
+    })
+
+def json_chart_data(request):
+    return json_filter_drilldown(request)
+      
+
+
+#Indicator 
 @login_required(login_url='login')
 @admin_user_required
 def indicator(request):
+    add_indicator = IndicatorForm(request.POST or None)
+    formFile = ImportFileIndicatorForm()
+    global imported_data_global 
     if request.method == 'POST':
-        add_indicator = IndicatorForm(request.POST)
-        formFile = ImportFileIndicatorForm()
-
         if 'formAddIndicator' in request.POST:
             if add_indicator.is_valid():
-                # Create an instance of the Indicator model and save it
-                indicator_instance = add_indicator.save(commit=False)
-                indicator_instance.save()
+                add_indicator.save()
                 messages.success(request, 'Successfully Added!')
             else:
                 messages.error(request, 'Please Try Again!')
 
         if 'fileIndicatorFile' in request.POST:
-            formFile = ImportFileIndicatorForm(request.POST, request.FILES)
+            formFile = ImportFileIndicatorForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
                 category = formFile.cleaned_data['category']
-                success, message = handle_uploaded_Indicator_file(file, category)
-
-                if success:
-                    messages.success(request, message)
-                else:
-                    messages.error(request, message)
+                success, imported_data,result =  handle_uploaded_Indicator_file(file, category)
+                imported_data_global = imported_data
+                context = {
+                        'result' : result
+                        }
+                return render(request, 'user-admin/import_preview.html', context=context)
             else:
                 messages.error(request, 'File not recognized')
-
-    else:
-        add_indicator = IndicatorForm()
-        formFile = ImportFileIndicatorForm()
-
+        elif 'confirm_data_form' in request.POST:
+            success, message = confirm_file(imported_data_global, 'indicator')
+            if success:
+                messages.success(request, message)
+            else:
+                messages.error(request,message)
+    
     context = {
-        'add_indicator': add_indicator,
-        'formFile': formFile
+        'add_indicator' : add_indicator,
+        'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
-
-
 @login_required(login_url='login')
 @admin_user_required
 def indicator_list(request, pk):
@@ -745,6 +897,7 @@ def measurement(request):
     editMeasurementForm = MeasurementForm()
     addNewMeasurementForm = MeasurementForm()
     formFile = ImportFileForm()
+    global imported_data_global 
     if request.method == 'POST':
         if 'formAddMeasurement' in request.POST:
             addMeasurementForm = MeasurementForm(request.POST)
@@ -784,15 +937,22 @@ def measurement(request):
             formFile = ImportFileForm(request.POST, request.FILES )
             if formFile.is_valid():
                 file = request.FILES['file']
-                success, message = handle_uploaded_Measurement_file(file)
-                
-                if success:
-                    messages.success(request, message)
-                else:
-                    messages.error(request, message)
+                success, imported_data,result = handle_uploaded_Measurement_file(file)
+                imported_data_global = imported_data
+                context = {
+                        'result' : result
+                        }
+                return render(request, 'user-admin/import_preview.html', context=context)
     
             else:
                 messages.error(request, 'File not recognized')
+        elif 'confirm_data_form' in request.POST:
+            print('Confiremed!')
+            success, message = confirm_file(imported_data_global, 'measuremennt')
+            if success:
+                messages.success(request, message)
+            else:
+                messages.error(request,message)
 
                 
     context = {
@@ -894,85 +1054,103 @@ def delete_source(request,pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
 
+
+
+def import_preview(request):
+    read_data = request.session.get('data', {})
+    read_type = request.session.get('type', {})
+    data = toJSON.loads(read_data[0])
+    print(data)
+    type = toJSON.loads(read_type[0])
+    
+    dataset = tablib.Dataset()
+    imported_data = dataset.load(read_data[0], format='dict')
+
+    print(imported_data)
+    if request.method == 'POST':
+        dataset = tablib.Dataset()
+        #imported_data = dataset.load(data[0])
+        #imported_data = dataset.load(read_data)
+        #print(imported_data)
+        # if type['type'] == 'topic':
+        #     success, message = confirm_topic_file(imported_data) 
+    
+        # if success:
+        #     messages.success(request, message)
+        # else:
+        #     messages.error(request, message)
+    return redirect('user-admin-topic')
+
+
+
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
     Topics = Topic.objects.all()
 
+    topics = Topic.objects.filter(is_deleted = False)
+
+    # If topic_id is provided, it's an update operation
+    if topic_id:
+        topic_instance = get_object_or_404(Topic, pk=topic_id)
+    else:
+        # If it's not an update operation, check if the topic_Id is present in the POST data
+        topic_instance = None
+        topic_id_from_post = request.POST.get('topic_Id')
+        if topic_id_from_post:
+            topic_instance = get_object_or_404(Topic, id=topic_id_from_post)
+
+    # Initialize form with or without data
+    form = TopicForm(instance=topic_instance)
+    formFile = ImportFileForm()
+    global imported_data_global 
     if request.method == 'POST':
         if 'topic_Id' in request.POST:
             # Editing an existing source
             topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
             form = TopicForm(request.POST, instance=topic_instance)
-        else:
-            # Adding a new source
-            form = TopicForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            if 'topic_Id' in request.POST:
-                messages.success(request, "Source has been successfully updated!")
+            if form.is_valid():
+                obj = form.save(commit=False)
+                is_new_topic = obj.pk is None
+                obj.save()
+    
+                success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
+                messages.success(request, success_message)
+    
+                return redirect('user-admin-topic')
             else:
-                messages.success(request, "Source has been successfully added!")
-            return redirect('user-admin-topic')
-        else:
-            messages.error(request, "Value exists or please try again!")
-
+                messages.error(request, "Value exists or please try again!")
+        
+        if 'fileTopicValue' in request.POST:
+            formFile = ImportFileForm(request.POST, request.FILES )
+            if formFile.is_valid():
+                file = request.FILES['file']
+                success, imported_data,result = handle_uploaded_Topic_file(file)
+                imported_data_global = imported_data
+                context = {
+                        'result' : result
+                        }
+                return render(request, 'user-admin/import_preview.html', context=context)
+    
+            else:
+                messages.error(request, 'File not recognized')
+        elif 'confirm_data_form' in request.POST:
+            success, message = confirm_file(imported_data_global, 'topic')
+            if success:
+                messages.success(request, message)
+            else:
+                messages.error(request,message)
     else:
-        # GET request or form is not valid, display the form
-        if topic_id:
-            # Editing an existing source, populate the form with existing data
-            topic_instance = get_object_or_404(Topic, id=topic_id)
-            form = TopicForm(instance=topic_instance)
-        else:
-            # Adding a new source
-            form = TopicForm()
-
+        form = TopicForm()
+        formFile = ImportFileForm(request.POST or None, request.FILES or None)
+    
     context = {
-        'form': form,
-        'topics': Topics
-    }
+        'form': form, 
+        'topics': topics,
+        'topic_id': topic_id, 
+        'formFile' : formFile
+        }
     return render(request, 'user-admin/topic.html', context=context)
-
-@login_required(login_url='login')
-def json_filter_topic(request):
-    topics = Topic.objects.all()
-    
-    # Creating a list of dictionaries representing each topic
-    topics_data = []
-    for topic in topics:
-        topics_data.append({
-            'id': topic.id,
-            'title_ENG': topic.title_ENG,
-            'title_AMH': topic.title_AMH,
-            'updated': topic.updated.isoformat(),
-            'created': topic.created.isoformat(),
-            'is_deleted': topic.is_deleted,
-        })
-
-    # Returning the list as JSON
-    return JsonResponse({'topics': topics_data})
-
-@login_required(login_url='login')
-@admin_user_required
-def topic_detail(request, pk):
-    topic = Topic.objects.get(pk=pk)
-    form = TopicForm(request.POST or None, instance=topic)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            form.save_m2m()
-            messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-topic')
-        else:
-            messages.error(request, 'Value Exist or Please try Again!')
-    context = {
-        'form' : form,
-        'topic' : topic
-    }  
-    return render(request, 'user-admin/topic_detail.html', context)
 
 @login_required(login_url='login')
 @admin_user_required
@@ -1041,15 +1219,7 @@ def delete_data_point(request, pk):
     messages.success(request, "Successfully Deleted!")
     return HttpResponseRedirect(previous_page)
     
-#Month
-@login_required(login_url='login')
-@admin_user_required
-def month(request):
-    months = Month.objects.all()
-    context = {
-        'months' : months,
-    }
-    return render(request, 'user-admin/month.html', context )
+
 
 
 @login_required(login_url='login')
@@ -1193,79 +1363,6 @@ def restore_indicator(request, pk):
     return HttpResponseRedirect(previous_page)
 
 
-@login_required(login_url='login')
-@admin_user_required
-def month_data(request, month_id):
-    indicator = Indicator.objects.get(pk=month_id)
-    months = Month.objects.all()
-    years = DataPoint.objects.all()
-
-    child_indicator = Indicator.objects.filter(parent=indicator)
-
-    data_set = []
-
-    if indicator.type_of == 'monthly':
-        for child in child_indicator:
-            arr = []
-            for year in years:
-                for month in months:
-                    value_child = DataValue.objects.filter(for_indicator=child, for_month=month, for_datapoint=year, is_deleted=False).first()
-                    if value_child is not None:
-                        date = datetime(int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1)
-                        val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
-                        arr.append(val)
-            data_set.append({'name': child.title_ENG, 'data': arr})
-            
-    # Return JSON response
-    return JsonResponse(data_set, safe=False)
-
-
-@login_required(login_url='login')
-@admin_user_required
-def quarter_data(request, quarter_id):
-    indicator = Indicator.objects.get(pk=quarter_id)
-    quarters = Quarter.objects.all()
-    years = DataPoint.objects.all()
-
-    child_indicator = Indicator.objects.filter(parent=indicator)
-
-    data_set = []
-
-    if indicator.type_of == 'quarterly':
-        for child in child_indicator:
-            arr = []
-            for year in years:
-                for quarter in quarters:
-                    value_child = DataValue.objects.filter(
-                        for_indicator=child,
-                        for_quarter=quarter,
-                        for_datapoint=year,
-                        is_deleted=False
-                    ).first()
-
-                    if value_child is not None and value_child.value is not None:
-                        # Map the quarter to perspective months
-                        quarter_to_month = {'Q1': 1, 'Q2': 3, 'Q3': 6, 'Q4': 9}
-                        start_month = quarter_to_month[quarter.title_ENG]
-                        start_date = 1  # You may adjust this as needed
-
-                        val = [
-                            [
-                                int(value_child.for_datapoint.year_EC),
-                                start_month,
-                                start_date
-                            ],
-                            value_child.value
-                        ]
-                        arr.append(val)
-
-            # Append data only if there is non-empty and non-null data
-            if arr:
-                data_set.append({'name': child.title_ENG, 'data': arr})
-
-    # Return JSON response
-    return JsonResponse(data_set, safe=False)
-
 
 @login_required(login_url='login')
 @admin_user_required
@@ -1275,71 +1372,7 @@ def year_add(request, year=None):
     largest_year = DataPoint.objects.aggregate(Max('year_EC'))['year_EC__max'] or 0
     context = {
         'largest_year': largest_year,
-        'years': years,  # Update sources to years
+        'years': years.reverse(),  # Update sources to years
     }
     return render(request, 'user-admin/add_year.html', context=context)
 
-@login_required(login_url='login')
-@admin_user_required
-def json_filter_year(request):
-    try:
-        # Determine the largest year from the DataPoint model
-        largest_year_instance = DataPoint.objects.latest('year_EC')
-        largest_year = int(largest_year_instance.year_EC)
-
-        # Calculate the next year
-        new_year = largest_year + 1
-
-        # Create a new DataPoint instance with the next year
-        DataPoint.objects.create(year_EC=str(new_year))
-        
-        # Adding a message for success
-        messages.success(request, 'Year added successfully!')
-
-        return JsonResponse({'success': True, 'new_year': new_year})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-    
-def json_filter_drilldown(request):
-    # Calculate topic counts
-    topics = Topic.objects.annotate(category_count=Count('category'))
-    topic_data = {
-        "name": "Topic",
-        "colorByPoint": True,
-        "data": [
-            {
-                "name": topic.title_ENG,
-                "y": topic.category_count,
-                "drilldown": topic.title_ENG
-            } for topic in topics
-        ]
-    }
-
-    # Calculate category and indicator counts
-    drilldown = {}
-    series_data = []
-    for topic in topics:
-        categories = Category.objects.filter(topic=topic)
-        category_data = []
-        for category in categories:
-            # Count related indicators for each category
-            indicator_count = Indicator.objects.filter(for_category=category, children__isnull=True).count()
-
-            # Add category and related indicator count to the category_data
-            category_data.append([
-                category.name_ENG,
-                indicator_count
-            ])
-
-        series_data.append({
-            "name": topic.title_ENG,
-            "id": topic.title_ENG,
-            "data": category_data
-        }) 
-
-    drilldown = series_data
-
-    return JsonResponse({
-        "topic_data": topic_data,
-        "drilldown": drilldown
-    })
