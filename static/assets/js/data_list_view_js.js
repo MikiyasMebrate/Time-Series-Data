@@ -300,12 +300,17 @@ let filterData = () => {
           } else {
             return `
               <li>
-              <div class="flex-grow-2">
-                 <p>
-                  <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                  <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                  </p>
-                </div>
+                <div class="flex-grow-2 ">
+                           <div class="row ">
+                              <div class="col-1"> 
+                              <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                              </div>
+                              <div class="col-11">
+                              <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                             </div>
+                          </div>
+
+
             </li>
               `;
           }
@@ -1008,7 +1013,66 @@ let filterData = () => {
                   }
 
                   table += `</tr>
+                  <tr class="text-center">
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border"></th>
+                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border"></th>`;
+
+                  let filterIndicatorscompositeKey = data.indicators.filter(
+                    (item) =>
+                      String(item.for_category_id) ===
+                        String(selectedCategoryId) &&
+                      selectedIndictorId.includes(String(item.id)) &&
+                      item.is_deleted == false
+                  );
+                  for (filterIndicator of filterIndicatorscompositeKey) {
+                    let title_amharic = "";
+                    if (!filterIndicator.title_AMH === null)
+                      title_amharic = " - " + filterIndicator.title_AMH;
+
+                    table += ` <th class="vertical-text border" ">
+                         <a href="/user-admin/data-list-detail/${filterIndicator.id}" class="fw-bold text-dark p-0 m-0">${filterIndicator.composite_key}</a>
+                         </th>`;
+
+                    let childIndicatorList = (parent, space) => {
+                      space += String("&nbsp;&nbsp;&nbsp;&nbsp");
+                      let status = false;
+
+                      for (let indicator of data.indicators) {
+                        if (
+                          String(indicator.parent_id) === String(parent) &&
+                          indicator.is_deleted == false
+                        ) {
+                          test = true;
+                          table += `
+                              <th class="vertical-text fw-normal border" >${space} ${indicator.composite_key} </th>
+                              `;
+
+                          childIndicatorList(indicator.id, String(space));
+                        }
+                      }
+                    };
+                    //Child List
+                    for (let indicator of data.indicators) {
+                      if (
+                        String(indicator.parent_id) ==
+                          String(filterIndicator.id) &&
+                        indicator.is_deleted == false
+                      ) {
+                        test = true;
+                        table += `
+                            <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.composite_key} </th>
+                            `;
+
+                        childIndicatorList(indicator.id, " ");
+                      }
+                    }
+                  }
+
+                  table += `</tr>
                   </thead>`;
+
+
+
 
                   table += `<tbody>`;
 

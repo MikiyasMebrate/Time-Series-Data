@@ -437,13 +437,16 @@ def data_list(request):
                 context = {
                         'result' : result
                         }
+                formFile = ImportFileIndicatorAddValueForm()
                 return render(request, 'user-admin/import_preview.html', context=context)
     
         elif 'confirm_data_form' in request.POST:
             success, message = confirm_file(imported_data_global, 'data_value')
             if success:
+                formFile = ImportFileIndicatorAddValueForm()
                 messages.success(request, message)
             else:
+                formFile = ImportFileIndicatorAddValueForm()
                 messages.error(request,message)
 
             
