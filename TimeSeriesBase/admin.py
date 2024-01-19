@@ -184,7 +184,6 @@ def handle_uploaded_Indicator_file(file, category):
 
 
         imported_data = dataset.load(file.read())
-        count_successfully_imported = 0
         total_data = []
             
         indicator_list = []

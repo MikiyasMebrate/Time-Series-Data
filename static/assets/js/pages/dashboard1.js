@@ -1,7 +1,6 @@
-// Generate a random integer between min (inclusive) and max (exclusive)
 
 let filterData = () => {
-  fetch("/user-admin/json")
+  fetch("/user-admin/json-dashboard/")
     .then((response) => response.json())
     .then((data) => {
       let yearRandomDataChart = () => {
@@ -543,6 +542,10 @@ function initializeChart() {
     })
   });
 }
+
+
+
+
 
 
 
