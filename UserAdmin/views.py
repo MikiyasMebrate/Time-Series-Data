@@ -49,6 +49,9 @@ def index(request):
 @login_required(login_url='login')
 @admin_user_required
 def category(request, category_id=None):
+    for i in DataValue.objects.all():
+        i.value = i.value
+        i.save()
     catagory = Category.objects.all()
     formFile = ImportFileForm()
 
@@ -160,7 +163,6 @@ def filter_indicator(request, pk):
     returned_json.append(model_to_dict(single_indicator))
     indicators = list(Indicator.objects.all().values())
     year = list(DataPoint.objects.all().values())
-    value = list(DataValue.objects.all().values())
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
     month = list(Month.objects.all().values())
@@ -175,13 +177,36 @@ def filter_indicator(request, pk):
                     
     
     child_list(single_indicator, ' ')
+
+    value_new = []
+    year_new = []
+
+
+    for indicator in returned_json:
+        for yr in DataPoint.objects.all():
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
+           except: value_filter = None
+           if value_filter:
+            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
+            #        i.save()
+                #value_new.append(value_filter[0])
+                for val in value_filter:
+                    value_new.append(val)
+
+                    
+                for yy in year_new:
+                   if yr.year_EC in  yy['year_EC']:
+                       break
+                else:
+                   year_new.append(model_to_dict(yr))
     
     
     context = {
         'indicators' :  returned_json,
         'indicator_point': indicator_point,
         'year' : year,
-        'value' : value,
+        'new_year' : year_new,
+        'value' : value_new,
         'measurements' : measurements,
         'month' : month,
         'quarter' : quarter

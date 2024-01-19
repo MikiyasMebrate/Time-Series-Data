@@ -254,9 +254,12 @@ let filterData = () => {
           value2 ? monthValue2.push(value2.value) : monthValue2.push(null);
         }
 
+        cat1 = data.categories.find((item) => String(item.id) == String(randomMonthlyIndicator1.for_category_id))
+        cat2 = data.categories.find((item) => String(item.id) == String(randomMonthlyIndicator2.for_category_id))
+
         monthlyValue.push(
-          { name: randomMonthlyIndicator1.title_ENG, data: monthValue1 },
-          { name: randomMonthlyIndicator2.title_ENG, data: monthValue2 }
+          { name: String(randomMonthlyIndicator1.title_ENG) + "  ( " + String(cat1.name_ENG)+")",  data: monthValue1 },
+          { name: String(randomMonthlyIndicator2.title_ENG) + "  ( " + String(cat2.name_ENG)+")",  data: monthValue2 }
         );
 
         //Random Month Graph
@@ -315,9 +318,6 @@ let filterData = () => {
         });
       }
 
-      let motionRndomhart = () => {
-
-      }
 
       yearRandomDataChart()
       monthRandomDataChart()

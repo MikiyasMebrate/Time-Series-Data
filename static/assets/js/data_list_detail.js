@@ -6,6 +6,7 @@ $(document).ready(function () {
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
+      data.year = data.year.reverse()
       let parentIndicator = data.indicators.find((item) => item.parent == null);
 
       let currentIndicator = data.indicators.find(
@@ -366,7 +367,11 @@ $(document).ready(function () {
             columnDefs: [{ width: "100%" }],
             dom: "Bfrtip",
           });
+      
         });
+
+
+
       }
 
       // Monthly
@@ -1099,9 +1104,12 @@ $(document).ready(function () {
       
       if (currentIndicator.type_of == "yearly") {
         //Filter Date, and values
-        let minYear = data.year[0].year_EC;
+        data.year = data.year.reverse()
+        let minYear = data.new_year[0].year_EC;
 
-        const data_set = data.year.map((year) => {
+        console.log(minYear)
+
+        const data_set = data.new_year.map((year) => {
           const value = data.value.find(
             (value) =>
               String(value.for_indicator_id) === String(currentIndicator.id) &&
@@ -1158,6 +1166,7 @@ $(document).ready(function () {
           ],
         });
       } else if (String(currentIndicator.type_of) == "monthly") {
+        data.year = data.year.reverse()
         let childIndicator = data.indicators.filter(
           (item) => String(item.parent_id) == String(currentIndicator.id)
         );
@@ -1251,6 +1260,7 @@ $(document).ready(function () {
           createChart(data_set);
         })();
       }else if (String(currentIndicator.type_of) == "quarterly") {
+        data.year = data.year.reverse()
         let childIndicator = data.indicators.filter(
           (item) => String(item.parent_id) == String(currentIndicator.id)
         );
