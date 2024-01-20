@@ -6,6 +6,7 @@ $(document).ready(function () {
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
+      data.year = data.year.reverse()
       let parentIndicator = data.indicators.find((item) => item.parent == null);
 
       let currentIndicator = data.indicators.find(
@@ -366,7 +367,11 @@ $(document).ready(function () {
             columnDefs: [{ width: "100%" }],
             dom: "Bfrtip",
           });
+      
         });
+
+
+
       }
 
       // Monthly
@@ -1084,7 +1089,6 @@ $(document).ready(function () {
       $("#newTable").on("page.dt", function () {
         var pageInfo = $("#newTable").DataTable().page.info();
         localStorage.setItem("paginationState", JSON.stringify(pageInfo));
-        console.log("pageInfo");
       });
 
       // Retrieve pagination state from local storage and set the table to the correct page on page load
@@ -1097,12 +1101,15 @@ $(document).ready(function () {
       });
 
       //Calculate Graph
-
+      
       if (currentIndicator.type_of == "yearly") {
         //Filter Date, and values
-        let minYear = data.year[0].year_EC;
+        data.year = data.year.reverse()
+        let minYear = data.new_year[0].year_EC;
 
-        const data_set = data.year.map((year) => {
+        console.log(minYear)
+
+        const data_set = data.new_year.map((year) => {
           const value = data.value.find(
             (value) =>
               String(value.for_indicator_id) === String(currentIndicator.id) &&
@@ -1158,18 +1165,40 @@ $(document).ready(function () {
             },
           ],
         });
-      } else if (currentIndicator.type_of == "monthly") {
+      } else if (String(currentIndicator.type_of) == "monthly") {
+        data.year = data.year.reverse()
         let childIndicator = data.indicators.filter(
           (item) => String(item.parent_id) == String(currentIndicator.id)
         );
+
+      
         let data_set = []
-        for (child of childIndicator) {
+        if(childIndicator.length > 0){
+          for (child of childIndicator) {
+            let arr = [];
+            for (year of data.year) {
+              for (month of data.month) {
+                let value = data.value.find(
+                  (value) =>
+                    String(value.for_indicator_id) == String(child.id) &&
+                    value.for_month_id == String(month.id) &&
+                    String(value.for_datapoint_id) == String(year.id) &&
+                    value.is_deleted == false
+                );
+                if (value) {
+                  arr.push([Date.UTC(parseInt(year.year_EC), parseInt(month.number), 1), parseInt(value.value)]);
+                }
+              }
+            }
+            data_set.push({'name' : child.title_ENG, 'data' : arr})
+          }
+        }else{
           let arr = [];
           for (year of data.year) {
             for (month of data.month) {
               let value = data.value.find(
                 (value) =>
-                  String(value.for_indicator_id) == String(child.id) &&
+                  String(value.for_indicator_id) == String(currentIndicator.id) &&
                   value.for_month_id == String(month.id) &&
                   String(value.for_datapoint_id) == String(year.id) &&
                   value.is_deleted == false
@@ -1179,8 +1208,106 @@ $(document).ready(function () {
               }
             }
           }
-          data_set.push({'name' : child.title_ENG, 'data' : arr})
+          data_set.push({'name' : currentIndicator.title_ENG, 'data' : arr})
         }
+
+     
+
+      
+
+        (async () => {
+          /**
+           * Create the chart when all data is loaded
+           * @return {undefined}
+           */
+          function createChart(series) {
+            Highcharts.stockChart("container", {
+              rangeSelector: {
+                selected: 4,
+              },
+
+              yAxis: {
+                labels: {
+                  format: "{#if (gt value 0)}+{/if}{value}%",
+                },
+                plotLines: [
+                  {
+                    value: 0,
+                    width: 2,
+                    color: "silver",
+                  },
+                ],
+              },
+
+              plotOptions: {
+                series: {
+                  label: {
+                    connectorAllowed: false,
+                  },
+                },
+              },
+
+              tooltip: {
+                pointFormat:
+                  '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+                valueDecimals: 2,
+                split: true,
+              },
+
+              series,
+            });
+          }
+          createChart(data_set);
+        })();
+      }else if (String(currentIndicator.type_of) == "quarterly") {
+        data.year = data.year.reverse()
+        let childIndicator = data.indicators.filter(
+          (item) => String(item.parent_id) == String(currentIndicator.id)
+        );
+
+      
+        let data_set = []
+        if(childIndicator.length > 0){
+          for (child of childIndicator) {
+            let arr = [];
+            for (year of data.year) {
+              for (quarter of data.quarter) {
+                let value = data.value.find(
+                  (value) =>
+                    String(value.for_indicator_id) == String(child.id) &&
+                    value.for_quarter_id == String(quarter.id) &&
+                    String(value.for_datapoint_id) == String(year.id) &&
+                    value.is_deleted == false
+                );
+                if (value) {
+                  arr.push([Date.UTC(parseInt(year.year_EC), parseInt(quarter.number), 1), parseInt(value.value)]);
+                }
+              }
+            }
+            data_set.push({'name' : child.title_ENG, 'data' : arr})
+          }
+        }else{
+          let arr = [];
+          for (year of data.year) {
+            for (month of data.month) {
+              let value = data.value.find(
+                (value) =>
+                  String(value.for_indicator_id) == String(currentIndicator.id) &&
+                  value.for_month_id == String(month.id) &&
+                  String(value.for_datapoint_id) == String(year.id) &&
+                  value.is_deleted == false
+              );
+              if (value) {
+                arr.push([Date.UTC(parseInt(year.year_EC), parseInt(month.number), 1), parseInt(value.value)]);
+              }
+            }
+          }
+          data_set.push({'name' : currentIndicator.title_ENG, 'data' : arr})
+        }
+
+     
+
+      
 
         (async () => {
           /**

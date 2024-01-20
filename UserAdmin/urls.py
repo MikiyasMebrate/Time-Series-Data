@@ -7,6 +7,8 @@ urlpatterns = [
     path('audit/', views.audit_log_list, name='user-admin-audit'),
     #JSON
     path('json/', views.json,name="json"),
+    path('json-indicator-value/<int:pk>',views.filter_indicator_value, name='json-indicator-value'),
+    path('json-dashboard/',views.dashboard_json, name='json-dashboard'),
     path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),
     path('json-filter-indicator/', views.filter_indicator_json, name='json_filter_indicator'),
     path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),

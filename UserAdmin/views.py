@@ -170,6 +170,37 @@ def filter_indicator_json(request):
 
     return JsonResponse(context)
 
+def filter_indicator_value(request, pk):
+    single_category = Category.objects.get(pk = pk)
+    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None)
+    indicator_list = []
+    
+    def child_indicators(parent):
+        child_indicator = Indicator.objects.filter(parent = parent)
+        if child_indicator:
+            for indicator in child_indicator:
+                indicator_list.append(model_to_dict(indicator))
+                child_indicators(indicator)
+        
+    for parent_indicator in parent_indicators:
+        indicator_list.append(model_to_dict(parent_indicator))
+        child_indicators(parent_indicator)
+
+    value_new = []
+    for indicator in indicator_list:
+        for yr in DataPoint.objects.all():
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
+           except: value_filter = None
+           if value_filter:
+            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
+            #        i.save()
+                #value_new.append(value_filter[0])
+                for val in value_filter:
+                    value_new.append(val)
+
+    return JsonResponse(value_new, safe=False)
+
+
 @login_required(login_url='login')
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
@@ -177,7 +208,6 @@ def filter_indicator(request, pk):
     returned_json.append(model_to_dict(single_indicator))
     indicators = list(Indicator.objects.all().values())
     year = list(DataPoint.objects.all().values())
-    value = list(DataValue.objects.all().values())
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
     month = list(Month.objects.all().values())
@@ -192,13 +222,36 @@ def filter_indicator(request, pk):
                     
     
     child_list(single_indicator, ' ')
+
+    value_new = []
+    year_new = []
+
+
+    for indicator in returned_json:
+        for yr in DataPoint.objects.all():
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
+           except: value_filter = None
+           if value_filter:
+            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
+            #        i.save()
+                #value_new.append(value_filter[0])
+                for val in value_filter:
+                    value_new.append(val)
+
+
+                for yy in year_new:
+                   if yr.year_EC in  yy['year_EC']:
+                       break
+                else:
+                   year_new.append(model_to_dict(yr))
     
     
     context = {
         'indicators' :  returned_json,
         'indicator_point': indicator_point,
         'year' : year,
-        'value' : value,
+        'new_year' : year_new,
+        'value' : value_new,
         'measurements' : measurements,
         'month' : month,
         'quarter' : quarter
@@ -294,45 +347,74 @@ def json_filter_topic(request):
 
 @login_required(login_url='login')
 def json(request):
-    topic = Topic.objects.all()
-    category = Category.objects.all()
-    indicator = Indicator.objects.all()
-    indicator_point = Indicator_Point.objects.all()
-    year = DataPoint.objects.all()
-    value = DataValue.objects.all()
-    month = Month.objects.all()
-    quarter = Quarter.objects.all()
-    measurement = Measurement.objects.all()
-    
-    topic_data = list(topic.values())
-    category_data = list(category.values())
-    indicator_data = list(indicator.values())
-    indicator_point_data = list(indicator_point.values())
-    year = list(year.values())
-    values = list(value.values())
-    months = list(month.values())
-    quarters = list(quarter.values())
-    measurement_data = list(measurement.values())
+    topic = list(Topic.objects.all().values())
+    category = list(Category.objects.all().values())
+    indicator = list(Indicator.objects.all().values())
+    indicator_point = list(Indicator_Point.objects.all().values())
+    year =list( DataPoint.objects.all().values())
+    month = list(Month.objects.all().values())
+    quarter = list(Quarter.objects.all().values())
+    measurement = list(Measurement.objects.all().values())
+
+    indicator_data = indicator
+
 
         # Add Amount_ENG attribute to each indicator
     for ind in indicator_data:
         measurement_id = ind.get('measurement_id')
         if measurement_id is not None:
-            matching_measurement = next((m for m in measurement_data if m['id'] == measurement_id), None)
+            matching_measurement = next((m for m in measurement if m['id'] == measurement_id), None)
             ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
         else:
             ind['Amount_ENG'] = None
 
 
     context = {
-        'topics': topic_data,
-        'categories': category_data,
+        'topics': topic,
+        'categories': category,
         'indicators':indicator_data,
-        'indicator_point' : indicator_point_data,
+        'indicator_point' : indicator_point,
         'year' : year,
-        'quarter' : quarters,
-        'month' : months,
-        'value' : values
+        'quarter' : quarter,
+        'month' : month,
+
+    }
+    return JsonResponse(context)
+
+@login_required(login_url='login')
+def dashboard_json(request):
+    topic = list(Topic.objects.all().values())
+    category = list(Category.objects.all().values())
+    indicator = list(Indicator.objects.all().values())
+    indicator_point = list(Indicator_Point.objects.all().values())
+    year =list( DataPoint.objects.all().values())
+    month = list(Month.objects.all().values())
+    quarter = list(Quarter.objects.all().values())
+    measurement = list(Measurement.objects.all().values())
+
+    indicator_data = indicator
+
+
+        # Add Amount_ENG attribute to each indicator
+    for ind in indicator_data:
+        measurement_id = ind.get('measurement_id')
+        if measurement_id is not None:
+            matching_measurement = next((m for m in measurement if m['id'] == measurement_id), None)
+            ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
+        else:
+            ind['Amount_ENG'] = None
+
+
+    context = {
+        'topics': topic,
+        'categories': category,
+        'indicators':indicator_data,
+        'indicator_point' : indicator_point,
+        'year' : year,
+        'quarter' : quarter,
+        'month' : month,
+        'value' : list(DataValue.objects.all().values())
+
     }
     return JsonResponse(context)
 
@@ -454,13 +536,16 @@ def data_list(request):
                 context = {
                         'result' : result
                         }
+                formFile = ImportFileIndicatorAddValueForm()
                 return render(request, 'user-admin/import_preview.html', context=context)
     
         elif 'confirm_data_form' in request.POST:
             success, message = confirm_file(imported_data_global, 'data_value')
             if success:
+                formFile = ImportFileIndicatorAddValueForm()
                 messages.success(request, message)
             else:
+                formFile = ImportFileIndicatorAddValueForm()
                 messages.error(request,message)
 
             

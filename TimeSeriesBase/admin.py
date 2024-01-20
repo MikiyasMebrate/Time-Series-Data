@@ -165,11 +165,16 @@ def handle_uploaded_Indicator_file(file, category):
             
 
         def filterChild(itemParent, itemChild):
-           '''
-           filter Child Items
-           '''
-           if itemChild['parent'] == itemParent:
-               return itemChild
+            '''
+            filter Child Items
+            '''
+            try:
+               if itemChild['parent'].strip() == itemParent.strip():
+                   return itemChild
+            except:
+               pass
+           
+           
            
 
   
@@ -178,7 +183,6 @@ def handle_uploaded_Indicator_file(file, category):
 
 
         imported_data = dataset.load(file.read())
-        count_successfully_imported = 0
         total_data = []
             
         indicator_list = []
@@ -215,7 +219,7 @@ def handle_uploaded_Indicator_file(file, category):
                 
         #Parent  
         for parent in parentIndicator:
-            data = (parent['parent'],f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'])
+            data = (parent['parent'],f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip())
             parent_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
             result = resource.import_data(parent_dataset, dry_run=True)
             if not result.has_errors():
@@ -226,11 +230,11 @@ def handle_uploaded_Indicator_file(file, category):
                     current_id = int(current_id) + int(parent_id)
                 else:
                     current_id = int(current_id) + 1
-                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of']))
+                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip()))
                 filterChildIndicator(current_id, parent['title_ENG'])
             else:
                 current_id = int(current_id) + 1
-                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of']))
+                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip()))
                 filterChildIndicator(int(current_id), parent['title_ENG'])
 
         
@@ -325,10 +329,14 @@ class DataValueResource(resources.ModelResource):
         model = models.DataValue
         skip_unchanged = True
         report_skipped = True
+        use_bulk = True
         exclude = ( 'id', 'is_deleted','for_source')
         fields = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
         import_id_fields = ('for_datapoint', 'for_quarter', 'for_month', 'value', 'for_indicator')
         export_order = ('for_indicator', 'for_datapoint', 'for_quarter', 'for_month', 'value', )
+    
+
+
         
 
 class DataValueAdmin(ImportExportModelAdmin):
@@ -349,7 +357,7 @@ def handle_uploaded_DataValue_file(file, type_of_data):
                          data_set.append((item['for_indicator'].lstrip(), key, None, None,  round(item[key], 1) if item[key] else 0 ))
     
             data_set_table = tablib.Dataset(*data_set, headers=['for_indicator', 'for_datapoint', 'for_quarter', 'for_month','value'])
-            print(data_set_table)
+            
             result = resource.import_data(data_set_table, dry_run=True)
             return True, data_set_table, result
         except Exception as e:
@@ -364,10 +372,11 @@ def handle_uploaded_DataValue_file(file, type_of_data):
             for item in imported_data.dict:
                 for i, key in enumerate(list(item.keys())):
                     if i != 0 and i != 1:
-                        data_set.append((item['year'], item['month'] ,key.strip(),item[key] if item[key] else 0  ))
-           
+                        data_set.append((item['Year'], item['Month'] ,key.strip(), round(item[key] ,1) if item[key]  else 0  ))
+
             data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_month','for_indicator', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)
+      
         
             return True, data_set_table, result
         except Exception as e:
@@ -399,9 +408,7 @@ admin.site.register(models.DataValue, DataValueAdmin)
 
 ###Confirm 
 def confirm_file(imported_data, type):
-    print(imported_data)
     try:
-        print('---->',imported_data)
         if type == 'topic':
             resource  = TopicResource()
         elif type == 'category':
