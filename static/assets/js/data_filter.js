@@ -12,6 +12,7 @@ let theSelectedCatagory;
 let yearTableList = [];
 let tmpData
 let reset
+let reversYear = false
 
 function resetFilters() {
   // Reset the checkboxes
@@ -60,8 +61,51 @@ function resetFilters() {
   document.getElementById("max-price").innerText = 0;
 }
 
+function resetCss() {
+  // Reset the slider values
+  document.getElementById("value1").innerText = 0;
+  document.getElementById("value2").innerText = 1;
+
+  // Reset the slider range
+  var slider = document.getElementById("slider-distance");
+  if (slider) {
+    // Set the initial values of the slider
+    slider.value = 0;
+
+    // Trigger the 'input' event to update the slider and its associated elements
+    var inputEvent = new Event('input', {
+      bubbles: true,
+      cancelable: true,
+    });
+    slider.dispatchEvent(inputEvent);
+
+    // Reset the CSS styles of the slider manually
+    var rangeElement = slider.querySelector('.range');
+    var thumbElements = slider.querySelectorAll('.thumb');
+    var signEelemnts = slider.querySelectorAll('.sign');
+    var inv1 = document.querySelector('.inverse-left');
+    var inv2 = document.querySelector('.inverse-right');
+    document.getElementById('in1').value = 0;
+    document.getElementById('in2').value = 1;
+
+    if (rangeElement && thumbElements.length === 2) {
+      rangeElement.style.left = '0%';
+      rangeElement.style.right = '99%';
+      thumbElements[0].style.left = '0%';
+      thumbElements[1].style.left = '1%';
+      signEelemnts[0].style.left = '0%';
+      signEelemnts[1].style.left = '1%';
+      inv1.style.width = '70%';
+      inv2.style.width = '70%';
+    }
+  }
+
+  // Reset the price values
+  document.getElementById("min-price").innerText = 0;
+  document.getElementById("max-price").innerText = 0;
+}
+
 function updateFilterSelection(reset = false) {
-  console.log('called')
   var isFilterSelected = true;
   $(".card").show();
   // Hide data display section by default
@@ -190,6 +234,7 @@ function updateFilterSelection(reset = false) {
 
 function updateCheckboxes() {
   let yearCheckboxes = document.getElementsByName("yearListsCheckBox");
+  let selectAllYear = document.getElementById("select_all_year_filter");
   // Clear existing entries in yearTableList
   yearTableList = [];
 
@@ -214,7 +259,11 @@ function updateCheckboxes() {
       }
     }
   });
-  
+
+  // Uncheck the "Select All" checkbox
+  if (selectAllYear) {
+    selectAllYear.checked = false;
+  }
 
   // Find the minimum and maximum checked years
   let minYear = checkedYears.length > 0 ? Math.min(...checkedYears) : 0;
@@ -223,6 +272,7 @@ function updateCheckboxes() {
   // Update the displayed year range
   document.getElementById("min-price").innerText = minYear;
   document.getElementById("max-price").innerText = maxYear;
+
 }
 
 //make datatable
@@ -313,6 +363,7 @@ function filterData() {
       //--------------------------End of  Function to create a filter item for Topic -----------------------------
       let yearList = () => {
         yearTableList = [];
+        let recentYearButtonClick = false;
         //Year list
         let selectYear = data.year.map(({ id, year_EC, year_GC, is_interval }) => {
           if (!is_interval && year_EC.toLowerCase().includes(searchTermYear.toLowerCase())) {
@@ -355,6 +406,7 @@ function filterData() {
 
         selectAllYear.addEventListener("change", () => {
           reset = false
+          resetCss()
           let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
 
           if (selectAllYear.checked) {
@@ -363,11 +415,11 @@ function filterData() {
                 return !is_interval && year_EC.toLowerCase().includes(searchTermYear.toLowerCase());
               })
               .map(({ id, year_EC, year_GC }) => [id, year_EC, year_GC]);
-            yearTableList = yearTableList.reverse()
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = true;
             });
 
+            yearTableList = yearTableList.reverse()
           }
           else {
             yearTableList = [];
@@ -381,8 +433,11 @@ function filterData() {
         let yearListCheckAll = document.getElementsByName("yearListsCheckBox");
 
         document.querySelectorAll('#last_5_year, #last_10_year, #last_15_year, #last_20_year').forEach(function (button) {
+          console.log('hello from view')
           reset = false
           button.addEventListener('click', function () {
+            resetCss()
+            recentYearButtonClick = true
             var yearsToShow = parseInt(this.textContent, 10);
             var yearCheckboxes = document.querySelectorAll('input[name="yearListsCheckBox"]');
             yearCheckboxes.forEach(function (checkbox, index) {
@@ -396,66 +451,57 @@ function filterData() {
               return yearData && !yearData.is_interval ? [yearData.id, yearData.year_EC, yearData.year_GC] : null;
             }).filter(Boolean);
           });
-   
+
         });
 
-        //Selected Year
+        // Selected Year
         yearListCheckAll.forEach((yearCheckBox) => {
           yearCheckBox.addEventListener("change", (eventYearCheckBox) => {
+            if (recentYearButtonClick) {
+              return;
+            }
+
+            reversYear = true;
+            resetCss();
+            console.log('hello from yearListCheckAll');
+
             if (eventYearCheckBox.target.checked) {
-              for (checkedYear of data.year) {
-                if (
-                  !checkedYear.is_interval &&
-                  String(yearCheckBox.value) === String(checkedYear.id)
-                ) {
-                  if (
-                    yearTableList.find(
-                      (item) => String(item[0]) == String(checkedYear.id)
-                    )
-                  ) {
+              for (let checkedYear of data.year) {
+                if (!checkedYear.is_interval && String(yearCheckBox.value) === String(checkedYear.id)) {
+                  if (yearTableList.find((item) => String(item[0]) == String(checkedYear.id))) {
                     continue;
                   } else {
-                    yearTableList.push([
-                      checkedYear.id,
-                      checkedYear.year_EC,
-                      checkedYear.year_GC,
-                    ]);
+                    yearTableList.push([checkedYear.id, checkedYear.year_EC, checkedYear.year_GC]);
                   }
                 }
               }
             } else {
               selectAllYear.checked = false;
               try {
-                for (checkedYear of data.year) {
-                  if (
-                    !checkedYear.is_interval &&
-                    String(yearCheckBox.value) === String(checkedYear.id)
-                  ) {
-                    let valueToCheck = [
-                      checkedYear.id,
-                      checkedYear.year_EC,
-                      checkedYear.year_GC,
-                    ];
-
+                for (let checkedYear of data.year) {
+                  if (!checkedYear.is_interval && String(yearCheckBox.value) === String(checkedYear.id)) {
+                    let valueToCheck = [checkedYear.id, checkedYear.year_EC, checkedYear.year_GC];
                     for (let i = 0; i < yearTableList.length; i++) {
-                      if (
-                        String(yearTableList[i][0]) === String(valueToCheck[0])
-                      ) {
+                      if (String(yearTableList[i][0]) === String(valueToCheck[0])) {
                         yearTableList.splice(i, 1);
                       }
                     }
                   }
                 }
               } catch {
-                null;
+                // Handle the catch block accordingly
+                console.error('Error handling');
               }
             }
-            //Sort Year by Ethiopian Calender
-            yearTableList.sort((a, b) => (a[1] > b[1] ? 1 : -1));
 
+            // Sort Year by Ethiopian Calender
+            yearTableList.sort((a, b) => (a[1] > b[1] ? 1 : -1));
           });
         });
+
       };
+
+
 
       // Event listener for the year search input
       document.getElementById('filterYearSearch').addEventListener('input', function (event) {
@@ -1168,6 +1214,12 @@ function filterData() {
             let list_table = document.getElementById("list_table_view")
             list_table.style.display = "block"
 
+            // Reverse the yearTableList array if reversYear is true
+            if (reversYear) {
+              console.log('hello')
+              yearTableList.reverse();
+              reversYear = false;
+            }
 
             // Hide chart
             $("#chart").hide();
@@ -1219,10 +1271,10 @@ function filterData() {
                     if (!title_AMH === null)
                       title_amharic = " - " + title_AMH;
 
-                      let measure = "";
-                      if (Amount_ENG !== null && Amount_ENG !== undefined) {
-                        measure = "(" + Amount_ENG + ")";
-                      }
+                    let measure = "";
+                    if (Amount_ENG !== null && Amount_ENG !== undefined) {
+                      measure = "(" + Amount_ENG + ")";
+                    }
 
                     //Table Row Start
                     table += `
@@ -1430,10 +1482,10 @@ function filterData() {
                   title_amharic = " - " + filterIndicator.title_AMH;
 
                 let measure = "";
-                if (filterIndicator.Amount_ENG !== null){
-                  measure = "(" + filterIndicator.Amount_ENG  + ")";
+                if (filterIndicator.Amount_ENG !== null) {
+                  measure = "(" + filterIndicator.Amount_ENG + ")";
                 }
-                
+
 
                 table += ` <th class="vertical-text border" ">
                          <p " class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
@@ -1656,12 +1708,12 @@ function filterData() {
                 if (!filterIndicator.title_AMH === null)
                   title_amharic = " - " + filterIndicator.title_AMH;
 
-                  let measure = "";
-                  if (filterIndicator.Amount_ENG !== null){
-                    measure = "(" + filterIndicator.Amount_ENG + ")";
-                  }
-                   
-  
+                let measure = "";
+                if (filterIndicator.Amount_ENG !== null) {
+                  measure = "(" + filterIndicator.Amount_ENG + ")";
+                }
+
+
                 table += ` <th class="vertical-text  border" ">
                          <p" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
                          </th>`;

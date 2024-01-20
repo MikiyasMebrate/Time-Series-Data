@@ -100,8 +100,25 @@ def category(request, category_id=None):
             else:
                 messages.error(request,message)
 
+        if 'catagory_Id' in request.POST:
+            # Editing an existing source
+            catagory_instance = get_object_or_404(Category, id=request.POST['catagory_Id'])
+            form = catagoryForm(request.POST, instance=catagory_instance)
+        else:
+            # Adding a new source
+            form = catagoryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            if 'catagory_Id' in request.POST:
+                messages.success(request, "Source has been successfully updated!")
+            else:
+                messages.success(request, "Source has been successfully added!")
+            return redirect('user-admin-category')
+        else:
+            messages.error(request, "Value exists or please try again!")
+
     else:
-        # GET request or form is not valid, display the form
         if category_id:
             try:
                 category_instance = get_object_or_404(Category, id=category_id)
