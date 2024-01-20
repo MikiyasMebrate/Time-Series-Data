@@ -9,6 +9,7 @@ from UserManagement import views
 urlpatterns = [
     path('',index,name="index"),
     path('index/',index,name="user_index"),
+    path("detail-analysis/<int:pk>", detail_analysis , name="detail-analysis"),
     path('about/',about,name="about"),
     path('contact/',contact,name="contact"),
     path('data/',data,name="data"),

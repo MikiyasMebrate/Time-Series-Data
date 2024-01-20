@@ -215,8 +215,8 @@ def filter_indicator(request, pk):
            try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
            except: value_filter = None
            if value_filter:
-            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
-            #        i.save()
+                # for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
+                #    i.save()
                 #value_new.append(value_filter[0])
                 for val in value_filter:
                     value_new.append(val)
@@ -802,6 +802,7 @@ def indicator(request):
         'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
+
 @login_required(login_url='login')
 @admin_user_required
 def indicator_list(request, pk):
