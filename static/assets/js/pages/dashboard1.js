@@ -196,7 +196,7 @@ let filterData = () => {
       };
 
       let monthRandomDataChart = () => {
-        let lastYear = data.year[data.year.length - 1]; // last Year
+        let lastYear = data.year[data.year.length - 2]; // last Year
         //Month Data
         let monthlyValue = [];
 
@@ -483,7 +483,7 @@ function initializeChart() {
   chart = Highcharts.chart('live_data', {
     chart: {
       type: 'line',
-      marginLeft: 100
+      marginLeft: 10, 
     },
     legend: {
       layout: 'proximate',

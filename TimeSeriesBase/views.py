@@ -13,7 +13,7 @@ def index(request):
     last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
     last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
 
-    print('--->',last_last_year)
+    #CPI
     cpi_category = Category.objects.filter(name_ENG = 'CPI').first()
     cpi_indicators = Indicator.objects.filter(for_category = cpi_category)
 
@@ -35,11 +35,29 @@ def index(request):
             
             cpi_value.append({'item' : item.title_ENG ,'value' : round(-1 * percentage if percentage < 0 else percentage, 1), 'link' : item.id, 'mode' : 'negative' if percentage < 0 else 'positive'})
 
-    print(cpi_value)
+    
+    #Export Bill  USD
+    export_bill_category = Category.objects.filter(name_ENG = 'Export in Bil USD').first()
+    export_bill_indicators = Indicator.objects.filter(for_category = export_bill_category)
+
+    export_bill_value = []
+    for item in export_bill_indicators:
+        value_last_year = DataValue.objects.filter(for_datapoint = last_year, for_indicator = item).first()
+        value_last_last_year = DataValue.objects.filter(for_datapoint = last_last_year, for_indicator = item).first()
+        percentage = ((value_last_year.value - value_last_last_year.value) / value_last_last_year.value) * 100
+        export_bill_value.append({'item' : item.title_ENG ,'value' : round(-1 * percentage if percentage < 0 else percentage, 1), 'link' : item.id, 'mode' : 'negative' if percentage < 0 else 'positive'})
+    
+
+    #GDP
+        
+        
     
     context = {
         'cpi' : cpi_value,
-        'year' : last_year
+        'cpi_category' : cpi_category,
+        'year' : last_year,
+        'export_bill_value' : export_bill_value,
+        'export_bill_category' : export_bill_category
     }
     return render(request,"index.html", context=context)
 

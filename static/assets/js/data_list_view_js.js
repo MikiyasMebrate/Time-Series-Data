@@ -8,9 +8,7 @@ let showLoading = (htmlID) => {
 `;
   document.getElementById(`${htmlID}`).innerHTML = lodingHtml;
 };
-let hideLoading = () => {
-  document.getElementById("topic_list_filter").innerHTML = "";
-};
+
 
 let values = (catId) => {
   return fetch(`/user-admin/json-indicator-value/${catId}`)
@@ -28,6 +26,7 @@ let values = (catId) => {
       throw err; // Re-throw the error to propagate it in the promise chain
     });
 };
+
 
 let filterData = () => {
   showLoading("topic_list_filter");
