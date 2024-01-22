@@ -113,12 +113,17 @@ $(document).ready(function () {
         selectTopic = data.topics.map(
           ({ title_ENG, title_AMH, id, is_deleted }) =>{
             if(!is_deleted){
-              return             `
+              return `
               <li>
-              <div class="flex-grow-2">
-                 <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                  <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                </div>
+                <div class="flex-grow-2 ">
+                   <div class="row ">
+                      <div class="col-1"> 
+                      <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                      </div>
+                      <div class="col-11">
+                      <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                     </div>
+                  </div>
             </li>
               `
             }

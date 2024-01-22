@@ -119,6 +119,8 @@
   
                 </div>
               </div>
+
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -286,10 +288,14 @@
                 >
                   + Add New Indicator
                 </button>
+
+                {% if category %}
+                {% else %}
                 <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#IndicatorExcel"
                 data-bs-whatever="@mdo">
                 <i class="bi bi-file-earmark-arrow-down"></i> Add Excel
               </button>
+              {% endif %}
               </div>
                <!--Add Data End-->
               <!--Data List Start-->

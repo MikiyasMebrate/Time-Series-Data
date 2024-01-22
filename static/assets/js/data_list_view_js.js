@@ -10,6 +10,8 @@ let showLoading = (htmlID) => {
 };
 
 
+
+
 let values = (catId) => {
   return fetch(`/user-admin/json-indicator-value/${catId}`)
     .then((response) => {
@@ -328,16 +330,14 @@ let filterData = () => {
             return `
               <li>
                 <div class="flex-grow-2 ">
-                           <div class="row ">
-                              <div class="col-1"> 
-                              <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
-                              </div>
-                              <div class="col-11">
-                              <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
-                             </div>
-                          </div>
-
-
+                   <div class="row ">
+                      <div class="col-1"> 
+                      <input type="radio" value=${id} name="topic_lists" id="topic_list${id}">
+                      </div>
+                      <div class="col-11">
+                      <label for="topic_list${id}" style="font-size: small;" class="mb-0">${title_ENG} - ${title_AMH}</label>
+                     </div>
+                  </div>
             </li>
               `;
           }
@@ -760,7 +760,6 @@ let filterData = () => {
                     //Type Year Table
                     let typeYearTable = () => {
                       table = "";
-                      dataListViewTable.innerHTML = table;
                       table += `
                       <table id="newTable" class="table table-bordered m-0 p-0">
                       <thead>
@@ -817,21 +816,31 @@ let filterData = () => {
 
                             for (j of yearTableList) {
                               let statusData = false;
-                              for (k of data.value) {
-                                if (
-                                  String(j[0]) === String(k.for_datapoint_id) &&
-                                  String(id) === String(k.for_indicator_id)
-                                ) {
-                                  table += `<td>${k.value}</td>`;
-                                  statusData = false;
-                                  break;
-                                } else {
-                                  statusData = true;
+                              
+                              if(data.value.length > 0){
+                                for (k of data.value) {
+                                  if (
+                                    String(j[0]) === String(k.for_datapoint_id) &&
+                                    String(id) === String(k.for_indicator_id)
+                                  ) {
+                                    table += `<td>${k.value}</td>`;
+                                    statusData = false;
+                                    break;
+                                  } else {
+                                    statusData = true;
+                                  }
                                 }
-                              }
-                              if (statusData) {
+  
+  
+                                if (statusData) {
+                                  table += `<td> - </td>`;
+                                }
+                              }else{
                                 table += `<td> - </td>`;
                               }
+                             
+
+
                             }
 
                             table += `</tr>`;
@@ -871,7 +880,9 @@ let filterData = () => {
                             </td>`;
 
                                   for (j of yearTableList) {
-                                    let statusData = false;
+
+                                    if(data.value.length > 0){
+                                      let statusData = false;
                                     for (k of data.value) {
                                       if (
                                         String(j[0]) ===
@@ -889,6 +900,12 @@ let filterData = () => {
                                     if (statusData) {
                                       table += `<td> - </td>`;
                                     }
+
+                                    }else{
+                                      table += `<td> - </td>`;
+                                    }
+                                    
+
                                   }
 
                                   table += `</tr>`;
@@ -932,7 +949,8 @@ let filterData = () => {
                           </td>`;
 
                                 for (j of yearTableList) {
-                                  let statusData = false;
+                                  if(data.value.length > 0 ){
+                                    let statusData = false;
                                   for (k of data.value) {
                                     if (
                                       String(j[0]) ===
@@ -950,6 +968,10 @@ let filterData = () => {
                                   if (statusData) {
                                     table += `<td> - </td>`;
                                   }
+                                  }else{
+                                    table += `<td> - </td>`;
+                                  }
+                                  
                                 }
 
                                 table += `</tr>`;
@@ -1518,6 +1540,8 @@ let filterData = () => {
 
               fetchDataAndUpdate();
             });
+
+
           });
         });
       });
