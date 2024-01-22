@@ -483,7 +483,20 @@ function initializeChart() {
   chart = Highcharts.chart('live_data', {
     chart: {
       type: 'line',
-      marginLeft: 100
+      responsive: {
+        rules: [{
+          condition: {
+            maxWidth: 500
+          },
+          chartOptions: {
+            legend: {
+              layout: 'horizontal',
+              align: 'center',
+              verticalAlign: 'bottom'
+            }
+          }
+        }]
+      }
     },
     legend: {
       layout: 'proximate',

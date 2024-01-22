@@ -15,6 +15,13 @@
   <script src="https://code.highcharts.com/modules/exporting.js"></script>
   <script src="https://code.highcharts.com/modules/export-data.js"></script>
   <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <style>
+    #live_data {
+      width: 100%%;
+      height: 400px; /* Set an appropriate height for your chart */
+    }
+    
+  </style>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -185,7 +192,13 @@
                     <tr>
                       <th scope="row">{{ forloop.counter }}</th>
                       <td>{{ entry.timestamp }}</td>
-                      <td>{{ entry.actor.get_full_name }} ({{ entry.actor.username }})</td>
+                      <td>
+                        {% if entry.actor.get_full_name %}
+                        {{ entry.actor.get_full_name }} ({{ entry.actor.username }})
+                    {% else %}
+                        System
+                    {% endif %}
+                      </td>
                    {% if entry.action == 0 %}
                        <td><span class="badge bg-success">Created</span></td>
                    {% elif entry.action == 1 %}
