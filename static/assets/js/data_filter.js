@@ -1990,14 +1990,14 @@ function filterData() {
                       if (indicatorSelectedType === 'yearly') {
                         let area_main = document.getElementById('main_area')
                         area_main.style.display = 'block'
-                        const datasetDropdown = document.getElementById('drop');
-                        datasetDropdown.style.display = 'none'
+                        // const datasetDropdown = document.getElementById('drop');
+                        // datasetDropdown.style.display = 'none'
                         let incicator_drop1 = document.getElementById('drop_two')
                         incicator_drop1.style.display = 'none'
                         let incicator_drop3 = document.getElementById('drop_three')
                         incicator_drop3.style.display = 'none'
-                        let datasetDropdown1 = document.getElementById('drop_second')
-                        datasetDropdown1.style.display = 'none'
+                        // let datasetDropdown1 = document.getElementById('drop_second')
+                        // datasetDropdown1.style.display = 'none'
         
                         document.getElementById('bar-chart-canvas1').style.display = 'none'
                         document.getElementById('series-chart-canvas1').style.display = 'none'
@@ -2030,9 +2030,9 @@ function filterData() {
                               labelElement.style.display = isAreaNavLink ? 'none' : 'block';
                               selectElement.style.display = isAreaNavLink ? 'none' : 'block';
                             }
-                            datasetDropdown.style.display = 'none'
+                            // datasetDropdown.style.display = 'none'
                             incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
-                            datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
+                            // datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                           });
                         });
         
