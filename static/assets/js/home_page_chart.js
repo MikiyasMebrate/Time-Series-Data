@@ -1,6 +1,6 @@
 $(function () {
   $.ajax({
-    url: "/user-admin/json/",
+    url: "/user-admin/json-dashboard/",
     type: "GET",
     dataType: "json",
     success: function (data) {

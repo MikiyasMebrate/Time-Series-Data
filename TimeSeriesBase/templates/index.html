@@ -1,7 +1,12 @@
 {%load static%}
-<html class="no-js" lang="zxx">
- {% include "includes/head.html" %}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  {% include "includes/head.html" %}
+</head>
 
 
     <body>
@@ -132,31 +137,112 @@
 
             <!-- services area start -->
             <section class="services__area-2 mt--120 pt-270 pb-140 p-relative" data-background="{% static "assets/img/bg/wave-bg-2.png" %}">
-                <div class="container">
-                    <div class="row no-gutters">
-                        {%for s in Category_value %}
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                            <div class="services__item services__item-2 mb-30 transition-3 white-bg wow fadeInUp" data-wow-delay=".2s">
-                                <div class="services__icon mb-35">
-                                    <img src="{% static "assets/img/icon/services/services-2.png" %}" alt="services">
-                                </div>
-                                <div class="services__content services__content-2">
-                                   
-                                    <h3><a>{{s.for_category}}</a></h3>
+                <div class="container pt-5">
+                    <div class="row justify-content-center">
+                     <!--Card 1-->
+                        <div class="col-lg-7  mt-3 shadow bg-light">
+                          
+                          <!--CPI-->
+                          <div class="row">
 
-                                    <p>{{s.title_ENG}}
-                                   
-                                    
-                                    <i class="fas fa-database"></i>
-             
-                                    <a href="#" class="small-box-footer">
-                                      
-                                    </a>
-                                </div>
+                            <div class="card-body">
+                              <h1 class="card-header text-muted mb-3">Inflation</h1>
                             </div>
+                            <h3 class="ps-4 text-muted mb-3">{{ cpi_category.name_ENG }}</h3>
+
+
+                            {% for item in cpi %}
+                            <!--Data 1-->
+                            <div class="col-4 border-end">
+                              <div class="card-body">
+                                <h4 class="card-subtitle mb-2 text-muted">{{ item.item }} </h4>
+                                <h5 class="card-text text-muted">{{year.year_EC}} (Year on Year)</h5>
+                                <h1>
+                                  {% if item.mode == 'positive' %}
+                                  ↑
+                                  {% else %}
+                                  ↓
+                                  {% endif %}
+                                  
+                                  {{item.value}}%</h1>
+                                <a href="{% url 'detail-analysis' item.link %}" class="nav-link text-end">Data</a>
+                              </div>
+                            </div>
+                            {% endfor %}
+
+                          </div>
+
                         </div>
-                      {% endfor %}
-                                        </div>
+
+                        <!--EXPORT-->
+                        <div class="col-lg-4 mt-3 ms-3 shadow bg-light">
+                          <div class="row">
+
+                            <div class="card-body">
+                              <h1 class="card-header text-muted mb-3">Export in Bil USD</h1>
+                            </div>
+                            <h3 class="ps-4 text-muted mb-3">{{ export_bill_category.name_ENG }}</h3>
+
+
+                            {% for item in export_bill_value %}
+                            <!--Data 1-->
+                            <div class="col-12 border-end">
+                              <div class="card-body">
+                                <h4 class="card-subtitle mb-2 text-muted">{{ item.item }} </h4>
+                                <h5 class="card-text text-muted">{{year.year_EC}} (Year on Year)</h5>
+                                <h1>
+                                  {% if item.mode == 'positive' %}
+                                  ↑
+                                  {% else %}
+                                  ↓
+                                  {% endif %}
+                                  
+                                  {{item.value}}%</h1>
+                                <a href="{% url 'detail-analysis' item.link %}" class="nav-link text-end">Data</a>
+                              </div>
+                            </div>
+                            {% endfor %}
+
+                          </div>
+                        </div>
+
+                        <!--GDP-->
+                        <div style="margin-top: 60px;" class="col-11 shadow bg-light shadow">
+                           <!--CPI-->
+                           <div class="row">
+
+                            <div class="card-body">
+                              <h1 class="card-header text-muted mb-3">Annual Budget in Bil Birr </h1>
+                            </div>
+                            <h3 class="ps-4 text-muted mb-3">{{ cpi_category.name_ENG }}</h3>
+
+
+                            {% for item in cpi %}
+                            <!--Data 1-->
+                            <div class="col-4 border-end">
+                              <div class="card-body">
+                                <h4 class="card-subtitle mb-2 text-muted">{{ item.item }} </h4>
+                                <h5 class="card-text text-muted">{{year.year_EC}} (Year on Year)</h5>
+                                <h1>
+                                  {% if item.mode == 'positive' %}
+                                  ↑
+                                  {% else %}
+                                  ↓
+                                  {% endif %}
+                                  
+                                  {{item.value}}%</h1>
+                                <a href="{% url 'detail-analysis' item.link %}" class="nav-link text-end">Data</a>
+                              </div>
+                            </div>
+                            {% endfor %}
+
+                          </div>
+
+                        </div>
+
+                      
+
+
                     <div class="about__area-2 pt-130">
                         <div class="row">
                             <div class="col-xl-7 col-lg-6">

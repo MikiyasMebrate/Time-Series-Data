@@ -232,8 +232,8 @@ def filter_indicator(request, pk):
            try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
            except: value_filter = None
            if value_filter:
-            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
-            #        i.save()
+                # for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
+                #    i.save()
                 #value_new.append(value_filter[0])
                 for val in value_filter:
                     value_new.append(val)
@@ -819,6 +819,7 @@ def indicator(request):
         'formFile' : formFile
     }
     return render(request, 'user-admin/indicators.html', context)
+
 @login_required(login_url='login')
 @admin_user_required
 def indicator_list(request, pk):
@@ -1188,8 +1189,6 @@ def import_preview(request):
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
-    Topics = Topic.objects.all()
-
     topics = Topic.objects.filter(is_deleted = False)
 
     # If topic_id is provided, it's an update operation
@@ -1206,11 +1205,16 @@ def topic(request, topic_id=None):
     form = TopicForm(instance=topic_instance)
     formFile = ImportFileForm()
     global imported_data_global 
+
     if request.method == 'POST':
-        if 'topic_Id' in request.POST:
+        if 'topic_Id' in request.POST or 'topicFormValue' in request.POST:
             # Editing an existing source
-            topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
-            form = TopicForm(request.POST, instance=topic_instance)
+            try:
+                 topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
+                 form = TopicForm(request.POST, instance=topic_instance)
+            except:
+                form = TopicForm(request.POST)
+            print('-->',topic_instance)
             if form.is_valid():
                 obj = form.save(commit=False)
                 is_new_topic = obj.pk is None

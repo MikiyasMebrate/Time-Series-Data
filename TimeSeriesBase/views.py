@@ -10,13 +10,62 @@ from django.http import JsonResponse
 @login_required(login_url='login')
 @staff_user_required
 def index(request):
-    Category_value = Indicator.objects.order_by('-created_at')[:4] # Replace your_attribute with the actual attribute name
+    last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
+    last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
+
+    #CPI
+    cpi_category = Category.objects.filter(name_ENG = 'CPI').first()
+    cpi_indicators = Indicator.objects.filter(for_category = cpi_category)
+
+    cpi_value = []
+    for item in cpi_indicators:
+        value_last_year = DataValue.objects.filter(for_datapoint = last_year, for_indicator = item)
+        value_last_last_year = DataValue.objects.filter(for_datapoint = last_last_year, for_indicator = item)
+        
+        if value_last_year and value_last_last_year:
+            sum1 = 0
+            for val in value_last_year:
+                sum1 = sum1 + val.value
+
+            sum2 = 0
+            for val in value_last_last_year:
+                sum2 = sum2 + val.value
+
+            percentage = ((sum1 - sum2) / sum2) * 100
+            
+            cpi_value.append({'item' : item.title_ENG ,'value' : round(-1 * percentage if percentage < 0 else percentage, 1), 'link' : item.id, 'mode' : 'negative' if percentage < 0 else 'positive'})
+
     
-    # Generate random data based on the attribute
-    random_data = {
-        'Category_value': Category_value,
+    #Export Bill  USD
+    export_bill_category = Category.objects.filter(name_ENG = 'Export in Bil USD').first()
+    export_bill_indicators = Indicator.objects.filter(for_category = export_bill_category)
+
+    export_bill_value = []
+    for item in export_bill_indicators:
+        value_last_year = DataValue.objects.filter(for_datapoint = last_year, for_indicator = item).first()
+        value_last_last_year = DataValue.objects.filter(for_datapoint = last_last_year, for_indicator = item).first()
+        percentage = ((value_last_year.value - value_last_last_year.value) / value_last_last_year.value) * 100
+        export_bill_value.append({'item' : item.title_ENG ,'value' : round(-1 * percentage if percentage < 0 else percentage, 1), 'link' : item.id, 'mode' : 'negative' if percentage < 0 else 'positive'})
+    
+
+    #GDP
+        
+        
+    
+    context = {
+        'cpi' : cpi_value,
+        'cpi_category' : cpi_category,
+        'year' : last_year,
+        'export_bill_value' : export_bill_value,
+        'export_bill_category' : export_bill_category
     }
-    return render(request,"index.html",random_data)
+    return render(request,"index.html", context=context)
+
+@login_required(login_url='login')
+@staff_user_required
+def detail_analysis(request, pk):
+    return render(request, 'detail_analysis.html')
+
 
 
 @login_required(login_url='login')
