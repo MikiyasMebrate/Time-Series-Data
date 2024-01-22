@@ -1482,3 +1482,27 @@ def year_add(request, year=None):
     }
     return render(request, 'user-admin/add_year.html', context=context)
 
+@login_required(login_url='login')
+@admin_user_required
+def month_data(request, month_id):
+    catagory = Category.objects.get(pk=month_id)
+    months = Month.objects.all()
+    years = DataPoint.objects.all()
+
+    child_indicator = Indicator.objects.filter(for_category=catagory)
+
+    data_set = []
+
+    if child_indicator:
+        for child in child_indicator:
+            arr = []
+            for year in years:
+                for month in months:
+                    value_child = DataValue.objects.filter(for_indicator=child, for_month=month, for_datapoint=year, is_deleted=False).first()
+                    if value_child is not None:
+                        val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
+                        arr.append(val)
+            data_set.append({'name': child.title_ENG, 'data': arr})
+            
+    # Return JSON response
+    return JsonResponse(data_set, safe=False)

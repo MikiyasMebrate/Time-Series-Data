@@ -311,10 +311,10 @@
                                 <select class='form-select indicatorDropdown1 mb-1' id='drop_two'></select>
                                 <!--to handle for the first drop down for the quarter -->
                                 <select class='form-select indicatorDropdown2 mb-1' id='drop_three'></select>
-                                <!--to handle for the second drop down for the month -->
-                                <select class='form-select datasetDropdown mb-1' id='drop' style='display:none'></select>
+                                {% comment %} <!--to handle for the second drop down for the month -->
+                                <select class='form-select datasetDropdown mb-1' id='drop' style='display:none'></select> {% endcomment %}
                                 <!--to handle for the second drop down for the quarter -->
-                                <select class='form-select datasetDropdown1 mb-1' id='drop_second' style='display:none'></select>
+                                {% comment %} <select class='form-select datasetDropdown1 mb-1' id='drop_second' style='display:none'></select> {% endcomment %}
                                 <div class="chart tab-pane active " id="bar-chart" style="position: relative; height: 500px;">
                                     <!--to handle for chart the year -->
                                     <div id="bar-chart-canvas"  style="height: 500px;"></div>

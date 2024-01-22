@@ -33,7 +33,6 @@ let filterData = () => {
   fetch("/user-admin/json/")
     .then((response) => response.json())
     .then(async (data) => {
-      hideLoading();
       let table = "";
       let indicatorSelectedType = "yearly";
 
