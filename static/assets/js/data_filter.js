@@ -955,6 +955,7 @@ function filterData() {
                           indicatorCheckBox.addEventListener(
                             "change",
                             (eventIndicator) => {
+                              resetCss()
                               if (eventIndicator.target.checked) {
                                 selectedIndictorId.push(eventIndicator.target.value);
                               } else {
@@ -1178,7 +1179,7 @@ function filterData() {
                   selectAllIndicator.addEventListener("change", () => {
                     document.getElementById('search_attr3').style.display = 'block'
                     if (selectAllIndicator.checked) {
-                      reset = true
+                      resetCss()
                       indicatorListCheckAll.forEach((event) => {
                         event.checked = true;
                         if (!selectedIndictorId.includes(event.value)) {
@@ -1201,7 +1202,6 @@ function filterData() {
                     indicatorCheckBox.addEventListener(
                       "change",
                       (eventIndicator) => {
-                        reset = true
                         resetCss()
                         document.getElementById('search_attr3').style.display = 'block'
                         if (eventIndicator.target.checked) {
