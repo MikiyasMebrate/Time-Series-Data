@@ -11,48 +11,8 @@
 <!-- Include jQuery UI library -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <style>
-    /**
-    * ==============================================
-    * Dot Spin
-    * ==============================================
-    */
-   .dot-spin {
-     width: 10px;
-     height: 10px;
-     border-radius: 5px;
-     background-color: transparent;
-     color: transparent;
-     box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 0 rgba(76, 175, 80, 0), 0 18px 0 0 rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 0 rgba(76, 175, 80, 0), -18px 0 0 0 rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 0 rgba(76, 175, 80, 0);
-     animation: dot-spin 1.5s infinite linear;
-   }
-   
-   @keyframes dot-spin {
-     0%, 100% {
-       box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
-     }
-     12.5% {
-       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 0 #4CAF50, 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
-     }
-     25% {
-       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 0 #4CAF50, 0 18px 0 0 #4CAF50, -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
-     }
-     37.5% {
-       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 0 #4CAF50, 0 18px 0 0 #4CAF50, -12.727926px 12.727926px 0 0 #4CAF50, -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
-     }
-     50% {
-       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 0 #4CAF50, -12.727926px 12.727926px 0 0 #4CAF50, -18px 0 0 0 #4CAF50, -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
-     }
-     62.5% {
-       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 0 #4CAF50, -18px 0 0 0 #4CAF50, -12.727926px -12.727926px 0 0 #4CAF50;
-     }
-     75% {
-       box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 0 #4CAF50, -12.727926px -12.727926px 0 0 #4CAF50;
-     }
-     87.5% {
-       box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 0 #4CAF50;
-     }
-   }
-   
+
+ 
 </style>             
 </head>
   <body>
@@ -349,7 +309,7 @@
                 
                         <div class="card-body">
                             <!-- Loading Indicator -->
-                                    <div id="loadingIndicator" style="display: none; width: 1000px; height: 500px;  border-radius: 10px; " class="text-center">
+                                    <div id="loadingIndicator" style="display: none; width: 900px; height: 500px;  border-radius: 10px; " class="text-center">
                                         <div class='d-flex align-items-center justify-content-center' style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 100%;">
                                             <div class="snippet" data-title="dot-spin">
                                                 <div class="stage">
@@ -452,36 +412,5 @@
  <script src="https://code.highcharts.com/modules/export-data.js"></script>
  <script src="https://code.highcharts.com/modules/drilldown.js"></script>
        
- <script>
-    const snippets = document.querySelectorAll('.snippet');
-
-    for (let i = 0; i < snippets.length; i++) {
-      snippets[i].addEventListener('mouseleave', clearTooltip);
-      snippets[i].addEventListener('blur', clearTooltip);
-    }
-    
-    function showTooltip(el, msg) {
-      el.setAttribute('class', 'snippet tooltip');
-      el.setAttribute('aria-label', msg);
-    }
-    
-    function clearTooltip(e) {
-      e.currentTarget.setAttribute('class', 'snippet');
-      e.currentTarget.removeAttribute('aria-label');
-    }
-    
-    const clipboardSnippets = new ClipboardJS('.snippet', {
-      text: trigger => trigger.getAttribute('data-title')
-    });
-    
-    clipboardSnippets.on('success', e => {
-      e.clearSelection();
-      showTooltip(e.trigger, 'Copied!');
-    });
-    
-    clipboardSnippets.on('error', e => {
-      showTooltip(e.trigger, 'Copy failed!');
-    });
-    <script>
   </body>
 </html>
