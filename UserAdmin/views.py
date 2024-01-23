@@ -162,10 +162,12 @@ def filter_indicator_json(request):
     topic = list(Topic.objects.all().values())
     category_data = list(Category.objects.all().values())
     indicator = list(Indicator.objects.filter(~Q(for_category_id = None )).values())
+    measurements = list(Measurement.objects.filter().values())
     context = {
         'topics' : topic,
         'categories' : category_data,
-        'indicators' : indicator
+        'indicators' : indicator,
+        'measurements' : measurements
     }
 
     return JsonResponse(context)
@@ -244,6 +246,7 @@ def filter_indicator(request, pk):
                        break
                 else:
                    year_new.append(model_to_dict(yr))
+    
     
     
     context = {
@@ -563,6 +566,7 @@ def data_list_detail(request, pk):
     sub_indicator_form = SubIndicatorFormDetail()
     indicator = Indicator.objects.get(pk = pk)
     measurement_form = MeasurementSelectForm()
+    operation = operationForm()
 
     if request.method == 'POST':
         if 'addValueIndicator' in request.POST:
@@ -717,6 +721,22 @@ def data_list_detail(request, pk):
                 messages.success(request, 'Successfully Actual Point Added!')
             else:
                 messages.error(request, 'Please Try Again!')
+        
+        if 'editOperation' in request.POST:
+            operation = operationForm(request.POST)
+            if operation.is_valid():
+                try:
+                   indicator_id = request.POST.get('indicator_operator')
+                   op = operation.cleaned_data['operation_type']
+                   indicator_obj = Indicator.objects.get(pk = indicator_id)
+                   indicator_obj.op_type = op
+                   indicator_obj.save()
+                   messages.success(request, 'Successfully Operator Updated!')
+                   return redirect(request.path)
+                except:
+                   messages.error(request, 'Please Try Again not valid!')
+                   
+
                 
             
                        
@@ -726,6 +746,7 @@ def data_list_detail(request, pk):
         'sub_indicator_form' : sub_indicator_form,
         'indicator' : indicator,
         'measurement_form' :measurement_form,
+        'operationForm' : operation
     }
     return render(request, 'user-admin/data_list_detail.html', context)
 
@@ -837,8 +858,12 @@ def indicator_list(request, pk):
                 category_obj = form.cleaned_data['for_category']
                 type_of_obj = form.cleaned_data['type_of']
                 indicator_id = request.POST.get('indicator_Id')
+                measurement = request.POST.get('measurement_form')
+                operation_type = form.cleaned_data['operation_type']
+                 
+                measurement_obj = Measurement.objects.get(pk = measurement)
     
-                Indicator.objects.filter(id = indicator_id).update(title_AMH = title_AMH,title_ENG = title_ENG,for_category = category_obj, type_of = type_of_obj)
+                Indicator.objects.filter(id = indicator_id).update(title_AMH = title_AMH,title_ENG = title_ENG,for_category = category_obj, type_of = type_of_obj, op_type = operation_type, measurement = measurement_obj)
                 form = IndicatorForm()
                 messages.success(request, 'Successfully Updated')
             else:
@@ -854,12 +879,14 @@ def indicator_list(request, pk):
                 title_AMH = add_indicator.cleaned_data['title_AMH']
                 category_obj = add_indicator.cleaned_data['for_category']
                 type_of_obj = add_indicator.cleaned_data['type_of']
+                operation_type = add_indicator.cleaned_data['operation_type']
 
                 obj = Indicator()
                 obj.title_AMH = title_AMH
                 obj.title_ENG = title_ENG
                 obj.for_category = category_obj
                 obj.type_of = type_of_obj
+                obj.op_type = operation_type
                 
                 try:
                     obj.save()
@@ -890,7 +917,8 @@ def indicator_list(request, pk):
         'category' : category,
         'form' : form,
         'add_indicator' : add_indicator,
-        'formFile' : formFile
+        'formFile' : formFile,
+        
     }
     return render(request, 'user-admin/indicators.html', context)
 
@@ -901,6 +929,7 @@ def indicator_detail(request, pk):
     indicator_list = Indicator.objects.filter(for_category = indicator.for_category)
     editIndicator = IndicatorSubForm()
     addIndicator  = SubIndicatorForm()
+    operation = operationForm()
 
     if request.method == 'POST':
         if 'editSubIndicatorForm' in request.POST:
@@ -942,7 +971,7 @@ def indicator_detail(request, pk):
         'category' : category,
         'editIndicator' : editIndicator,
         'indicator' : indicator,
-        'addIndicator' : addIndicator
+        'addIndicator' : addIndicator,
     }
     return render(request, 'user-admin/indicator_detail.html', context)
 

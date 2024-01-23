@@ -43,15 +43,14 @@ class Indicator(models.Model):
     title_ENG = models.CharField(max_length=300) 
     title_AMH = models.CharField(max_length=300 , null=True, blank=True)
     composite_key = models.CharField(max_length=300, unique = True)
+    op_type = models.CharField(max_length = 60, choices = operation_type, null = True, blank = True ) 
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
     measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
-
-
-
+   
     def save(self, *args, **kwargs):
         self.composite_key = str(self.title_ENG.replace(" ","").replace("/","").replace("&","")) +  str(self.id)
         super(Indicator, self).save(*args, **kwargs)

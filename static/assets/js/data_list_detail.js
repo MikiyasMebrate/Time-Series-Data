@@ -138,32 +138,39 @@ $(document).ready(function () {
                 <div class="col-1">
                   <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                 </div>
+                ${checkParentHasChild ? `<div class="col-1">
+                <button type="button" name="btnOperationAdd" indicator_op_id="${id}" data-bs-toggle="modal"  data-bs-target="#operationEdit"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Operater"><i class="bi bi-calculator-fill"></i></button> 
+              </div>` : ''}
               </div>
           </td>
            `;
 
               for (year of data.year) {
                 let statusData = false;
-                for (value of data.value) {
-                  if (
-                    String(year.id) === String(value.for_datapoint_id) &&
-                    String(id) === String(value.for_indicator_id)
-                  ) {
-                    if (checkParentHasChild) {
-                      if (value.value != null) {
-                        table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                if (data.value.length > 0 ){
+                  for (value of data.value) {
+                    if (
+                      String(year.id) === String(value.for_datapoint_id) &&
+                      String(id) === String(value.for_indicator_id)
+                    ) {
+                      if (checkParentHasChild) {
+                        if (value.value != null) {
+                          table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                        } else {
+                          table += `<td class="text-center fw-bold"> - </td>`;
+                        }
                       } else {
-                        table += `<td class="text-center fw-bold"> - </td>`;
+                        table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                       }
+  
+                      statusData = false;
+                      break;
                     } else {
-                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                      statusData = true;
                     }
-
-                    statusData = false;
-                    break;
-                  } else {
-                    statusData = true;
                   }
+                }else{
+                  table += `<td class="text-center fw-bold"> - </td>`;
                 }
                 if (statusData) {
                   if (checkParentHasChild) {
@@ -207,6 +214,9 @@ $(document).ready(function () {
                                      <div class="col-1">
                                        <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                                      </div>
+                                     ${checkChildHasChild ? `<div class="col-1">
+                                     <button type="button" name="btnOperationAdd" indicator_op_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#operationEdit"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Operater"><i class="bi bi-calculator-fill"></i></button> 
+                                   </div>` : ''}
                                    </div>
                                </td>
                              `;
@@ -245,35 +255,42 @@ $(document).ready(function () {
                                <div class="col-1">
                              <button type="button" name="btnDeleteIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                            </div>
+                           ${checkChildOfChildHasChild ? `<div class="col-1">
+                           <button type="button" name="btnOperationAdd" indicator_op_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#operationEdit"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Operater"><i class="bi bi-calculator-fill"></i></button> 
+                         </div>` : ''}
                              </div>
                            </td>`;
 
                           for (year of data.year) {
                             let statusData = false;
-                            for (value of data.value) {
-                              if (
-                                String(year.id) ===
-                                  String(value.for_datapoint_id) &&
-                                String(i.id) === String(value.for_indicator_id)
-                              ) {
-                                if (checkChildOfChildHasChild) {
-                                  if (value.value != null) {
-                                    table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                            if(data.value.length > 0 ){
+                              for (value of data.value) {
+                                if (
+                                  String(year.id) ===
+                                    String(value.for_datapoint_id) &&
+                                  String(i.id) === String(value.for_indicator_id)
+                                ) {
+                                  if (checkChildOfChildHasChild) {
+                                    if (value.value != null) {
+                                      table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                    } else {
+                                      table += `<td class="text-center fw-bold"> - </td>`;
+                                    }
                                   } else {
-                                    table += `<td class="text-center fw-bold"> - </td>`;
+                                    if (value.value != null) {
+                                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                                    } else {
+                                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                                    }
                                   }
+                                  statusData = false;
+                                  break;
                                 } else {
-                                  if (value.value != null) {
-                                    table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
-                                  } else {
-                                    table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
-                                  }
+                                  statusData = true;
                                 }
-                                statusData = false;
-                                break;
-                              } else {
-                                statusData = true;
                               }
+                            }else{
+                              table += `<td class="text-center fw-bold"> - </td>`;
                             }
                             if (statusData) {
                               if (checkChildOfChildHasChild) {
@@ -297,31 +314,35 @@ $(document).ready(function () {
                     //Child List
                     for (year of data.year) {
                       let statusData = false;
-                      for (value of data.value) {
-                        if (
-                          String(year.id) === String(value.for_datapoint_id) &&
-                          String(indicator.id) ===
-                            String(value.for_indicator_id) &&
-                          indicator.is_deleted == false
-                        ) {
-                          if (checkChildHasChild) {
-                            if (value.value != null) {
-                              table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                      if(data.value.length > 0){
+                        for (value of data.value) {
+                          if (
+                            String(year.id) === String(value.for_datapoint_id) &&
+                            String(indicator.id) ===
+                              String(value.for_indicator_id) &&
+                            indicator.is_deleted == false
+                          ) {
+                            if (checkChildHasChild) {
+                              if (value.value != null) {
+                                table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                              } else {
+                                table += `<td class="text-center fw-bold"> - </td>`;
+                              }
                             } else {
-                              table += `<td class="text-center fw-bold"> - </td>`;
+                              if (value.value != null) {
+                                table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                              } else {
+                                table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                              }
                             }
+                            statusData = false;
+                            break;
                           } else {
-                            if (value.value != null) {
-                              table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
-                            } else {
-                              table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
-                            }
+                            statusData = true;
                           }
-                          statusData = false;
-                          break;
-                        } else {
-                          statusData = true;
                         }
+                      }else{
+                        table += `<td class="text-center fw-bold"> - </td>`;
                       }
                       if (statusData) {
                         if (checkChildHasChild) {
@@ -400,7 +421,7 @@ $(document).ready(function () {
                         ${currentIndicator.title_ENG} ${title_amharic}
                         <div class="horizontal-text">
                            <button type="button" name="btnDeleteIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
-                         </div>
+                           </div>
                       </th>`;
 
           let childIndicatorList = (parent, space) => {
@@ -1037,6 +1058,18 @@ $(document).ready(function () {
         });
       };
 
+      //Add Operation
+      let addOpration = () => {
+        let btnAddOperation = document.getElementsByName("btnOperationAdd");
+        btnAddOperation.forEach((clickableButtonOperation) => {
+          clickableButtonOperation.addEventListener("click", () => {
+            let indicatorId = clickableButtonOperation.getAttribute('indicator_op_id');
+            document.getElementById("indicator_operation_id").value = indicatorId;
+          });
+        });
+      };
+
+
       let removeIndicator = () => {
         //Remove Indicator
         let btnRemoveIndicator =
@@ -1054,13 +1087,17 @@ $(document).ready(function () {
         });
       };
 
+      addOpration();
       addIndicator();
       removeIndicator();
+     
 
       let parentContainer = document.querySelector("#list_table_view");
       parentContainer.addEventListener("click", () => {
+        addOpration();
         addIndicator();
         removeIndicator();
+       
       });
 
       //Edit Actual

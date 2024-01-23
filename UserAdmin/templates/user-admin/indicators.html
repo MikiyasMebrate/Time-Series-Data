@@ -47,16 +47,24 @@
                   {{form.title_AMH.label}}
                 {{form.title_AMH}}
                 </div>
-
                 <div class="mt-2" id="id_category_option">
                   {{form.for_category.label}}
                   {{form.for_category}}
                 </div>
+                <div id="measurementOptionId"></div>
 
                 <div class="mt-2 fw-bold">
                   {{add_indicator.type_of.label}} {% for err in add_indicator.type_of.errors %} : <small class="text-danger"> {{err}}  </small> {% endfor%}
                   {{add_indicator.type_of}}
                 </div>
+
+                <div class="mt-2 fw-bold">
+                  {{add_indicator.operation_type.label}} {% for err in add_indicator.operation_type.errors %} : <small class="text-danger"> {{err}}  </small> {% endfor%}
+                  {{add_indicator.operation_type}}
+                </div>
+
+
+                
 
                 
               </div>
@@ -166,9 +174,16 @@
           {{add_indicator.title_AMH}}
           </div>
 
+          
+
           <div class="mt-2 fw-bold">
             {{add_indicator.type_of.label}} {% for err in add_indicator.type_of.errors %} : <small class="text-danger"> {{err}}  </small> {% endfor%}
             {{add_indicator.type_of}}
+          </div>
+
+          <div class="mt-2 fw-bold">
+            {{add_indicator.operation_type.label}} {% for err in add_indicator.operation_type.errors %} : <small class="text-danger"> {{err}}  </small> {% endfor%}
+            {{add_indicator.operation_type}}
           </div>
           
               

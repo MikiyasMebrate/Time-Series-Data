@@ -66,6 +66,32 @@
     </div>
   </div>
 
+    <!-- Edit Operation  -->
+    <div  class="modal fade" id="operationEdit" tabindex="-1" aria-labelledby="operationEditLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="operationEditLabel">Edit Operation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form name="editOperation" method="post" id="editOperation">
+          {% csrf_token %}
+          <div class="modal-body">
+            <input type="number" name="indicator_operator" id="indicator_operation_id" style="display: none;">
+            {{operationForm.as_p}}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" name="editOperation" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
   <!-- Remove Indicator -->
   <div class="modal fade" id="removeIndicatorModal" tabindex="-1" aria-labelledby="removeIndicatorModalLabel"
     aria-hidden="true">
@@ -228,7 +254,7 @@
 
                     {% endif %}
                     <button class="ms-4 btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editMeasurement"
-                      data-bs-whatever="@mdo">Edit</button>
+                      data-bs-whatever="@mdo">Edit </button>
                   </p>
                 </div>
               </div>

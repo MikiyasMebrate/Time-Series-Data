@@ -142,8 +142,8 @@ class IndicatorResource(resources.ModelResource):
         model = models.Indicator
         report_skipped = True
         skip_unchanged = True
-        fields = ('id','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
-        exclude = ( 'created_at', 'is_deleted', 'composite_key' )
+        fields = ('id','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of', )
+        exclude = ( 'created_at', 'is_deleted', 'composite_key','op_type' )
         import_id_fields = ('parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
         export_order = ('id','parent','title_ENG', 'title_AMH','for_category', 'measurement', 'type_of')
     

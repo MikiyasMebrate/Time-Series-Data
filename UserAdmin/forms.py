@@ -53,6 +53,12 @@ class catagoryForm(forms.ModelForm):
         # Override the queryset for the topic field
         self.fields['topic'].queryset = Topic.objects.filter(is_deleted=False)
 
+operation_type = [
+    ('sum', 'Sum'),
+    ('average','Average')
+]
+
+
 class IndicatorForm(forms.Form):
     data_point_type = [
     ('yearly', 'Yearly'),
@@ -69,6 +75,18 @@ class IndicatorForm(forms.Form):
     type_of = forms.CharField(required=True, widget=forms.Select(choices=data_point_type,attrs={
         'class' : 'form-select'
     }))
+    operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
+
+
+class operationForm(forms.Form):
+     operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
+
+
+
 
 
 
