@@ -10,9 +10,51 @@
 
 <!-- Include jQuery UI library -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-
+<style>
+    /**
+    * ==============================================
+    * Dot Spin
+    * ==============================================
+    */
+   .dot-spin {
+     width: 10px;
+     height: 10px;
+     border-radius: 5px;
+     background-color: transparent;
+     color: transparent;
+     box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 0 rgba(76, 175, 80, 0), 0 18px 0 0 rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 0 rgba(76, 175, 80, 0), -18px 0 0 0 rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 0 rgba(76, 175, 80, 0);
+     animation: dot-spin 1.5s infinite linear;
+   }
+   
+   @keyframes dot-spin {
+     0%, 100% {
+       box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
+     }
+     12.5% {
+       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 0 #4CAF50, 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
+     }
+     25% {
+       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 0 #4CAF50, 12.727926px 12.727926px 0 0 #4CAF50, 0 18px 0 0 #4CAF50, -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
+     }
+     37.5% {
+       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 0 #4CAF50, 0 18px 0 0 #4CAF50, -12.727926px 12.727926px 0 0 #4CAF50, -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
+     }
+     50% {
+       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 0 #4CAF50, -12.727926px 12.727926px 0 0 #4CAF50, -18px 0 0 0 #4CAF50, -12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0);
+     }
+     62.5% {
+       box-shadow: 0 -18px 0 -5px rgba(76, 175, 80, 0), 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 0 #4CAF50, -18px 0 0 0 #4CAF50, -12.727926px -12.727926px 0 0 #4CAF50;
+     }
+     75% {
+       box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 -5px rgba(76, 175, 80, 0), 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 0 #4CAF50, -12.727926px -12.727926px 0 0 #4CAF50;
+     }
+     87.5% {
+       box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 0 #4CAF50;
+     }
+   }
+   
+</style>             
 </head>
-
   <body>
     {% include 'includes/navbar.html'%}
     <section class='pt-5 mt-5'>
@@ -23,7 +65,9 @@
           <div class="col-md-4 col-sm-6 col-lg-4" id="filterColumn">
               <h4 class="ms-1">Indicator Variables</h4>
               <hr class="dropdown-divider">
+
               <div class="accordion collapsed mt-3" id="accordionExample">
+
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="databaseHeader">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -214,9 +258,10 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
           </div> <!-- end of col-md-4 -->
-
+          
           <div class="col-md-8 col-sm-6 col-lg-8 pb-5 pt-1" id="dataColumn">
               <!-- Add disabled attribute to the display options buttons before the apply button is clicked -->
               <div id="displayOptions" class="d-flex justify-content-between align-items-end mb-2 flex-row-reverse">
@@ -303,7 +348,18 @@
                         </div>
                 
                         <div class="card-body">
-                            <div class="tab-content p-0">
+                            <!-- Loading Indicator -->
+                                    <div id="loadingIndicator" style="display: none; width: 1000px; height: 500px;  border-radius: 10px; " class="text-center">
+                                        <div class='d-flex align-items-center justify-content-center' style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 100%;">
+                                            <div class="snippet" data-title="dot-spin">
+                                                <div class="stage">
+                                                    <div class="dot-spin" ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            <!-- Add the loading indicator HTML here -->
+                            <div class="tab-content p-0" id='tabs' >
                                 <label id='select_label' class='text-danger form-label fw-bold' for="indicatorDropdown ">Select Indicator to display indicator data</label>
                                 <!--to handle for the first drop down for the yaer -->
                                 <select class='form-select indicatorDropdown mb-1' id='drop_first'></select>
@@ -396,5 +452,36 @@
  <script src="https://code.highcharts.com/modules/export-data.js"></script>
  <script src="https://code.highcharts.com/modules/drilldown.js"></script>
        
+ <script>
+    const snippets = document.querySelectorAll('.snippet');
+
+    for (let i = 0; i < snippets.length; i++) {
+      snippets[i].addEventListener('mouseleave', clearTooltip);
+      snippets[i].addEventListener('blur', clearTooltip);
+    }
+    
+    function showTooltip(el, msg) {
+      el.setAttribute('class', 'snippet tooltip');
+      el.setAttribute('aria-label', msg);
+    }
+    
+    function clearTooltip(e) {
+      e.currentTarget.setAttribute('class', 'snippet');
+      e.currentTarget.removeAttribute('aria-label');
+    }
+    
+    const clipboardSnippets = new ClipboardJS('.snippet', {
+      text: trigger => trigger.getAttribute('data-title')
+    });
+    
+    clipboardSnippets.on('success', e => {
+      e.clearSelection();
+      showTooltip(e.trigger, 'Copied!');
+    });
+    
+    clipboardSnippets.on('error', e => {
+      showTooltip(e.trigger, 'Copy failed!');
+    });
+    <script>
   </body>
 </html>
