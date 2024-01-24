@@ -866,6 +866,7 @@ function filterData() {
                             </div>
                           </li>
                           `;
+
               //Select-all Button for Indicator
               let selectAllIndicator = document.getElementById("select_all");
               let selectedIndictorId = [];
@@ -3025,7 +3026,7 @@ function filterData() {
 
                           series: [{
                             type: 'column',
-                            name: selectedname,
+                            name: indc_name,
                             data: datasetData1,
                             dataGrouping: {
                               units: [[
@@ -3156,14 +3157,13 @@ function filterData() {
 
                       // Function to fetch and update data based on the selected indicator
                       async function updateChartData() {
+                        // Clear existing charts
+                        Highcharts.charts.forEach(chart => {
+                          if (chart) {
+                            chart.destroy();
+                          }
+                        });
                         try {
-                          // Clear existing charts
-                          Highcharts.charts.forEach(chart => {
-                            if (chart) {
-                              chart.destroy();
-                            }
-                          });
-
                           // Use AJAX or fetch to get data from the server based on the selected indicator
                           const response = await fetch(`/user-admin/json-filter-quaarter/${selectedCategoryId}/`);
                           const data = await response.json();
@@ -3189,9 +3189,11 @@ function filterData() {
                             console.error('Invalid or missing data format in the response.');
                           }
 
+                          const selectedIndicator = $('.indicatorDropdown2').val();
+                          bar_chart(selectedIndicator, chartData);
+                          draw_line(selectedIndicator, chartData);
                           // Call the createChart function with the updated data
                           createChart(chartData);
-
                         } catch (error) {
                           console.error('Error fetching data:', error);
                         } finally {
@@ -3213,10 +3215,7 @@ function filterData() {
 
                       // Event listener for dropdown change
                       $('.indicatorDropdown2').change(function () {
-                        const selectedIndicator = $(this).val();
                         updateChartData();
-                        bar_chart(selectedIndicator, chartData);
-                        draw_line(selectedIndicator, chartData);
                       });
 
                       // Initial load with the first indicator (assuming the first indicator is selected by default)
@@ -3336,38 +3335,38 @@ $(document).ready(function () {
     $("#mapbutton").removeClass("active");
 
   });
-  
+
   const snippets = document.querySelectorAll('.snippet');
 
   for (let i = 0; i < snippets.length; i++) {
     snippets[i].addEventListener('mouseleave', clearTooltip);
     snippets[i].addEventListener('blur', clearTooltip);
   }
-  
+
   function showTooltip(el, msg) {
     el.setAttribute('class', 'snippet tooltip');
     el.setAttribute('aria-label', msg);
   }
-  
+
   function clearTooltip(e) {
     e.currentTarget.setAttribute('class', 'snippet');
     e.currentTarget.removeAttribute('aria-label');
   }
-  
+
   const clipboardSnippets = new ClipboardJS('.snippet', {
     text: trigger => trigger.getAttribute('data-title')
   });
-  
+
   clipboardSnippets.on('success', e => {
     e.clearSelection();
     showTooltip(e.trigger, 'Copied!');
   });
-  
+
   clipboardSnippets.on('error', e => {
     showTooltip(e.trigger, 'Copy failed!');
   });
 
 });
 
-  
+
 

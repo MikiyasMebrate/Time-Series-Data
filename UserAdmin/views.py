@@ -460,51 +460,6 @@ def json_random(request):
     # Directly return the indicators_data dictionary
     return JsonResponse(indicators_data)
 
-@login_required(login_url='login')
-@admin_user_required
-def quarter_data(request, quarter_id):
-    indicator = Indicator.objects.get(pk=quarter_id)
-    quarters = Quarter.objects.all()
-    years = DataPoint.objects.all()
-
-    child_indicator = Indicator.objects.filter(parent=indicator)
-
-    data_set = []
-
-    if indicator.type_of == 'quarterly':
-        for child in child_indicator:
-            arr = []
-            for year in years:
-                for quarter in quarters:
-                    value_child = DataValue.objects.filter(
-                        for_indicator=child,
-                        for_quarter=quarter,
-                        for_datapoint=year,
-                        is_deleted=False
-                    ).first()
-
-                    if value_child is not None and value_child.value is not None:
-                        # Map the quarter to perspective months
-                        quarter_to_month = {'Q1': 1, 'Q2': 3, 'Q3': 6, 'Q4': 9}
-                        start_month = quarter_to_month[quarter.title_ENG]
-                        start_date = 1  # You may adjust this as needed
-
-                        val = [
-                            [
-                                int(value_child.for_datapoint.year_EC),
-                                start_month,
-                                start_date
-                            ],
-                            value_child.value
-                        ]
-                        arr.append(val)
-
-            # Append data only if there is non-empty and non-null data
-            if arr:
-                data_set.append({'name': child.title_ENG, 'data': arr})
-
-    # Return JSON response
-    return JsonResponse(data_set, safe=False)
 
 @login_required(login_url='login')
 @admin_user_required
@@ -1541,5 +1496,51 @@ def month_data(request, month_id):
                         arr.append(val)
             data_set.append({'name': child.title_ENG, 'data': arr})
             
+    # Return JSON response
+    return JsonResponse(data_set, safe=False)
+
+@login_required(login_url='login')
+@admin_user_required
+def quarter_data(request, quarter_id):
+    catagory = Category.objects.get(pk=quarter_id)
+    quarters = Quarter.objects.all()
+    years = DataPoint.objects.all()
+
+    child_indicator = Indicator.objects.filter(for_category=catagory)
+
+    data_set = []
+
+    if child_indicator:
+        for child in child_indicator:
+            arr = []
+            for year in years:
+                for quarter in quarters:
+                    value_child = DataValue.objects.filter(
+                        for_indicator=child,
+                        for_quarter=quarter,
+                        for_datapoint=year,
+                        is_deleted=False
+                    ).first()
+
+                    if value_child is not None and value_child.value is not None:
+                        # Map the quarter to perspective months
+                        quarter_to_month = {'Q1': 1, 'Q2': 3, 'Q3': 6, 'Q4': 9}
+                        start_month = quarter_to_month[quarter.title_ENG]
+                        start_date = 1  # You may adjust this as needed
+
+                        val = [
+                            [
+                                int(value_child.for_datapoint.year_EC),
+                                start_month,
+                                start_date
+                            ],
+                            value_child.value
+                        ]
+                        arr.append(val)
+
+            # Append data only if there is non-empty and non-null data
+            if arr:
+                data_set.append({'name': child.title_ENG, 'data': arr})
+
     # Return JSON response
     return JsonResponse(data_set, safe=False)
