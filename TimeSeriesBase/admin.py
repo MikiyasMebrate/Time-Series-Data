@@ -321,7 +321,7 @@ class DataValueResource(resources.ModelResource):
     for_month = fields.Field(
         column_name='for_month',
         attribute='for_month',
-        widget=ForeignKeyWidget(models.Month, field='number'),
+        widget=ForeignKeyWidget(models.Month, field='title_ENG'),
         saves_null_values = True,
     )
 
@@ -392,7 +392,7 @@ def handle_uploaded_DataValue_file(file, type_of_data):
             for item in imported_data.dict:
                 for i, key in enumerate(list(item.keys())):
                     if i != 0 and i != 1:
-                        data_set.append((item['Year'], item['Quarter'] ,key.strip(),item[key] if item[key] else 0  ))
+                        data_set.append((item['Year'], item['Quarter'] ,key.strip(), round(item[key] ,1) if item[key] else 0  ))
     
             data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_quarter','for_indicator', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)

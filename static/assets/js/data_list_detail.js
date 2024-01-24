@@ -157,9 +157,9 @@ $(document).ready(function () {
                     ) {
                       if (checkParentHasChild) {
                         if (value.value != null) {
-                          table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                          table += `<td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2 fw-bold text-dark">${value.value}</button></td>`;
                         } else {
-                          table += `<td class="text-center fw-bold"> - </td>`;
+                          table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> mmm </button></td>`;
                         }
                       } else {
                         table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
@@ -173,14 +173,14 @@ $(document).ready(function () {
                   }
                 }else{
                   if (checkParentHasChild) {
-                    table += `<td class="text-center fw-bold"> - </td>`;
+                    table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   } else {
                     table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   }
                 }
                 if (statusData) {
                   if (checkParentHasChild) {
-                    table += `<td class="text-center fw-bold"> - </td>`;
+                    table += `<td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   } else {
                     table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   }
@@ -278,13 +278,13 @@ $(document).ready(function () {
                                 ) {
                                   if (checkChildOfChildHasChild) {
                                     if (value.value != null) {
-                                      table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                                     } else {
                                       table += `<td class="text-center fw-bold"> - </td>`;
                                     }
                                   } else {
                                     if (value.value != null) {
-                                      table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
+                                      table += `<td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${value.value}</button></td>`;
                                     } else {
                                       table += ` <td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                                     }
@@ -297,7 +297,7 @@ $(document).ready(function () {
                               }
                             }else{
                               if (checkChildOfChildHasChild) {
-                                table += `<td class="text-center fw-bold"> - </td>`;
+                                table += `<td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${i.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                               } else {
                                 table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${i.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                               }
@@ -334,7 +334,7 @@ $(document).ready(function () {
                           ) {
                             if (checkChildHasChild) {
                               if (value.value != null) {
-                                table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                table += `<td class="p-0"><button id="${value.id}" value="${value.value}" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2 fw-bold text-dark">${value.value}</button></td>`;
                               } else {
                                 table += `<td class="text-center fw-bold"> - </td>`;
                               }
@@ -360,7 +360,7 @@ $(document).ready(function () {
                       }
                       if (statusData) {
                         if (checkChildHasChild) {
-                          table += `<td class="text-center fw-bold"> - </td>`;
+                          table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${indicator.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                         } else {
                           table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${indicator.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                         }
@@ -432,7 +432,7 @@ $(document).ready(function () {
 
           table += ` <th class="vertical-text border" ">
                         <button type="button" name="btnAddIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn  horizontal-text btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
-                        ${currentIndicator.title_ENG} ${title_amharic}
+                        ${currentIndicator.title_ENG} ${title_amharic} (${currentIndicator.op_type})
                         <div class="horizontal-text">
                            <button type="button" name="btnDeleteIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                            </div>
@@ -541,11 +541,6 @@ $(document).ready(function () {
 
               //Print Main Indicator Value
               if (currentDataValue) {
-                if (checkParentHasChild) {
-                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
-                    currentDataValue.value ? currentDataValue.value : " - "
-                  } </td>`;
-                } else {
                   table += `<td class="p-0"><button id="${
                     currentDataValue.id
                   }" value="${
@@ -553,10 +548,10 @@ $(document).ready(function () {
                   }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
                     currentDataValue.value ? currentDataValue.value : " - "
                   }</button></td>`;
-                }
+                
               } else {
                 if (checkParentHasChild) {
-                  table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                  table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                 } else {
                   table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                 }
@@ -610,7 +605,7 @@ $(document).ready(function () {
                       }
                     } else {
                       if (checkChildHasChild) {
-                        table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                        table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                       } else {
                         table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                       }
@@ -641,10 +636,6 @@ $(document).ready(function () {
 
                 if (valueData) {
                   if (checkChildHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
-                      valueData.value ? valueData.value : " - "
-                    } </td>`;
-                  } else {
                     table += `<td class="p-0"><button id="${
                       valueData.id
                     }" value="${
@@ -655,7 +646,7 @@ $(document).ready(function () {
                   }
                 } else {
                   if (checkChildHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                    table += `<td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   } else {
                     table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                   }
@@ -720,7 +711,7 @@ $(document).ready(function () {
 
           table += ` <th class="vertical-text border" ">
                         <button type="button" name="btnAddIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn  horizontal-text btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
-                        ${currentIndicator.title_ENG} ${title_amharic}
+                        ${currentIndicator.title_ENG} ${title_amharic}  (${currentIndicator.op_type})
                         <div class="horizontal-text">
                            <button type="button" name="btnDeleteIndicator" indicator_id="${currentIndicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                          </div>
@@ -827,26 +818,22 @@ $(document).ready(function () {
                 }
               });
 
+
+
               //Print Main Indicator Value
               if (currentDataValue) {
-                if (checkParentHasChild) {
-                  table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
-                    currentDataValue.value ? currentDataValue.value : " - "
-                  } </td>`;
-                } else {
-                  table += `<td class="p-0"><button id="${
-                    currentDataValue.id
-                  }" value="${
-                    currentDataValue.value
-                  }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
-                    currentDataValue.value ? currentDataValue.value : " - "
-                  }</button></td>`;
-                }
+                table += `<td class="p-0"><button id="${
+                  currentDataValue.id
+                }" value="${
+                  currentDataValue.value
+                }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
+                  currentDataValue.value ? currentDataValue.value : " - "
+                }</button></td>`;
               } else {
                 if (checkParentHasChild) {
-                  table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                  table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${quarter.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                 } else {
-                  table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                  table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${currentIndicator.id}-${year.id}-${quarter.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                 }
               }
 
@@ -868,7 +855,7 @@ $(document).ready(function () {
                   for (indicatorList of filterChild) {
                     valueData = data.value.find((value) => {
                       if (
-                        String(value.for_month_id) === String(month.id) &&
+                        String(value.for_quarter_id) === String(quarter.id) &&
                         String(value.for_indicator_id) ===
                           String(indicatorList.id) &&
                         String(value.for_datapoint_id) === String(year.id)
@@ -888,7 +875,7 @@ $(document).ready(function () {
                         table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
                           valueData.value ? valueData.value : " - "
                         } </td>`;
-                      } else {
+                      }else{
                         table += `<td class="p-0"><button id="${
                           valueData.id
                         }" value="${
@@ -899,7 +886,7 @@ $(document).ready(function () {
                       }
                     } else {
                       if (checkChildHasChild) {
-                        table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                        table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                       } else {
                         table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${indicatorList.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
                       }
@@ -930,10 +917,6 @@ $(document).ready(function () {
 
                 if (valueData) {
                   if (checkChildHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
-                      valueData.value ? valueData.value : " - "
-                    } </td>`;
-                  } else {
                     table += `<td class="p-0"><button id="${
                       valueData.id
                     }" value="${
@@ -941,6 +924,12 @@ $(document).ready(function () {
                     }" data-bs-toggle="modal" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2">${
                       valueData.value ? valueData.value : " - "
                     }</button></td>`;
+                  } else {
+                    if (checkChildHasChild) {
+                      table += `<td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                    } else {
+                      table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${childIndicator.id}-${year.id}-${month.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                    }
                   }
                 } else {
                   if (checkChildHasChild) {
@@ -1340,22 +1329,24 @@ $(document).ready(function () {
         }else{
           let arr = [];
           for (year of data.year) {
-            for (month of data.month) {
+            for (quarter of data.quarter) {
               let value = data.value.find(
                 (value) =>
                   String(value.for_indicator_id) == String(currentIndicator.id) &&
-                  value.for_month_id == String(month.id) &&
+                  value.for_quarter_id == String(quarter.id) &&
                   String(value.for_datapoint_id) == String(year.id) &&
                   value.is_deleted == false
               );
               if (value) {
-                arr.push([Date.UTC(parseInt(year.year_EC), parseInt(month.number), 1), parseInt(value.value)]);
+                arr.push([Date.UTC(parseInt(year.year_EC), parseInt(quarter.number), 1), parseInt(value.value)]);
               }
             }
           }
           data_set.push({'name' : currentIndicator.title_ENG, 'data' : arr})
         }
 
+
+  
      
 
       
