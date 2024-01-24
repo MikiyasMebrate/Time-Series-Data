@@ -58,7 +58,7 @@ $(document).ready(function () {
         }
       }
 
-      measurementOptions +=
+      measurementOptions =
         `<select name="measurement_form" id="measurement_option_id_select" class="form-select">` +
         measurementOptions +
         `</select>`;
@@ -110,7 +110,7 @@ $(document).ready(function () {
                   <tbody>`;
 
         data.indicators.map(
-          ({ title_ENG, title_AMH, id, for_category, is_deleted }) => {
+          ({ title_ENG, title_AMH, id, for_category, is_deleted, op_type }) => {
             if (for_category != null && is_deleted == false) {
               let title_amharic = "";
               if (!title_AMH === null) title_amharic = " - " + title_AMH;
@@ -129,18 +129,20 @@ $(document).ready(function () {
         <tr>
           <td class="fw-bold">
               <div class="row">
-                <div class="col-9">
+                <div class="col-7">
                     ${title_ENG} ${title_amharic}
                 </div>
+                <div class="col-2">
+                (${op_type})
+              </div>
                 <div class="col-1">
                   <button type="button" name="btnAddIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
                 </div>
                 <div class="col-1">
                   <button type="button" name="btnDeleteIndicator" indicator_id="${id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                 </div>
-                ${checkParentHasChild ? `<div class="col-1">
-                <button type="button" name="btnOperationAdd" indicator_op_id="${id}" data-bs-toggle="modal"  data-bs-target="#operationEdit"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Operater"><i class="bi bi-calculator-fill"></i></button> 
-              </div>` : ''}
+               
+                
               </div>
           </td>
            `;
@@ -170,7 +172,11 @@ $(document).ready(function () {
                     }
                   }
                 }else{
-                  table += `<td class="text-center fw-bold"> - </td>`;
+                  if (checkParentHasChild) {
+                    table += `<td class="text-center fw-bold"> - </td>`;
+                  } else {
+                    table += ` <td class="p-0"><button data-bs-toggle="modal"  id="${id}-${year.id}" name="btnIndicator" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                  }
                 }
                 if (statusData) {
                   if (checkParentHasChild) {
@@ -205,18 +211,18 @@ $(document).ready(function () {
                              <tr>
                                <td class="fw-normal">   
                                    <div class="row">
-                                     <div class="col-9">
+                                     <div class="col-7">
                                          &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
                                      </div>
+                                     ${checkChildHasChild ? ` <div class="col-2">
+                                     (${indicator.op_type})
+                                   </div>` : ' <div class="col-2"></div>'}
                                      <div class="col-1">
                                          <button type="button" name="btnAddIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button> 
                                      </div>
                                      <div class="col-1">
                                        <button type="button" name="btnDeleteIndicator" indicator_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                                      </div>
-                                     ${checkChildHasChild ? `<div class="col-1">
-                                     <button type="button" name="btnOperationAdd" indicator_op_id="${indicator.id}" data-bs-toggle="modal"  data-bs-target="#operationEdit"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Operater"><i class="bi bi-calculator-fill"></i></button> 
-                                   </div>` : ''}
                                    </div>
                                </td>
                              `;
@@ -246,18 +252,18 @@ $(document).ready(function () {
                            <tr>
                            <td class="fw-normal">
                              <div class="row">
-                               <div class="col-9">
+                               <div class="col-7">
                                  &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
                                </div>
+                               ${checkChildOfChildHasChild ? ` <div class="col-2">
+                               (${indicator.op_type})
+                             </div>` : ' <div class="col-2"></div>'}
                                <div class="col-1">
                                  <button type="button" name="btnAddIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#addIndicatorModal"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Add new Sub-Indicator">+</button>
                                </div>
                                <div class="col-1">
                              <button type="button" name="btnDeleteIndicator" indicator_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#removeIndicatorModal"  class="btn btn-outline-danger border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove Indicator">-</button> 
                            </div>
-                           ${checkChildOfChildHasChild ? `<div class="col-1">
-                           <button type="button" name="btnOperationAdd" indicator_op_id="${i.id}" data-bs-toggle="modal"  data-bs-target="#operationEdit"  class="btn btn-outline-primary border-0  pt-1 pb-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Operater"><i class="bi bi-calculator-fill"></i></button> 
-                         </div>` : ''}
                              </div>
                            </td>`;
 
@@ -290,7 +296,11 @@ $(document).ready(function () {
                                 }
                               }
                             }else{
-                              table += `<td class="text-center fw-bold"> - </td>`;
+                              if (checkChildOfChildHasChild) {
+                                table += `<td class="text-center fw-bold"> - </td>`;
+                              } else {
+                                table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${i.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                              }
                             }
                             if (statusData) {
                               if (checkChildOfChildHasChild) {
@@ -342,7 +352,11 @@ $(document).ready(function () {
                           }
                         }
                       }else{
-                        table += `<td class="text-center fw-bold"> - </td>`;
+                        if (checkChildHasChild) {
+                          table += `<td class="text-center fw-bold"> - </td>`;
+                        } else {
+                          table += ` <td class="p-0"><button data-bs-toggle="modal" name="btnIndicator"  id="${indicator.id}-${year.id}" data-bs-target="#indicatorEditValue" class="btn btn-outline-secondary border-0 ps-5 pe-5 pt-2 pb-2"> - </button></td>`;
+                        }
                       }
                       if (statusData) {
                         if (checkChildHasChild) {

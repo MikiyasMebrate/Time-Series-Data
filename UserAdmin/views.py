@@ -19,6 +19,11 @@ import json as toJSON
 import tablib
 
 
+##############################
+#          JSON             #
+#############################
+
+
 @login_required(login_url='login')
 @admin_user_required
 def audit_log_list(request):
@@ -236,7 +241,7 @@ def filter_indicator(request, pk):
            if value_filter:
                 # for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
                 #    i.save()
-                #value_new.append(value_filter[0])
+                # value_new.append(value_filter[0])
                 for val in value_filter:
                     value_new.append(val)
 
@@ -938,10 +943,13 @@ def indicator_detail(request, pk):
                 indicator_id = request.POST.get('indicator_Id')
                 indicator_title_AMH = editIndicator.cleaned_data['title_AMH']
                 indicator_title_ENG = editIndicator.cleaned_data['title_ENG']
+                operation_type = editIndicator.cleaned_data['operation_type']
+                
                 try:
                     indicator_obj  = Indicator.objects.get(pk = indicator_id)
                     indicator_obj.title_AMH = indicator_title_AMH.strip()
                     indicator_obj.title_ENG = indicator_title_ENG.strip()
+                    indicator_obj.op_type = operation_type
                     indicator_obj.save()
                     messages.success(request, 'Successfully Updated!')
                 except:

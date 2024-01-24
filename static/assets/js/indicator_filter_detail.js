@@ -2,7 +2,6 @@ $(document).ready(function () {
   let urlPath = window.location.pathname;
   let id = urlPath.replace("/user-admin/indicator-detail/", "");
   let url = `/user-admin/json-indicator/${id}/`;
-
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
@@ -20,7 +19,7 @@ $(document).ready(function () {
     <tbody>`;
 
       data.indicators.map(
-        ({ title_ENG, title_AMH, id, for_category, is_deleted }) => {
+        ({ title_ENG, title_AMH, id, for_category, is_deleted, op_type }) => {
           if (for_category != null && is_deleted == false) {
             let title_amharic = "";
             if (!title_AMH === null) title_amharic = " - " + title_AMH;
@@ -38,7 +37,7 @@ $(document).ready(function () {
             table += `
             <tr>
               <td class="fw-bold">
-                        ${title_ENG}
+                        ${title_ENG} ${checkParentHasChild ? '(' + op_type + ')' : ''}
               </td>
               <td class="fw-bold">
               ${title_AMH}
@@ -78,7 +77,7 @@ $(document).ready(function () {
                   table += `
             <tr>
               <td class="fw-normal">
-                        &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
+                        &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG} ${checkChildHasChild ? '<span class="text-bold"> (' + indicator.op_type + ')</span>' : ''}
               </td>
               <td class="fw-normal">
               &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_AMH}
@@ -120,7 +119,7 @@ $(document).ready(function () {
                         table += `
                     <tr>
                     <td class="fw-normal">
-                          &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
+                          &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG} ${checkChildOfChildHasChild ? '<span class="text-bold"> (' + indicator.op_type + ')</span>' : ''}
                     </td>
                     <td class="fw-normal">
                           &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_AMH}
@@ -181,6 +180,7 @@ $(document).ready(function () {
 
       let titleEnglish = document.getElementById("id_title_ENG");
       let titleAmharic = document.getElementById("id_title_AMH");
+      let operationType = document.getElementById("id_operation_type")
       let category = document.getElementById("id_category_option");
 
       //Add Indicator Function
@@ -212,6 +212,15 @@ $(document).ready(function () {
             titleEnglish.value = selectedIndicator.title_ENG;
             titleAmharic.value = selectedIndicator.title_AMH;
 
+            let hasChild = data.indicators.filter((item) => String(item.parent_id) == String(selectedIndicator.id))
+            let op_type_html = document.getElementById('op_type')
+            
+            if(hasChild.length == 0){
+              op_type_html.style.display = 'none'
+            }else{
+              operationType.value = selectedIndicator.op_type
+              op_type_html.style.display = 'block'
+            }
             document.getElementById("id_indicator_id").value = indicatorId;
           });
         });
