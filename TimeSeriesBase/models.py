@@ -43,7 +43,7 @@ class Indicator(models.Model):
     title_ENG = models.CharField(max_length=300) 
     title_AMH = models.CharField(max_length=300 , null=True, blank=True)
     composite_key = models.CharField(max_length=300, unique = True)
-    op_type = models.CharField(max_length = 60, choices = operation_type, null = True, blank = True ) 
+    op_type = models.CharField(max_length = 60, choices = operation_type,default = 'sum') 
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     for_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
@@ -162,32 +162,59 @@ class DataValue(models.Model):
         try: 
             #Year Type Data
             if  (not self.for_month and self.for_datapoint) and (not self.for_quarter and self.for_datapoint) :
-               main_parent = self.for_indicator.parent # get Parent of Indicator
-               try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
-               except:parent_data_value = None
-               child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
+                main_parent = self.for_indicator.parent # get Parent of Indicator
+                try: parent_data_value = DataValue.objects.get(for_indicator = main_parent, for_datapoint = self.for_datapoint)
+                except:parent_data_value = None
+                child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
               
-               sum = 0
-               for child in child_indicators:
-                   try: 
-                       child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
-                       if(child_data_value.is_deleted == False):
-                           sum  = sum + Decimal(child_data_value.value)
-                       else:
-                           None
-                   except: 
-                       None
-                   
-               if parent_data_value is None and main_parent is not None:
-                   parent_data = DataValue()
-                   parent_data.value = round(sum,1)
-                   parent_data.for_indicator = main_parent
-                   parent_data.for_datapoint = self.for_datapoint
-                   parent_data.save()
-               else: 
-                   parent_data_value.value = round(sum, 1)
-                   try: parent_data_value.save()
-                   except: None
+               
+               
+                if main_parent.op_type == 'sum' or main_parent.op_type == None:
+                    sum = 0
+                    for child in child_indicators:
+                        try: 
+                            child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
+                            if(child_data_value.is_deleted == False):
+                                sum  = sum + Decimal(child_data_value.value)
+                            else:
+                                None
+                        except: 
+                            None
+                        
+                    if parent_data_value is None and main_parent is not None:
+                        parent_data = DataValue()
+                        parent_data.value = round(sum,1)
+                        parent_data.for_indicator = main_parent
+                        parent_data.for_datapoint = self.for_datapoint
+                        parent_data.save()
+                    else: 
+                        parent_data_value.value = round(sum, 1)
+                        try: parent_data_value.save()
+                        except: None
+                elif main_parent.op_type == 'average':
+                    avg = 0
+                    for child in child_indicators:
+                        try: 
+                            child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint)
+                            if(child_data_value.is_deleted == False):
+                                avg  = avg + Decimal(child_data_value.value)
+                            else:
+                                None
+                        except: 
+                            None
+                        
+                    if parent_data_value is None and main_parent is not None:
+                        parent_data = DataValue()
+                        parent_data.value = round(avg/len(child_indicators),1)
+                        parent_data.for_indicator = main_parent
+                        parent_data.for_datapoint = self.for_datapoint
+                        parent_data.save()
+                    else: 
+                        parent_data_value.value = round(avg/len(child_indicators), 1)
+                        try: parent_data_value.save()
+                        except: None
+
+
 
             #Month Type Data 
             elif not self.for_quarter and self.for_datapoint :
@@ -196,27 +223,51 @@ class DataValue(models.Model):
                 except:parent_data_value = None
                 child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
 
-                sum = 0
-                for child in child_indicators:
-                   try: 
-                       child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_month = self.for_month)
-                       if(child_data_value.is_deleted == False):
-                           sum  = sum + Decimal(child_data_value.value)
-                       else:
+                if main_parent.op_type == 'sum' or main_parent.op_type == None:
+                    sum = 0
+                    for child in child_indicators:
+                       try: 
+                           child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_month = self.for_month)
+                           if(child_data_value.is_deleted == False):
+                               sum  = sum + Decimal(child_data_value.value)
+                           else:
+                               None
+                       except: 
                            None
-                   except: 
-                       None
-                if parent_data_value is None and main_parent is not None:
-                   parent_data = DataValue()
-                   parent_data.value = round(sum,1)
-                   parent_data.for_indicator = main_parent
-                   parent_data.for_datapoint = self.for_datapoint
-                   parent_data.for_month = self.for_month
-                   parent_data.save()
-                elif parent_data_value is not None: 
-                   parent_data_value.value = round(sum,1)
-                   try: parent_data_value.save()
-                   except: None
+                    if parent_data_value is None and main_parent is not None:
+                       parent_data = DataValue()
+                       parent_data.value = round(sum,1)
+                       parent_data.for_indicator = main_parent
+                       parent_data.for_datapoint = self.for_datapoint
+                       parent_data.for_month = self.for_month
+                       parent_data.save()
+                    elif parent_data_value is not None: 
+                       parent_data_value.value = round(sum,1)
+                       try: parent_data_value.save()
+                       except: None
+                elif main_parent.op_type == 'average':
+                    avg = 0
+                    for child in child_indicators:
+                       try: 
+                           child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_month = self.for_month)
+                           if(child_data_value.is_deleted == False):
+                               avg  = avg + Decimal(child_data_value.value)
+                           else:
+                               None
+                       except: 
+                           None
+                    if parent_data_value is None and main_parent is not None:
+                       parent_data = DataValue()
+                       parent_data.value = round(avg/len(child_indicators),1)
+                       parent_data.for_indicator = main_parent
+                       parent_data.for_datapoint = self.for_datapoint
+                       parent_data.for_month = self.for_month
+                       parent_data.save()
+                    elif parent_data_value is not None: 
+                       parent_data_value.value = round(avg/len(child_indicators),1)
+                       try: parent_data_value.save()
+                       except: None
+
 
             #Quarter Type Data
             elif  not self.for_month and self.for_datapoint :
@@ -225,28 +276,50 @@ class DataValue(models.Model):
                 except:parent_data_value = None
                 child_indicators = Indicator.objects.filter(parent = main_parent, is_deleted = False)
 
-                sum = 0
-                for child in child_indicators:
-                   try: 
-                       child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_quarter = self.for_quarter)
-                       if(child_data_value.is_deleted == False):
-                           sum  = sum + Decimal(child_data_value.value)
-                       else:
+                if main_parent.op_type == 'sum' or main_parent.op_type == None:
+                    sum = 0
+                    for child in child_indicators:
+                       try: 
+                           child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_quarter = self.for_quarter)
+                           if(child_data_value.is_deleted == False):
+                               sum  = sum + Decimal(child_data_value.value)
+                           else:
+                               None
+                       except: 
                            None
-                   except: 
-                       None
-                if parent_data_value is None and main_parent is not None:
-                   parent_data = DataValue()
-                   parent_data.value = round(sum,1)
-                   parent_data.for_indicator = main_parent
-                   parent_data.for_datapoint = self.for_datapoint
-                   parent_data.for_quarter = self.for_quarter
-                   parent_data.save()
-                else: 
-                   parent_data_value.value = round(sum,1)
-                   try: parent_data_value.save()
-                   except: None
-        
+                    if parent_data_value is None and main_parent is not None:
+                       parent_data = DataValue()
+                       parent_data.value = round(sum,1)
+                       parent_data.for_indicator = main_parent
+                       parent_data.for_datapoint = self.for_datapoint
+                       parent_data.for_quarter = self.for_quarter
+                       parent_data.save()
+                    else: 
+                       parent_data_value.value = round(sum,1)
+                       try: parent_data_value.save()
+                       except: None
+                elif main_parent.op_type == 'average':
+                    avg = 0
+                    for child in child_indicators:
+                       try: 
+                           child_data_value = DataValue.objects.get(for_indicator = child, for_datapoint = self.for_datapoint , for_quarter = self.for_quarter)
+                           if(child_data_value.is_deleted == False):
+                               avg  = avg + Decimal(child_data_value.value)
+                           else:
+                               None
+                       except: 
+                           None
+                    if parent_data_value is None and main_parent is not None:
+                       parent_data = DataValue()
+                       parent_data.value = round(avg/len(child_indicators),1)
+                       parent_data.for_indicator = main_parent
+                       parent_data.for_datapoint = self.for_datapoint
+                       parent_data.for_quarter = self.for_quarter
+                       parent_data.save()
+                    else: 
+                       parent_data_value.value = round(avg/len(child_indicators),1)
+                       try: parent_data_value.save()
+                       except: None        
         except:
             None
 

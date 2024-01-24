@@ -111,8 +111,9 @@ $(document).ready(function () {
                 }
               }
 
-              measurementOptions +=
-                `<select name="measurement_form" id="measurement_option_id_select" class="form-select">` +
+              measurementOptions =
+                `<label class="mt-2">Measurement</label>
+                <select name="measurement_form" id="measurement_option_id_select" class="form-select">` +
                 measurementOptions +
                 `</select>`;
               let measurementHtml = document.getElementById(

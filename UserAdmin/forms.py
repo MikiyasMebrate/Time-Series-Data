@@ -99,9 +99,12 @@ class IndicatorSubForm(forms.Form):
     title_ENG = forms.CharField(required=True, widget=forms.TextInput(attrs={
         'class' : 'form-control'
     }))
-    title_AMH = forms.CharField(required=True, widget=forms.TextInput(attrs={
+    title_AMH = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class' : 'form-control'
     })) 
+    operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
 
 
 
