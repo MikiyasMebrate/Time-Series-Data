@@ -52,15 +52,15 @@
     box-shadow: 0 -18px 0 0 #4CAF50, 12.727926px -12.727926px 0 0 #4CAF50, 18px 0 0 -5px rgba(76, 175, 80, 0), 12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), 0 18px 0 -5px rgba(76, 175, 80, 0), -12.727926px 12.727926px 0 -5px rgba(76, 175, 80, 0), -18px 0 0 -5px rgba(76, 175, 80, 0), -12.727926px -12.727926px 0 0 #4CAF50;
   }
 }
-@media screen and (min-width: 1920px) {
+@media screen and (min-width: calc(1080px + var(--width-increase))) {
   #loadingIndicator {
-      width: 900px; /* Default width for 1080p and above */
+      width: calc(var(--default-width) + var(--width-increase));
   }
 }
 
-@media screen and (max-width: 1919px) {
+@media screen and (max-width: 1079px) {
   #loadingIndicator {
-      width: 700px; /* Decrease width by 100px for resolutions below 1080p */
+      width: var(--default-width);
   }
 }
 .loading {

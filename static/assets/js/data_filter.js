@@ -1725,7 +1725,7 @@ function filterData() {
                                 transform: rotate(180deg) !important;
                             }
                            </style>
-                          <table id="newTable" class="table table-bordered m-0 p-0">
+                          <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%">
                           <thead>
                             <tr class="text-center">
                             <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
