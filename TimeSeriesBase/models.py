@@ -98,6 +98,7 @@ class DataPoint(models.Model):
 class Quarter(models.Model):
     title_ENG = models.CharField(max_length=50)
     title_AMH = models.CharField(max_length=50)
+    number = models.IntegerField()
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
