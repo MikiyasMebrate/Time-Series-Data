@@ -398,12 +398,18 @@ let guiButton = document.getElementById('start');
 let guiButtonState = 'Start';
 let intervalId;
 
+// Function to start the chart automatically
+function startChartAutomatically() {
+  guiButton.click(); // Simulate a click on the "Start" button
+}
+
 fetch('/user-admin/json-filter-random/')
   .then(response => response.json())
   .then(data => {
     parseData(data);
     initializeChart();
     initEvents();
+    startChartAutomatically();
   });
 
 function initEvents() {
@@ -483,7 +489,7 @@ function initializeChart() {
   chart = Highcharts.chart('live_data', {
     chart: {
       type: 'line',
-      marginLeft: 10, 
+      marginLeft: 10,
     },
     legend: {
       layout: 'proximate',
@@ -494,7 +500,7 @@ function initializeChart() {
       align: 'left',
       x: 93,
       y: 20,
-      text: 'Random catagory indicator(s) data per year'
+      text: 'Random category indicator(s) data per year'
     },
     subtitle: {
       floating: true,
@@ -539,9 +545,27 @@ function initializeChart() {
         name: indicator.name,
         data: []
       };
-    })
+    }),
+    responsive: {
+      rules: [
+        {
+          condition: {
+            maxWidth: 800 // Adjust the maximum width as needed
+          },
+          chartOptions: {
+            legend: {
+              layout: 'horizontal',
+              align: 'center',
+              verticalAlign: 'bottom'
+            }
+          }
+        }
+        // Add more rules for other screen sizes if needed
+      ]
+    }
   });
 }
+
 
 
 
