@@ -37,10 +37,6 @@ urlpatterns = [
     path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
     path('indicator-detail/<int:pk>', views.indicator_detail, name='user-admin-indicator-detail'),
     
-   
-   #Data-Point
-    path('data-point-detail/<int:pk>', views.data_point_detail, name="user-admin-data-point-detail"),
-    path('data-point-delete/<int:pk>', views.delete_data_point, name="user-admin-data-point-delete"),
     
     
     #Measurement

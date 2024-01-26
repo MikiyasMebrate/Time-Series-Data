@@ -78,6 +78,7 @@ class IndicatorForm(forms.Form):
     operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={
         'class' : 'form-select'
     }))
+    is_public = forms.BooleanField(required=False)
 
 
 class operationForm(forms.Form):
@@ -105,6 +106,7 @@ class IndicatorSubForm(forms.Form):
     operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={
         'class' : 'form-select'
     }))
+    is_public = forms.BooleanField(required=False)
 
 
 
@@ -115,6 +117,7 @@ class SubIndicatorForm(forms.Form):
     title_AMH_add = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class' : 'form-control'
     }))
+    is_public = forms.BooleanField(required=False)
 
 class SubIndicatorFormDetail(forms.ModelForm):
     class Meta:

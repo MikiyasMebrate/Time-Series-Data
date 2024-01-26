@@ -214,6 +214,8 @@ $(document).ready(function () {
 
             let hasChild = data.indicators.filter((item) => String(item.parent_id) == String(selectedIndicator.id))
             let op_type_html = document.getElementById('op_type')
+            let is_public_html = document.getElementById('id_is_public')
+
             
             if(hasChild.length == 0){
               op_type_html.style.display = 'none'
@@ -222,6 +224,7 @@ $(document).ready(function () {
               op_type_html.style.display = 'block'
             }
             document.getElementById("id_indicator_id").value = indicatorId;
+            is_public_html.checked = selectedIndicator.is_public
           });
         });
       };

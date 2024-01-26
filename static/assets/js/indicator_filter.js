@@ -46,6 +46,7 @@ $(document).ready(function () {
         let op_type = document.getElementById("id_operation_type");
         let category_div = document.getElementById("id_category_option");
         let parentContainer = document.querySelector("#list_table_view");
+        let is_public_html = document.getElementById("id_is_public")
 
         //Edit Indicator Function
         let editIndicatorModal = () => {
@@ -143,6 +144,8 @@ $(document).ready(function () {
               } else {
                 op_type.value = selectedIndicator.op_type;
               }
+              is_public_html.value = selectedIndicator.is_public
+              is_public_html.checked = selectedIndicator.is_public
               category.value = selectCategory.id;
               document.getElementById("id_indicator_id").value = indicatorId;
             });

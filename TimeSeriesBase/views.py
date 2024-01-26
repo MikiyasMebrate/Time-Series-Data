@@ -7,8 +7,6 @@ import json
 import random
 from django.http import JsonResponse
 
-@login_required(login_url='login')
-@staff_user_required
 def index(request):
     last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
     last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
@@ -61,21 +59,16 @@ def index(request):
     }
     return render(request,"index.html", context=context)
 
-@login_required(login_url='login')
-@staff_user_required
+
+
 def detail_analysis(request, pk):
     return render(request, 'detail_analysis.html')
 
 
-
-@login_required(login_url='login')
-@staff_user_required
 def about(request):
     return render(request,"about.html")
 
 
-@login_required(login_url='login')
-@staff_user_required
 def contact(request):
     return render(request,"contact.html")
 
@@ -87,7 +80,5 @@ def profile_view(request):
     return render(request,"profile.html")
 
 
-@login_required(login_url='login')
-@staff_user_required
 def data(request):
     return render(request,"data.html")
