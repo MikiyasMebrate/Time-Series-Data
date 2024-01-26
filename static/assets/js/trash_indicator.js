@@ -1,6 +1,6 @@
 $(document).ready(function () {
   let filterIndicator = () => {
-    fetch("/user-admin/json/")
+    fetch("/user-admin/json-dashboard/")
       .then((response) => response.json())
       .then((data) => {
         //Add New indicator
