@@ -19,7 +19,7 @@ urlpatterns = [
     path('json-filter-random/', views.json_random, name='json_random'),
     path('json-filter-drill/', views.json_filter_drilldown, name='json_drill'),
     # URL for fetching a specific measurement by ID
-        path('json-filter-month/<int:month_id>/', views.month_data, name='json_month_by_id'),
+    path('json-filter-month/<int:month_id>/', views.month_data, name='json_month_by_id'),
     path('json-filter-measurement/<int:measurement_id>/', views.json_measurement_byID, name='json_measurement_by_id'),
     path('json-filter-quaarter/<int:quarter_id>/', views.quarter_data, name='json_month_by_id'),
 
@@ -37,10 +37,6 @@ urlpatterns = [
     path('indicator-delete/<int:pk>', views.delete_indicator, name='user-admin-indicator-delete'),
     path('indicator-detail/<int:pk>', views.indicator_detail, name='user-admin-indicator-detail'),
     
-   
-   #Data-Point
-    path('data-point-detail/<int:pk>', views.data_point_detail, name="user-admin-data-point-detail"),
-    path('data-point-delete/<int:pk>', views.delete_data_point, name="user-admin-data-point-delete"),
     
     
     #Measurement

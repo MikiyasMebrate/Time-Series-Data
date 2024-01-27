@@ -50,6 +50,7 @@ class Indicator(models.Model):
     is_deleted = models.BooleanField(default = False)
     measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
+    is_public = models.BooleanField(default = True)
    
     def save(self, *args, **kwargs):
         self.composite_key = str(self.title_ENG.replace(" ","").replace("/","").replace("&","")) +  str(self.id)
