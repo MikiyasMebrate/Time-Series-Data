@@ -2772,6 +2772,7 @@ function filterData() {
                       }
 
                       function createChart(series) {
+                        console.log("called")
                         Highcharts.stockChart('line-chart-canvas1', {
 
                           rangeSelector: {
@@ -2832,8 +2833,8 @@ function filterData() {
                               chartData.push({ name: category.name, data: arr });
                             });
 
-                            createChart(chartData);
                             const selectedIndicator = $('.indicatorDropdown1').val();
+                            createChart(chartData);
                             bar_chart(selectedIndicator, chartData);
                             draw_line(selectedIndicator, chartData);
 
@@ -2868,8 +2869,8 @@ function filterData() {
 
                       // Further check and update as needed
                       if (initialIndicator) {
-                        console.log(initialIndicator);
-                        updateChartData();
+                        // console.log(initialIndicator);
+                        // updateChartData();
                         $('.indicatorDropdown1').change(); // Manually trigger change event
                       } else {
                         console.error('Initial indicator is not valid or not set correctly.');
@@ -2926,9 +2927,9 @@ function filterData() {
                           selectElement.style.display = isAreaNavLink ? 'none' : 'block';
                         }
                         // Show/hide the second dropdown based on the selected chart type
-                        incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
-                        incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn') ? 'block' : 'none';
                         incicator_drop3.style.display = (this.id === 'line_btn') ? 'none' : 'none';
+                        incicator_drop3.style.display = (this.id === 'bar_btn' || this.id === 'series_btn') ? 'block' : 'none';
+                        incicator_drop1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                         incicator_drop2.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                         // datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
                       });
@@ -3157,12 +3158,6 @@ function filterData() {
 
                       // Function to fetch and update data based on the selected indicator
                       async function updateChartData() {
-                        // Clear existing charts
-                        Highcharts.charts.forEach(chart => {
-                          if (chart) {
-                            chart.destroy();
-                          }
-                        });
                         try {
                           // Use AJAX or fetch to get data from the server based on the selected indicator
                           const response = await fetch(`/user-admin/json-filter-quaarter/${selectedCategoryId}/`);
@@ -3184,16 +3179,15 @@ function filterData() {
                               chartData.push({ name: category.name, data: arr });
                             });
 
+                            const selectedIndicator = $('.indicatorDropdown2').val();
+                            bar_chart(selectedIndicator, chartData);
+                            draw_line(selectedIndicator, chartData);
+                            // Call the createChart function with the updated data
+                            createChart(chartData);
 
                           } else {
                             console.error('Invalid or missing data format in the response.');
                           }
-
-                          const selectedIndicator = $('.indicatorDropdown2').val();
-                          bar_chart(selectedIndicator, chartData);
-                          draw_line(selectedIndicator, chartData);
-                          // Call the createChart function with the updated data
-                          createChart(chartData);
                         } catch (error) {
                           console.error('Error fetching data:', error);
                         } finally {
@@ -3223,20 +3217,12 @@ function filterData() {
 
                       // Further check and update as needed
                       if (initialIndicator) {
-                        updateChartData(initialIndicator);
+                        $('.indicatorDropdown2').change(); // Manually trigger change event
                       }
                       else {
                         console.error('Initial indicator is not valid or not set correctly.');
                         // Handle the situation where the initial indicator is not valid or not set correctly.
                       }
-
-                      // // Event listener for dataset dropdown change
-                      // $('.datasetDropdown1').change(function () {
-                      //   const selectedDataset = $(this).val();
-                      //   const selectedIndicator = $('.indicatorDropdown2').val();
-                      //   bar_chart(selectedIndicator, chartData, selectedDataset);
-                      //   draw_line(selectedIndicator, chartData, selectedDataset);
-                      // });
 
                     })();
 
