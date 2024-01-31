@@ -6,22 +6,8 @@ from TimeSeriesBase.models import *
 import json
 import random
 from django.http import JsonResponse
-
-# views.py
-
-import threading
-import time
-
-
-def background_task(name, stop_event):
-    while not stop_event.is_set():
-        print(f"Background task for {name} is running...")
-        time.sleep(10)
-
-    print(f"Background task for {name} has finished.")
-
-
-
+from django.contrib.auth.models import AnonymousUser
+from django.forms.models import model_to_dict
 
 
 def index(request):
@@ -109,3 +95,70 @@ def profile_view(request):
 
 def data(request):
     return render(request,"data.html")
+
+
+
+##############################
+#          JSON             #
+#############################
+
+
+
+
+def json(request):
+    topic = list(Topic.objects.all().values())
+    year =list( DataPoint.objects.all().values())
+    month = list(Month.objects.all().values())
+    quarter = list(Quarter.objects.all().values())
+
+    context = {
+        'topics': topic,
+        'year' : year,
+        'quarter' : quarter,
+        'month' : month,
+
+    }
+    return JsonResponse(context)
+
+def filter_category_lists(request,pk):
+    topic = Topic.objects.get(pk = pk)
+    category_lists = list(Category.objects.filter(topic = topic).prefetch_related('topic').values())
+    return JsonResponse(category_lists, safe=False)
+
+
+def filter_indicator_lists(request, pk):
+    category = Category.objects.get(pk = pk)
+    if isinstance(request.user, AnonymousUser):
+        indicators = list(Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category").values())
+    else:
+        indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
+    return JsonResponse(indicators, safe=False)
+   
+
+
+def filter_indicator_value(request, pk):
+    single_category = Category.objects.get(pk = pk)
+    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None).select_related("for_category")
+    indicator_list = []
+
+
+    def child_indicators(parent):
+        child_indicator = Indicator.objects.filter(parent = parent).select_related("for_category")
+        if child_indicator:
+            for indicator in child_indicator:
+                indicator_list.append(model_to_dict(indicator))
+                child_indicators(indicator)
+        
+    for parent_indicator in parent_indicators:
+        indicator_list.append(model_to_dict(parent_indicator))
+        child_indicators(parent_indicator)
+
+    value_new = []
+    for indicator in indicator_list:
+        for yr in DataPoint.objects.all():
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).select_related("for_datapoint", "for_indicator").values())
+           except: value_filter = None
+           if value_filter:
+                for val in value_filter:
+                    value_new.append(val)
+    return JsonResponse(value_new, safe=False)

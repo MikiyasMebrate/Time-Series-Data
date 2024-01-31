@@ -50,7 +50,6 @@ def filter_indicator_lists(request, pk):
         indicators = list(Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category").values())
     else:
         indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
-        
     return JsonResponse(indicators, safe=False)
    
 
@@ -80,7 +79,6 @@ def filter_indicator_value(request, pk):
            if value_filter:
                 for val in value_filter:
                     value_new.append(val)
-
     return JsonResponse(value_new, safe=False)
 
 @login_required(login_url='login')
