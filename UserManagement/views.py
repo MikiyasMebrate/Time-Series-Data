@@ -31,6 +31,9 @@ from django.core.validators import validate_email
 User = get_user_model()
 
 
+
+
+
 def forget_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -52,7 +55,6 @@ def forget_password(request):
             # Generate reset URL
             reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
             reset_url = request.build_absolute_uri(reset_url)
-            print(reset_url)
 
             subject = 'Reset Your Password'
             message = f'Click the link below to reset your password:\n\n{reset_url}'
@@ -63,8 +65,6 @@ def forget_password(request):
         except Exception as e:
             # Handle network-related errors
             messages.error(request, 'An error occurred while sending the reset password link. Please try again later.')
-            print(f'Error sending email: {e}')
-
     return render(request, 'forget_pass.html')
 
 

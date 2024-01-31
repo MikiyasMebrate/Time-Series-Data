@@ -550,12 +550,11 @@ function initializeChart() {
       rules: [
         {
           condition: {
-            maxWidth: 800 // Adjust the maximum width as needed
+            maxWidth: 1800 // Adjust the maximum width as needed
           },
           chartOptions: {
             legend: {
               layout: 'horizontal',
-              align: 'center',
               verticalAlign: 'bottom'
             }
           }

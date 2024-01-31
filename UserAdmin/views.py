@@ -22,40 +22,15 @@ from django.contrib.auth.models import AnonymousUser
 ##############################
 #          JSON             #
 #############################
-#JSON
+
 def json(request):
     topic = list(Topic.objects.all().values())
-    category = list(Category.objects.all().values())
-
-    if isinstance(request.user, AnonymousUser):
-        indicator = list(Indicator.objects.filter(is_public = True).values())
-    else:
-        indicator = list(Indicator.objects.filter().values())
-    
-    indicator_point = list(Indicator_Point.objects.all().values())
     year =list( DataPoint.objects.all().values())
     month = list(Month.objects.all().values())
     quarter = list(Quarter.objects.all().values())
-    measurement = list(Measurement.objects.all().values())
-
-    indicator_data = indicator
-
-
-        # Add Amount_ENG attribute to each indicator
-    for ind in indicator_data:
-        measurement_id = ind.get('measurement_id')
-        if measurement_id is not None:
-            matching_measurement = next((m for m in measurement if m['id'] == measurement_id), None)
-            ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
-        else:
-            ind['Amount_ENG'] = None
-
 
     context = {
         'topics': topic,
-        'categories': category,
-        'indicators':indicator_data,
-        'indicator_point' : indicator_point,
         'year' : year,
         'quarter' : quarter,
         'month' : month,
@@ -63,14 +38,31 @@ def json(request):
     }
     return JsonResponse(context)
 
+def filter_category_lists(request,pk):
+    topic = Topic.objects.get(pk = pk)
+    category_lists = list(Category.objects.filter(topic = topic).prefetch_related('topic').values())
+    return JsonResponse(category_lists, safe=False)
+
+
+def filter_indicator_lists(request, pk):
+    category = Category.objects.get(pk = pk)
+    if isinstance(request.user, AnonymousUser):
+        indicators = list(Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category").values())
+    else:
+        indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
+        
+    return JsonResponse(indicators, safe=False)
+   
+
 
 def filter_indicator_value(request, pk):
     single_category = Category.objects.get(pk = pk)
-    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None)
+    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None).select_related("for_category")
     indicator_list = []
-    
+
+
     def child_indicators(parent):
-        child_indicator = Indicator.objects.filter(parent = parent)
+        child_indicator = Indicator.objects.filter(parent = parent).select_related("for_category")
         if child_indicator:
             for indicator in child_indicator:
                 indicator_list.append(model_to_dict(indicator))
@@ -83,12 +75,9 @@ def filter_indicator_value(request, pk):
     value_new = []
     for indicator in indicator_list:
         for yr in DataPoint.objects.all():
-           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).select_related("for_datapoint", "for_indicator").values())
            except: value_filter = None
            if value_filter:
-            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
-            #        i.save()
-                #value_new.append(value_filter[0])
                 for val in value_filter:
                     value_new.append(val)
 
@@ -109,8 +98,8 @@ def filter_indicator_json(request):
 
     return JsonResponse(context)
 
-@login_required(login_url='login')
-@admin_user_required
+# @login_required(login_url='login')
+# @admin_user_required
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
