@@ -112,6 +112,7 @@ document.addEventListener("DOMContentLoaded", updateTopic);
 
 // Function to update source information
 let updateSource = () => {
+  console.log("called");
   fetch("/user-admin/json-filter-source/")
     .then((response) => {
       if (!response.ok) {
@@ -151,6 +152,8 @@ let updateSource = () => {
     });
 };
 
+// Call the function when the document is ready
+document.addEventListener("DOMContentLoaded", updateSource);
 
 let btndeletecatagory = () =>{
         //remove catagory

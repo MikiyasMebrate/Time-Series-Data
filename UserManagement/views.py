@@ -26,6 +26,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from .tasks import send_reset_email
 
 
 User = get_user_model()
@@ -54,16 +55,15 @@ def forget_password(request):
             reset_url = request.build_absolute_uri(reset_url)
             print(reset_url)
 
-            subject = 'Reset Your Password'
-            message = f'Click the link below to reset your password:\n\n{reset_url}'
-            send_mail(subject, message, 'habtamutesfaye.com@gmail.com', [user.email])
+            # Call the Celery task
+            send_reset_email.delay(user.email, reset_url)
 
-            messages.success(request, 'Password reset link has been sent to your email.')
+            messages.success(request, 'Password reset link will be sent to your email shortly.')
             return redirect('forget_password')
         except Exception as e:
-            # Handle network-related errors
-            messages.error(request, 'An error occurred while sending the reset password link. Please try again later.')
-            print(f'Error sending email: {e}')
+            # Handle other errors
+            messages.error(request, 'An error occurred while processing your request. Please try again later.')
+            print(f'Error: {e}')
 
     return render(request, 'forget_pass.html')
 

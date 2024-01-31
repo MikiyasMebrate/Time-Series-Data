@@ -4,6 +4,7 @@ from django.http import Http404, JsonResponse,HttpResponseRedirect
 from django.contrib import messages
 from TimeSeriesBase.models import *
 from .forms import *
+from django.db.models import F
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -13,7 +14,7 @@ from datetime import datetime
 from TimeSeriesBase.admin import *
 from django.http import JsonResponse
 from django.db.models import Max
-from django.db.models import Count
+from django.db.models import Count,Prefetch
 import random
 import json as toJSON
 import tablib
@@ -23,45 +24,37 @@ from django.contrib.auth.models import AnonymousUser
 #          JSON             #
 #############################
 #JSON
+
+
 def json(request):
     topic = list(Topic.objects.all().values())
     category = list(Category.objects.all().values())
 
     if isinstance(request.user, AnonymousUser):
-        indicator = list(Indicator.objects.filter(is_public = True).values())
+        indicators = Indicator.objects.filter(is_public=True).values()
     else:
-        indicator = list(Indicator.objects.filter().values())
-    
+        indicators = Indicator.objects.all().values()
+
     indicator_point = list(Indicator_Point.objects.all().values())
-    year =list( DataPoint.objects.all().values())
+    year = list(DataPoint.objects.all().values())
     month = list(Month.objects.all().values())
     quarter = list(Quarter.objects.all().values())
-    measurement = list(Measurement.objects.all().values())
 
-    indicator_data = indicator
-
-
-        # Add Amount_ENG attribute to each indicator
-    for ind in indicator_data:
-        measurement_id = ind.get('measurement_id')
-        if measurement_id is not None:
-            matching_measurement = next((m for m in measurement if m['id'] == measurement_id), None)
-            ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
-        else:
-            ind['Amount_ENG'] = None
-
+    # Annotate the Amount_ENG field using F expression
+    indicators_with_measurement = indicators.annotate(Amount_ENG=F('measurement__Amount_ENG'))
 
     context = {
         'topics': topic,
         'categories': category,
-        'indicators':indicator_data,
-        'indicator_point' : indicator_point,
-        'year' : year,
-        'quarter' : quarter,
-        'month' : month,
-
+        'indicators': list(indicators_with_measurement),
+        'indicator_point': indicator_point,
+        'year': year,
+        'quarter': quarter,
+        'month': month,
     }
+
     return JsonResponse(context)
+
 
 
 def filter_indicator_value(request, pk):
@@ -252,6 +245,7 @@ def json_filter_source(request):
 
 @login_required(login_url='login')
 def filter_catagory_json(request):
+    
     category_data = list(Category.objects.all().values())
     
     for category in category_data:
@@ -411,12 +405,28 @@ def json_filter_year(request):
         return JsonResponse({'success': True, 'new_year': new_year})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-  
+
+# calculate for drildown to avoid nested loop 
+def calculate_category_data(topic, categories_with_indicators):
+    return [
+        [
+            category.name_ENG,
+            len(category.indicators)
+        ] for category in categories_with_indicators if category.topic == topic
+    ]
+
 @login_required(login_url='login')
 @admin_user_required   
 def json_filter_drilldown(request):
-    # Calculate topic counts
+    # Fetch topics with annotated category count
     topics = Topic.objects.annotate(category_count=Count('category'))
+
+    # Fetch categories and related indicators for all topics using prefetch_related
+    categories_with_indicators = Category.objects.filter(topic__in=topics).prefetch_related(
+        Prefetch('indicator_set', queryset=Indicator.objects.filter(children__isnull=True), to_attr='indicators')
+    )
+
+    # Create topic_data
     topic_data = {
         "name": "Topic",
         "colorByPoint": True,
@@ -429,37 +439,20 @@ def json_filter_drilldown(request):
         ]
     }
 
-    # Calculate category and indicator counts
-    drilldown = {}
-    series_data = []
-    for topic in topics:
-        categories = Category.objects.filter(topic=topic)
-        category_data = []
-        for category in categories:
-            # Count related indicators for each category
-            indicator_count = Indicator.objects.filter(for_category=category, children__isnull=True).count()
-
-            # Add category and related indicator count to the category_data
-            category_data.append([
-                category.name_ENG,
-                indicator_count
-            ])
-
-        series_data.append({
+    # Create drilldown data
+    drilldown = [
+        {
             "name": topic.title_ENG,
             "id": topic.title_ENG,
-            "data": category_data
-        }) 
-
-    drilldown = series_data
+            "data": calculate_category_data(topic, categories_with_indicators)
+        } for topic in topics
+    ]
 
     return JsonResponse({
         "topic_data": topic_data,
         "drilldown": drilldown
     })
 
-def json_chart_data(request):
-    return json_filter_drilldown(request)
 
 def month_data(request, month_id):
     catagory = Category.objects.get(pk=month_id)
@@ -1260,7 +1253,7 @@ def source(request, source_id=None):
         else:
             # Adding a new source
             form = SourceForm(request.POST)
-
+        
         if form.is_valid():
             form.save()
             if 'source_id' in request.POST:
@@ -1285,28 +1278,6 @@ def source(request, source_id=None):
         'sources': sources
     }
     return render(request, 'user-admin/source.html', context=context)
-
-@login_required(login_url='login')
-@admin_user_required
-def source_detail(request, pk):
-    source = Source.objects.get(pk=pk)
-    
-    form = SourceForm(request.POST or None, instance=source)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
-            form.save()
-            messages.success(request, 'Successfully Updated')
-            return redirect('user-admin-source')
-        else:
-            messages.error(request, 'Value Exist or Please try Again!')
-    context = {
-        'form' : form,
-        'source' : source
-    }  
-    return render(request, 'user-admin/source_detail.html', context)
 
 @login_required(login_url='login')
 @admin_user_required

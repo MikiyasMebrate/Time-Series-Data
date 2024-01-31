@@ -46,7 +46,7 @@ urlpatterns = [
 
     #source
     path('source/', views.source, name="user-admin-source"),
-    path('source/<int:pk>', views.source_detail, name="user-source-detail"),
+
     path('source-delete/<int:pk>', views.delete_source, name='user-source-delete'),
 
     #year

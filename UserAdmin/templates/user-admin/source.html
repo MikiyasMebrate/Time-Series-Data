@@ -31,7 +31,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form method='POST'>
+            <form method='POST' name="">
               {% csrf_token %}
               <div class="mb-3">
                 <label for="id_source" class="col-form-label">Name English: {% for err in form.title_ENG.errors%}<small
