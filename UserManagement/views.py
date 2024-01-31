@@ -32,6 +32,9 @@ from .tasks import send_reset_email
 User = get_user_model()
 
 
+
+
+
 def forget_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -53,7 +56,6 @@ def forget_password(request):
             # Generate reset URL
             reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
             reset_url = request.build_absolute_uri(reset_url)
-            print(reset_url)
 
             # Call the Celery task
             send_reset_email.delay(user.email, reset_url)

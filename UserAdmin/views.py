@@ -23,47 +23,48 @@ from django.contrib.auth.models import AnonymousUser
 ##############################
 #          JSON             #
 #############################
-#JSON
-
 
 def json(request):
     topic = list(Topic.objects.all().values())
-    category = list(Category.objects.all().values())
-
-    if isinstance(request.user, AnonymousUser):
-        indicators = Indicator.objects.filter(is_public=True).values()
-    else:
-        indicators = Indicator.objects.all().values()
-
-    indicator_point = list(Indicator_Point.objects.all().values())
-    year = list(DataPoint.objects.all().values())
+    year =list( DataPoint.objects.all().values())
     month = list(Month.objects.all().values())
     quarter = list(Quarter.objects.all().values())
 
-    # Annotate the Amount_ENG field using F expression
-    indicators_with_measurement = indicators.annotate(Amount_ENG=F('measurement__Amount_ENG'))
-
     context = {
         'topics': topic,
-        'categories': category,
-        'indicators': list(indicators_with_measurement),
-        'indicator_point': indicator_point,
-        'year': year,
-        'quarter': quarter,
-        'month': month,
+        'year' : year,
+        'quarter' : quarter,
+        'month' : month,
+
     }
 
     return JsonResponse(context)
+
+def filter_category_lists(request,pk):
+    topic = Topic.objects.get(pk = pk)
+    category_lists = list(Category.objects.filter(topic = topic).prefetch_related('topic').values())
+    return JsonResponse(category_lists, safe=False)
+
+
+def filter_indicator_lists(request, pk):
+    category = Category.objects.get(pk = pk)
+    if isinstance(request.user, AnonymousUser):
+        indicators = list(Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category").values())
+    else:
+        indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
+    return JsonResponse(indicators, safe=False)
+   
 
 
 
 def filter_indicator_value(request, pk):
     single_category = Category.objects.get(pk = pk)
-    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None)
+    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None).select_related("for_category")
     indicator_list = []
-    
+
+
     def child_indicators(parent):
-        child_indicator = Indicator.objects.filter(parent = parent)
+        child_indicator = Indicator.objects.filter(parent = parent).select_related("for_category")
         if child_indicator:
             for indicator in child_indicator:
                 indicator_list.append(model_to_dict(indicator))
@@ -76,15 +77,11 @@ def filter_indicator_value(request, pk):
     value_new = []
     for indicator in indicator_list:
         for yr in DataPoint.objects.all():
-           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).select_related("for_datapoint", "for_indicator").values())
            except: value_filter = None
            if value_filter:
-            #    for i in DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']):
-            #        i.save()
-                #value_new.append(value_filter[0])
                 for val in value_filter:
                     value_new.append(val)
-
     return JsonResponse(value_new, safe=False)
 
 @login_required(login_url='login')
@@ -102,8 +99,8 @@ def filter_indicator_json(request):
 
     return JsonResponse(context)
 
-@login_required(login_url='login')
-@admin_user_required
+# @login_required(login_url='login')
+# @admin_user_required
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []

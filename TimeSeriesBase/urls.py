@@ -16,5 +16,10 @@ urlpatterns = [
     path('profile/', profile_view, name = 'staff-profile'),
     path('login/',views.login_view,name="login"),
     path('logout/',views.logout_view,name="logout"),
+    ###JSON###
+    path('user-json/', json, name="user-json"),
+    path('user-list-view-category/<int:pk>', filter_category_lists, name='user-list-view-category'),
+    path('user-list-view-indicator/<int:pk>', filter_indicator_lists, name="user-list-view-indicator"),
+    path('user-json-indicator-value/<int:pk>',filter_indicator_value, name='json-indicator-value'),
 
 ]
