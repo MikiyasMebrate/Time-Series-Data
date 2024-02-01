@@ -21,5 +21,6 @@ urlpatterns = [
     path('user-list-view-category/<int:pk>', filter_category_lists, name='user-list-view-category'),
     path('user-list-view-indicator/<int:pk>', filter_indicator_lists, name="user-list-view-indicator"),
     path('user-json-indicator-value/<int:pk>',filter_indicator_value, name='json-indicator-value'),
+    path('user-json-indicator/<int:pk>/', filter_indicator, name='user-json_indicator'),
 
 ]

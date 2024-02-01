@@ -12,6 +12,7 @@ urlpatterns = [
     path('json-indicator-value/<int:pk>',views.filter_indicator_value, name='json-indicator-value'),
     path('json-dashboard/',views.dashboard_json, name='json-dashboard'),
     path('json-indicator/<int:pk>/', views.filter_indicator, name='json_indicator'),
+    path('json_indicator_page_detail/<int:pk>/', views.filter_indicator_indicator_page, name='json_indicator_page_detail'),
     path('json-filter-indicator/', views.filter_indicator_json, name='json_filter_indicator'),
     path('json-filter-topic/', views.json_filter_topic, name='json_filter_topic'),
     path('json-filter-catagory/', views.filter_category_json, name='json_filter_catagory'),

@@ -56,10 +56,30 @@ def filter_category_lists(request,pk):
 def filter_indicator_lists(request, pk):
     category = Category.objects.get(pk = pk)
     if isinstance(request.user, AnonymousUser):
-        indicators = list(Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category").values())
+        indicators = Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category")
     else:
-        indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
-    return JsonResponse(indicators, safe=False)
+        indicators = Indicator.objects.filter(for_category = category).select_related("for_category")
+
+    def child_indicator_filter(parent):
+        return Indicator.objects.filter(parent = parent)
+
+    returned_json = []
+
+    def child_list(parent, child_lists):
+        for i in child_lists:
+            if i.parent.id == parent.id:
+                child_lists = child_indicator_filter(indicator)
+                returned_json.extend(list(child_lists.values()))
+                child_list(i,child_lists)
+
+    returned_json.extend(list(indicators.values()))             
+    for indicator in indicators:
+        child_lists = child_indicator_filter(indicator)
+        returned_json.extend(list(child_lists.values())) 
+        child_list(indicator, child_lists)
+
+
+    return JsonResponse(returned_json, safe=False)
    
 
 @login_required(login_url='login')
@@ -113,7 +133,35 @@ def filter_indicator_json(request):
     return JsonResponse(context)
 
 
-#Indicator Detail Page With Child 
+#Indicator Page Detail Indicator 
+@login_required(login_url='login')
+@admin_user_required
+def filter_indicator_indicator_page(request, pk):
+    single_indicator = Indicator.objects.get(pk = pk)
+    returned_json = []
+    returned_json.append(model_to_dict(single_indicator))
+    indicators = list(Indicator.objects.select_related('parent').filter().values())
+    indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
+
+    def child_list(parent):
+        for i in indicators:
+            if i['parent_id'] == parent.id:
+                returned_json.append(i)
+                child_list(Indicator.objects.get(id = i['id']))
+                    
+    
+    child_list(single_indicator, ' ')
+
+    context = {
+        'indicators' :  returned_json,
+        'indicator_point': indicator_point,
+    }
+    
+    return JsonResponse(context)
+
+
+
+#Indicator Detail Page With Child and with Values
 @login_required(login_url='login')
 @admin_user_required
 def filter_indicator(request, pk):

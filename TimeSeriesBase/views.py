@@ -119,10 +119,30 @@ def filter_category_lists(request,pk):
 def filter_indicator_lists(request, pk):
     category = Category.objects.get(pk = pk)
     if isinstance(request.user, AnonymousUser):
-        indicators = list(Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category").values())
+        indicators = Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category")
     else:
-        indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
-    return JsonResponse(indicators, safe=False)
+        indicators = Indicator.objects.filter(for_category = category).select_related("for_category")
+
+    def child_indicator_filter(parent):
+        return Indicator.objects.filter(parent = parent)
+
+    returned_json = []
+
+    def child_list(parent, child_lists):
+        for i in child_lists:
+            if i.parent.id == parent.id:
+                child_lists = child_indicator_filter(indicator)
+                returned_json.extend(list(child_lists.values()))
+                child_list(i,child_lists)
+
+    returned_json.extend(list(indicators.values()))             
+    for indicator in indicators:
+        child_lists = child_indicator_filter(indicator)
+        returned_json.extend(list(child_lists.values())) 
+        child_list(indicator, child_lists)
+
+
+    return JsonResponse(returned_json, safe=False)
    
 
 
@@ -152,3 +172,62 @@ def filter_indicator_value(request, pk):
                 for val in value_filter:
                     value_new.append(val)
     return JsonResponse(value_new, safe=False)
+
+
+##INDEX SAMPLE DATA 
+#Indicator Detail Page With Child and with Values
+def filter_indicator(request, pk):
+    single_indicator = Indicator.objects.get(pk = pk)
+    returned_json = []
+    returned_json.append(model_to_dict(single_indicator))
+    indicators = list(Indicator.objects.all().values())
+    year = list(DataPoint.objects.all().values())
+    indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
+    measurements = list(Measurement.objects.all().values())
+    month = list(Month.objects.all().values())
+    quarter = list(Quarter.objects.all().values())
+
+    def child_list(parent, space):
+        space = space + "   "
+        for i in indicators:
+            if i['parent_id'] == parent.id:
+                returned_json.append(i)
+                child_list(Indicator.objects.get(id = i['id']), space)
+                    
+    
+    child_list(single_indicator, ' ')
+
+    value_new = []
+    year_new = []
+
+
+    for indicator in returned_json:
+        for yr in DataPoint.objects.prefetch_related('datavalue_set'):
+           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
+           except: value_filter = None
+           if value_filter:
+                for val in value_filter:
+                    value_new.append(val)
+
+
+                for yy in year_new:
+                   if yr.year_EC in  yy['year_EC']:
+                       break
+                else:
+                   year_new.append(model_to_dict(yr))
+    
+    
+    
+    context = {
+        'indicators' :  returned_json,
+        'indicator_point': indicator_point,
+        'year' : year,
+        'new_year' : year_new,
+        'value' : value_new,
+        'measurements' : measurements,
+        'month' : month,
+        'quarter' : quarter
+    }
+    
+    return JsonResponse(context)
+
