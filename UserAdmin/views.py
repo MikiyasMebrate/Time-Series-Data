@@ -477,7 +477,7 @@ def audit_log_list(request):
 @login_required(login_url='login')
 @admin_user_required
 def index(request):
-    auditlog_entries = LogEntry.objects.select_related('content_type', 'actor')[:6s]
+    auditlog_entries = LogEntry.objects.select_related('content_type', 'actor')[:6]
     size_topic = Topic.objects.filter(is_deleted = False).count()
     size_category = Category.objects.filter(is_deleted = False).count()
     size_indicator = Indicator.objects.filter(is_deleted = False).count()
