@@ -11,16 +11,6 @@ from django.forms.models import model_to_dict
 
 
 def index(request):
-    # Create a thread for the background task
-    stop_event = threading.Event()
-    background_thread = threading.Thread(target=background_task, args=("Example", stop_event), daemon=True)
-    # Start the background thread
-    background_thread.start()
-    stop_event.set()
-    
-    
-    
-
     last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
     last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
 
