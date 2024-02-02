@@ -48,7 +48,17 @@ def send_registration_email(request,email,first_name,last_name,auto_password, st
 
     print(f"Background task for {email} has finished.")
 
+def send_reset_email(request,user_email, reset_url,stop_event):
+    while not stop_event.is_set():
+        try:
+            print(f"Background task for {user_email} is running...")
+            send_mail('Reset Your Password', f'Click the link below to reset your password:\n\n{reset_url}', 'habtamutesfaye.com@gmail.com', [user_email])
+        except Exception as e:
+        # Handle email sending errors
+            print(f"Error occurred while sending reset email to {user_email}: {e}")
+    print(f"Background task for {user_email} has finished.")
 
+User = get_user_model()
 
 def forget_password(request):
     if request.method == 'POST':
@@ -62,7 +72,6 @@ def forget_password(request):
         except ValidationError:
             messages.error(request, 'Invalid email format.')
             return redirect('forget_password')
-
         try:
             # Generate token and uidb64
             token = default_token_generator.make_token(user)
@@ -72,17 +81,19 @@ def forget_password(request):
             reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
             reset_url = request.build_absolute_uri(reset_url)
 
-            subject = 'Reset Your Password'
-            message = f'Click the link below to reset your password:\n\n{reset_url}'
-            send_mail(subject, message, 'habtamutesfaye.com@gmail.com', [user.email])
+            # Start a background task to send the reset email
+            stop_event = threading.Event()
+            background_thread = threading.Thread(target=send_reset_email, args=(request,user.email,reset_url,stop_event), daemon=True)
+            background_thread.start()
+            stop_event.set()
 
             messages.success(request, 'Password reset link has been sent to your email.')
             return redirect('forget_password')
         except Exception as e:
             # Handle network-related errors
             messages.error(request, 'An error occurred while sending the reset password link. Please try again later.')
-    return render(request, 'forget_pass.html')
 
+    return render(request, 'forget_pass.html')
 
 # views.py
 def reset_password(request, token, uidb64):
