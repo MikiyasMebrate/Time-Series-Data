@@ -193,6 +193,8 @@ def filter_indicator_value(request, pk):
 
 ##INDEX SAMPLE DATA 
 #Indicator Detail Page With Child and with Values
+##INDEX SAMPLE DATA 
+#Indicator Detail Page With Child and with Values
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
     returned_json = []
@@ -204,41 +206,55 @@ def filter_indicator(request, pk):
     month = list(Month.objects.all().values())
     quarter = list(Quarter.objects.all().values())
 
-    def child_list(parent, space):
-        space = space + "   "
+    indicators_with_children = Indicator.objects.filter(parent=single_indicator).prefetch_related("children")
+
+    # Create a dictionary for each parent and child indicator
+    indicator_list = [model_to_dict(single_indicator)]
+    indicator_list  += [model_to_dict(child_indicator) for child_indicator in indicators_with_children]
+
+    def child_list(parent):
         for i in indicators:
             if i['parent_id'] == parent.id:
                 returned_json.append(i)
-                child_list(Indicator.objects.get(id = i['id']), space)
+                child_list(Indicator.objects.get(id = i['id']))
                     
     
-    child_list(single_indicator, ' ')
+    child_list(single_indicator)
+
 
     value_new = []
     year_new = []
 
 
-    for indicator in returned_json:
-        for yr in DataPoint.objects.prefetch_related('datavalue_set'):
-           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).values())
-           except: value_filter = None
-           if value_filter:
-                for val in value_filter:
-                    value_new.append(val)
-
-
-                for yy in year_new:
-                   if yr.year_EC in  yy['year_EC']:
-                       break
-                else:
-                   year_new.append(model_to_dict(yr))
+    # Fetch data values for each indicator in a single query
+    for indicator in indicator_list:
+    # Fetch DataValues and related DataPoint instances in a single query
+        value_filter = DataValue.objects.filter(for_indicator__id=indicator['id']).select_related("for_datapoint", "for_indicator")
     
+        for data_value in value_filter:
+            for_datapoint_instance = data_value.for_datapoint
     
+            # Check if the DataPoint instance is in year_new before appending
+            if model_to_dict(for_datapoint_instance) not in year_new:
+                year_new.append(model_to_dict(for_datapoint_instance))
+    
+            # Convert DataValue and DataPoint instances to dictionaries and append to value_new
+            value_new.append({
+                'id': data_value.id,
+                'value': data_value.value,
+                'for_quarter_id': data_value.for_quarter_id,
+                'for_month_id': data_value.for_month_id,
+                'for_datapoint_id': data_value.for_datapoint_id,
+                'for_datapoint__year_EC': for_datapoint_instance.year_EC,
+                'for_source_id': data_value.for_source_id,
+                'for_indicator_id': data_value.for_indicator_id,
+                'is_deleted': data_value.is_deleted
+            })   
     
     context = {
         'indicators' :  returned_json,
         'indicator_point': indicator_point,
-        'year' : year,
+        'year' : year_new,
         'new_year' : year_new,
         'value' : value_new,
         'measurements' : measurements,
