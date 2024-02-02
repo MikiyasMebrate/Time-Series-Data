@@ -1,12 +1,23 @@
 
+let showLoading = (divID) =>{
+  document.getElementById(`${divID}`).style.display = 'block'
+}
+
+let hideLoading = (divID) =>{
+  console.log(document.getElementById(`${divID}`).style.display = "none")
+}
+
+
 $(document).ready(function () {
     let urlPath = window.location.pathname;
     let pathID = urlPath.replace("/detail-analysis/", "");
-    let url = `/user-admin/json-indicator/${pathID}/`;
-    console.log(url)
+    let url = `/user-json-indicator/${pathID}/`;
+
+    showLoading('loading_div')
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
+        hideLoading('loading_div')
         data.year = data.new_year
         
         let currentIndicator = data.indicators.find((item) => item.parent == null);

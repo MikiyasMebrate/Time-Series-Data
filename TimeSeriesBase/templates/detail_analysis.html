@@ -14,9 +14,12 @@
 <body class="pt-5 ms-5 me-5">
     {% include 'includes/navbar.html'%}
     <div class="row justify-content-center mt-5 pt-5">
+        
+       
         <!--Title-->
         <div class="col-10">
             <h3 id="currentTitleIndicator"></h3>
+            
         </div>
         <!--Table-->
         <div class="col-10 mt-5">
@@ -24,6 +27,12 @@
             <div class="card">
                 <div class="card-body" id="list_table_view">
                     <div id="tableTest">
+                         <!--Loading Page-->
+        <div class="d-flex justify-content-center">
+            <div  id="loading_div" style="display: none;"  class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
                     </div>
                 </div>
             </div>

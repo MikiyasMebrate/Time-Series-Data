@@ -11,6 +11,7 @@ let showLoading = (htmlID) => {
 let disableLoading= (htmlID) => {
   document.getElementById(`${htmlID}`).innerHTML = ''
 }
+
 let categories = (topicID) => {
   console.log(topicID);
   return fetch(`/user-admin/admin-list-view-category/${topicID}`)
