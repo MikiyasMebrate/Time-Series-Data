@@ -11,16 +11,6 @@ from django.forms.models import model_to_dict
 
 
 def index(request):
-    # Create a thread for the background task
-    stop_event = threading.Event()
-    background_thread = threading.Thread(target=background_task, args=("Example", stop_event), daemon=True)
-    # Start the background thread
-    background_thread.start()
-    stop_event.set()
-    
-    
-    
-
     last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
     last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
 
@@ -120,6 +110,8 @@ def json(request):
     }
     return JsonResponse(context)
 
+import time
+
 def filter_category_lists(request,pk):
     topic = Topic.objects.get(pk = pk)
     category_lists = list(Category.objects.filter(topic = topic).prefetch_related('topic').values())
@@ -134,6 +126,7 @@ def filter_indicator_lists(request, pk):
         indicators = list(Indicator.objects.filter(for_category = category).select_related("for_category").values())
     return JsonResponse(indicators, safe=False)
    
+
 
 
 def filter_indicator_value(request, pk):
@@ -161,4 +154,5 @@ def filter_indicator_value(request, pk):
            if value_filter:
                 for val in value_filter:
                     value_new.append(val)
+
     return JsonResponse(value_new, safe=False)

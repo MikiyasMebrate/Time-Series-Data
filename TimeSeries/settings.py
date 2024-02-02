@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'import_export',
     'auditlog',
-    'debug_toolbar'
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [

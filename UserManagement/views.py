@@ -26,12 +26,27 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from .tasks import send_reset_email
+import threading
+from django.template.loader import render_to_string
 
+def send_registration_email(request,email,first_name,last_name,auto_password, stop_event):
+    while not stop_event.is_set():
+        print(f"Background task for {email} is running...")
+        subject, from_email, to = "Account Creation", "mikiyasmebrate2656@gmail.com", f"{email}"
+        text_content = "Account Created Successfully"
+        context = {
+            'first_name': first_name,
+            'last_name' : last_name,
+            'email' : email,
+            'password' : auto_password
+        }
+        html_content = render_to_string('success-email.html',context)
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        if msg.send():
+            print('Successfully Sent')
 
-User = get_user_model()
-
-
+    print(f"Background task for {email} has finished.")
 
 
 
@@ -57,16 +72,15 @@ def forget_password(request):
             reset_url = reverse_lazy('reset_password', kwargs={'token': token, 'uidb64': uidb64})
             reset_url = request.build_absolute_uri(reset_url)
 
-            # Call the Celery task
-            send_reset_email.delay(user.email, reset_url)
+            subject = 'Reset Your Password'
+            message = f'Click the link below to reset your password:\n\n{reset_url}'
+            send_mail(subject, message, 'habtamutesfaye.com@gmail.com', [user.email])
 
-            messages.success(request, 'Password reset link will be sent to your email shortly.')
+            messages.success(request, 'Password reset link has been sent to your email.')
             return redirect('forget_password')
         except Exception as e:
-            # Handle other errors
-            messages.error(request, 'An error occurred while processing your request. Please try again later.')
-            print(f'Error: {e}')
-
+            # Handle network-related errors
+            messages.error(request, 'An error occurred while sending the reset password link. Please try again later.')
     return render(request, 'forget_pass.html')
 
 
@@ -127,7 +141,7 @@ def users_list(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            try: 
+            
                  username = form.cleaned_data['username']
                  first_name = form.cleaned_data['first_name']
                  last_name = form.cleaned_data['last_name']
@@ -136,30 +150,17 @@ def users_list(request):
                  
                  auto_password = generate_password(10)
                  user_obj = CustomUser.objects.create_user(email=email, first_name=first_name, is_superuser = is_admin, last_name = last_name, is_active= True, is_staff=True,  username=username, password=auto_password)
-     
-     
-     
-                 subject, from_email, to = "Account Creation", "mikiyasmebrate2656@gmail.com", f"{email}"
-                 text_content = "Account Created Successfully"
-                 html_content = f''' <p> Dear {first_name} {last_name}, </p>
-                 <p> We are delighted to inform you that your account has been successfully created. Welcome to our platform!</p>
-                 <p>Below are your account details:</p>
-                 <p>Email: {email}</p>
-                 <p>Password: {auto_password}</p>
-                 <p>Please keep this information secure and do not share it with anyone.</p>
-                 <p>Thank you for joining us! We look forward to providing you with a great experience on our platform.</p>
-                 <p>Best regards,</p>
-                 <p>MoPD Team</p>'''
-                 msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-                 msg.attach_alternative(html_content, "text/html")
-                 
-                 if msg.send():
-                     messages.success(request, 'Email Successfully Sent!')
-                     messages.success(request, 'Your Account has been Successfully Created!')
-                 print(email)                
+                 stop_event = threading.Event()
+                 background_thread = threading.Thread(target=send_registration_email, args=(request,email,first_name,last_name,auto_password, stop_event), daemon=True)
+                 # Start the background thread
+                 background_thread.start()
+                 stop_event.set()
+
+                 messages.success(request, "Your Account has been Successfully Created! You will receive email. ")                
                  return redirect('user-admin-user-list')
-            except:
-                messages.error(request, 'Please Try Again! Username and Email should be UNIQUE! ')
+            
+
+     
         else:
             messages.error(request, 'Please Try Again!')
 
