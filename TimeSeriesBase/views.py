@@ -165,37 +165,35 @@ def filter_indicator_lists(request, pk):
    
 
 
-
+from django.shortcuts import get_object_or_404
 def filter_indicator_value(request, pk):
-    single_category = Category.objects.get(pk = pk)
-    parent_indicators = Indicator.objects.filter(for_category = single_category, parent = None).select_related("for_category")
-    indicator_list = []
+    # Use get_object_or_404 to handle the case where the category with the specified primary key does not exist
+    single_category = get_object_or_404(Category, pk=pk)
 
+    # Fetch all indicators related to the category using select_related to minimize queries
+    parent_indicators = Indicator.objects.filter(for_category=single_category, parent=None).select_related("for_category")
 
-    def child_indicators(parent):
-        child_indicator = Indicator.objects.filter(parent = parent).select_related("for_category")
-        if child_indicator:
-            for indicator in child_indicator:
-                indicator_list.append(model_to_dict(indicator))
-                child_indicators(indicator)
-        
-    for parent_indicator in parent_indicators:
-        indicator_list.append(model_to_dict(parent_indicator))
-        child_indicators(parent_indicator)
+    # Prefetch child indicators to minimize additional queries inside loops
+    indicators_with_children = Indicator.objects.filter(parent__in=parent_indicators).prefetch_related("children")
+
+    # Create a dictionary for each parent and child indicator
+    indicator_list = [model_to_dict(parent_indicator) for parent_indicator in parent_indicators]
+    indicator_list += [model_to_dict(child_indicator) for child_indicator in indicators_with_children]
 
     value_new = []
+
+    # Fetch data values for each indicator in a single query
     for indicator in indicator_list:
-        for yr in DataPoint.objects.all():
-           try: value_filter = list(DataValue.objects.filter(for_datapoint = yr, for_indicator__id = indicator['id']).select_related("for_datapoint", "for_indicator").values())
-           except: value_filter = None
-           if value_filter:
-                for val in value_filter:
-                    value_new.append(val)
+        value_filter = DataValue.objects.filter(for_indicator__id=indicator['id']).select_related("for_datapoint", "for_indicator").values()
+
+        for val in value_filter:
+            value_new.append(val)
+
     return JsonResponse(value_new, safe=False)
 
 
-##INDEX SAMPLE DATA 
-#Indicator Detail Page With Child and with Values
+
+
 ##INDEX SAMPLE DATA 
 #Indicator Detail Page With Child and with Values
 def filter_indicator(request, pk):
@@ -257,7 +255,7 @@ def filter_indicator(request, pk):
     context = {
         'indicators' :  returned_json,
         'indicator_point': indicator_point,
-        'year' : year_new,
+        'year' : year,
         'new_year' : year_new,
         'value' : value_new,
         'measurements' : measurements,
