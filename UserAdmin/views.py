@@ -69,9 +69,10 @@ def filter_category_lists(request,pk):
 @admin_user_required
 def filter_indicator_lists(request, pk):
     category = Category.objects.get(pk = pk)
-    
-    indicators = Indicator.objects.filter(for_category = category).select_related("for_category")
-
+    if isinstance(request.user, AnonymousUser):
+        indicators = Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category")
+    else:
+        indicators = Indicator.objects.filter(for_category = category).select_related("for_category")
 
     def child_indicator_filter(parent):
         return Indicator.objects.filter(parent = parent)
@@ -80,18 +81,14 @@ def filter_indicator_lists(request, pk):
 
     def child_list(parent, child_lists):
         for i in child_lists:
-            if i.parent == parent:
-                child_lists = child_indicator_filter(i)
+            if i.parent.id == parent.id:
+                child_lists = child_indicator_filter(indicator)
                 returned_json.extend(list(child_lists.values()))
                 child_list(i,child_lists)
 
-    returned_json.extend(list(indicators.values()))    
-
-
+    returned_json.extend(list(indicators.values()))             
     for indicator in indicators:
         child_lists = child_indicator_filter(indicator)
-        print('Parent', indicator)
-        print('Child', child_lists)
         returned_json.extend(list(child_lists.values())) 
         child_list(indicator, child_lists)
 
@@ -368,7 +365,6 @@ def dashboard_json(request):
     return JsonResponse(context)
 
 
-
 @login_required(login_url='login')
 @admin_user_required
 def json_random(request):
@@ -472,79 +468,6 @@ def json_filter_drilldown(request):
         "topic_data": topic_data,
         "drilldown": drilldown
     })
-
-
-
-# def month_data(request, month_id):
-#     catagory = Category.objects.get(pk=month_id)
-#     months = Month.objects.all()
-#     years = DataPoint.objects.all()
-
-#     child_indicator = Indicator.objects.filter(for_category=catagory)
-
-#     data_set = []
-
-#     if child_indicator:
-#         for child in child_indicator:
-#             arr = []
-#             for year in years:
-#                 for month in months:
-#                     value_child = DataValue.objects.filter(for_indicator=child, for_month=month, for_datapoint=year, is_deleted=False).first()
-#                     if value_child is not None:
-#                         val = [[int(value_child.for_datapoint.year_EC), int(value_child.for_month.number), 1], value_child.value]
-#                         arr.append(val)
-#             data_set.append({'name': child.title_ENG, 'data': arr})
-            
-#     # Return JSON response
-#     return JsonResponse(data_set, safe=False)
-
-
-
-# @login_required(login_url='login')
-# @admin_user_required
-# def quarter_data(request, quarter_id):
-#     catagory = Category.objects.get(pk=quarter_id)
-#     quarters = Quarter.objects.all()
-#     years = DataPoint.objects.all()
-
-#     child_indicator = Indicator.objects.filter(for_category=catagory)
-
-#     data_set = []
-
-#     if child_indicator:
-#         for child in child_indicator:
-#             arr = []
-#             for year in years:
-#                 for quarter in quarters:
-#                     value_child = DataValue.objects.filter(
-#                         for_indicator=child,
-#                         for_quarter=quarter,
-#                         for_datapoint=year,
-#                         is_deleted=False
-#                     ).first()
-
-#                     if value_child is not None and value_child.value is not None:
-#                         # Map the quarter to perspective months
-#                         quarter_to_month = {'Q1': 1, 'Q2': 3, 'Q3': 6, 'Q4': 9}
-#                         start_month = quarter_to_month[quarter.title_ENG]
-#                         start_date = 1  # You may adjust this as needed
-
-#                         val = [
-#                             [
-#                                 int(value_child.for_datapoint.year_EC),
-#                                 start_month,
-#                                 start_date
-#                             ],
-#                             value_child.value
-#                         ]
-#                         arr.append(val)
-
-#             # Append data only if there is non-empty and non-null data
-#             if arr:
-#                 data_set.append({'name': child.title_ENG, 'data': arr})
-
-#     # Return JSON response
-#     return JsonResponse(data_set, safe=False)
 
 
 

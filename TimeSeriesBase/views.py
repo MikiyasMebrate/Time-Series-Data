@@ -290,3 +290,77 @@ def filter_indicator(request, pk):
     
     return JsonResponse(context)
 
+
+from django.db.models import F
+
+def month_data(request, month_id):
+    category = Category.objects.get(pk=month_id)
+    child_indicators = Indicator.objects.filter(for_category=category)
+
+    months = Month.objects.all()
+    years = DataPoint.objects.all()
+
+    data_set = []
+
+    for child in child_indicators:
+        values = DataValue.objects.filter(
+            for_indicator=child,
+            for_month__in=months,
+            for_datapoint__in=years,
+            is_deleted=False
+        ).values('for_datapoint__year_EC', 'for_month__number', 'value')
+
+        arr = [
+            [
+                [int(value['for_datapoint__year_EC']), int(value['for_month__number']), 1],
+                value['value']
+            ]
+            for value in sorted(values, key=lambda x: (x['for_datapoint__year_EC'], x['for_month__number']))
+        ]
+
+        data_set.append({'name': child.title_ENG, 'data': arr})
+
+    return JsonResponse(data_set, safe=False)
+
+
+from django.db.models import F
+
+def quarter_data(request, quarter_id):
+    category = Category.objects.get(pk=quarter_id)
+    child_indicators = Indicator.objects.filter(for_category=category)
+
+    data_set = []
+
+    for child in child_indicators:
+        values = DataValue.objects.filter(
+            for_indicator=child,
+            is_deleted=False
+        ).values('for_datapoint__year_EC', 'for_quarter__title_ENG', 'value')
+
+        quarters = set(value['for_quarter__title_ENG'] for value in values)
+        years = sorted(set(value['for_datapoint__year_EC'] for value in values))
+
+        arr = [
+            [
+                [
+                    int(value['for_datapoint__year_EC']),
+                    quarter_to_month(value['for_quarter__title_ENG']),
+                    1
+                ],
+                value['value']
+            ]
+            for value in sorted(values, key=lambda x: (x['for_datapoint__year_EC'], quarter_to_month(x['for_quarter__title_ENG'])))
+            if value['value'] is not None
+        ]
+
+        # Append data only if there is non-empty data
+        if arr:
+            data_set.append({'name': child.title_ENG, 'data': arr})
+
+    return JsonResponse(data_set, safe=False)
+
+def quarter_to_month(quarter_title):
+    # Map the quarter to perspective months
+    quarter_to_month = {'Q1': 1, 'Q2': 4, 'Q3': 7, 'Q4': 10}
+    return quarter_to_month.get(quarter_title, 1)
+

@@ -22,5 +22,8 @@ urlpatterns = [
     path('user-list-view-indicator/<int:pk>', filter_indicator_lists, name="user-list-view-indicator"),
     path('user-json-indicator-value/<int:pk>',filter_indicator_value, name='json-indicator-value'),
     path('user-json-indicator/<int:pk>/', filter_indicator, name='user-json_indicator'),
+        # filter for the data page graphs
+    path('user-json-filter-month/<int:month_id>/', month_data, name='json_month_by_id'),
+    path('user-json-filter-quaarter/<int:quarter_id>/', quarter_data, name='json_month_by_id'),
 
 ]

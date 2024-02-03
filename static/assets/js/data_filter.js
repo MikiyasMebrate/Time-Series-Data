@@ -3469,7 +3469,7 @@ function filterData() {
                                 // Use AJAX or fetch to get data from the server based on the selected indicator
                                 try {
                                   const response = await fetch(
-                                    `/user-admin/json-filter-month/${selectedCategoryId}/`
+                                    `/user-json-filter-month/${selectedCategoryId}/`
                                   );
                                   const data = await response.json();
 
@@ -3724,13 +3724,13 @@ function filterData() {
                                         case 1:
                                           quarter = "1";
                                           break;
-                                        case 3:
+                                        case 4:
                                           quarter = "2";
                                           break;
-                                        case 6:
+                                        case 7:
                                           quarter = "3";
                                           break;
-                                        case 9:
+                                        case 10:
                                           quarter = "4";
                                           break;
                                         default:
@@ -3795,13 +3795,13 @@ function filterData() {
                                         case 1:
                                           quarter = "1";
                                           break;
-                                        case 3:
+                                        case 4:
                                           quarter = "2";
                                           break;
-                                        case 6:
+                                        case 7:
                                           quarter = "3";
                                           break;
-                                        case 9:
+                                        case 10:
                                           quarter = "4";
                                           break;
                                         default:
@@ -3865,11 +3865,11 @@ function filterData() {
                                       switch (quarter) {
                                         case 1:
                                           return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter: 1`;
-                                        case 3:
+                                        case 4:
                                           return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  2`;
-                                        case 6:
+                                        case 7:
                                           return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  3`;
-                                        case 9:
+                                        case 10:
                                           return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter:  4`;
                                         default:
                                           return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.y}</b><br/>Quarter: Unknown Quarter`;
@@ -3888,7 +3888,7 @@ function filterData() {
                                 try {
                                   // Use AJAX or fetch to get data from the server based on the selected indicator
                                   const response = await fetch(
-                                    `/user-admin/json-filter-quaarter/${selectedCategoryId}/`
+                                    `/user-json-filter-quaarter/${selectedCategoryId}/`
                                   );
                                   const data = await response.json();
 
