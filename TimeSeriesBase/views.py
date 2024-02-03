@@ -159,8 +159,8 @@ def filter_indicator_lists(request, pk):
 
     def child_list(parent, child_lists):
         for i in child_lists:
-            if i.parent.id == parent.id:
-                child_lists = child_indicator_filter(indicator)
+            if i.parent == parent:
+                child_lists = child_indicator_filter(i)
                 returned_json.extend(list(child_lists.values()))
                 child_list(i,child_lists)
 
@@ -198,7 +198,6 @@ def filter_indicator_value(request, pk):
 
         for val in value_filter:
             value_new.append(val)
-
     return JsonResponse(value_new, safe=False)
 
 from django.core.cache import cache
@@ -206,10 +205,17 @@ from django.core.cache import cache
 #Indicator Detail Page With Child and with Values
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
+
+
     returned_json = []
     returned_json.append(model_to_dict(single_indicator))
+
+
     indicators = list(Indicator.objects.all().values())
+
+
     year = list(DataPoint.objects.all().values())
+    
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
     # Attempt to get data from cache

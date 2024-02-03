@@ -69,10 +69,9 @@ def filter_category_lists(request,pk):
 @admin_user_required
 def filter_indicator_lists(request, pk):
     category = Category.objects.get(pk = pk)
-    if isinstance(request.user, AnonymousUser):
-        indicators = Indicator.objects.filter(for_category = category, is_public = True).select_related("for_category")
-    else:
-        indicators = Indicator.objects.filter(for_category = category).select_related("for_category")
+    
+    indicators = Indicator.objects.filter(for_category = category).select_related("for_category")
+
 
     def child_indicator_filter(parent):
         return Indicator.objects.filter(parent = parent)
@@ -81,14 +80,18 @@ def filter_indicator_lists(request, pk):
 
     def child_list(parent, child_lists):
         for i in child_lists:
-            if i.parent.id == parent.id:
-                child_lists = child_indicator_filter(indicator)
+            if i.parent == parent:
+                child_lists = child_indicator_filter(i)
                 returned_json.extend(list(child_lists.values()))
                 child_list(i,child_lists)
 
-    returned_json.extend(list(indicators.values()))             
+    returned_json.extend(list(indicators.values()))    
+
+
     for indicator in indicators:
         child_lists = child_indicator_filter(indicator)
+        print('Parent', indicator)
+        print('Child', child_lists)
         returned_json.extend(list(child_lists.values())) 
         child_list(indicator, child_lists)
 
