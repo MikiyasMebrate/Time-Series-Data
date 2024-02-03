@@ -27,23 +27,35 @@ from django.contrib.auth.models import AnonymousUser
 
 
 ##LIST VIEW START
-@login_required(login_url='login')
-@admin_user_required
+from django.core.cache import cache
 def json(request):
     topic = list(Topic.objects.all().values())
     year =list( DataPoint.objects.all().values())
-    month = list(Month.objects.all().values())
-    quarter = list(Quarter.objects.all().values())
+    month_data = cache.get("month_data")
+    quarter_data = cache.get("quarter_data")
+
+    if month_data is None:
+        # Fetch month data from the database if not in cache
+        month_data = list(Month.objects.all().values())
+        # Cache the data for future requests
+        cache.set("month_data", month_data)
+
+    if quarter_data is None:
+        # Fetch quarter data from the database if not in cache
+        quarter_data = list(Quarter.objects.all().values())
+        # Cache the data for future requests
+        cache.set("quarter_data", quarter_data)
+        
 
     context = {
         'topics': topic,
         'year' : year,
-        'quarter' : quarter,
-        'month' : month,
+        'quarter' : quarter_data,
+        'month' : month_data,
 
     }
-
     return JsonResponse(context)
+
 
 @login_required(login_url='login')
 @admin_user_required
@@ -115,9 +127,7 @@ def filter_indicator_value(request, pk):
 
     return JsonResponse(value_new, safe=False)
 
-
 ##LIST VIEW END
-
 
 
 #Indicator Page 
@@ -177,8 +187,17 @@ def filter_indicator(request, pk):
     year = list(DataPoint.objects.all().values())
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
-    month = list(Month.objects.all().values())
-    quarter = list(Quarter.objects.all().values())
+    if month_data is None:
+        # Fetch month data from the database if not in cache
+        month_data = list(Month.objects.all().values())
+        # Cache the data for future requests
+        cache.set("month_data", month_data)
+
+    if quarter_data is None:
+        # Fetch quarter data from the database if not in cache
+        quarter_data = list(Quarter.objects.all().values())
+        # Cache the data for future requests
+        cache.set("quarter_data", quarter_data)
 
     indicators_with_children = Indicator.objects.filter(parent=single_indicator).prefetch_related("children")
 
@@ -232,8 +251,8 @@ def filter_indicator(request, pk):
         'new_year' : year_new,
         'value' : value_new,
         'measurements' : measurements,
-        'month' : month,
-        'quarter' : quarter
+        'month' : month_data,
+        'quarter' : quarter_data
     }
     
     return JsonResponse(context)
@@ -284,7 +303,6 @@ def json_measurement(request):
         'measurements' : measurements
     }
     return JsonResponse(context)
-
 
 
 #TOPIC PAGE

@@ -110,24 +110,34 @@ def data(request):
 #############################
 
 
-
-
 def json(request):
     topic = list(Topic.objects.all().values())
     year =list( DataPoint.objects.all().values())
-    month = list(Month.objects.all().values())
-    quarter = list(Quarter.objects.all().values())
+    month_data = cache.get("month_data")
+    quarter_data = cache.get("quarter_data")
+
+    if month_data is None:
+        # Fetch month data from the database if not in cache
+        month_data = list(Month.objects.all().values())
+        # Cache the data for future requests
+        cache.set("month_data", month_data)
+
+    if quarter_data is None:
+        # Fetch quarter data from the database if not in cache
+        quarter_data = list(Quarter.objects.all().values())
+        # Cache the data for future requests
+        cache.set("quarter_data", quarter_data)
+        
 
     context = {
         'topics': topic,
         'year' : year,
-        'quarter' : quarter,
-        'month' : month,
+        'quarter' : quarter_data,
+        'month' : month_data,
 
     }
     return JsonResponse(context)
 
-import time
 
 def filter_category_lists(request,pk):
     topic = Topic.objects.get(pk = pk)
@@ -164,8 +174,8 @@ def filter_indicator_lists(request, pk):
     return JsonResponse(returned_json, safe=False)
    
 
-
 from django.shortcuts import get_object_or_404
+
 def filter_indicator_value(request, pk):
     # Use get_object_or_404 to handle the case where the category with the specified primary key does not exist
     single_category = get_object_or_404(Category, pk=pk)
@@ -191,9 +201,7 @@ def filter_indicator_value(request, pk):
 
     return JsonResponse(value_new, safe=False)
 
-
-
-
+from django.core.cache import cache
 ##INDEX SAMPLE DATA 
 #Indicator Detail Page With Child and with Values
 def filter_indicator(request, pk):
@@ -204,9 +212,21 @@ def filter_indicator(request, pk):
     year = list(DataPoint.objects.all().values())
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
-    month = list(Month.objects.all().values())
-    quarter = list(Quarter.objects.all().values())
+    # Attempt to get data from cache
+    month_data = cache.get("month_data")
+    quarter_data = cache.get("quarter_data")
 
+    if month_data is None:
+        # Fetch month data from the database if not in cache
+        month_data = list(Month.objects.all().values())
+        # Cache the data for future requests
+        cache.set("month_data", month_data)
+
+    if quarter_data is None:
+        # Fetch quarter data from the database if not in cache
+        quarter_data = list(Quarter.objects.all().values())
+        # Cache the data for future requests
+        cache.set("quarter_data", quarter_data)
     indicators_with_children = Indicator.objects.filter(parent=single_indicator).prefetch_related("children")
 
     # Create a dictionary for each parent and child indicator
@@ -221,7 +241,6 @@ def filter_indicator(request, pk):
                     
     
     child_list(single_indicator)
-
 
     value_new = []
     year_new = []
@@ -259,8 +278,8 @@ def filter_indicator(request, pk):
         'new_year' : year_new,
         'value' : value_new,
         'measurements' : measurements,
-        'month' : month,
-        'quarter' : quarter
+        'month': month_data,
+        'quarter': quarter_data
     }
     
     return JsonResponse(context)
