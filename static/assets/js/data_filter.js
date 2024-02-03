@@ -1642,7 +1642,7 @@ function filterData() {
                         //Type Year Table
                         let typeYearTable = () => {
                           table += `
-                                                          <table id="newTable" class="table table-bordered m-0 p-0">
+                                                          <table id="newTable" class="table  m-0 p-0">
                                                           <thead>
                                                             <tr>
                                                               <th class="ps-5 pe-5">Name</th>`;
@@ -1890,7 +1890,7 @@ function filterData() {
                                                       transform: rotate(180deg) !important;
                                                   }
                                                   </style>
-                                                    <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
+                                                    <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%;">
                                                     <thead>
                                                       <tr class="text-center">
                                                       <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
@@ -2145,7 +2145,7 @@ function filterData() {
                                                           transform: rotate(180deg) !important;
                                                       }
                                                     </style>
-                                                    <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%">
+                                                    <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%">
                                                     <thead>
                                                       <tr class="text-center">
                                                       <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>

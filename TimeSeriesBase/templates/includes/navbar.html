@@ -1,96 +1,55 @@
 {%load static%}
-
-<header>
-    <div class="header__area  header__transparent">
-        <div class="header__shape p-absolute">
-            <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt="">
-
-        </div>
-        <div id="header__sticky" class="header__bottom header__bottom-2 header__style-4">
-            <div class="container-fluid">
-                <div class="ps-5 pe-5 row align-items-center">
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6">
-                        <div class="logo-3 ">
-                            <a href="{% url 'index' %}">
-                                <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt="">
-                                <h3>MoPD</h3>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-xl-9 col-lg-9 col-md-6 col-sm-6 col-6">
-                        <div class="header__bottom-right d-flex justify-content-end align-items-center">
-                            <div class="main-menu main-menu-3">
-                                <nav id="mobile-menu">
-                                    <ul>
-                                        <li>
-                                            <a href="{% url 'index' %}">Home</a>
-
-                                        </li>
-                                        <li><a href="{% url 'about' %}">About</a></li>
-                                        <li>
-                                            <a href="{% url 'data' %}">Data</a>
-
-                                        </li>
-
-
-                                        
-                                 {% if user.is_anonymous %}
-                                 <l><a  class="btn btn-success"     href="{% url 'login' %}">Login</a></l>
-                                 {% else %}
-                                 <li>
-                                    <div class="btn-group dropsend p-0 m-0">
-                                        <button type="button" class="btn  dropdown-toggle"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <img class="rounded-circle img-fluid" width="40px"
-                                             {% if user.photo %} 
-                                                 src="/media/{{user.photo}}" 
-                                             {% else %}
-                                                src="{% static 'assets/img/avatar.png'%}"
-                                             {% endif %}
-                                                alt="Profile Picture">
-                                        </button>
-                                        <ul class="dropdown-menu p-0 m-0">
-                                            <li class="dropdown-item  text-start p-0 m-0 "> <a class="p-2 m-0 "
-                                                    href="{% url 'staff-profile' %}"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="16"
-                                                        height="16" fill="currentColor"
-                                                        class="bi bi-person-bounding-box" viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5" />
-                                                        <path
-                                                            d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                                    </svg> view profile</a> </li>
-                                            <li class="dropdown-item  text-start p-0 m-0 dark"> <a
-                                                    class="p-2 m-0 dark" href="{% url 'logout' %}"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="16"
-                                                        height="16" fill="currentColor"
-                                                        class="bi bi-box-arrow-left" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd"
-                                                            d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
-                                                        <path fill-rule="evenodd"
-                                                            d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z" />
-                                                    </svg> Logout</a> </li>
-                                            <!-- Dropdown menu links -->
-                                        </ul>
-                                    </div>
-
-                                    <!-- Split dropstart button -->
-
-                                </li>
-                                 {% endif %}
-                                        <!-- Profile -->
-
-                            </div>
-
-                            </ul>
-                            </nav>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<nav class="navbar navbar-expand-lg bg-light navbar-light sticky-top shadow fs-5">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'index'%}"
+      ><img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt="" />
+      <img src="{% static 'assets/img/icon/brand/trianlge.png' %}" alt="" />
+      <h3>MoPD</h3></a
+    >
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse  justify-content-end ms-5" id="navbarNav">
+      <ul class="navbar-nav gap-3">
+        <li class="nav-item">
+          <a class="nav-link"  href="{% url 'index' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'data' %}">Data</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+        <li class="nav-item dropdown dropstart">
+            {% if user.is_anonymous %}
+            <a  class="btn btn-success" href="{% url 'login' %}">Login</a>
+            </a>
+            {% else %}
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="rounded-circle img-fluid" width="30px"
+                   {% if user.photo %} 
+                       src="/media/{{user.photo}}" 
+                   {% else %}
+                      src="{% static 'assets/img/avatar.png'%}"
+                   {% endif %}
+                      alt="Profile Picture">
+              </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" href="{% url 'staff-profile' %}">View Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+            {% endif %}
+          </li>
+      </ul>
     </div>
-    </div>
-</header>
-<!-- header area end -->
+  </div>
+</nav>
+
