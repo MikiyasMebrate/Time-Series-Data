@@ -14,7 +14,6 @@ let reset;
 let isDataFetching = true;
 let reversYear = false;
 
-
 let showLoading = (htmlID) => {
   let lodingHtml = `
   <div class="d-flex align-items-center">
@@ -30,7 +29,9 @@ function toggleLoadingState(isLoading) {
   loadingButton.prop("disabled", isLoading);
 
   if (isLoading) {
-    loadingButton.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`);
+    loadingButton.html(
+      `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`
+    );
   } else {
     loadingButton.html(`Apply`);
   }
@@ -227,9 +228,9 @@ function updateCheckboxes() {
 
 function updateFilterSelection(reset = false) {
   if (isDataFetching) {
-    toggleLoadingState(true)
+    toggleLoadingState(true);
   } else {
-    toggleLoadingState(false)
+    toggleLoadingState(false);
   }
   var isFilterSelected = true;
   $(".card").show();
@@ -254,17 +255,26 @@ function updateFilterSelection(reset = false) {
 
     // Check if at least one checkbox is checked in the indicator_list_filter_body
     var indicatorFilterBody = $("#indicator_list_filter_body");
-    if (indicatorFilterBody.find('input[type="checkbox"]:checked').length === 0) {
+    if (
+      indicatorFilterBody.find('input[type="checkbox"]:checked').length === 0
+    ) {
       isFilterSelected = false;
     }
 
     // Check if at least one checkbox or radio button is checked in the filter submenu
-    var filterOptionSelection = $('#filterSelections .filter-option-selection:contains("' + filterOptionName + '")');
-    var filterOptionCheckmark = filterOptionSelection.find(".filter-option-checkmark");
+    var filterOptionSelection = $(
+      '#filterSelections .filter-option-selection:contains("' +
+        filterOptionName +
+        '")'
+    );
+    var filterOptionCheckmark = filterOptionSelection.find(
+      ".filter-option-checkmark"
+    );
 
-
-    if (filterSubmenu.find('input[type="checkbox"]:checked').length === 0 && filterSubmenu.find('input[type="radio"]:checked').length === 0) {
-
+    if (
+      filterSubmenu.find('input[type="checkbox"]:checked').length === 0 &&
+      filterSubmenu.find('input[type="radio"]:checked').length === 0
+    ) {
       // Remove the checkmark on the card
       filterOptionCheckmark.empty(); // Clear the checkmark content
       isFilterSelected = false;
@@ -272,7 +282,6 @@ function updateFilterSelection(reset = false) {
       // Add the checkmark on the card
       filterOptionCheckmark.html('<span class="bi bi-check check"></span>'); // Add the checkmark content
     }
-
   });
 
   // Create and append new apply button to the #button div if all filters are selected and the button doesn't exist
@@ -365,8 +374,6 @@ function updateFilterSelection(reset = false) {
     document.getElementById("yearSelectedBadge").innerHTML = yearSelected;
   }
 }
-
-
 
 function filterData() {
   toggleLoadingState(true);
@@ -515,7 +522,6 @@ function filterData() {
             yearListCheckAll.forEach((eventYear) => {
               eventYear.checked = true;
             });
-
           } else {
             yearTableList = [];
             yearListCheckAll.forEach((eventYear) => {
@@ -560,7 +566,6 @@ function filterData() {
                     : null;
                 })
                 .filter(Boolean);
-
             });
           });
 
@@ -750,17 +755,23 @@ function filterData() {
         }
       }
       // Event listener for the search input
-      document.getElementById("filterDatabaseSearch").addEventListener("input", function (event) {
-        var searchTerm = event.target.value;
-        updateFilterTopic(searchTerm);
-        updateFilterSelection(reset);
-      });
+      document
+        .getElementById("filterDatabaseSearch")
+        .addEventListener("input", function (event) {
+          var searchTerm = event.target.value;
+          updateFilterTopic(searchTerm);
+          updateFilterSelection(reset);
+        });
       $(document).on("change", 'input[type="radio"]', function () {
         updateFilterSelection();
       });
       // Event listeners for sorting buttons
-      document.getElementById("sortAZDatabase").addEventListener("click", sortAZTopic);
-      document.getElementById("sortZADatabase").addEventListener("click", sortZATopic);
+      document
+        .getElementById("sortAZDatabase")
+        .addEventListener("click", sortAZTopic);
+      document
+        .getElementById("sortZADatabase")
+        .addEventListener("click", sortZATopic);
 
       //--------------------------End of Function to create a filter item for topic -----------------------------
 
@@ -910,7 +921,8 @@ function filterData() {
             }
 
             // Event listener for the search input
-            document.getElementById("filterSearch")
+            document
+              .getElementById("filterSearch")
               .addEventListener("input", function (event) {
                 var searchTerm = event.target.value;
                 updateFilter(searchTerm);
@@ -926,7 +938,6 @@ function filterData() {
               .addEventListener("click", sortZA, updateFilterSelection);
 
             //--------------------------End of Function to create a filter item for catagory -----------------------------
-
 
             $(document).on(
               "change",
@@ -959,9 +970,13 @@ function filterData() {
                     theSelectedCatagory = data.categories.find(
                       (item) => String(item.id) == String(selectedCategoryId)
                     );
-                    $(document).on("change", 'input[name="category_lists"]', function () {
-                      updateFilterSelection();
-                    });
+                    $(document).on(
+                      "change",
+                      'input[name="category_lists"]',
+                      function () {
+                        updateFilterSelection();
+                      }
+                    );
                     //Yearly Indicator
                     data.indicators.map(
                       ({
@@ -974,7 +989,7 @@ function filterData() {
                       }) => {
                         if (
                           String(for_category_id) ===
-                          String(selectedCategoryId) &&
+                            String(selectedCategoryId) &&
                           is_deleted == false
                         ) {
                           let title_amharic = "";
@@ -1234,7 +1249,7 @@ function filterData() {
                       ) {
                         return (
                           String(indicator.for_category_id) ===
-                          String(selectedCategoryId) &&
+                            String(selectedCategoryId) &&
                           indicator.is_deleted === false &&
                           indicator.title_ENG
                             .toLowerCase()
@@ -1261,7 +1276,7 @@ function filterData() {
                         "";
                       // Update the current indicator type
                       indicatorSelectedType = newType;
-                      console.log("called")
+                      console.log("called");
                       updateFilterSelection();
                     }
 
@@ -1276,7 +1291,7 @@ function filterData() {
                       ) {
                         return (
                           String(indicator.for_category_id) ===
-                          String(selectedCategoryId) &&
+                            String(selectedCategoryId) &&
                           indicator.is_deleted === false &&
                           indicator.title_ENG
                             .toLowerCase()
@@ -1350,7 +1365,7 @@ function filterData() {
                           }
                         );
                       });
-                      updateFilterSelection()
+                      updateFilterSelection();
                     }
 
                     // Function to sort indicators A-Z
@@ -1359,7 +1374,7 @@ function filterData() {
                         .filter(
                           (indicator) =>
                             String(indicator.for_category_id) ===
-                            String(selectedCategoryId) &&
+                              String(selectedCategoryId) &&
                             indicator.is_deleted === false
                         )
                         .sort((a, b) => a.title_ENG.localeCompare(b.title_ENG));
@@ -1403,7 +1418,7 @@ function filterData() {
                         .filter(
                           (indicator) =>
                             String(indicator.for_category_id) ===
-                            String(selectedCategoryId) &&
+                              String(selectedCategoryId) &&
                             indicator.is_deleted === false
                         )
                         .sort((a, b) => b.title_ENG.localeCompare(a.title_ENG));
@@ -1571,7 +1586,6 @@ function filterData() {
                         ' <p class="text-danger">Please Select Indicator</p>';
                     }
 
-
                     //Fetch Values
                     async function fetchDataAndUpdate() {
                       try {
@@ -1579,10 +1593,9 @@ function filterData() {
                         let value = await values(selectedCategoryId);
                         data.value = value;
                         isDataFetching = false;
-                        console.log("finished")
+                        console.log("finished");
 
-                        updateFilterSelection()
-
+                        updateFilterSelection();
                       } catch (error) {
                         console.error("Error:", error);
                       }
@@ -1597,8 +1610,7 @@ function filterData() {
                       $("#dataDisplay").show();
                       // Show table
                       $("#table-container").show();
-                      let table_card =
-                        document.getElementById("table_card");
+                      let table_card = document.getElementById("table_card");
                       table_card.style.display = "block";
                       let list_table =
                         document.getElementById("list_table_view");
@@ -1606,7 +1618,7 @@ function filterData() {
 
                       // Reverse the yearTableList array if reversYear is true
                       if (reversYear) {
-                        console.log("year reversed")
+                        console.log("year reversed");
                         yearTableList = yearTableList.reverse();
                         reversYear = false;
                       }
@@ -1616,34 +1628,29 @@ function filterData() {
                       $("#map").hide();
                       $("#display_chart").hide();
 
-                      $("#displayOptions a:nth-child(1)").addClass(
-                        "active"
-                      );
-                      $("#displayOptions a:nth-child(2)").removeClass(
-                        "active"
-                      );
+                      $("#displayOptions a:nth-child(1)").addClass("active");
+                      $("#displayOptions a:nth-child(2)").removeClass("active");
 
                       table = "";
 
                       let dataListViewTable =
                         document.getElementById("list_table_view");
-
                       //Type Year Table
                       let typeYearTable = () => {
                         table += `
-                                                          <table id="newTable" class="table  m-0 p-0">
-                                                          <thead>
-                                                            <tr>
-                                                              <th class="ps-5 pe-5">Name</th>`;
+                                                        <table id="newTable" class="table  m-0 p-0">
+                                                        <thead>
+                                                          <tr>
+                                                            <th class="ps-5 pe-5">Name</th>`;
 
                         for (let i of yearTableList) {
-                          table += `<th style="font-size: small; class="white-space: nowrap;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+                          table += `<th class="border bg-white " style="font-size: small; class="white-space: nowrap;  ">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
                         }
 
                         table += `</tr>
-                                                                    </thead>
-                                                                <tbody>
-                                                          `;
+                                                                  </thead>
+                                                              <tbody>
+                                                        `;
 
                         //let indicatorList = data.indicators.filter((item)=>String(item.for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(item.id)) && item.is_deleted == false)
                         data.indicators.map(
@@ -1657,7 +1664,7 @@ function filterData() {
                           }) => {
                             if (
                               String(for_category_id) ===
-                              String(selectedCategoryId) &&
+                                String(selectedCategoryId) &&
                               selectedIndictorId.includes(String(id)) &&
                               is_deleted == false
                             ) {
@@ -1676,25 +1683,24 @@ function filterData() {
 
                               //Table Row Start
                               table += `
-                                                            <tr>
-                                                              <td  style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                  <div class="row">
-                                                                    <div class="col-10">
-                                                                      <p style="font-size: small;" white-space: nowrap; class="d-block fw-bold text-dark">${title_ENG} ${title_amharic} <span class="measurement-text" style="color: red;">${measure}</span></p>
-                                                                    </div>
+                                                          <tr>
+                                                            <td class="border" style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                <div class="row">
+                                                                  <div class="col-10">
+                                                                    <p style="font-size: small;" white-space: nowrap; class="d-block fw-bold text-dark">${title_ENG} ${title_amharic} <span class="measurement-text" style="color: red;">${measure}</span></p>
                                                                   </div>
-                                                              </td>`;
+                                                                </div>
+                                                            </td>`;
 
                               for (j of yearTableList) {
                                 let statusData = false;
                                 for (k of data.value) {
                                   if (
                                     String(j[0]) ===
-                                    String(k.for_datapoint_id) &&
-                                    String(id) ===
-                                    String(k.for_indicator_id)
+                                      String(k.for_datapoint_id) &&
+                                    String(id) === String(k.for_indicator_id)
                                   ) {
-                                    table += `<td>${k.value}</td>`;
+                                    table += `<td class="border bg-white" >${k.value}</td>`;
                                     statusData = false;
                                     break;
                                   } else {
@@ -1702,7 +1708,7 @@ function filterData() {
                                   }
                                 }
                                 if (statusData) {
-                                  table += `<td> - </td>`;
+                                  table += `<td class="border bg-white " > - </td>`;
                                 }
                               }
 
@@ -1720,32 +1726,31 @@ function filterData() {
 
                                 for (i of data.indicators) {
                                   if (
-                                    String(i.parent_id) ===
-                                    String(parent) &&
+                                    String(i.parent_id) === String(parent) &&
                                     i.is_deleted == false
                                   ) {
                                     status = true;
                                     //Table Row Start
                                     table += `
-                                                            <tr>
-                                                              <td style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                <a>
-                                                                  <h6 class="mb-1">
-                                                                    <p style="font-size: small;" class="d-block white-space: nowrap; text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </p>
-                                                                  </h6>
-                                                                </a>
-                                                              </td>`;
+                                                          <tr>
+                                                            <td class="border bg-white " style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                              <a>
+                                                                <h6 class="mb-1">
+                                                                  <p style="font-size: small;" class="d-block white-space: nowrap; text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </p>
+                                                                </h6>
+                                                              </a>
+                                                            </td>`;
 
                                     for (j of yearTableList) {
                                       let statusData = false;
                                       for (k of data.value) {
                                         if (
                                           String(j[0]) ===
-                                          String(k.for_datapoint_id) &&
+                                            String(k.for_datapoint_id) &&
                                           String(i.id) ===
-                                          String(k.for_indicator_id)
+                                            String(k.for_indicator_id)
                                         ) {
-                                          table += `<td>${k.value}</td>`;
+                                          table += `<td class="border bg-white ">${k.value}</td>`;
                                           statusData = false;
                                           break;
                                         } else {
@@ -1753,7 +1758,7 @@ function filterData() {
                                         }
                                       }
                                       if (statusData) {
-                                        table += `<td> - </td>`;
+                                        table += `<td class="border bg-white " > - </td>`;
                                       }
                                     }
 
@@ -1773,8 +1778,7 @@ function filterData() {
                               //Child Lists
                               for (let indicator of data.indicators) {
                                 if (
-                                  String(indicator.parent_id) ==
-                                  String(id) &&
+                                  String(indicator.parent_id) == String(id) &&
                                   indicator.is_deleted == false
                                 ) {
                                   test = true;
@@ -1782,25 +1786,25 @@ function filterData() {
 
                                   //Table Row Start
                                   table += `
-                                                          <tr>
-                                                            <td style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                              <a>
-                                                                <h6 class="mb-1">
-                                                                  <p style="font-size: small;" class="d-block white-space: nowrap; text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </p>
-                                                                </h6>
-                                                              </a>
-                                                            </td>`;
+                                                        <tr>
+                                                          <td class="border bg-white " style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            <a>
+                                                              <h6 class="mb-1">
+                                                                <p style="font-size: small;" class="d-block white-space: nowrap; text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </p>
+                                                              </h6>
+                                                            </a>
+                                                          </td>`;
 
                                   for (j of yearTableList) {
                                     let statusData = false;
                                     for (k of data.value) {
                                       if (
                                         String(j[0]) ===
-                                        String(k.for_datapoint_id) &&
+                                          String(k.for_datapoint_id) &&
                                         String(indicator.id) ===
-                                        String(k.for_indicator_id)
+                                          String(k.for_indicator_id)
                                       ) {
-                                        table += `<td>${k.value}</td>`;
+                                        table += `<td class="border bg-white ">${k.value}</td>`;
                                         statusData = false;
                                         break;
                                       } else {
@@ -1808,7 +1812,7 @@ function filterData() {
                                       }
                                     }
                                     if (statusData) {
-                                      table += `<td> - </td>`;
+                                      table += `<td class="border bg-white "> - </td>`;
                                     }
                                   }
 
@@ -1832,13 +1836,13 @@ function filterData() {
                         );
 
                         table += `</tbody>
-                                                        </table>`;
+                                                      </table>`;
 
                         $(document).ready(function () {
                           $("#newTable").DataTable({
-                            columnDefs: [{ width: 900, targets: 0 }],
                             retrieve: true,
                             ordering: false,
+                            scrollX: true,
                             responsive: true,
                             paging: true,
                             searching: true,
@@ -1847,29 +1851,25 @@ function filterData() {
                               [10, 25, 50, -1],
                               ["10 rows", "25 rows", "50 rows", "Show all"],
                             ],
+                            columnDefs: [
+                              { width: "100%" },
+                              { width: "200px", targets: 0 },
+                            ],
+                            dom: "Bfrtip",
                             buttons: [
                               "pageLength",
-                              "copy",
-                              {
-                                extend: "excelHtml5",
-                                text: "Save as Excel",
-                                customize: function (xlsx) {
-                                  var sheet =
-                                    xlsx.xl.worksheets["sheet1.xml"];
-                                  $("row:nth-child(2) c", sheet).attr(
-                                    "s",
-                                    "54"
-                                  );
-                                },
-                              },
-                              ,
+                              "excel",
+                              "csv",
+                              "pdf",
                               "print",
                             ],
                             drawCallback: function (settings) {
                               // Add color to columns (excluding first column) after each draw
-                              $("#newTable tbody tr td:not(:first-child)").css("background-color", "#f2f2f2");
+                              $("#newTable tbody tr td:not(:first-child)").css(
+                                "background-color",
+                                "#f2f2f2"
+                              );
                             },
-                            dom: "Bfrtip",
                           });
                         });
                       };
@@ -1877,41 +1877,39 @@ function filterData() {
                       //Type Month table
                       let typeMonthTable = () => {
                         table += `
-                                                    <style>
-                                                    table.dataTable th {
-                                                      writing-mode: vertical-lr !important;
-                                                      vertical-align: middle !important;
-                                                      transform: rotate(180deg) !important;
-                                                  }
-                                                  </style>
-                                                    <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%;">
-                                                    <thead>
-                                                      <tr class="text-center">
-                                                      <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
-                                                      <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Month</th>`;
+                                                  <style>
+                                                  table.dataTable th {
+                                                    writing-mode: vertical-lr !important;
+                                                    vertical-align: middle !important;
+                                                    transform: rotate(180deg) !important;
+                                                }
+                                                </style>
+                                                  <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%;">
+                                                  <thead>
+                                                    <tr class="text-center">
+                                                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Year</th>
+                                                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class=" border">Month</th>`;
 
                         let filterIndicators = data.indicators.filter(
                           (item) =>
                             String(item.for_category_id) ===
-                            String(selectedCategoryId) &&
+                              String(selectedCategoryId) &&
                             selectedIndictorId.includes(String(item.id)) &&
                             item.is_deleted == false
                         );
                         for (filterIndicator of filterIndicators) {
                           let title_amharic = "";
                           if (!filterIndicator.title_AMH === null)
-                            title_amharic =
-                              " - " + filterIndicator.title_AMH;
+                            title_amharic = " - " + filterIndicator.title_AMH;
 
                           let measure = "";
                           if (filterIndicator.Amount_ENG !== null) {
-                            measure =
-                              "(" + filterIndicator.Amount_ENG + ")";
+                            measure = "(" + filterIndicator.Amount_ENG + ")";
                           }
 
                           table += ` <th class="vertical-text border" ">
-                                                          <p " class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
-                                                          </th>`;
+                                                        <p " class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
+                                                        </th>`;
 
                           let childIndicatorList = (parent, space) => {
                             space += String("&nbsp;&nbsp;&nbsp;&nbsp");
@@ -1920,18 +1918,15 @@ function filterData() {
                             for (let indicator of data.indicators) {
                               if (
                                 String(indicator.parent_id) ===
-                                String(parent) &&
+                                  String(parent) &&
                                 indicator.is_deleted == false
                               ) {
                                 test = true;
                                 table += `
-                                                                <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
-                                                                `;
+                                                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                                                              `;
 
-                                childIndicatorList(
-                                  indicator.id,
-                                  String(space)
-                                );
+                                childIndicatorList(indicator.id, String(space));
                               }
                             }
                           };
@@ -1939,13 +1934,13 @@ function filterData() {
                           for (let indicator of data.indicators) {
                             if (
                               String(indicator.parent_id) ==
-                              String(filterIndicator.id) &&
+                                String(filterIndicator.id) &&
                               indicator.is_deleted == false
                             ) {
                               test = true;
                               table += `
-                                                              <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                                                              `;
+                                                            <th class="vertical-text fw-normal border">&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                                                            `;
 
                               childIndicatorList(indicator.id, " ");
                             }
@@ -1953,7 +1948,7 @@ function filterData() {
                         }
 
                         table += `</tr>
-                                                    </thead>`;
+                                                  </thead>`;
 
                         table += `<tbody>`;
 
@@ -1964,63 +1959,58 @@ function filterData() {
                           //month loop
                           for (let month of data.month) {
                             table += `
-                                                        <tr class="text-center">`;
+                                                      <tr class="text-center">`;
 
                             if (!checkYearPrint) {
-                              table += `<td class="border-bottom-0 fw-bold" "">${year[1]} E.C - ${year[2]} G.C</td>`;
+                              table += `<td class="border fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
                             } else {
-                              table += `<td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
+                              table += `<td class="border"></td>`;
                             }
 
                             table += `                     
-                                                        <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
+                                                      <td class="fw-bold border" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
                             //Filter parent indicators
                             let indicatorsObject = data.indicators.filter(
                               (item) =>
                                 String(item.for_category_id) ===
-                                String(selectedCategoryId) &&
-                                selectedIndictorId.includes(
-                                  String(item.id)
-                                ) &&
+                                  String(selectedCategoryId) &&
+                                selectedIndictorId.includes(String(item.id)) &&
                                 item.is_deleted == false
                             );
 
                             for (let indicatorObj of indicatorsObject) {
-                              let currentDataValue = data.value.find(
-                                (item) => {
-                                  if (
-                                    String(item.for_month_id) ===
+                              let currentDataValue = data.value.find((item) => {
+                                if (
+                                  String(item.for_month_id) ===
                                     String(month.id) &&
-                                    String(item.for_indicator_id) ===
+                                  String(item.for_indicator_id) ===
                                     String(indicatorObj.id) &&
-                                    String(item.for_datapoint_id) ===
+                                  String(item.for_datapoint_id) ===
                                     String(year[0])
-                                  ) {
-                                    return item;
-                                  }
+                                ) {
+                                  return item;
                                 }
-                              );
+                              });
 
                               //Print Main Indicator Value
-                              table += `<td class="fw-bold";> ${currentDataValue
-                                ? currentDataValue.value
-                                : " - "
-                                } </td>`;
+                              table += `<td class="border bg-white fw-bold";> ${
+                                currentDataValue
+                                  ? currentDataValue.value
+                                  : " - "
+                              } </td>`;
 
                               //Filter Only Child Indicator
                               let childIndicators = data.indicators.filter(
                                 (item) =>
                                   String(item.parent_id) ==
-                                  String(indicatorObj.id) &&
-                                  !item.is_deleted
+                                    String(indicatorObj.id) && !item.is_deleted
                               );
 
                               let childIndicatorDataValue = (parent) => {
                                 let filterChild = data.indicators.filter(
                                   (item) =>
-                                    String(item.parent_id) ==
-                                    String(parent) &&
+                                    String(item.parent_id) == String(parent) &&
                                     item.is_deleted == false
                                 );
                                 if (filterChild) {
@@ -2028,24 +2018,22 @@ function filterData() {
                                     valueData = data.value.find((value) => {
                                       if (
                                         String(value.for_month_id) ===
-                                        String(month.id) &&
+                                          String(month.id) &&
                                         String(value.for_indicator_id) ===
-                                        String(indicatorList.id) &&
+                                          String(indicatorList.id) &&
                                         String(value.for_datapoint_id) ===
-                                        String(year[0])
+                                          String(year[0])
                                       ) {
                                         return value;
                                       }
                                     });
 
                                     if (valueData) {
-                                      table += `<td> ${valueData.value} </td>`;
+                                      table += `<td class="bg-white border" > ${valueData.value} </td>`;
                                     } else {
-                                      table += `<td> - </td>`;
+                                      table += `<td class="bg-white border"> - </td>`;
                                     }
-                                    childIndicatorDataValue(
-                                      indicatorList.id
-                                    );
+                                    childIndicatorDataValue(indicatorList.id);
                                   }
                                 }
                               };
@@ -2054,20 +2042,20 @@ function filterData() {
                                 valueData = data.value.find((value) => {
                                   if (
                                     String(value.for_month_id) ===
-                                    String(month.id) &&
+                                      String(month.id) &&
                                     String(value.for_indicator_id) ===
-                                    String(childIndicator.id) &&
+                                      String(childIndicator.id) &&
                                     String(value.for_datapoint_id) ===
-                                    String(year[0])
+                                      String(year[0])
                                   ) {
                                     return value;
                                   }
                                 });
 
                                 if (valueData) {
-                                  table += `<td> ${valueData.value} </td>`;
+                                  table += `<td class="bg-white border"> ${valueData.value} </td>`;
                                 } else {
-                                  table += `<td> - </td>`;
+                                  table += `<td class="bg-white border"> - </td>`;
                                 }
 
                                 //Call Child
@@ -2075,7 +2063,7 @@ function filterData() {
                               }
                             }
                             table += `
-                                                      </tr>`;
+                                                    </tr>`;
 
                             checkYearPrint = true;
                           }
@@ -2093,12 +2081,7 @@ function filterData() {
                             orderNumber: true,
                             lengthMenu: [
                               [36, 72, 108, -1],
-                              [
-                                "36 rows",
-                                "72 rows",
-                                "108 rows",
-                                "Show all",
-                              ],
+                              ["36 rows", "72 rows", "108 rows", "Show all"],
                             ],
                             buttons: [
                               "pageLength",
@@ -2107,8 +2090,7 @@ function filterData() {
                                 extend: "excelHtml5",
                                 text: "Save as Excel",
                                 customize: function (xlsx) {
-                                  var sheet =
-                                    xlsx.xl.worksheets["sheet1.xml"];
+                                  var sheet = xlsx.xl.worksheets["sheet1.xml"];
                                   $("row:nth-child(2) c", sheet).attr(
                                     "s",
                                     "54"
@@ -2132,41 +2114,39 @@ function filterData() {
                       //Type Quarter table
                       let typeQuarterTable = () => {
                         table += `
-                                                        <style>
-                                                        table.dataTable th {
-                                                          writing-mode: vertical-lr !important;
-                                                          vertical-align: middle !important;
-                                                          transform: rotate(180deg) !important;
-                                                      }
-                                                    </style>
-                                                    <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%">
-                                                    <thead>
-                                                      <tr class="text-center">
-                                                      <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
-                                                      <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
+                                                      <style>
+                                                      table.dataTable th {
+                                                        writing-mode: vertical-lr !important;
+                                                        vertical-align: middle !important;
+                                                        transform: rotate(180deg) !important;
+                                                    }
+                                                  </style>
+                                                  <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%">
+                                                  <thead>
+                                                    <tr class="text-center">
+                                                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
+                                                    <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
 
                         let filterIndicators = data.indicators.filter(
                           (item) =>
                             String(item.for_category_id) ===
-                            String(selectedCategoryId) &&
+                              String(selectedCategoryId) &&
                             selectedIndictorId.includes(String(item.id)) &&
                             item.is_deleted == false
                         );
                         for (filterIndicator of filterIndicators) {
                           let title_amharic = "";
                           if (!filterIndicator.title_AMH === null)
-                            title_amharic =
-                              " - " + filterIndicator.title_AMH;
+                            title_amharic = " - " + filterIndicator.title_AMH;
 
                           let measure = "";
                           if (filterIndicator.Amount_ENG !== null) {
-                            measure =
-                              "(" + filterIndicator.Amount_ENG + ")";
+                            measure = "(" + filterIndicator.Amount_ENG + ")";
                           }
 
                           table += ` <th class="vertical-text  border" ">
-                                                          <p" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
-                                                          </th>`;
+                                                        <p" class="fw-bold text-dark p-0 m-0">${filterIndicator.title_ENG} ${title_amharic}  <span class="measurement-text" style="color: red;">${measure}</span></p>
+                                                        </th>`;
 
                           let childIndicatorList = (parent, space) => {
                             space += String("&nbsp;&nbsp;&nbsp;&nbsp");
@@ -2175,18 +2155,15 @@ function filterData() {
                             for (let indicator of data.indicators) {
                               if (
                                 String(indicator.parent_id) ===
-                                String(parent) &&
+                                  String(parent) &&
                                 indicator.is_deleted == false
                               ) {
                                 test = true;
                                 table += `
-                                                                <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
-                                                                `;
+                                                              <th class="vertical-text fw-normal border" >${space} ${indicator.title_ENG} </th>
+                                                              `;
 
-                                childIndicatorList(
-                                  indicator.id,
-                                  String(space)
-                                );
+                                childIndicatorList(indicator.id, String(space));
                               }
                             }
                           };
@@ -2194,13 +2171,13 @@ function filterData() {
                           for (let indicator of data.indicators) {
                             if (
                               String(indicator.parent_id) ==
-                              String(filterIndicator.id) &&
+                                String(filterIndicator.id) &&
                               indicator.is_deleted == false
                             ) {
                               test = true;
                               table += `
-                                                              <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
-                                                              `;
+                                                            <th class="vertical-text fw-normal border" >&nbsp;&nbsp;  ${indicator.title_ENG} </th>
+                                                            `;
 
                               childIndicatorList(indicator.id, " ");
                             }
@@ -2208,7 +2185,7 @@ function filterData() {
                         }
 
                         table += `</tr>
-                                                    </thead>`;
+                                                  </thead>`;
 
                         table += `<tbody>`;
 
@@ -2219,49 +2196,46 @@ function filterData() {
                           //month loop
                           for (let quarter of data.quarter) {
                             table += `
-                                                        <tr class="text-center">`;
+                                                      <tr class="text-center">`;
 
                             if (!checkYearPrint) {
-                              table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                              table += `<td style="width: 28%;"  class=" fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
                             } else {
-                              table += ` <td class="border-0"></td>`;
+                              table += ` <td class="border"></td>`;
                             }
 
                             table += `                     
-                                                        <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
+                                                      <td class="fw-bold" style="width: 22%;" >${quarter.title_ENG}: ${quarter.title_AMH}</td>`;
 
                             //Filter parent indicators
                             let indicatorsObject = data.indicators.filter(
                               (item) =>
                                 String(item.for_category_id) ===
-                                String(selectedCategoryId) &&
-                                selectedIndictorId.includes(
-                                  String(item.id)
-                                ) &&
+                                  String(selectedCategoryId) &&
+                                selectedIndictorId.includes(String(item.id)) &&
                                 item.is_deleted == false
                             );
 
                             for (let indicatorObj of indicatorsObject) {
-                              let currentDataValue = data.value.find(
-                                (item) => {
-                                  if (
-                                    String(item.for_quarter_id) ===
+                              let currentDataValue = data.value.find((item) => {
+                                if (
+                                  String(item.for_quarter_id) ===
                                     String(quarter.id) &&
-                                    String(item.for_indicator_id) ===
+                                  String(item.for_indicator_id) ===
                                     String(indicatorObj.id) &&
-                                    String(item.for_datapoint_id) ===
+                                  String(item.for_datapoint_id) ===
                                     String(year[0])
-                                  ) {
-                                    return item;
-                                  }
+                                ) {
+                                  return item;
                                 }
-                              );
+                              });
 
                               //Print Main Indicator Value
-                              table += `<td class="fw-bold"  style="width: 10%";> ${currentDataValue
-                                ? currentDataValue.value
-                                : " - "
-                                } </td>`;
+                              table += `<td class="fw-bold"  style="width: 10%";> ${
+                                currentDataValue
+                                  ? currentDataValue.value
+                                  : " - "
+                              } </td>`;
 
                               //Filter Only Child Indicator
                               let childIndicators = data.indicators.filter(
@@ -2273,8 +2247,7 @@ function filterData() {
                               let childIndicatorDataValue = (parent) => {
                                 let filterChild = data.indicators.filter(
                                   (item) =>
-                                    String(item.parent_id) ==
-                                    String(parent) &&
+                                    String(item.parent_id) == String(parent) &&
                                     item.is_deleted == false
                                 );
                                 if (filterChild) {
@@ -2282,11 +2255,11 @@ function filterData() {
                                     valueData = data.value.find((value) => {
                                       if (
                                         String(value.for_month_id) ===
-                                        String(month.id) &&
+                                          String(month.id) &&
                                         String(value.for_indicator_id) ===
-                                        String(indicatorList.id) &&
+                                          String(indicatorList.id) &&
                                         String(value.for_datapoint_id) ===
-                                        String(year[0])
+                                          String(year[0])
                                       ) {
                                         return value;
                                       }
@@ -2297,9 +2270,7 @@ function filterData() {
                                     } else {
                                       table += `<td> - </td>`;
                                     }
-                                    childIndicatorDataValue(
-                                      indicatorList.id
-                                    );
+                                    childIndicatorDataValue(indicatorList.id);
                                   }
                                 }
                               };
@@ -2308,11 +2279,11 @@ function filterData() {
                                 valueData = data.value.find((value) => {
                                   if (
                                     String(value.for_quarter_id) ===
-                                    String(quarter.id) &&
+                                      String(quarter.id) &&
                                     String(value.for_indicator_id) ===
-                                    String(childIndicator.id) &&
+                                      String(childIndicator.id) &&
                                     String(value.for_datapoint_id) ===
-                                    String(year[0])
+                                      String(year[0])
                                   ) {
                                     return value;
                                   }
@@ -2329,7 +2300,7 @@ function filterData() {
                               }
                             }
                             table += `
-                                                      </tr>`;
+                                                    </tr>`;
 
                             checkYearPrint = true;
                           }
@@ -2346,12 +2317,7 @@ function filterData() {
                             orderNumber: true,
                             lengthMenu: [
                               [24, 50, 100, -1],
-                              [
-                                "24 rows",
-                                "50 rows",
-                                "100 rows",
-                                "Show all",
-                              ],
+                              ["24 rows", "50 rows", "100 rows", "Show all"],
                             ],
                             buttons: [
                               "pageLength",
@@ -2360,8 +2326,7 @@ function filterData() {
                                 extend: "excelHtml5",
                                 text: "Save as Excel",
                                 customize: function (xlsx) {
-                                  var sheet =
-                                    xlsx.xl.worksheets["sheet1.xml"];
+                                  var sheet = xlsx.xl.worksheets["sheet1.xml"];
                                   $("row:nth-child(2) c", sheet).attr(
                                     "s",
                                     "54"
@@ -2384,13 +2349,9 @@ function filterData() {
 
                       if (String(indicatorSelectedType) == "yearly") {
                         typeYearTable();
-                      } else if (
-                        String(indicatorSelectedType) == "monthly"
-                      ) {
+                      } else if (String(indicatorSelectedType) == "monthly") {
                         typeMonthTable();
-                      } else if (
-                        String(indicatorSelectedType) == "quarterly"
-                      ) {
+                      } else if (String(indicatorSelectedType) == "quarterly") {
                         typeQuarterTable();
                       }
 
@@ -2517,8 +2478,8 @@ function filterData() {
                               // datasetDropdown.style.display = 'none'
                               incicator_drop3.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn" ||
-                                  this.id === "line_btn"
+                                this.id === "series_btn" ||
+                                this.id === "line_btn"
                                   ? "none"
                                   : "none";
                               // datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
@@ -2543,7 +2504,7 @@ function filterData() {
                               ({ id, for_category_id, is_deleted }) => {
                                 return (
                                   String(for_category_id) ===
-                                  String(selectedCategoryId) &&
+                                    String(selectedCategoryId) &&
                                   selectedIndictorId.includes(String(id)) &&
                                   !is_deleted
                                 );
@@ -2561,7 +2522,7 @@ function filterData() {
                                 for (let k of data.value) {
                                   if (
                                     String(j[0]) ===
-                                    String(k.for_datapoint_id) &&
+                                      String(k.for_datapoint_id) &&
                                     String(id) === String(k.for_indicator_id)
                                   ) {
                                     indicatorData.data.push({
@@ -2676,7 +2637,7 @@ function filterData() {
                               input.max = maxYear;
 
                               const btn =
-                                document.getElementById("play-pause-button"),
+                                  document.getElementById("play-pause-button"),
                                 startYear = minYear,
                                 endYear = maxYear;
 
@@ -2751,8 +2712,8 @@ function filterData() {
                                     categories:
                                       alldata[0] && alldata[0].data
                                         ? alldata[0].data.map(
-                                          (point) => point.x
-                                        )
+                                            (point) => point.x
+                                          )
                                         : [],
                                     labels: {
                                       rotation: -45,
@@ -3045,8 +3006,9 @@ function filterData() {
                                     step: 1,
                                   },
                                   accessibility: {
-                                    rangeDescription: `Range: ${chartdata[0].x
-                                      } to ${chartdata[chartdata.length - 1].x}`,
+                                    rangeDescription: `Range: ${
+                                      chartdata[0].x
+                                    } to ${chartdata[chartdata.length - 1].x}`,
                                   },
                                   pointStart: chartdata[0].x,
                                   pointInterval: 1,
@@ -3107,8 +3069,9 @@ function filterData() {
                                 },
                                 xAxis: {
                                   accessibility: {
-                                    rangeDescription: `Range: ${chartdata[0].x
-                                      } to ${chartdata[chartdata.length - 1].x}`,
+                                    rangeDescription: `Range: ${
+                                      chartdata[0].x
+                                    } to ${chartdata[chartdata.length - 1].x}`,
                                   },
                                   categories: chartdata.map((item) => item.x),
                                 },
@@ -3191,6 +3154,7 @@ function filterData() {
                             }
                           }, 2000); // Adjust the delay as needed
                         } else if (indicatorSelectedType === "monthly") {
+                          let initial2  = false
                           let area_main = document.getElementById("main_area");
                           area_main.style.display = "none";
                           let incicator_drop1 =
@@ -3255,19 +3219,19 @@ function filterData() {
                                 this.id === "line_btn" ? "none" : "none";
                               incicator_drop2.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn"
+                                this.id === "series_btn"
                                   ? "block"
                                   : "none";
                               incicator_drop1.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn" ||
-                                  this.id === "line_btn"
+                                this.id === "series_btn" ||
+                                this.id === "line_btn"
                                   ? "none"
                                   : "none";
                               incicator_drop3.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn" ||
-                                  this.id === "line_btn"
+                                this.id === "series_btn" ||
+                                this.id === "line_btn"
                                   ? "none"
                                   : "none";
                             });
@@ -3296,7 +3260,7 @@ function filterData() {
                             ({ id, for_category_id, is_deleted }) => {
                               return (
                                 String(for_category_id) ===
-                                String(selectedCategoryId) &&
+                                  String(selectedCategoryId) &&
                                 selectedIndictorId.includes(String(id)) &&
                                 !is_deleted
                               );
@@ -3329,7 +3293,7 @@ function filterData() {
                              * Create the chart when all data is loaded
                              * @return {undefined}
                              */
-                            async function bar_chart(indc_name, chartdata) {
+                            async function bar_chart1(indc_name, chartdata) {
                               const datasetData1 =
                                 chartdata.find(
                                   (dataset) => dataset.name === indc_name
@@ -3372,10 +3336,11 @@ function filterData() {
                               });
                             }
 
-                            async function draw_line(
+                            async function draw_line1(
                               selectedIndicator,
                               chartData
                             ) {
+                              console.log("clalled line chart");
                               const datasetData =
                                 chartData.find(
                                   (dataset) =>
@@ -3416,7 +3381,7 @@ function filterData() {
                               });
                             }
 
-                            function createChart(series) {
+                            function createChart1(series) {
                               console.log("called");
                               Highcharts.stockChart("line-chart-canvas1", {
                                 rangeSelector: {
@@ -3458,7 +3423,8 @@ function filterData() {
                               });
                             }
 
-                            async function updateChartData() {
+                            async function updateChartData1() {
+                              console.log("calld update data");
                               // Use AJAX or fetch to get data from the server based on the selected indicator
                               try {
                                 const response = await fetch(
@@ -3496,9 +3462,10 @@ function filterData() {
                                   const selectedIndicator = $(
                                     ".indicatorDropdown1"
                                   ).val();
-                                  createChart(chartData);
-                                  bar_chart(selectedIndicator, chartData);
-                                  draw_line(selectedIndicator, chartData);
+
+                                  createChart1(chartData);
+                                  bar_chart1(selectedIndicator, chartData);
+                                  draw_line1(selectedIndicator, chartData);
                                 } else {
                                   console.error(
                                     "Invalid or missing data format in the response."
@@ -3522,10 +3489,11 @@ function filterData() {
                               }
                             }
 
-                            // Event listener for dropdown change
-                            $(".indicatorDropdown1").change(function () {
-                              updateChartData();
-                            });
+                            $(".indicatorDropdown1").off('change').on('change', function () {
+                              console.log("change from main");
+                              updateChartData1();
+                          });
+                          
 
                             // Initial load with the first indicator (assuming the first indicator is selected by default)
                             const initialIndicator = $(
@@ -3533,9 +3501,9 @@ function filterData() {
                             ).val();
 
                             // Further check and update as needed
-                            if (initialIndicator) {
-                              // console.log(initialIndicator);
-                              // updateChartData();
+                            if (initialIndicator && initial2 == false) {
+                              console.log("called intalization")
+                              initial2 = true
                               $(".indicatorDropdown1").change(); // Manually trigger change event
                             } else {
                               console.error(
@@ -3556,6 +3524,7 @@ function filterData() {
                           let incicator_drop3 =
                             document.getElementById("drop_three");
                           incicator_drop3.style.display = "block";
+                          let initial1 = false
 
                           document.getElementById(
                             "bar-chart-canvas"
@@ -3621,19 +3590,19 @@ function filterData() {
                                 this.id === "line_btn" ? "none" : "none";
                               incicator_drop3.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn"
+                                this.id === "series_btn"
                                   ? "block"
                                   : "none";
                               incicator_drop1.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn" ||
-                                  this.id === "line_btn"
+                                this.id === "series_btn" ||
+                                this.id === "line_btn"
                                   ? "none"
                                   : "none";
                               incicator_drop2.style.display =
                                 this.id === "bar_btn" ||
-                                  this.id === "series_btn" ||
-                                  this.id === "line_btn"
+                                this.id === "series_btn" ||
+                                this.id === "line_btn"
                                   ? "none"
                                   : "none";
                               // datasetDropdown1.style.display = (this.id === 'bar_btn' || this.id === 'series_btn' || this.id === 'line_btn') ? 'none' : 'none';
@@ -3649,7 +3618,7 @@ function filterData() {
                             ({ id, for_category_id, is_deleted }) => {
                               return (
                                 String(for_category_id) ===
-                                String(selectedCategoryId) &&
+                                  String(selectedCategoryId) &&
                                 selectedIndictorId.includes(String(id)) &&
                                 !is_deleted
                               );
@@ -3683,7 +3652,7 @@ function filterData() {
                              * Create the chart when all data is loaded
                              * @return {undefined}
                              */
-                            async function bar_chart(indc_name, data) {
+                            async function bar_chart2(indc_name, data) {
                               const datasetData1 =
                                 data.find(
                                   (dataset) => dataset.name === indc_name
@@ -3711,6 +3680,7 @@ function filterData() {
                                   formatter: function () {
                                     const point = this.points[0];
                                     const value = point.point.options.quarter;
+    
                                     let quarter;
 
                                     switch (value) {
@@ -3730,7 +3700,7 @@ function filterData() {
                                         quarter = "Unknown Quarter";
                                     }
 
-                                    return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.quarter}</b><br/>
+                                    return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.y}</b><br/>
                               Quarter: ${quarter}`;
                                   },
                                 },
@@ -3754,11 +3724,12 @@ function filterData() {
                               });
                             }
 
-                            async function draw_line(
+                            async function draw_line2(
                               selectedIndicator,
                               chartData,
                               selectedDataset
                             ) {
+                              console.log('clalled line')
                               const datasetData =
                                 chartData.find(
                                   (dataset) =>
@@ -3801,7 +3772,7 @@ function filterData() {
                                         quarter = "Unknown Quarter";
                                     }
 
-                                    return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.quarter}</b><br/>
+                                    return `<span style="color:${point.color}">${point.series.name}</span>: <b>${point.point.options.y}</b><br/>
                               Quarter: ${quarter}`;
                                   },
                                 },
@@ -3821,7 +3792,7 @@ function filterData() {
                             }
 
                             // Function to create the chart
-                            function createChart(series) {
+                            function createChart2(series) {
                               // // Calling to create a new dropdown menu from the dataset names on a single indicator selected
                               // createDatasetDropdown(series);
 
@@ -3877,7 +3848,7 @@ function filterData() {
                             }
 
                             // Function to fetch and update data based on the selected indicator
-                            async function updateChartData() {
+                            async function updateChartData2() {
                               try {
                                 // Use AJAX or fetch to get data from the server based on the selected indicator
                                 const response = await fetch(
@@ -3911,10 +3882,10 @@ function filterData() {
                                   const selectedIndicator = $(
                                     ".indicatorDropdown2"
                                   ).val();
-                                  bar_chart(selectedIndicator, chartData);
-                                  draw_line(selectedIndicator, chartData);
+                                  bar_chart2(selectedIndicator, chartData);
+                                  draw_line2(selectedIndicator, chartData);
                                   // Call the createChart function with the updated data
-                                  createChart(chartData);
+                                  createChart2(chartData);
                                 } else {
                                   console.error(
                                     "Invalid or missing data format in the response."
@@ -3938,18 +3909,18 @@ function filterData() {
                               }
                             }
 
-                            // Event listener for dropdown change
-                            $(".indicatorDropdown2").change(function () {
-                              updateChartData();
-                            });
-
+                            $(".indicatorDropdown2").off('change').on('change', function () {
+                              console.log("change from main");
+                              updateChartData2();
+                          });
                             // Initial load with the first indicator (assuming the first indicator is selected by default)
                             const initialIndicator = $(
                               ".indicatorDropdown2"
                             ).val();
 
                             // Further check and update as needed
-                            if (initialIndicator) {
+                            if (initialIndicator && initial1 == false) {
+                              initial1 = true
                               $(".indicatorDropdown2").change(); // Manually trigger change event
                             } else {
                               console.error(
@@ -3977,7 +3948,6 @@ function filterData() {
         }
         fetchCategoryData();
       });
-
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.error("Error fetching data: " + textStatus, errorThrown);

@@ -29,7 +29,7 @@ $(document).ready(function () {
         //Yearly
         if (String(currentIndicator.type_of) === "yearly") {
           table += `
-          <table id="newTable" class="table table-striped table-responsive m-0 p-0" style="width:100%;">
+          <table id="newTable" class="table  table-responsive m-0 p-0" style="width:100%;">
         <thead>
           <tr>
             <th  style="padding-left: 200px !important;padding-right: 200px !important;" class="ps-5 pe-5">Name</th>`;
@@ -41,7 +41,7 @@ $(document).ready(function () {
                 String(item.for_datapoint_id) == String(year.id)
             );
   
-            table += `<th style="font-size: small;" class = "text-center">${
+            table += `<th style="font-size: small;" class = "border text-center">${
               year.year_EC
             }-E.C </br>${year.year_GC}-G.C </th>`;
           }
@@ -68,7 +68,7 @@ $(document).ready(function () {
                 }
                 table += `
           <tr>
-            <td class="fw-bold">
+            <td class="border fw-bold border">
                 <div class="row">
                   <div class="col-9">
                       ${title_ENG} ${title_amharic}
@@ -86,12 +86,12 @@ $(document).ready(function () {
                     ) {
                       if (checkParentHasChild) {
                         if (value.value != null) {
-                          table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                          table += `<td class="border text-center fw-bold"> ${value.value} </td>`;
                         } else {
-                          table += `<td class="text-center fw-bold"> - </td>`;
+                          table += `<td class="border text-center fw-bold"> - </td>`;
                         }
                       } else {
-                        table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                        table += `<td class="border text-center fw-bold"> ${value.value} </td>`;
                       }
   
                       statusData = false;
@@ -102,9 +102,9 @@ $(document).ready(function () {
                   }
                   if (statusData) {
                     if (checkParentHasChild) {
-                      table += `<td class="text-center fw-bold"> - </td>`;
+                      table += `<td class="border text-center fw-bold"> - </td>`;
                     } else {
-                        table += `<td class="text-center fw-bold"> - </td>`;
+                        table += `<td class="border text-center fw-bold"> - </td>`;
                     }
                   }
                 }
@@ -131,7 +131,7 @@ $(document).ready(function () {
                       //Table Row Start
                       table += `
                                <tr>
-                                 <td class="fw-normal">   
+                                 <td class="border fw-normal">   
                                      <div class="row">
                                        <div class="col-9">
                                            &nbsp;&nbsp;&nbsp;&nbsp;  ${indicator.title_ENG}
@@ -163,7 +163,7 @@ $(document).ready(function () {
                             //Table Row Start
                             table += `
                              <tr>
-                             <td class="fw-normal">
+                             <td class="border fw-normal">
                                <div class="row">
                                  <div class="col-9">
                                    &nbsp;&nbsp;&nbsp;&nbsp; ${space} ${i.title_ENG}
@@ -181,15 +181,15 @@ $(document).ready(function () {
                                 ) {
                                   if (checkChildOfChildHasChild) {
                                     if (value.value != null) {
-                                      table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                      table += `<td class="border text-center fw-bold"> ${value.value} </td>`;
                                     } else {
-                                      table += `<td class="text-center fw-bold"> - </td>`;
+                                      table += `<td class="border text-center fw-bold"> - </td>`;
                                     }
                                   } else {
                                     if (value.value != null) {
-                                        table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                        table += `<td class="border text-center fw-bold"> ${value.value} </td>`;
                                     } else {
-                                        table += `<td class="text-center fw-bold"> - </td>`;
+                                        table += `<td class="border text-center fw-bold"> - </td>`;
                                     }
                                   }
                                   statusData = false;
@@ -200,9 +200,9 @@ $(document).ready(function () {
                               }
                               if (statusData) {
                                 if (checkChildOfChildHasChild) {
-                                  table += `<td class="text-center fw-bold"> - </td>`;
+                                  table += `<td class="border text-center fw-bold"> - </td>`;
                                 } else {
-                                   table += `<td class="text-center fw-bold"> - </td>`;
+                                   table += `<td class="border text-center fw-bold"> - </td>`;
                                 }
                               }
                             }
@@ -229,15 +229,15 @@ $(document).ready(function () {
                           ) {
                             if (checkChildHasChild) {
                               if (value.value != null) {
-                                table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                table += `<td class="border text-center fw-bold"> ${value.value} </td>`;
                               } else {
-                                table += `<td class="text-center fw-bold"> - </td>`;
+                                table += `<td class="border text-center fw-bold"> - </td>`;
                               }
                             } else {
                               if (value.value != null) {
-                                table += `<td class="text-center fw-bold"> ${value.value} </td>`;
+                                table += `<td class="border text-center fw-bold"> ${value.value} </td>`;
                               } else {
-                                table += `<td class="text-center fw-bold"> - </td>`;
+                                table += `<td class="border text-center fw-bold"> - </td>`;
                               }
                             }
                             statusData = false;
@@ -248,9 +248,9 @@ $(document).ready(function () {
                         }
                         if (statusData) {
                           if (checkChildHasChild) {
-                            table += `<td class="text-center fw-bold"> - </td>`;
+                            table += `<td class="border text-center fw-bold"> - </td>`;
                           } else {
-                            table += `<td class="text-center fw-bold"> - </td>`;
+                            table += `<td class="border text-center fw-bold"> - </td>`;
                           }
                         }
                       }
@@ -320,9 +320,9 @@ $(document).ready(function () {
                       transform: rotate(180deg) !important;
                   }
                   </style>
-          <table id="newTable" class="table table-bordered table-responsive m-0 p-0" style="width:100%;">
+          <table id="newTable" class="table table-responsive m-0 p-0" style="width:100%;">
           <thead>
-            <tr class="text-center">
+            <tr class="border text-center">
             <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Year</th>
             <th style="padding-left: 100px !important;padding-right: 100px !important;" class="vertical-text border">Month</th>`;
   
@@ -389,15 +389,15 @@ $(document).ready(function () {
             //month loop
             for (let month of data.month) {
               table += `
-              <tr class="text-center">`;
+              <tr class="border text-center">`;
   
               if (!checkYearPrint) {
-                table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${
+                table += `<td style="width: 28%;"  class="fw-bold border">${
                   year.year_EC
                 }-E.C : ${year.year_GC}-G.C
                 </td>`;
               } else {
-                table += ` <td class="border-0"><p style="display:none">${year.year_EC}-E.C : ${year.year_GC}-G.C </p></td>`;
+                table += ` <td class="border"><p> </p></td>`;
               }
   
               table += `                     
@@ -424,17 +424,17 @@ $(document).ready(function () {
                 //Print Main Indicator Value
                 if (currentDataValue) {
                   if (checkParentHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                    table += `<td  style="width: 10%"; class="border text-center fw-bold"> ${
                       currentDataValue.value ? currentDataValue.value : " - "
                     } </td>`;
                   } else {
-                    table += `<td class="p-0">${currentDataValue.value ? currentDataValue.value : " - "}</button></td>`;
+                    table += `<td class="p-0 border">${currentDataValue.value ? currentDataValue.value : " - "}</button></td>`;
                   }
                 } else {
                   if (checkParentHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                    table += `<td  style="width: 10%"; class="border text-center fw-bold">  -  </td>`;
                   } else {
-                    table += ` <td class="p-0"> - </td>`;
+                    table += ` <td class=" border p-0"> - </td>`;
                   }
                 }
   
@@ -472,17 +472,17 @@ $(document).ready(function () {
   
                       if (valueData) {
                         if (checkChildHasChild) {
-                          table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                          table += `<td  style="width: 10%"; class="border text-center fw-bold"> ${
                             valueData.value ? valueData.value : " - "
                           } </td>`;
                         } else {
-                          table += `<td class="p-0"${valueData.value ? valueData.value : " - "}</td>`;
+                          table += `<td class=" border p-0"${valueData.value ? valueData.value : " - "}</td>`;
                         }
                       } else {
                         if (checkChildHasChild) {
-                          table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                          table += `<td  style="width: 10%"; class="border text-center fw-bold">  -  </td>`;
                         } else {
-                          table += ` <td class="p-0"> - </td>`;
+                          table += ` <td class="birder p-0"> - </td>`;
                         }
                       }
                       childIndicatorDataValue(indicatorList.id);
@@ -511,17 +511,17 @@ $(document).ready(function () {
   
                   if (valueData) {
                     if (checkChildHasChild) {
-                      table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                      table += `<td  style="width: 10%"; class="border text-center fw-bold"> ${
                         valueData.value ? valueData.value : " - "
                       } </td>`;
                     } else {
-                      table += `<td class="p-0">${valueData.value ? valueData.value : " - "}</td>`;
+                      table += `<td class=" border p-0">${valueData.value ? valueData.value : " - "}</td>`;
                     }
                   } else {
                     if (checkChildHasChild) {
-                      table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                      table += `<td  style="width: 10%"; class="border text-center fw-bold">  -  </td>`;
                     } else {
-                      table += ` <td class="p-0"> - </td>`;
+                      table += ` <td class="border p-0"> - </td>`;
                     }
                   }
   
@@ -584,9 +584,9 @@ $(document).ready(function () {
                       transform: rotate(180deg) !important;
                   }
                   </style>
-          <table id="newTable" class="table table-responsive table-bordered m-0 p-0" style="width:100%;">
+          <table id="newTable" class="table ive table-bordered m-0 p-0" style="width:100%;">
           <thead>
-            <tr class="text-center">
+            <tr class="border text-center">
             <th style="padding-left: 100px !important;padding-right: 100px !important;"   class="vertical-text border">Year</th>
             <th style="padding-left: 100px !important;padding-right: 100px !important;"   class="vertical-text border">Month</th>`;
   
@@ -655,7 +655,7 @@ $(document).ready(function () {
             //month loop
             for (let quarter of data.quarter) {
               table += `
-              <tr class="text-center">`;
+              <tr class="border text-center">`;
   
               if (!checkYearPrint) {
                 table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${
@@ -690,7 +690,7 @@ $(document).ready(function () {
                 //Print Main Indicator Value
                 if (currentDataValue) {
                   if (checkParentHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                    table += `<td  style="width: 10%"; class="border text-center fw-bold"> ${
                       currentDataValue.value ? currentDataValue.value : " - "
                     } </td>`;
                   } else {
@@ -698,7 +698,7 @@ $(document).ready(function () {
                   }
                 } else {
                   if (checkParentHasChild) {
-                    table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                    table += `<td  style="width: 10%"; class="border text-center fw-bold">  -  </td>`;
                   } else {
                     table += ` <td class="p-0"> - </button></td>`;
                   }
@@ -739,7 +739,7 @@ $(document).ready(function () {
   
                       if (valueData) {
                         if (checkChildHasChild) {
-                          table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                          table += `<td  style="width: 10%"; class="border text-center fw-bold"> ${
                             valueData.value ? valueData.value : " - "
                           } </td>`;
                         } else {
@@ -747,7 +747,7 @@ $(document).ready(function () {
                         }
                       } else {
                         if (checkChildHasChild) {
-                          table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                          table += `<td  style="width: 10%"; class="border text-center fw-bold">  -  </td>`;
                         } else {
                           table += ` <td class="p-0"> - </td>`;
                         }
@@ -778,7 +778,7 @@ $(document).ready(function () {
   
                   if (valueData) {
                     if (checkChildHasChild) {
-                      table += `<td  style="width: 10%"; class="text-center fw-bold"> ${
+                      table += `<td  style="width: 10%"; class="border text-center fw-bold"> ${
                         valueData.value ? valueData.value : " - "
                       } </td>`;
                     } else {
@@ -788,7 +788,7 @@ $(document).ready(function () {
                     }
                   } else {
                     if (checkChildHasChild) {
-                      table += `<td  style="width: 10%"; class="text-center fw-bold">  -  </td>`;
+                      table += `<td  style="width: 10%"; class="border text-center fw-bold">  -  </td>`;
                     } else {
                       table += ` <td class="p-0"> - </td>`;
                     }

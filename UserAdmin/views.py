@@ -1152,8 +1152,6 @@ def delete_measurement(request, pk):
 ##############################
 #          SOURCE            #
 #############################
-        
-
 @login_required(login_url='login')
 @admin_user_required
 def source(request, source_id=None):
@@ -1215,8 +1213,6 @@ def delete_source(request,pk):
 ##############################
 #         TOPIC              #
 #############################
-
-
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
