@@ -3052,7 +3052,7 @@ function filterData() {
                                 series: [
                                   {
                                     type: "area",
-                                    name: "Custom Data",
+                                    name: selectedIndicatorName,
                                     data: chartdata.map((item) => [
                                       item.x,
                                       item.y !== null ? item.y : 0,
@@ -3075,6 +3075,12 @@ function filterData() {
                                   },
                                   categories: chartdata.map((item) => item.x),
                                 },
+                                tooltip: {
+                                  formatter: function () {
+                                      return '<b>' + this.series.name + '</b><br/>' +
+                                          this.x + ': ' + this.y;
+                                  }
+                              },
                                 legend: {
                                   layout: "vertical",
                                   align: "right",
@@ -3135,8 +3141,15 @@ function filterData() {
                                     ),
                                     // Other xAxis configurations...
                                   },
+                                  tooltip: {
+                                    formatter: function () {
+                                        return '<b>' + this.series.name + '</b><br/>' +
+                                            this.x + ': ' + this.y;
+                                    }
+                                },
                                   series: [
                                     {
+                                      name: selectedIndicatorName,
                                       data: modifiedData.map((item) => item.y),
                                     },
                                   ],
