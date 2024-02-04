@@ -1648,7 +1648,7 @@ function filterData() {
                                                               <th class="ps-5 pe-5">Name</th>`;
 
                           for (let i of yearTableList) {
-                            table += `<th style="font-size: small; class="white-space: nowrap;">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
+                            table += `<th class="border bg-white " style="font-size: small; class="white-space: nowrap;  ">${i[1]}-E.C </br>${i[2]}<span>-G.C</span></th>`;
                           }
 
                           table += `</tr>
@@ -1688,7 +1688,7 @@ function filterData() {
                                 //Table Row Start
                                 table += `
                                                             <tr>
-                                                              <td  style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                              <td class="border" style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                                   <div class="row">
                                                                     <div class="col-10">
                                                                       <p style="font-size: small;" white-space: nowrap; class="d-block fw-bold text-dark">${title_ENG} ${title_amharic} <span class="measurement-text" style="color: red;">${measure}</span></p>
@@ -1705,7 +1705,7 @@ function filterData() {
                                       String(id) ===
                                       String(k.for_indicator_id)
                                     ) {
-                                      table += `<td>${k.value}</td>`;
+                                      table += `<td class="border bg-white" >${k.value}</td>`;
                                       statusData = false;
                                       break;
                                     } else {
@@ -1713,7 +1713,7 @@ function filterData() {
                                     }
                                   }
                                   if (statusData) {
-                                    table += `<td> - </td>`;
+                                    table += `<td class="border bg-white " > - </td>`;
                                   }
                                 }
 
@@ -1739,7 +1739,7 @@ function filterData() {
                                       //Table Row Start
                                       table += `
                                                             <tr>
-                                                              <td style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                              <td class="border bg-white " style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                                 <a>
                                                                   <h6 class="mb-1">
                                                                     <p style="font-size: small;" class="d-block white-space: nowrap; text-dark fw-normal ps-2 ">${space} ${i.title_ENG} </p>
@@ -1756,7 +1756,7 @@ function filterData() {
                                             String(i.id) ===
                                             String(k.for_indicator_id)
                                           ) {
-                                            table += `<td>${k.value}</td>`;
+                                            table += `<td class="border bg-white ">${k.value}</td>`;
                                             statusData = false;
                                             break;
                                           } else {
@@ -1764,7 +1764,7 @@ function filterData() {
                                           }
                                         }
                                         if (statusData) {
-                                          table += `<td> - </td>`;
+                                          table += `<td class="border bg-white " > - </td>`;
                                         }
                                       }
 
@@ -1794,7 +1794,7 @@ function filterData() {
                                     //Table Row Start
                                     table += `
                                                           <tr>
-                                                            <td style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            <td class="border bg-white " style="width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                               <a>
                                                                 <h6 class="mb-1">
                                                                   <p style="font-size: small;" class="d-block white-space: nowrap; text-dark  fw-normal"> &nbsp;&nbsp; ${indicator.title_ENG}  </p>
@@ -1811,7 +1811,7 @@ function filterData() {
                                           String(indicator.id) ===
                                           String(k.for_indicator_id)
                                         ) {
-                                          table += `<td>${k.value}</td>`;
+                                          table += `<td class="border bg-white ">${k.value}</td>`;
                                           statusData = false;
                                           break;
                                         } else {
@@ -1819,7 +1819,7 @@ function filterData() {
                                         }
                                       }
                                       if (statusData) {
-                                        table += `<td> - </td>`;
+                                        table += `<td class="border bg-white "> - </td>`;
                                       }
                                     }
 
@@ -1973,13 +1973,13 @@ function filterData() {
                                                         <tr class="text-center">`;
 
                               if (!checkYearPrint) {
-                                table += `<td class="border-bottom-0 fw-bold" "">${year[1]} E.C - ${year[2]} G.C</td>`;
+                                table += `<td class="border fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
                               } else {
-                                table += `<td class="border-0"><p style="display:none;" >${year[1]} E.C - ${year[2]} G.C</p></td>`;
+                                table += `<td class="border"></td>`;
                               }
 
                               table += `                     
-                                                        <td class="fw-bold" >${month.month_AMH}: ${month.month_ENG}</td>`;
+                                                        <td class="fw-bold border" >${month.month_AMH}: ${month.month_ENG}</td>`;
 
                               //Filter parent indicators
                               let indicatorsObject = data.indicators.filter(
@@ -2009,7 +2009,7 @@ function filterData() {
                                 );
 
                                 //Print Main Indicator Value
-                                table += `<td class="fw-bold";> ${currentDataValue
+                                table += `<td class="border bg-white fw-bold";> ${currentDataValue
                                   ? currentDataValue.value
                                   : " - "
                                   } </td>`;
@@ -2045,9 +2045,9 @@ function filterData() {
                                       });
 
                                       if (valueData) {
-                                        table += `<td> ${valueData.value} </td>`;
+                                        table += `<td class="bg-white border" > ${valueData.value} </td>`;
                                       } else {
-                                        table += `<td> - </td>`;
+                                        table += `<td class="bg-white border"> - </td>`;
                                       }
                                       childIndicatorDataValue(
                                         indicatorList.id
@@ -2071,9 +2071,9 @@ function filterData() {
                                   });
 
                                   if (valueData) {
-                                    table += `<td> ${valueData.value} </td>`;
+                                    table += `<td class="bg-white border"> ${valueData.value} </td>`;
                                   } else {
-                                    table += `<td> - </td>`;
+                                    table += `<td class="bg-white border"> - </td>`;
                                   }
 
                                   //Call Child
@@ -2228,9 +2228,9 @@ function filterData() {
                                                         <tr class="text-center">`;
 
                               if (!checkYearPrint) {
-                                table += `<td style="width: 28%;"  class="border-bottom-0 fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
+                                table += `<td style="width: 28%;"  class=" fw-bold">${year[1]} E.C - ${year[2]} G.C</td>`;
                               } else {
-                                table += ` <td class="border-0"></td>`;
+                                table += ` <td class="border"></td>`;
                               }
 
                               table += `                     
