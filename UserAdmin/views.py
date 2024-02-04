@@ -186,18 +186,14 @@ def filter_indicator(request, pk):
     year = list(DataPoint.objects.all().values())
     indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
     measurements = list(Measurement.objects.all().values())
-    if month_data is None:
         # Fetch month data from the database if not in cache
-        month_data = list(Month.objects.all().values())
-        # Cache the data for future requests
-        cache.set("month_data", month_data)
-
-    if quarter_data is None:
-        # Fetch quarter data from the database if not in cache
-        quarter_data = list(Quarter.objects.all().values())
-        # Cache the data for future requests
-        cache.set("quarter_data", quarter_data)
-
+    month_data = list(Month.objects.all().values())
+    # Cache the data for future requests
+    cache.set("month_data", month_data)
+     # Fetch quarter data from the database if not in cache
+    quarter_data = list(Quarter.objects.all().values())
+     # Cache the data for future requests
+    cache.set("quarter_data", quarter_data)
     indicators_with_children = Indicator.objects.filter(parent=single_indicator).prefetch_related("children")
 
     # Create a dictionary for each parent and child indicator
