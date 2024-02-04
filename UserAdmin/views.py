@@ -513,94 +513,62 @@ def index(request):
 @login_required(login_url='login')
 @admin_user_required
 def category(request, category_id=None):
-    catagory = Category.objects.all()
-    formFile = ImportFileForm()
-
+    categories = Category.objects.all()
+    form_file = ImportFileForm()
 
     if request.method == 'POST':
-        catagory_id_str = request.POST.get('catagory_Id', '')
-        if catagory_id_str.isdigit():
-            try:
-                category_instance = get_object_or_404(Category, id=int(catagory_id_str))
-                form = catagoryForm(request.POST, instance=category_instance)
-            except Http404 as e:
-                messages.error(request, "Invalid category ID provided.")
-                return redirect('user-admin-category')
-        else:
-            # Adding a new category, set category_id to None
-            category_instance = None
-            form = catagoryForm(request.POST)
+        category_id_str = request.POST.get('category_Id', '')
+        form = catagoryForm()
+        category_instance = None
 
-        global imported_data_global
-        if 'addcatagory' in request.POST:
+        if category_id_str.isdigit():
+            category_instance = get_object_or_404(Category, id=int(category_id_str))
+            form = catagoryForm(request.POST, instance=category_instance)
+
+        if 'addcatagory' in request.POST or 'catagory_Id' in request.POST:
+            form = catagoryForm(request.POST, instance=category_instance)
+
             if form.is_valid():
                 form.save()
-                if category_instance:
-                    messages.success(request, "Category has been successfully updated!")
-                else:
-                    messages.success(request, "Category has been successfully added!")
+                action_message = "updated" if category_instance else "added"
+                messages.success(request, f"Category has been successfully {action_message}!")
                 return redirect('user-admin-category')
             else:
                 messages.error(request, "Value exists or please try again!")
-        
+
         elif 'fileCategoryValue' in request.POST:
-            formFile = ImportFileForm(request.POST, request.FILES )
-            if formFile.is_valid():
+            form_file = ImportFileForm(request.POST, request.FILES)
+            if form_file.is_valid():
                 file = request.FILES['file']
-                success, imported_data,result = handle_uploaded_Category_file(file)
-                imported_data_global = imported_data
-                context = {
-                        'result' : result
-                        }
+                success, imported_data, result = handle_uploaded_Category_file(file)
+
+                context = {'result': result}
                 return render(request, 'user-admin/import_preview.html', context=context)
-    
             else:
                 messages.error(request, 'File not recognized')
+
         elif 'confirm_data_form' in request.POST:
-            print('Confiremed!')
-            success, message = confirm_file(imported_data_global, 'category')
+            print('Confirmed!')
+            success, message = confirm_file(request.session.get('imported_data_global', {}), 'category')
             if success:
                 messages.success(request, message)
             else:
-                messages.error(request,message)
-
-        if 'catagory_Id' in request.POST:
-            # Editing an existing source
-            catagory_instance = get_object_or_404(Category, id=request.POST['catagory_Id'])
-            form = catagoryForm(request.POST, instance=catagory_instance)
-        else:
-            # Adding a new source
-            form = catagoryForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            if 'catagory_Id' in request.POST:
-                messages.success(request, "Source has been successfully updated!")
-            else:
-                messages.success(request, "Source has been successfully added!")
-            return redirect('user-admin-category')
-        else:
-            messages.error(request, "Value exists or please try again!")
+                messages.error(request, message)
 
     else:
         if category_id:
-            try:
-                category_instance = get_object_or_404(Category, id=category_id)
-                form = catagoryForm(instance=category_instance)
-            except Http404 as e:
-                messages.error(request, "Invalid category ID provided.")
-                return redirect('user-admin-category')
+            category_instance = get_object_or_404(Category, id=category_id)
+            form = catagoryForm(instance=category_instance)
         else:
-            # Adding a new category
             form = catagoryForm()
-            formFile = ImportFileForm()
-            
+
     context = {
         'form': form,
-        'catagories': catagory,
-        'formFile' : formFile
+        'categories': categories,
+        'formFile': form_file
     }
     return render(request, 'user-admin/categories.html', context=context)
+
 
 
 @login_required(login_url='login')
@@ -1252,73 +1220,57 @@ def delete_source(request,pk):
 @login_required(login_url='login')
 @admin_user_required
 def topic(request, topic_id=None):
-    topics = Topic.objects.filter(is_deleted = False)
+    topics = Topic.objects.filter(is_deleted=False)
+    topic_instance = None
+    formFile = ImportFileForm()
 
-    # If topic_id is provided, it's an update operation
     if topic_id:
         topic_instance = get_object_or_404(Topic, pk=topic_id)
-    else:
-        # If it's not an update operation, check if the topic_Id is present in the POST data
-        topic_instance = None
-        topic_id_from_post = request.POST.get('topic_Id')
-        if topic_id_from_post:
-            topic_instance = get_object_or_404(Topic, id=topic_id_from_post)
 
-    # Initialize form with or without data
     form = TopicForm(instance=topic_instance)
-    formFile = ImportFileForm()
-    global imported_data_global 
-
+    
     if request.method == 'POST':
         if 'topic_Id' in request.POST or 'topicFormValue' in request.POST:
-            # Editing an existing source
             try:
-                 topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
-                 form = TopicForm(request.POST, instance=topic_instance)
-            except:
+                topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
+                form = TopicForm(request.POST, instance=topic_instance)
+            except Http404:
                 form = TopicForm(request.POST)
+
             if form.is_valid():
                 obj = form.save(commit=False)
-                is_new_topic = obj.pk is None
                 obj.save()
-    
-                success_message = "Topic has been successfully added!" if is_new_topic else "Topic has been successfully updated!"
-                messages.success(request, success_message)
-    
+
+                messages.success(request, "Topic has been successfully added!" if obj.pk is None else "Topic has been successfully updated!")
                 return redirect('user-admin-topic')
             else:
                 messages.error(request, "Value exists or please try again!")
-        
+
         if 'fileTopicValue' in request.POST:
-            formFile = ImportFileForm(request.POST, request.FILES )
+            formFile = ImportFileForm(request.POST, request.FILES)
             if formFile.is_valid():
                 file = request.FILES['file']
-                success, imported_data,result = handle_uploaded_Topic_file(file)
-                imported_data_global = imported_data
-                context = {
-                        'result' : result
-                        }
+                success, imported_data, result = handle_uploaded_Topic_file(file)
+                context = {'result': result}
                 return render(request, 'user-admin/import_preview.html', context=context)
-    
             else:
                 messages.error(request, 'File not recognized')
+
         elif 'confirm_data_form' in request.POST:
-            success, message = confirm_file(imported_data_global, 'topic')
+            success, message = confirm_file(request.session.get('imported_data_global', {}), 'topic')
             if success:
                 messages.success(request, message)
             else:
-                messages.error(request,message)
-    else:
-        form = TopicForm()
-        formFile = ImportFileForm(request.POST or None, request.FILES or None)
-    
+                messages.error(request, message)
+
     context = {
-        'form': form, 
+        'form': form,
         'topics': topics,
-        'topic_id': topic_id, 
-        'formFile' : formFile
-        }
+        'topic_id': topic_id,
+        'formFile': formFile
+    }
     return render(request, 'user-admin/topic.html', context=context)
+
 
 @login_required(login_url='login')
 @admin_user_required
