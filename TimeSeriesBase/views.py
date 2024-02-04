@@ -3,31 +3,15 @@ from django. contrib import messages
 from django.contrib.auth.decorators import login_required
 from UserManagement.decorators import staff_user_required
 from TimeSeriesBase.models import *
-import json
-import random
 from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from django.forms.models import model_to_dict
-import threading
-import time
+from django.db.models import F
 
 
-def background_task(name, stop_event):
-    while not stop_event.is_set():
-        print(f"Background task for {name} is running...")
-        time.sleep(10)
 
-    print(f"Background task for {name} has finished.")
 
 def index(request):
-     # Create a thread for the background task
-    stop_event = threading.Event()
-    background_thread = threading.Thread(target=background_task, args=("Example", stop_event), daemon=True)
-    # Start the background thread
-    background_thread.start()
-    stop_event.set()
-
-
     last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
     last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
 
@@ -291,7 +275,7 @@ def filter_indicator(request, pk):
     return JsonResponse(context)
 
 
-from django.db.models import F
+
 
 def month_data(request, month_id):
     category = Category.objects.get(pk=month_id)

@@ -16,8 +16,9 @@ from django.http import JsonResponse
 from django.db.models import Max
 from django.db.models import Count,Prefetch
 import random
-import json as toJSON
-import tablib
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.db.models import Prefetch
 from django.contrib.auth.models import AnonymousUser
 
 ##############################
@@ -96,9 +97,7 @@ def filter_indicator_lists(request, pk):
     return JsonResponse(returned_json, safe=False)
    
 
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from django.db.models import Prefetch
+
 
 @login_required(login_url='login')
 @admin_user_required
