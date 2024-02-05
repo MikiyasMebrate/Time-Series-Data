@@ -156,8 +156,8 @@ AUTH_USER_MODEL = 'UserManagement.CustomUser'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# LOGIN_URL = 'login/'
-# LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login/'
+LOGIN_REDIRECT_URL = 'index'
 
 
 #EMAIL
@@ -171,7 +171,6 @@ EMAIL_HOST_USER = 'mikiyasmebrate2656@gmail.com'
 EMAIL_HOST_PASSWORD = 'xtajckwklnucoblh'  # Replace with your actual Gmail password
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-
 
 
 #itdx avkv bkab armz  

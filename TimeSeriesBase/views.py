@@ -6,11 +6,12 @@ from TimeSeriesBase.models import *
 from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
 from django.forms.models import model_to_dict
+from .decorators import public_required
 from django.db.models import F
+from django.shortcuts import get_object_or_404
 
 
-
-
+@public_required
 def index(request):
     last_year =DataPoint.objects.filter().order_by('-year_EC')[1]
     last_last_year = DataPoint.objects.filter().order_by('-year_EC')[2]
@@ -63,37 +64,33 @@ def index(request):
     }
     return render(request,"index.html", context=context)
 
-
-
+@public_required
 def detail_analysis(request, pk):
     return render(request, 'detail_analysis.html')
 
-
+@public_required
 def about(request):
     return render(request,"about.html")
 
-
+@public_required
 def contact(request):
     return render(request,"contact.html")
 
 
-
-@login_required(login_url='login')
 @staff_user_required
 def profile_view(request):
     return render(request,"profile.html")
 
-
+@public_required
 def data(request):
     return render(request,"data.html")
-
 
 
 ##############################
 #          JSON             #
 #############################
 
-
+@public_required
 def json(request):
     topic = list(Topic.objects.all().values())
     year =list( DataPoint.objects.all().values())
@@ -123,12 +120,14 @@ def json(request):
     return JsonResponse(context)
 
 
+@public_required
 def filter_category_lists(request,pk):
     topic = Topic.objects.get(pk = pk)
     category_lists = list(Category.objects.filter(topic = topic).prefetch_related('topic').values())
     return JsonResponse(category_lists, safe=False)
 
 
+@public_required
 def filter_indicator_lists(request, pk):
     category = Category.objects.get(pk = pk)
     if isinstance(request.user, AnonymousUser):
@@ -145,21 +144,34 @@ def filter_indicator_lists(request, pk):
         for i in child_lists:
             if i.parent == parent:
                 child_lists = child_indicator_filter(i)
-                returned_json.extend(list(child_lists.values()))
+                returned_json.extend(list(child_lists.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))
                 child_list(i,child_lists)
 
-    returned_json.extend(list(indicators.values()))             
+    returned_json.extend(list(indicators.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))             
     for indicator in indicators:
         child_lists = child_indicator_filter(indicator)
-        returned_json.extend(list(child_lists.values())) 
+        returned_json.extend(list(child_lists.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public'))) 
         child_list(indicator, child_lists)
 
-
+    #  "id": 1033,
+    #     "title_ENG": "TOTAL OUTSTANDING(USD)",
+    #     "title_AMH": "",
+    #     "composite_key": "TOTALOUTSTANDING1033",
+    #     "op_type": "sum",
+    #     "parent_id": null,
+    #     "created_at": "2024-01-24T06:20:36.775Z",
+    #     "for_category_id": 21,
+    #     "is_deleted": false,
+    #     "measurement_id": 4,
+    #     "type_of": "yearly",
+    #     "is_public": true
+    # },
     return JsonResponse(returned_json, safe=False)
    
 
-from django.shortcuts import get_object_or_404
 
+
+@public_required
 def filter_indicator_value(request, pk):
     # Use get_object_or_404 to handle the case where the category with the specified primary key does not exist
     single_category = get_object_or_404(Category, pk=pk)
@@ -187,6 +199,8 @@ def filter_indicator_value(request, pk):
 from django.core.cache import cache
 ##INDEX SAMPLE DATA 
 #Indicator Detail Page With Child and with Values
+
+@public_required
 def filter_indicator(request, pk):
     single_indicator = Indicator.objects.get(pk = pk)
 
@@ -274,9 +288,7 @@ def filter_indicator(request, pk):
     
     return JsonResponse(context)
 
-
-
-
+@public_required
 def month_data(request, month_id):
     category = Category.objects.get(pk=month_id)
     child_indicators = Indicator.objects.filter(for_category=category)
@@ -306,9 +318,9 @@ def month_data(request, month_id):
 
     return JsonResponse(data_set, safe=False)
 
-
 from django.db.models import F
 
+@public_required
 def quarter_data(request, quarter_id):
     category = Category.objects.get(pk=quarter_id)
     child_indicators = Indicator.objects.filter(for_category=category)
@@ -343,6 +355,7 @@ def quarter_data(request, quarter_id):
 
     return JsonResponse(data_set, safe=False)
 
+@public_required
 def quarter_to_month(quarter_title):
     # Map the quarter to perspective months
     quarter_to_month = {'Q1': 1, 'Q2': 4, 'Q3': 7, 'Q4': 10}

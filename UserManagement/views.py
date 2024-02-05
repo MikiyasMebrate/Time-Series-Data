@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from TimeSeriesBase.models import *
+from UserAdmin.forms import *
 from .forms import *
 from django.shortcuts import render, redirect
 from .models import CustomUser
@@ -14,14 +15,10 @@ import string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-
-#forget passsword
 from TimeSeriesBase.forms import CustomUserSetPasswordForm
-# views.py
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, smart_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.core.mail import send_mail
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
@@ -157,14 +154,19 @@ def generate_password(length):
     return password
 
 
-#Session
+from django.shortcuts import get_object_or_404
+
 @login_required(login_url='login')
 @admin_user_required
 def users_list(request):
+    site_config = get_object_or_404(SiteConfiguration, id=1)  # Adjust the lookup based on your model logic
+
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        form1 = SiteConfigurationForm(request.POST, instance=site_config)
+
         if form.is_valid():
-            
+            # Your user creation logic here...
                  username = form.cleaned_data['username']
                  first_name = form.cleaned_data['first_name']
                  last_name = form.cleaned_data['last_name']
@@ -181,14 +183,20 @@ def users_list(request):
 
                  messages.success(request, "Your Account has been Successfully Created! You will receive email. ")                
                  return redirect('user-admin-user-list')
-            
 
-     
+
+        elif form1.is_valid():
+            form1.save()
+            messages.success(request, 'Site configuration updated successfully.')
+            return redirect('user-admin-user-list')
+
         else:
-            messages.error(request, 'Please Try Again!')
+            messages.error(request, 'Please correct the errors in the form.')
 
-    # If it's a GET request or the form is not valid, render the form and user list
-    form = CustomUserCreationForm()
+    else:
+        form = CustomUserCreationForm()
+        form1 = SiteConfigurationForm(instance=site_config)
+
     total_users_count = CustomUser.objects.count()
     active_users_count = CustomUser.objects.filter(is_active=True).count()
     inactive_users_count = total_users_count - active_users_count
@@ -196,6 +204,7 @@ def users_list(request):
 
     context = {
         'form': form,
+        'form1': form1,
         'users': users,
         'total_users_count': total_users_count,
         'active_users_count': active_users_count,
@@ -203,7 +212,7 @@ def users_list(request):
     }
 
     return render(request, 'user-admin/users_list.html', context)
-        
+
 
 
 @login_required(login_url='login')
@@ -238,22 +247,20 @@ def login_view(request):
 @login_required(login_url='login')
 @admin_user_required
 def edit_user(request, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
-
-    if request.method == 'POST':
-        form = CustomUserForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "User updated successfully!")
-            return redirect('user-admin-user-list')  # Change 'user-admin-user-list' to the appropriate URL name or path
-    else:
-        form = CustomUserForm(instance=user)
-
-    return render(request, 'user-admin/edit_user.html', {
-        'form': form,
-        'user': user,
-    })
-
+        user =  CustomUser.objects.get(id = user_id)
+        if request.method == 'POST':
+            form = CustomUserForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "User updated successfully!")
+                return redirect('user-admin-user-list')  # Change 'user-admin-user-list' to the appropriate URL name or path
+        else:
+            form = CustomUserForm(instance=user)
+    
+        return render(request, 'user-admin/edit_user.html', {
+            'form': form,
+            'user': user,
+        })
 
 @login_required(login_url='login')
 @admin_user_required
@@ -310,14 +317,17 @@ def staff_profile_updated(request):
 @login_required(login_url='login')
 @admin_user_required
 def activate_deactivate_user(request, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
-    previous_page = request.META.get('HTTP_REFERER')
-    
-    if request.method == 'POST':
-        user.is_active = not user.is_active  # Toggle the is_active status
-        user.save()
-        messages.success(request, f"User '{user.first_name} {user.last_name}' has been {'Activated ' if user.is_active else 'Deactivated'}!")
-        return HttpResponseRedirect(previous_page)
+    try:
+        user = CustomUser.objects.get(pk = user_id)
+        previous_page = request.META.get('HTTP_REFERER')
+        
+        if request.method == 'POST':
+            user.is_active = not user.is_active  # Toggle the is_active status
+            user.save()
+            messages.success(request, f"User '{user.first_name} {user.last_name}' has been {'Activated ' if user.is_active else 'Deactivated'}!")
+            return HttpResponseRedirect(previous_page)
+    except:
+        messages.error(request, "Please Try Again Later!")
 
     return render(request, 'user-admin/users_list.html', {'user': user})
 

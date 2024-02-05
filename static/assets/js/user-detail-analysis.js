@@ -4,7 +4,7 @@ let showLoading = (divID) =>{
 }
 
 let hideLoading = (divID) =>{
-  console.log(document.getElementById(`${divID}`).style.display = "none")
+ document.getElementById(`${divID}`).style.display = "none"
 }
 
 

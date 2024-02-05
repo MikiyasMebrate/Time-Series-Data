@@ -1,11 +1,22 @@
+let showLoading = (divID) =>{
+  document.getElementById(`${divID}`).style.display = 'block'
+}
+
+let hideLoading = (divID) =>{
+ document.getElementById(`${divID}`).style.display = "none"
+}
+
+
 $(document).ready(function () {
   let urlPath = window.location.pathname;
   let pathID = urlPath.replace("/user-admin/data-list-detail/", "");
   let url = `/user-admin/json-indicator/${pathID}/`;
-
+  
+  showLoading('loading_div')
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
+      hideLoading('loading_div')
       data.year = data.year.reverse()
       let parentIndicator = data.indicators.find((item) => item.parent == null);
 

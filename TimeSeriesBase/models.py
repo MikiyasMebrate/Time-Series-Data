@@ -7,6 +7,11 @@ from django.db import models
 from auditlog.registry import auditlog
 from decimal import Decimal
 
+class SiteConfiguration(models.Model):
+    is_public = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Public" if self.is_public else "Private"
 
 class Topic(models.Model):
     title_ENG = models.CharField(max_length=300, unique = True)

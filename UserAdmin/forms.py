@@ -1,6 +1,16 @@
 from django import forms
-from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue
+from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue,SiteConfiguration
 
+class SiteConfigurationForm(forms.ModelForm):
+    class Meta:
+        model = SiteConfiguration
+        fields = ['is_public']
+        widgets = {
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        initial = {
+            'is_public': False,  # Set the initial value to False
+        }
 
 data_point_type = [
     ('yearly', 'Yearly'),

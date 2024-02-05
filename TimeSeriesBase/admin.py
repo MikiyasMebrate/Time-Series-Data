@@ -5,6 +5,7 @@ from import_export.widgets import ForeignKeyWidget  # For foreignkey
 from import_export.fields import Field
 from import_export.admin import ImportExportModelAdmin #Admin 
 from . import models
+from UserAdmin.forms import SiteConfigurationForm
 from import_export.formats.base_formats import XLS
 import tablib
 
@@ -18,6 +19,10 @@ admin.site.register(models.Source)
 
 
 
+class SiteConfigurationAdmin(admin.ModelAdmin):
+    form = SiteConfigurationForm
+
+admin.site.register(models.SiteConfiguration, SiteConfigurationAdmin) 
 # Import Export 
 
 #Topic 

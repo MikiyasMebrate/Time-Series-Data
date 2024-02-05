@@ -17,8 +17,28 @@ from django.db.models import Max
 from django.db.models import Count,Prefetch
 import random
 import json as toJSON
-import tablib
 from django.contrib.auth.models import AnonymousUser
+
+def site_configuration_view(request):
+    # Fetch the first instance of SiteConfiguration from the database
+    site_config = SiteConfiguration.objects.first()
+
+    if request.method == 'POST':
+        # If the form is submitted via POST, populate it with the request data and the instance
+        form = SiteConfigurationForm(request.POST, instance=site_config)
+        if form.is_valid():
+            # If the form is valid, save the changes
+            form.save()
+            messages.success(request, 'Site configuration updated successfully.')
+            return redirect('user-admin-index')  # Redirect to the specified URL after updating the configuration
+    else:
+        # If the request method is not POST, create a form instance with the fetched site_config
+        form = SiteConfigurationForm(instance=site_config)
+
+    # Render the HTML template with the form
+    return render(request, 'user-admin/index.html', {'form': form})
+
+
 
 ##############################
 #          JSON             #
@@ -96,9 +116,6 @@ def filter_indicator_lists(request, pk):
     return JsonResponse(returned_json, safe=False)
    
 
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from django.db.models import Prefetch
 
 @login_required(login_url='login')
 @admin_user_required
@@ -257,6 +274,8 @@ def filter_indicator(request, pk):
         'quarter': quarter_data
     }
 
+    import time
+    time.sleep(5)
     return JsonResponse(context)
 
 
@@ -277,19 +296,10 @@ def json_filter_source(request):
 
     return JsonResponse({'sources': sources_data}) 
 
-#Category Page
+#Category Page -> For Edit
 @login_required(login_url='login')
 def filter_category_json(request):
-    category_data = list(Category.objects.all().values())
-    
-    for category in category_data:
-        try:
-            category_obj = Category.objects.get(id=category['id'])
-            related_topic = category_obj.topic
-            category['topic'] = {'id': related_topic.id, 'title_ENG': related_topic.title_ENG, 'title_AMH': related_topic.title_AMH} if related_topic else {}
-        except Category.DoesNotExist:
-            category['topic'] = {} 
-
+    category_data = list(Category.objects.filter().select_related('topic').values('id', 'name_ENG', 'name_AMH','topic_id','topic__title_ENG','topic__title_AMH'))
     context = {
         'categories': category_data,
     }
@@ -332,25 +342,16 @@ def json_filter_topic(request):
 @admin_user_required
 def dashboard_json(request):
     topic = list(Topic.objects.all().values())
-    category = list(Category.objects.all().values())
-    indicator = list(Indicator.objects.all().values())
-    indicator_point = list(Indicator_Point.objects.all().values())
+    category = list(Category.objects.filter().select_related('topic').values())
+    indicator = list(Indicator.objects.filter().select_related('for_category').values())
+    indicator_point = list(Indicator_Point.objects.filter().select_related('for_indicator').values())
     year =list( DataPoint.objects.all().values())
     month = list(Month.objects.all().values())
     quarter = list(Quarter.objects.all().values())
     measurement = list(Measurement.objects.all().values())
-
+    values = list(DataValue.objects.all().select_related("for_datapoint", "for_indicator").values())
     indicator_data = indicator
 
-
-        # Add Amount_ENG attribute to each indicator
-    for ind in indicator_data:
-        measurement_id = ind.get('measurement_id')
-        if measurement_id is not None:
-            matching_measurement = next((m for m in measurement if m['id'] == measurement_id), None)
-            ind['Amount_ENG'] = matching_measurement['Amount_ENG'] if matching_measurement else None
-        else:
-            ind['Amount_ENG'] = None
 
 
     context = {
@@ -361,7 +362,7 @@ def dashboard_json(request):
         'year' : year,
         'quarter' : quarter,
         'month' : month,
-        'value' : list(DataValue.objects.all().values())
+        'value' : values
 
     }
     return JsonResponse(context)
@@ -488,24 +489,25 @@ def audit_log_list(request):
 #          INDEX             #
 #############################
 
-@login_required(login_url='login')
-@admin_user_required
+from django.db.models import Count
+
 def index(request):
     auditlog_entries = LogEntry.objects.select_related('content_type', 'actor')[:6]
-    size_topic = Topic.objects.filter(is_deleted = False).count()
-    size_category = Category.objects.filter(is_deleted = False).count()
-    size_indicator = Indicator.objects.filter(is_deleted = False).count()
-    size_source = Source.objects.filter(is_deleted = False).count()
+    size_topic = Topic.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
+    size_category = Category.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
+    size_indicator = Indicator.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
+    size_source = Source.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
 
     context = {
-        'size_topic' : size_topic,
-        'size_category' : size_category,
-        'size_indicator'  : size_indicator,
-        'size_source' : size_source,
+        'size_topic': size_topic,
+        'size_category': size_category,
+        'size_indicator': size_indicator,
+        'size_source': size_source,
         'auditlog_entries': auditlog_entries
     }
 
     return render(request, 'user-admin/index.html', context)
+
  
 
    
@@ -515,28 +517,27 @@ def index(request):
 @login_required(login_url='login')
 @admin_user_required
 def category(request, category_id=None):
-    categories = Category.objects.all()
+    categories = Category.objects.filter().select_related('topic')
     form_file = ImportFileForm()
 
+    form = catagoryForm()
+
     if request.method == 'POST':
-        category_id_str = request.POST.get('category_Id', '')
-        form = catagoryForm()
-        category_instance = None
+        
+        category_id_str = request.POST.get('catagory_Id')
+        try: 
+            category_obj = Category.objects.get(pk = category_id_str)
+            form = catagoryForm(request.POST, instance = category_obj)
+            form_instance = True
+        except: 
+            category_obj = None
+            form = catagoryForm(request.POST )
+            form_instance = False
+            
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated!') if form_instance else messages.success(request, 'Successfully Added!')
 
-        if category_id_str.isdigit():
-            category_instance = get_object_or_404(Category, id=int(category_id_str))
-            form = catagoryForm(request.POST, instance=category_instance)
-
-        if 'addcatagory' in request.POST or 'catagory_Id' in request.POST:
-            form = catagoryForm(request.POST, instance=category_instance)
-
-            if form.is_valid():
-                form.save()
-                action_message = "updated" if category_instance else "added"
-                messages.success(request, f"Category has been successfully {action_message}!")
-                return redirect('user-admin-category')
-            else:
-                messages.error(request, "Value exists or please try again!")
 
         elif 'fileCategoryValue' in request.POST:
             form_file = ImportFileForm(request.POST, request.FILES)
@@ -550,19 +551,11 @@ def category(request, category_id=None):
                 messages.error(request, 'File not recognized')
 
         elif 'confirm_data_form' in request.POST:
-            print('Confirmed!')
             success, message = confirm_file(request.session.get('imported_data_global', {}), 'category')
             if success:
                 messages.success(request, message)
             else:
                 messages.error(request, message)
-
-    else:
-        if category_id:
-            category_instance = get_object_or_404(Category, id=category_id)
-            form = catagoryForm(instance=category_instance)
-        else:
-            form = catagoryForm()
 
     context = {
         'form': form,
