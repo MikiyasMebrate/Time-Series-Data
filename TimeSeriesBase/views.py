@@ -145,16 +145,28 @@ def filter_indicator_lists(request, pk):
         for i in child_lists:
             if i.parent == parent:
                 child_lists = child_indicator_filter(i)
-                returned_json.extend(list(child_lists.values()))
+                returned_json.extend(list(child_lists.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))
                 child_list(i,child_lists)
 
-    returned_json.extend(list(indicators.values()))             
+    returned_json.extend(list(indicators.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))             
     for indicator in indicators:
         child_lists = child_indicator_filter(indicator)
-        returned_json.extend(list(child_lists.values())) 
+        returned_json.extend(list(child_lists.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public'))) 
         child_list(indicator, child_lists)
 
-
+    #  "id": 1033,
+    #     "title_ENG": "TOTAL OUTSTANDING(USD)",
+    #     "title_AMH": "",
+    #     "composite_key": "TOTALOUTSTANDING1033",
+    #     "op_type": "sum",
+    #     "parent_id": null,
+    #     "created_at": "2024-01-24T06:20:36.775Z",
+    #     "for_category_id": 21,
+    #     "is_deleted": false,
+    #     "measurement_id": 4,
+    #     "type_of": "yearly",
+    #     "is_public": true
+    # },
     return JsonResponse(returned_json, safe=False)
    
 

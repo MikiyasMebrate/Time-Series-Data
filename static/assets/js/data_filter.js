@@ -1660,7 +1660,7 @@ function filterData() {
                             id,
                             for_category_id,
                             is_deleted,
-                            Amount_ENG,
+                            measurement__Amount_ENG,
                           }) => {
                             if (
                               String(for_category_id) ===
@@ -1675,10 +1675,10 @@ function filterData() {
 
                               let measure = "";
                               if (
-                                Amount_ENG !== null &&
-                                Amount_ENG !== undefined
+                                measurement__Amount_ENG !== null &&
+                                measurement__Amount_ENG !== undefined
                               ) {
-                                measure = "(" + Amount_ENG + ")";
+                                measure = "(" + measurement__Amount_ENG + ")";
                               }
 
                               //Table Row Start
@@ -1903,8 +1903,8 @@ function filterData() {
                             title_amharic = " - " + filterIndicator.title_AMH;
 
                           let measure = "";
-                          if (filterIndicator.Amount_ENG !== null) {
-                            measure = "(" + filterIndicator.Amount_ENG + ")";
+                          if (filterIndicator.measurement__Amount_ENG !== null) {
+                            measure = "(" + filterIndicator.measurement__Amount_ENG + ")";
                           }
 
                           table += ` <th class="vertical-text border" ">
@@ -2140,8 +2140,8 @@ function filterData() {
                             title_amharic = " - " + filterIndicator.title_AMH;
 
                           let measure = "";
-                          if (filterIndicator.Amount_ENG !== null) {
-                            measure = "(" + filterIndicator.Amount_ENG + ")";
+                          if (filterIndicator.measurement__Amount_ENG !== null) {
+                            measure = "(" + filterIndicator.measurement__Amount_ENG + ")";
                           }
 
                           table += ` <th class="vertical-text  border" ">

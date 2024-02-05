@@ -514,10 +514,7 @@ def category(request, category_id=None):
             category_obj = None
             form = catagoryForm(request.POST )
             form_instance = False
-
-        
-
-        category_instance = None
+            
         if form.is_valid():
             form.save()
             messages.success(request, 'Successfully Updated!') if form_instance else messages.success(request, 'Successfully Added!')
