@@ -38,7 +38,7 @@ let updateCategory = () => {
             // Populate form fields with selected category data
             nameEnglish.val(selectedCategory.name_ENG);
             nameAmharic.val(selectedCategory.name_AMH);
-            topic.val(selectedCategory.topic.id).trigger("change");  // Trigger change for Select2
+            topic.val(selectedCategory.topic_id).trigger("change");  // Trigger change for Select2
 
             // Set the category ID in a hidden field for form submission
             $("#id_catagory_id").val(categoryId);
@@ -83,7 +83,7 @@ let updateTopic = () => {
 
           // Find the selected topic in the fetched data
           let selectedTopic = data.topics.find(
-            (topic) => String(topic.id) === String(topicId)
+            (topic) => String(topic_id) === String(topicId)
           );
           console.log(selectedTopic)
 

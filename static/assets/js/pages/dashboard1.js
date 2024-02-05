@@ -379,8 +379,6 @@ $.ajax({
         }
         
       });
-      console.log(data.topic_data);
-      console.log(data.drilldown);
   },
   error: function(error) {
       console.error("Error fetching chart data:", error);
