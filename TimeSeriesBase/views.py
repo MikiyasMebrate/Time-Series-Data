@@ -196,7 +196,7 @@ def filter_indicator(request, pk):
 
 
     indicators = list(Indicator.objects.all().values())
-
+    print(indicators)
 
     year = list(DataPoint.objects.all().values())
     

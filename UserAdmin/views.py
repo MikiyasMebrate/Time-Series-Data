@@ -175,7 +175,6 @@ def filter_indicator_indicator_page(request, pk):
     return JsonResponse(context)
 
 
-
 #Indicator Detail Page With Child and with Values
 @login_required(login_url='login')
 @admin_user_required
@@ -826,9 +825,6 @@ def data_list_detail(request, pk):
 ##############################
 #          INDICATOR         #
 #############################
-      
-
-
 #Indicator 
 @login_required(login_url='login')
 @admin_user_required
@@ -1290,8 +1286,7 @@ def delete_topic(request,pk):
 
 ##############################
 #         TRASH             #
-#############################
-     
+#############################  
 @login_required(login_url='login')
 @admin_user_required
 def trash_topic(request):

@@ -1662,23 +1662,17 @@ function filterData() {
                             is_deleted,
                             Amount_ENG,
                           }) => {
-                            if (
-                              String(for_category_id) ===
-                                String(selectedCategoryId) &&
-                              selectedIndictorId.includes(String(id)) &&
-                              is_deleted == false
-                            ) {
+                            if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted == false) {
                               console.log();
                               let title_amharic = "";
                               if (!title_AMH === null)
                                 title_amharic = " - " + title_AMH;
 
                               let measure = "";
-                              if (
-                                Amount_ENG !== null &&
-                                Amount_ENG !== undefined
-                              ) {
+                              if (Amount_ENG !== null && Amount_ENG !== undefined) {
                                 measure = "(" + Amount_ENG + ")";
+                              } else{
+                                measure = ""
                               }
 
                               //Table Row Start
@@ -1835,8 +1829,7 @@ function filterData() {
                           }
                         );
 
-                        table += `</tbody>
-                                                      </table>`;
+                        table += `</tbody> </table>`;
 
                         $(document).ready(function () {
                           $("#newTable").DataTable({
@@ -1901,9 +1894,9 @@ function filterData() {
                           let title_amharic = "";
                           if (!filterIndicator.title_AMH === null)
                             title_amharic = " - " + filterIndicator.title_AMH;
-
+                           console.log(" filterIndicator",  filterIndicator)
                           let measure = "";
-                          if (filterIndicator.Amount_ENG !== null) {
+                          if (filterIndicator.measurement_id != null ) {
                             measure = "(" + filterIndicator.Amount_ENG + ")";
                           }
 
