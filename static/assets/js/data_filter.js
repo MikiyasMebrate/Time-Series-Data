@@ -73,7 +73,6 @@ let categories = (topicID) => {
 };
 
 let indicators = (catID) => {
-  console.log(catID);
   return fetch(`/user-list-view-indicator/${catID}`)
     .then((response) => {
       if (!response.ok) {
@@ -539,7 +538,6 @@ function filterData() {
           .forEach(function (button) {
             reset = false;
             button.addEventListener("click", function () {
-              console.log("called here at last_5_year");
               reversYear = true;
               resetCss();
               recentYearButtonClick = true;
@@ -572,7 +570,6 @@ function filterData() {
         // Selected Year
         yearListCheckAll.forEach((yearCheckBox) => {
           yearCheckBox.addEventListener("change", (eventYearCheckBox) => {
-            console.log("called here at yearCheckBox");
             resetCss();
 
             if (eventYearCheckBox.target.checked) {
@@ -1276,7 +1273,6 @@ function filterData() {
                         "";
                       // Update the current indicator type
                       indicatorSelectedType = newType;
-                      console.log("called");
                       updateFilterSelection();
                     }
 
@@ -1589,11 +1585,9 @@ function filterData() {
                     //Fetch Values
                     async function fetchDataAndUpdate() {
                       try {
-                        console.log("called");
                         let value = await values(selectedCategoryId);
                         data.value = value;
                         isDataFetching = false;
-                        console.log("finished");
 
                         updateFilterSelection();
                       } catch (error) {
@@ -1618,7 +1612,6 @@ function filterData() {
 
                       // Reverse the yearTableList array if reversYear is true
                       if (reversYear) {
-                        console.log("year reversed");
                         yearTableList = yearTableList.reverse();
                         reversYear = false;
                       }
@@ -1663,7 +1656,6 @@ function filterData() {
                             measurement__Amount_ENG,
                           }) => {
                             if (String(for_category_id) === String(selectedCategoryId) && selectedIndictorId.includes(String(id)) && is_deleted == false) {
-                              console.log();
                               let title_amharic = "";
                               if (!title_AMH === null)
                                 title_amharic = " - " + title_AMH;
@@ -1895,7 +1887,6 @@ function filterData() {
                           let title_amharic = "";
                           if (!filterIndicator.title_AMH === null)
                             title_amharic = " - " + filterIndicator.title_AMH;
-                           console.log(" filterIndicator",  filterIndicator)
                           let measure = "";
                           if (filterIndicator.Amount_ENG !== null) {
                             measure = "(" + filterIndicator.Amount_ENG + ")";
@@ -3347,7 +3338,6 @@ function filterData() {
                               selectedIndicator,
                               chartData
                             ) {
-                              console.log("clalled line chart");
                               const datasetData =
                                 chartData.find(
                                   (dataset) =>
@@ -3389,7 +3379,6 @@ function filterData() {
                             }
 
                             function createChart1(series) {
-                              console.log("called");
                               Highcharts.stockChart("line-chart-canvas1", {
                                 rangeSelector: {
                                   selected: 4,
@@ -3431,7 +3420,6 @@ function filterData() {
                             }
 
                             async function updateChartData1() {
-                              console.log("calld update data");
                               // Use AJAX or fetch to get data from the server based on the selected indicator
                               try {
                                 const response = await fetch(
@@ -3497,7 +3485,6 @@ function filterData() {
                             }
 
                             $(".indicatorDropdown1").off('change').on('change', function () {
-                              console.log("change from main");
                               updateChartData1();
                           });
                           
@@ -3509,7 +3496,6 @@ function filterData() {
 
                             // Further check and update as needed
                             if (initialIndicator && initial2 == false) {
-                              console.log("called intalization")
                               initial2 = true
                               $(".indicatorDropdown1").change(); // Manually trigger change event
                             } else {
@@ -3736,7 +3722,6 @@ function filterData() {
                               chartData,
                               selectedDataset
                             ) {
-                              console.log('clalled line')
                               const datasetData =
                                 chartData.find(
                                   (dataset) =>
@@ -3917,7 +3902,6 @@ function filterData() {
                             }
 
                             $(".indicatorDropdown2").off('change').on('change', function () {
-                              console.log("change from main");
                               updateChartData2();
                           });
                             // Initial load with the first indicator (assuming the first indicator is selected by default)
