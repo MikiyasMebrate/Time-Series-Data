@@ -885,8 +885,6 @@ def indicator_list(request, pk):
                 messages.success(request, 'Successfully Updated')
             else:
                 error_messages = ''
-                for field, errors in form.errors.items():
-                    print(field, errors)
                 messages.error(request, f'Please Try Again, {error_messages}')
 
         if 'formAddIndicator' in request.POST:
@@ -1110,7 +1108,6 @@ def measurement(request):
             else:
                 messages.error(request, 'File not recognized')
         elif 'confirm_data_form' in request.POST:
-            print('Confiremed!')
             success, message = confirm_file(imported_data_global, 'measuremennt')
             if success:
                 messages.success(request, message)
@@ -1312,7 +1309,6 @@ def trash_indicator(request):
 def trash_category(request):
     if request.method == 'POST':
         catagory_Id = request.POST.get('catagory_Id')
-        print(catagory_Id)
         if catagory_Id:
             category = get_object_or_404(Category, pk=catagory_Id)
             category.is_deleted = False

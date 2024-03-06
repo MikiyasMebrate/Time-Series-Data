@@ -28,7 +28,6 @@ from django.template.loader import render_to_string
 
 def send_registration_email(request,email,first_name,last_name,auto_password, stop_event):
     while not stop_event.is_set():
-        print(f"Background task for {email} is running...")
         subject, from_email, to = "Account Creation", "mikiyasmebrate2656@gmail.com", f"{email}"
         text_content = "Account Created Successfully"
         context = {
@@ -40,15 +39,10 @@ def send_registration_email(request,email,first_name,last_name,auto_password, st
         html_content = render_to_string('success-email.html',context)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
         msg.attach_alternative(html_content, "text/html")
-        if msg.send():
-            print('Successfully Sent')
-
-    print(f"Background task for {email} has finished.")
 
 def send_reset_email(request,user, reset_url,stop_event):
     while not stop_event.is_set():
         try:
-            print(f"Background task for {user.email} is running...")
             subject, from_email, to = "Reset Password", "mikiyasmebrate2656@gmail.com", f"{user.email}"
             text_content = "Account Password Rested Successfully"
             context = {
@@ -60,12 +54,8 @@ def send_reset_email(request,user, reset_url,stop_event):
             html_content = render_to_string('reset_password_email.html',context)
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
             msg.attach_alternative(html_content, "text/html")
-            if msg.send():
-                print('Successfully Sent')
         except Exception as e:
-        # Handle email sending errors
-            print(f"Error occurred while sending reset email to {user.email}: {e}")
-    print(f"Background task for {user.email} has finished.")
+            None
 
 User = get_user_model()
 
