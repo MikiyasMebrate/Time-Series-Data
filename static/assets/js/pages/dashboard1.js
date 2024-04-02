@@ -496,20 +496,21 @@ function initializeChart() {
     title: {
       floating: true,
       align: 'left',
-      x: 93,
-      y: 20,
+      x: 20, // Adjust the x position as needed
+      y: 20, // Adjust the y position as needed
       text: 'Random category indicator(s) data per year'
     },
     subtitle: {
       floating: true,
       align: 'left',
-      y: 60,
-      x: 90,
+      x: 20, // Adjust the x position as needed
+      y: 60, // Adjust the y position as needed
       text: `Year: ${currentYear}`,
       style: {
         fontSize: '40px'
       }
     },
+    
     tooltip: {
       split: true
     },

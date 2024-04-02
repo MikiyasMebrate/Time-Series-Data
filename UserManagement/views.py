@@ -146,13 +146,10 @@ def reset_password_confirm(request):
     return render(request, 'sucess.html')
 
 #forget password end
-
-
 def generate_password(length):
     characters = string.ascii_letters + string.digits 
     password = ''.join(random.choice(characters) for _ in range(length))
     return password
-
 
 from django.shortcuts import get_object_or_404
 
@@ -214,12 +211,10 @@ def users_list(request):
     return render(request, 'user-admin/users_list.html', context)
 
 
-
 @login_required(login_url='login')
 def logout_view(request):
     logout(request)
     return redirect('login')
-
 
 
 def login_view(request):
@@ -275,8 +270,6 @@ def admin_profile(request):
         form = CustomUserCreationForm()
 
     return render(request, 'user-admin/profile.html', {'form': form})
-
-
 
 
 @login_required(login_url='login')

@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.db.models import Max
 from django.db.models import Count,Prefetch
 import random
+from django.db.models import Count
 import json as toJSON
 from django.contrib.auth.models import AnonymousUser
 
@@ -102,7 +103,7 @@ def filter_indicator_lists(request, pk):
     def child_list(parent, child_lists):
         for i in child_lists:
             if i.parent.id == parent.id:
-                child_lists = child_indicator_filter(indicator)
+                child_lists = child_indicator_filter(i)
                 returned_json.extend(list(child_lists.values()))
                 child_list(i,child_lists)
 
@@ -124,24 +125,37 @@ def filter_indicator_value(request, pk):
     single_category = get_object_or_404(Category, pk=pk)
 
     # Fetch all indicators related to the category using select_related to minimize queries
-    parent_indicators = Indicator.objects.filter(for_category=single_category, parent=None).select_related("for_category")
-
-    # Prefetch child indicators to minimize additional queries inside loops
-    indicators_with_children = Indicator.objects.filter(parent__in=parent_indicators).prefetch_related("children")
-
-    # Create a dictionary for each parent and child indicator
-    indicator_list = [model_to_dict(parent_indicator) for parent_indicator in parent_indicators]
-    indicator_list += [model_to_dict(child_indicator) for child_indicator in indicators_with_children]
-
     value_new = []
 
+
+
+    l = Indicator.objects.filter(for_category=single_category, parent=None).prefetch_related("children")
+
+    all_indicator =  Indicator.objects.prefetch_related("children")
+    returned_json = []
+   
+    def child_list(child_lists):
+        for i in child_lists:
+            child = all_indicator.filter(parent = i).prefetch_related("children")
+            if child is not None:
+                returned_json.extend(list(child.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))
+                child_list(child)
+
+    returned_json.extend(list(l.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))             
+    for indicator in l:
+        child_lists =all_indicator.filter(parent = indicator).prefetch_related("children")
+        returned_json.extend(list(child_lists.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public'))) 
+        child_list(child_lists)
+
+
+
+
     # Fetch data values for each indicator in a single query
-    for indicator in indicator_list:
-        value_filter = DataValue.objects.filter(for_indicator__id=indicator['id']).select_related("for_datapoint", "for_indicator").values()
+    for indicator in returned_json:
+        value_filter =  DataValue.objects.filter(for_indicator__id=indicator['id']).select_related("for_datapoint", "for_indicator").values()
 
         for val in value_filter:
             value_new.append(val)
-
     return JsonResponse(value_new, safe=False)
 
 ##LIST VIEW END
@@ -489,8 +503,10 @@ def audit_log_list(request):
 #          INDEX             #
 #############################
 
-from django.db.models import Count
 
+
+@login_required(login_url='login')
+@admin_user_required
 def index(request):
     auditlog_entries = LogEntry.objects.select_related('content_type', 'actor')[:6]
     size_topic = Topic.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
@@ -521,6 +537,7 @@ def category(request, category_id=None):
     form_file = ImportFileForm()
 
     form = catagoryForm()
+    global imported_data_global
 
     if request.method == 'POST':
         
@@ -544,14 +561,14 @@ def category(request, category_id=None):
             if form_file.is_valid():
                 file = request.FILES['file']
                 success, imported_data, result = handle_uploaded_Category_file(file)
-
+                imported_data_global = imported_data
                 context = {'result': result}
                 return render(request, 'user-admin/import_preview.html', context=context)
             else:
                 messages.error(request, 'File not recognized')
 
         elif 'confirm_data_form' in request.POST:
-            success, message = confirm_file(request.session.get('imported_data_global', {}), 'category')
+            success, message = confirm_file(imported_data_global, 'category')
             if success:
                 messages.success(request, message)
             else:
@@ -1216,7 +1233,8 @@ def topic(request, topic_id=None):
         topic_instance = get_object_or_404(Topic, pk=topic_id)
 
     form = TopicForm(instance=topic_instance)
-    
+    global imported_data_global
+
     if request.method == 'POST':
         if 'topic_Id' in request.POST or 'topicFormValue' in request.POST:
             try:
@@ -1239,13 +1257,14 @@ def topic(request, topic_id=None):
             if formFile.is_valid():
                 file = request.FILES['file']
                 success, imported_data, result = handle_uploaded_Topic_file(file)
+                imported_data_global = imported_data
                 context = {'result': result}
                 return render(request, 'user-admin/import_preview.html', context=context)
             else:
                 messages.error(request, 'File not recognized')
 
         elif 'confirm_data_form' in request.POST:
-            success, message = confirm_file(request.session.get('imported_data_global', {}), 'topic')
+            success, message = confirm_file(imported_data_global, 'topic')
             if success:
                 messages.success(request, message)
             else:
