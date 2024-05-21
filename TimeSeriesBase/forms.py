@@ -4,6 +4,24 @@ from django.contrib.auth.forms import PasswordChangeForm,UserChangeForm
 from django.contrib.auth.models import User  
 from UserManagement.models import CustomUser
 from django.contrib.auth.forms import SetPasswordForm
+from django_icon_picker.widgets import IconPicker
+from .models import DashboardTopic
+
+
+from django.contrib import admin
+
+class DashboardTopicForm(forms.ModelForm):
+    class Meta:
+        model = DashboardTopic
+        fields = '__all__'
+        widgets = {
+            'icon': IconPicker(),  # Use the IconPickerWidget for the icon field
+        }
+
+
+
+
+
 
 class CustomUserSetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(

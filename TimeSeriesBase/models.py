@@ -6,6 +6,9 @@ from django.dispatch import receiver
 from django.db import models
 from auditlog.registry import auditlog
 from decimal import Decimal
+from fontawesome_5.fields import IconField
+
+
 
 class SiteConfiguration(models.Model):
     is_public = models.BooleanField(default=False)
@@ -22,10 +25,24 @@ class Topic(models.Model):
 
     def __str__(self):
         return self.title_ENG
+
+
+class DashboardTopic(models.Model):
+    title_ENG = models.CharField(max_length=300, unique = True)
+    title_AMH = models.CharField(max_length=300, null = True)
+    icon = IconField()
+    updated =  models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title_ENG   
     
 class Category(models.Model):
     name_ENG = models.CharField(max_length=300, unique = True)
     name_AMH = models.CharField(max_length=300, unique = True)
+    dashboard_topic = models.ForeignKey(DashboardTopic, null=True, blank=True, on_delete=models.SET_NULL)
+    dashboard_category_indicator = models.OneToOneField("Indicator", null=True, blank=True, on_delete=models.SET_NULL)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)
@@ -122,10 +139,10 @@ class Month(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        ordering = ['pk'] #Oldest First
+        ordering = ['number'] #Oldest First
 
     def __str__(self):
-        return self.month_AMH + " : " + self.month_ENG 
+        return self.month_AMH + " : " + self.month_ENG + " ==> " + str(self.number)
     
 class Measurement(models.Model):
     Amount_ENG = models.CharField(max_length=50)

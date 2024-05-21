@@ -8,6 +8,7 @@ from . import models
 from UserAdmin.forms import SiteConfigurationForm
 from import_export.formats.base_formats import XLS
 import tablib
+from .forms import DashboardTopicForm
 
 
 # Register your models here.
@@ -18,6 +19,9 @@ admin.site.register(models.Month)
 admin.site.register(models.Source)
 
 
+
+
+admin.site.register(models.DashboardTopic)
 
 class SiteConfigurationAdmin(admin.ModelAdmin):
     form = SiteConfigurationForm

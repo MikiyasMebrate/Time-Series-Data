@@ -498,12 +498,15 @@ def index(request):
     size_indicator = Indicator.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
     size_source = Source.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
 
+    dashboard = models.DashboardTopic.objects.all().first()
+
     context = {
         'size_topic': size_topic,
         'size_category': size_category,
         'size_indicator': size_indicator,
         'size_source': size_source,
-        'auditlog_entries': auditlog_entries
+        'auditlog_entries': auditlog_entries,
+        'dashboard' : dashboard
     }
 
     return render(request, 'user-admin/index.html', context)

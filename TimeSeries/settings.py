@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +30,9 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
+import django
+from django.utils.translation import gettext
+django.utils.translation.ugettext = gettext
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,6 +48,9 @@ INSTALLED_APPS = [
     'import_export',
     'auditlog',
     'debug_toolbar',
+    'fontawesome_5',
+    'rest_framework'
+    
 ]
 
 MIDDLEWARE = [
@@ -69,7 +76,7 @@ ROOT_URLCONF = 'TimeSeries.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,6 +165,7 @@ AUTH_USER_MODEL = 'UserManagement.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = 'index'
+
 
 
 #EMAIL
