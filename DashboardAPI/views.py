@@ -28,13 +28,23 @@ def topic_lists(request):
         return JsonResponse({'topics':serializer.data})
     
 
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 @api_view(['GET'])
 def category_list(request , id):
     if request.method == 'GET':
-        category = Category.objects.filter(dashboard_topic__id = id)
-        serializer = CategorySerializer(category, many=True)
-        return JsonResponse({'categories':serializer.data})
+       
+        queryset = list(
+            Category.objects.filter(dashboard_topic__id = id).select_related().values(
+            'dashboard_category_indicator__id',
+            'dashboard_category_indicator__title_ENG',
+            'dashboard_category_indicator__title_AMH',
+            'id',
+            'name_ENG',
+            'name_AMH',
+        )
+        )
+        return JsonResponse({'categories':queryset})
     

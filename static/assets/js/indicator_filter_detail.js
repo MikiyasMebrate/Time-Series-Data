@@ -1,7 +1,7 @@
 $(document).ready(function () {
   let urlPath = window.location.pathname;
   let id = urlPath.replace("/user-admin/indicator-detail/", "");
-  let url = `/user-admin/json-json_indicator_page_detail/${id}/`;
+  let url = `/user-admin/json_indicator_page_detail/${id}/`;
   fetch(url)
     .then((response) => response.json())
     .then((data) => {

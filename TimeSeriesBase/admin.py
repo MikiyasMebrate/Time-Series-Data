@@ -85,7 +85,7 @@ class CategoryResource(resources.ModelResource):
         model = models.Category
         report_skipped = True
         skip_unchanged = True
-        exclude = ( 'id', 'created_at', 'is_deleted')
+        exclude = ( 'id', 'created_at', 'is_deleted', 'dashboard_topic', 'dashboard_category_indicator')
         import_id_fields = ('name_ENG', 'name_AMH','topic')
 
 class CategoryAdmin(ImportExportModelAdmin):
@@ -330,7 +330,7 @@ class DataValueResource(resources.ModelResource):
     for_month = fields.Field(
         column_name='for_month',
         attribute='for_month',
-        widget=ForeignKeyWidget(models.Month, field='title_ENG'),
+        widget=ForeignKeyWidget(models.Month, field='number'),
         saves_null_values = True,
     )
 
@@ -385,8 +385,9 @@ def handle_uploaded_DataValue_file(file, type_of_data):
 
             data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_month','for_indicator', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)
-      
-        
+
+
+            print(data_set_table)
             return True, data_set_table, result
         except Exception as e:
             return False, '', ''
@@ -436,5 +437,5 @@ def confirm_file(imported_data, type):
         else:
             return False, f"Error importing data: Please review your Dcoument."
     except Exception as e:
-         return False, f"Error importing data: Please review your Document."
+         return False, f"Error importing data: Please review your Document.{e}"
         

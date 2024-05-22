@@ -169,26 +169,25 @@ def filter_indicator_json(request):
 @login_required(login_url='login')
 @admin_user_required
 def filter_indicator_indicator_page(request, pk):
-    single_indicator = Indicator.objects.get(pk = pk)
+    single_indicator = Indicator.objects.get(pk=pk)
     returned_json = []
     returned_json.append(model_to_dict(single_indicator))
     indicators = list(Indicator.objects.select_related('parent').filter().values())
-    indicator_point = list(Indicator_Point.objects.filter(for_indicator = pk).values())
+    indicator_point = list(Indicator_Point.objects.filter(for_indicator=pk).values())
 
     def child_list(parent):
         for i in indicators:
-            if i['parent_id'] == parent.id:
+            if i['parent_id'] == parent['id']:  # Accessing 'parent_id' instead of 'parent.id'
                 returned_json.append(i)
-                child_list(Indicator.objects.get(id = i['id']))
-                    
-    
-    child_list(single_indicator, ' ')
+                child_list(i)  # Calling child_list with the child indicator as the parent
+
+    child_list(model_to_dict(single_indicator))  # Passing the dictionary representation of the single_indicator
 
     context = {
-        'indicators' :  returned_json,
+        'indicators': returned_json,
         'indicator_point': indicator_point,
     }
-    
+
     return JsonResponse(context)
 
 
@@ -498,7 +497,6 @@ def index(request):
     size_indicator = Indicator.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
     size_source = Source.objects.filter(is_deleted=False).aggregate(count=Count('id'))['count']
 
-    dashboard = models.DashboardTopic.objects.all().first()
 
     context = {
         'size_topic': size_topic,
@@ -506,7 +504,6 @@ def index(request):
         'size_indicator': size_indicator,
         'size_source': size_source,
         'auditlog_entries': auditlog_entries,
-        'dashboard' : dashboard
     }
 
     return render(request, 'user-admin/index.html', context)
@@ -524,6 +521,7 @@ def category(request, category_id=None):
     form_file = ImportFileForm()
 
     form = catagoryForm()
+    global imported_data_global
 
     if request.method == 'POST':
         
@@ -547,14 +545,14 @@ def category(request, category_id=None):
             if form_file.is_valid():
                 file = request.FILES['file']
                 success, imported_data, result = handle_uploaded_Category_file(file)
-
+                imported_data_global = imported_data
                 context = {'result': result}
                 return render(request, 'user-admin/import_preview.html', context=context)
             else:
                 messages.error(request, 'File not recognized')
 
         elif 'confirm_data_form' in request.POST:
-            success, message = confirm_file(request.session.get('imported_data_global', {}), 'category')
+            success, message = confirm_file(imported_data_global, 'category')
             if success:
                 messages.success(request, message)
             else:
@@ -566,7 +564,6 @@ def category(request, category_id=None):
         'formFile': form_file
     }
     return render(request, 'user-admin/categories.html', context=context)
-
 
 
 @login_required(login_url='login')
@@ -1216,20 +1213,25 @@ def topic(request, topic_id=None):
         topic_instance = get_object_or_404(Topic, pk=topic_id)
 
     form = TopicForm(instance=topic_instance)
-    
+    global imported_data_global
+
     if request.method == 'POST':
         if 'topic_Id' in request.POST or 'topicFormValue' in request.POST:
-            try:
-                topic_instance = get_object_or_404(Topic, id=request.POST['topic_Id'])
-                form = TopicForm(request.POST, instance=topic_instance)
-            except Http404:
+            topic_id = request.POST.get('topic_Id')
+            if topic_id:
+                try:
+                    topic_instance = get_object_or_404(Topic, id=topic_id)
+                    form = TopicForm(request.POST, instance=topic_instance)
+                except Http404:
+                    form = TopicForm(request.POST)
+            else:
                 form = TopicForm(request.POST)
 
             if form.is_valid():
                 obj = form.save(commit=False)
                 obj.save()
 
-                messages.success(request, "Topic has been successfully added!" if obj.pk is None else "Topic has been successfully updated!")
+                messages.success(request, "Topic has been successfully added!" if not topic_id else "Topic has been successfully updated!")
                 return redirect('user-admin-topic')
             else:
                 messages.error(request, "Value exists or please try again!")
@@ -1239,13 +1241,14 @@ def topic(request, topic_id=None):
             if formFile.is_valid():
                 file = request.FILES['file']
                 success, imported_data, result = handle_uploaded_Topic_file(file)
+                imported_data_global = imported_data
                 context = {'result': result}
                 return render(request, 'user-admin/import_preview.html', context=context)
             else:
                 messages.error(request, 'File not recognized')
 
         elif 'confirm_data_form' in request.POST:
-            success, message = confirm_file(request.session.get('imported_data_global', {}), 'topic')
+            success, message = confirm_file(imported_data_global, 'topic')
             if success:
                 messages.success(request, message)
             else:

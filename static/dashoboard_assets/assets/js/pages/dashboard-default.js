@@ -1,7 +1,7 @@
 "use strict";
 
 function floatchart() {
-    new ApexCharts(document.querySelector("#all-earnings-graph"), {
+    new ApexCharts(document.querySelector("#all-earnings-graph3"), {
         chart: {
             type: "bar",
             height: 50,
