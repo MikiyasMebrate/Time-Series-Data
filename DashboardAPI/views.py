@@ -25,6 +25,7 @@ def topic_lists(request):
     if request.method == 'GET':
         topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
         serializer = DashboardTopicSerializer(topics, many=True)
+        time.sleep(3)
         return JsonResponse({'topics':serializer.data})
     
 
@@ -55,5 +56,6 @@ def category_list(request , id):
                 'name_AMH',
         )
         )
+        time.sleep(3)
         return JsonResponse({'categories':queryset, 'values' : value_filter})
     
