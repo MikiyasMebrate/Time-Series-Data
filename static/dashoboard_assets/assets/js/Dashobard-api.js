@@ -350,7 +350,7 @@ $(document).ready(function () {
     },
   });
 
-  //Default
+  //Default s
   $("#category-card-list").html("");
   $.ajax({
     type: "GET",
