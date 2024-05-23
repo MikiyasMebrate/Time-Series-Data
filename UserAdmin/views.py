@@ -18,6 +18,7 @@ from django.db.models import Count,Prefetch
 import random
 import json as toJSON
 from django.contrib.auth.models import AnonymousUser
+from TimeSeriesBase.models import DashboardTopic
 
 def site_configuration_view(request):
     # Fetch the first instance of SiteConfiguration from the database
@@ -1446,3 +1447,154 @@ def year_add(request, year=None):
 
 
 
+
+
+#############################
+#        Main DashBord      #
+#############################
+@login_required(login_url='login')
+@admin_user_required
+def dashbord_topic(request):
+    form = DashboardTopicForm(request.POST or None, request.FILES or None)
+    topics = DashboardTopic.objects.all()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Added')
+            return redirect('dashbord_topic')
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'topics': topics,
+        'form' : form
+    }
+    return render(request, 'user-admin/dashboard_topic.html', context=context)
+
+
+@admin_user_required
+def dashboard_topic_delete(request, id):
+    try:
+        dashbord_topic = DashboardTopic.objects.get(pk = id)
+        dashbord_topic.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('dashbord_topic')    
+
+
+@admin_user_required
+def edit_dashboard_topic(request):
+    id = request.POST['id']
+    title_ENG = request.POST['title_ENG']
+    title_AMH = request.POST['title_AMH']
+
+    try:
+        topic = DashboardTopic.objects.get(id = id)
+        topic.title_ENG = title_ENG
+        topic.title_AMH = title_AMH
+        topic.save()
+        response = {'success' : True}
+    except:
+        response = {'success' : False}
+    return JsonResponse(response)
+    
+
+
+###Topic Catagory
+
+@login_required(login_url='login')
+@admin_user_required
+def topic_category(request , id):
+    form = catagoryFormTopic(request.POST or None, request.FILES or None)
+    topic = DashboardTopic.objects.get(id = id)
+    categories = Category.objects.filter(dashboard_topic__id = id)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.instance.dashboard_topic = topic
+            form.save()
+            messages.success(request, 'Successfully Added')
+            return redirect('topic_category' , id=id)
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'categories': categories,
+        'form' : form
+    }
+    return render(request, 'user-admin/topic_category.html', context=context)
+
+
+
+@admin_user_required
+def dashboard_category_delete(request, id):
+    try:
+        category = Category.objects.get(pk = id)
+        topic = category.dashboard_topic.id
+        category.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('topic_category' , topic)    
+
+
+
+
+
+
+
+
+###Topic Catagory Indicator
+
+@login_required(login_url='login')
+@admin_user_required
+def topic_category_indicator(request , id):
+    form = DashboardIndicatorForm(request.POST or None, request.FILES or None)
+    category = Category.objects.get(id = id)
+    indicators = Indicator.objects.filter(for_category__id = id)
+    if request.method == 'POST':
+        if form.is_valid():
+            title_ENG = form.cleaned_data['title_ENG']
+            title_AMH = form.cleaned_data['title_AMH']
+            type_of = form.cleaned_data['type_of']
+            operation_type = form.cleaned_data['operation_type']
+            is_public = form.cleaned_data['is_public']
+            
+            # Create a new DashboardIndicator instance and save it
+            indicator = Indicator(
+                title_ENG=title_ENG,
+                title_AMH=title_AMH,
+                type_of=type_of,
+                is_public=is_public,
+                for_category= category
+
+            )
+            indicator.save()
+            
+            # Perform any additional logic or redirection here
+            messages.success(request, 'Successfully added.')
+            return redirect('topic_category_indicator', id=id)
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'indicators': indicators,
+        'form' : form
+    }
+    return render(request, 'user-admin/topic_category_indicator.html', context=context)
+
+
+
+@admin_user_required
+def dashboard_indicator_delete(request, id):
+    try:
+        indicator = Indicator.objects.get(pk = id)
+        category = indicator.for_category.id
+        indicator.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('topic_category_indicator' , category)        

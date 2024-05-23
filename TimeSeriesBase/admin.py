@@ -5,10 +5,8 @@ from import_export.widgets import ForeignKeyWidget  # For foreignkey
 from import_export.fields import Field
 from import_export.admin import ImportExportModelAdmin #Admin 
 from . import models
-from UserAdmin.forms import SiteConfigurationForm
 from import_export.formats.base_formats import XLS
 import tablib
-from .forms import DashboardTopicForm
 
 
 # Register your models here.
@@ -20,13 +18,6 @@ admin.site.register(models.Source)
 
 
 
-
-admin.site.register(models.DashboardTopic)
-
-class SiteConfigurationAdmin(admin.ModelAdmin):
-    form = SiteConfigurationForm
-
-admin.site.register(models.SiteConfiguration, SiteConfigurationAdmin) 
 # Import Export 
 
 #Topic 
@@ -85,7 +76,7 @@ class CategoryResource(resources.ModelResource):
         model = models.Category
         report_skipped = True
         skip_unchanged = True
-        exclude = ( 'id', 'created_at', 'is_deleted', 'dashboard_topic', 'dashboard_category_indicator')
+        exclude = ( 'id', 'created_at', 'is_deleted')
         import_id_fields = ('name_ENG', 'name_AMH','topic')
 
 class CategoryAdmin(ImportExportModelAdmin):
@@ -213,22 +204,22 @@ def handle_uploaded_Indicator_file(file, category):
 
             if len(childIndicator) != 0:
                 for child in childIndicator:                    
-                    data = (parent_id,f'{child['title_ENG'].strip()}' ,child['title_AMH'],None, None,None)
+                    data = (parent_id,f'{child["title_ENG"].strip()}' ,child["title_AMH"],None, None,None)
                     child_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
                     result = resource.import_data(child_dataset, dry_run=True)
                     if not result.has_errors():
                         current_id = int(current_id) + 1
-                        total_data.append(((int(current_id), parent_id,f'{child['title_ENG'].strip()}' ,child['title_AMH'],None, None,None)))
+                        total_data.append(((int(current_id), parent_id,f"{child['title_ENG'].strip()}" ,child['title_AMH'],None, None,None)))
                         filterChildIndicator(int(current_id), child['title_ENG'])
                     else:
                         current_id = int(current_id) + 1
-                        total_data.append((current_id, parent_id,f'{child['title_ENG'].strip()}' ,child['title_AMH'],None, None,None))
+                        total_data.append((current_id, parent_id,f"{child['title_ENG'].strip()}" ,child['title_AMH'],None, None,None))
                         filterChildIndicator(int(current_id), child['title_ENG'])
                              
                 
         #Parent  
         for parent in parentIndicator:
-            data = (parent['parent'],f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip())
+            data = (parent['parent'],f"{parent['title_ENG'].strip()}",parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip())
             parent_dataset = tablib.Dataset(data, headers=['parent', 'title_ENG', 'title_AMH', 'for_category', 'measurement', 'type_of'])
             result = resource.import_data(parent_dataset, dry_run=True)
             if not result.has_errors():
@@ -239,11 +230,11 @@ def handle_uploaded_Indicator_file(file, category):
                     current_id = int(current_id) + int(parent_id)
                 else:
                     current_id = int(current_id) + 1
-                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip()))
+                total_data.append((current_id, None,f"{parent['title_ENG'].strip()}",parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip()))
                 filterChildIndicator(current_id, parent['title_ENG'])
             else:
                 current_id = int(current_id) + 1
-                total_data.append((current_id, None,f'{parent['title_ENG'].strip()}',parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip()))
+                total_data.append((current_id, None,f"{parent['title_ENG'].strip()}",parent['title_AMH'],category.name_ENG, parent['measurement'],parent['type_of'].strip()))
                 filterChildIndicator(int(current_id), parent['title_ENG'])
 
         
@@ -330,7 +321,7 @@ class DataValueResource(resources.ModelResource):
     for_month = fields.Field(
         column_name='for_month',
         attribute='for_month',
-        widget=ForeignKeyWidget(models.Month, field='number'),
+        widget=ForeignKeyWidget(models.Month, field='title_ENG'),
         saves_null_values = True,
     )
 
@@ -385,9 +376,8 @@ def handle_uploaded_DataValue_file(file, type_of_data):
 
             data_set_table = tablib.Dataset(*data_set, headers=['for_datapoint','for_month','for_indicator', 'value'])
             result = resource.import_data(data_set_table, dry_run=True)
-
-
-            print(data_set_table)
+      
+        
             return True, data_set_table, result
         except Exception as e:
             return False, '', ''
@@ -437,5 +427,5 @@ def confirm_file(imported_data, type):
         else:
             return False, f"Error importing data: Please review your Dcoument."
     except Exception as e:
-         return False, f"Error importing data: Please review your Document.{e}"
+         return False, f"Error importing data: Please review your Document."
         
