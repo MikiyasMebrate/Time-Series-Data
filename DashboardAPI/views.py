@@ -26,7 +26,7 @@ def topic_lists(request):
         topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
         #topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
         serializer = DashboardTopicSerializer(topics, many=True)
-        time.sleep(4)
+        
         return JsonResponse({'topics':serializer.data})
     
 
@@ -57,11 +57,10 @@ def category_list(request , id):
                 'name_AMH',
         )
         )
-        time.sleep(2)
+        
         return JsonResponse({'categories':queryset, 'values' : value_filter})
 
 
-from django.db.models import Prefetch
 
 @api_view(['GET'])
 def category_detail_lists(request , id):
