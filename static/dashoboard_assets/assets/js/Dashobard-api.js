@@ -354,7 +354,7 @@ $(document).ready(function () {
   $("#category-card-list").html("");
   $.ajax({
     type: "GET",
-    url: `/dashboard-api/category_list/2`,
+    url: `/dashboard-api/category_list/3`,
     beforeSend: function () {
       showLoadingSkeleton();
     },
