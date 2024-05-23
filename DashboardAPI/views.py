@@ -5,12 +5,12 @@ from django.db.models import Count
 # Create your views here.
 from django.shortcuts import render
 from django.http import JsonResponse
-from .serializers import DashboardTopicSerializer , CategorySerializer
-from TimeSeriesBase.models import DashboardTopic , Category
-
+from .serializers import DashboardTopicSerializer 
+from TimeSeriesBase.models import DashboardTopic , Category, DataValue
+from django.db.models import Q
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+import time
+
 
 
 def index(request):
@@ -28,23 +28,32 @@ def topic_lists(request):
         return JsonResponse({'topics':serializer.data})
     
 
-import json
-from django.core.serializers.json import DjangoJSONEncoder
 
 
 @api_view(['GET'])
 def category_list(request , id):
-    if request.method == 'GET':
-       
+
+        indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).select_related().values_list('dashboard_category_indicator__id', flat=True))
+        
+        value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
+            'for_indicator__type_of',
+            'value',
+            'for_indicator_id',
+            'for_datapoint_id__year_EC',
+            'for_quarter_id',
+            'for_month_id__month_AMH',
+        ))
+
         queryset = list(
             Category.objects.filter(dashboard_topic__id = id).select_related().values(
-            'dashboard_category_indicator__id',
-            'dashboard_category_indicator__title_ENG',
-            'dashboard_category_indicator__title_AMH',
-            'id',
-            'name_ENG',
-            'name_AMH',
+                'dashboard_topic__title_ENG',
+                'dashboard_category_indicator__id',
+                'dashboard_category_indicator__title_ENG',
+                'dashboard_category_indicator__title_AMH',
+                'id',
+                'name_ENG',
+                'name_AMH',
         )
         )
-        return JsonResponse({'categories':queryset})
+        return JsonResponse({'categories':queryset, 'values' : value_filter})
     
