@@ -18,9 +18,6 @@ admin.site.register(models.Quarter)
 admin.site.register(models.Month)
 admin.site.register(models.Source)
 
-
-
-
 admin.site.register(models.DashboardTopic)
 
 class SiteConfigurationAdmin(admin.ModelAdmin):
@@ -90,6 +87,10 @@ class CategoryResource(resources.ModelResource):
 
 class CategoryAdmin(ImportExportModelAdmin):
     resource_classes = [CategoryResource]
+    filter_horizontal  = ['dashboard_category_indicator']
+
+
+
 
 admin.site.register(models.Category, CategoryAdmin)
 
