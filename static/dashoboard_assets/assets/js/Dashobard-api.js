@@ -1,7 +1,8 @@
+//Loading
 let showLoadingSkeletonTopic = () => {
-    for (let i = 0; i < 8; i++) {
-        $("#loading-skeleton-topic").append(
-            `
+  for (let i = 0; i < 8; i++) {
+    $("#loading-skeleton-topic").append(
+      `
             <div class="col-md-6 col-xl-3 d-none d-md-block container loading-skeleton ">
                <div class="card social-widget-card">
                    <div class="card-body d-flex justify-content-between align-items-center p-2">
@@ -11,14 +12,13 @@ let showLoadingSkeletonTopic = () => {
                </div>
             </div>
             `
-        )
-    }
-   
-}
+    );
+  }
+};
 
-let hideLoadingSkeletonTopic = () =>{
-    $("#loading-skeleton-topic").html('')
-}
+let hideLoadingSkeletonTopic = () => {
+  $("#loading-skeleton-topic").html("");
+};
 
 let showLoadingSkeleton = () => {
   for (let i = 0; i < 4; i++) {
@@ -49,21 +49,101 @@ let showLoadingSkeleton = () => {
 };
 
 let hideLoadingSkeletonCategory = () => {
-    $("#loading-skeleton-category").html('')
-}
+  $("#loading-skeleton-category").html("");
+};
+
+
+//Default Graph Category
+let renderCategoryGraph = (id, dataArray) => {
+    const bootstrapColorsCode = [
+      "#0d6efd",
+      "#6610f2",
+      "#6f42c1",
+      "#d63384",
+      "#dc3545",
+      "#fd7e14",
+      "#ffc107",
+      "#198754",
+      "#20c997",
+      "#0dcaf0",
+    ];
+  
+    const seriesData = dataArray.map((dataPoint) => {
+      return {
+        x: dataPoint[0], // Year
+        y: dataPoint[1], // Value
+      };
+    });
+  
+    new ApexCharts(document.querySelector(`#all-earnings-graph${id}`), {
+      chart: {
+        type: "bar",
+        height: 50,
+        sparkline: {
+          enabled: true,
+        },
+      },
+      colors: [
+        `${
+          bootstrapColorsCode[
+            Math.floor(Math.random() * bootstrapColorsCode.length)
+          ]
+        }`,
+      ],
+      plotOptions: {
+        bar: {
+          columnWidth: "80%",
+        },
+      },
+      series: [
+        {
+          data: seriesData,
+        },
+      ],
+      xaxis: {
+        crosshairs: {
+          width: 1,
+        },
+      },
+      tooltip: {
+        fixed: {
+          enabled: true,
+        },
+        x: {
+          show: true,
+          formatter: function (val) {
+            return `Year: ${val}`; // Access x value (year) directly
+          },
+        },
+        y: {
+          title: {
+            formatter: function (e) {
+              return "";
+            },
+          },
+        },
+        marker: {
+          show: false,
+        },
+      },
+    }).render();
+  };
+  
+
+
 
 $(document).ready(function () {
+
   $.ajax({
     type: "GET",
     url: "/dashboard-api/topic_lists/",
     beforeSend: function () {
-        showLoadingSkeletonTopic();
-        showLoadingSkeleton()
-      },          
-      complete: function () {
-        hideLoadingSkeletonTopic();
-        hideLoadingSkeletonCategory()
-      },
+      showLoadingSkeletonTopic();
+      showLoadingSkeleton();
+    },
+    complete: function () {
+      hideLoadingSkeletonTopic();
+    },
     success: function (data) {
       const bootstrapColors = [
         "primary",
@@ -81,12 +161,14 @@ $(document).ready(function () {
         cardTopic += `
         <!-- custom cards -->
              <div class="col-md-6 col-xl-3 d-none d-md-block topic-card"
-             
              data-id = ${item.id}
              data-category-name = "${item.title_ENG}"
              >
                 <div class="card social-widget-card bg-${
-                  bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}">
+                  bootstrapColors[
+                    Math.floor(Math.random() * bootstrapColors.length)
+                  ]
+                }">
                     <div class="card-body d-flex justify-content-between align-items-center p-2">
                         <div class="d-flex flex-column">
                             <h3 class="text-white m-0">${Number(
@@ -118,8 +200,6 @@ $(document).ready(function () {
       $("#topic-card-lists").html(cardTopic);
       $("#sidebar-topic-list").html(sideNav);
 
-
-
       //Handel on Click topic card
       $(".topic-card").click(function () {
         $("#category-card-list").html("");
@@ -129,7 +209,7 @@ $(document).ready(function () {
           url: `/dashboard-api/category_list/${buttonData.id}`,
           beforeSend: function () {
             showLoadingSkeleton();
-          },          
+          },
           complete: function () {
             hideLoadingSkeletonCategory();
           },
@@ -139,12 +219,17 @@ $(document).ready(function () {
 
             data.categories.forEach((item) => {
               const valueItem = [];
+
+
               //Filter Indicator Value
               let value = data.values.filter(
                 (value) =>
                   value.for_indicator_id ==
                   item.dashboard_category_indicator__id
               );
+
+
+              let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
               for (val of value) {
                 if (String(val.for_indicator__type_of) == "monthly") {
                   valueItem.push([
@@ -158,21 +243,12 @@ $(document).ready(function () {
                 }
               }
 
-              //console.log(Number(value[value.length - 1].value))
-              let calculatePercentageDifference,
-                roundDifference,
-                difference = null;
+              let calculatePercentageDifference,roundDifference,difference = null;
+
               try {
-                calculatePercentageDifference =
-                  ((value[value.length - 1].value -
-                    value[value.length - 2].value) /
-                    value[value.length - 2].value) *
-                  100;
-                roundDifference =
-                  Math.round(calculatePercentageDifference * 100) / 100;
-                difference = (
-                  value[value.length - 1].value - value[value.length - 2].value
-                ).toFixed(2);
+                calculatePercentageDifference = ((value[value.length - 1].value - value[value.length - 2].value) / value[value.length - 2].value) * 100;
+                roundDifference = Math.round(calculatePercentageDifference * 100) / 100;
+                difference = ( value[value.length - 1].value - value[value.length - 2].value).toFixed(2);
               } catch {
                 null;
               }
@@ -210,7 +286,7 @@ $(document).ready(function () {
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <a class="dropdown-item" href="#">Month</a>
                                                 <a class="dropdown-item" href="#">Year</a>
-                                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" >Detail</button>
+                                                <button data-id="${item.id}"  class=" detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
                                                 </div>
                                         </div>
                                     </div>
@@ -226,7 +302,7 @@ $(document).ready(function () {
                                             }</div>
                                         </div>
                                         <div class="col-5">
-                                            <h5 class="mb-1">${
+                                            <h5 class="mb-1">Last ${seasonType}:  ${
                                               difference
                                                 ? difference < 0
                                                   ? (
@@ -266,60 +342,61 @@ $(document).ready(function () {
               $("#category-card-list").append(categoryCard);
               renderCategoryGraph(item.id, valueItem, [2000]);
             });
+
+            handelCategoryDetail() //Call handle on category detail
           },
         });
       });
     },
   });
 
-        //Default
-        $("#category-card-list").html("");
-        $.ajax({
-          type: "GET",
-          url: `/dashboard-api/category_list/2`,
-          beforeSend: function () {
-              showLoadingSkeleton();
-            },          
-            complete: function () {
-              hideLoadingSkeletonCategory();
-            },
-          success: function (data) {
-            let categoryCard = ``;
-            $("#category-title").html(
-              data.categories[0].dashboard_topic__title_ENG
-            );
-  
-            data.categories.forEach((item) => {
-              const valueItem = [];
-              let value = data.values.filter(
-                (value) =>
-                  value.for_indicator_id == item.dashboard_category_indicator__id
-              );
-              for (val of value) {
-                valueItem.push([val.for_datapoint_id__year_EC, val.value]);
-              }
-  
-              //console.log(Number(value[value.length - 1].value))
-              let calculatePercentageDifference,
-                roundDifference,
-                difference = null;
-              try {
-                calculatePercentageDifference =
-                  ((value[value.length - 1].value -
-                    value[value.length - 2].value) /
-                    value[value.length - 2].value) *
-                  100;
-                roundDifference =
-                  Math.round(calculatePercentageDifference * 100) / 100;
-                difference = (
-                  value[value.length - 1].value - value[value.length - 2].value
-                ).toFixed(2);
-              } catch {
-                null;
-              }
-  
-              categoryCard = `
-                      <div class="col-md-6 col-xxl-6">
+  //Default
+  $("#category-card-list").html("");
+  $.ajax({
+    type: "GET",
+    url: `/dashboard-api/category_list/2`,
+    beforeSend: function () {
+      showLoadingSkeleton();
+    },
+    complete: function () {
+      hideLoadingSkeletonCategory();
+    },
+    success: function (data) {
+      let categoryCard = ``;
+      $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
+
+      data.categories.forEach((item) => {
+        const valueItem = [];
+        let value = data.values.filter(
+          (value) =>
+            value.for_indicator_id == item.dashboard_category_indicator__id
+        );
+
+        let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
+        for (val of value) {
+          valueItem.push([val.for_datapoint_id__year_EC, val.value]);
+        }
+
+        //console.log(Number(value[value.length - 1].value))
+        let calculatePercentageDifference,
+          roundDifference,
+          difference = null;
+        try {
+          calculatePercentageDifference =
+            ((value[value.length - 1].value - value[value.length - 2].value) /
+              value[value.length - 2].value) *
+            100;
+          roundDifference =
+            Math.round(calculatePercentageDifference * 100) / 100;
+          difference = (
+            value[value.length - 1].value - value[value.length - 2].value
+          ).toFixed(2);
+        } catch {
+          null;
+        }
+
+        categoryCard = `
+                      <div class="col-md-6 col-xxl-6 col-12 ">
                           <div class="card" >
                               <div class="card-body">
                                   <div class="d-flex align-items-center">
@@ -349,10 +426,12 @@ $(document).ready(function () {
                                                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
                                                       class="ti ti-dots-vertical f-18"></i></a>
                                               <div class="dropdown-menu dropdown-menu-end">
-                                                  <a class="dropdown-item" href="#">Month</a>
-                                                  <a class="dropdown-item" href="#">Year</a>
-  
-                                                  <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" >Detail</button>
+                                              ${seasonType  == 'monthly' ? `
+                                              <a class="dropdown-item" href="#">Month</a>
+                                              <a class="dropdown-item" href="#">Year</a>
+                                              ` : '' }
+                                                 
+                                                  <button data-id="${item.id}"  class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
                                                   </div>
                                           </div>
                                       </div>
@@ -368,7 +447,7 @@ $(document).ready(function () {
                                               }</div>
                                           </div>
                                           <div class="col-5">
-                                              <h5 class="mb-1">${
+                                              <h5 class="mb-1">Last ${seasonType}: ${
                                                 difference
                                                   ? difference < 0
                                                     ? (
@@ -384,18 +463,17 @@ $(document).ready(function () {
                                                     : "text-danger "
                                                   : ""
                                               }" mb-0"><i  class="${
-                roundDifference
-                  ? roundDifference > 0
-                    ? "ti ti-arrow-up-right text-primary "
-                    : "ti ti-arrow-down-left text-danger "
-                  : "None"
-              }"></i> ${
-                roundDifference
-                  ? (roundDifference > 0
-                      ? roundDifference
-                      : roundDifference * -1) + "%"
-                  : "None"
-              }</h5>
+          roundDifference
+            ? roundDifference > 0
+              ? "ti ti-arrow-up-right text-primary "
+              : "ti ti-arrow-down-left text-danger "
+            : "None"
+        }"></i> ${
+          roundDifference
+            ? (roundDifference > 0 ? roundDifference : roundDifference * -1) +
+              "%"
+            : "None"
+        }</h5>
                                           </div>
                                       </div>
                                   </div>
@@ -404,87 +482,83 @@ $(document).ready(function () {
                       </div>
   
                       `;
-  
-              $("#category-card-list").append(categoryCard);
-              renderCategoryGraph(item.id, valueItem, [2000]);
-            });
-          },
-        });
 
-
-});
-
-let renderCategoryGraph = (id, dataArray) => {
-  const bootstrapColorsCode = [
-    "#0d6efd",
-    "#6610f2",
-    "#6f42c1",
-    "#d63384",
-    "#dc3545",
-    "#fd7e14",
-    "#ffc107",
-    "#198754",
-    "#20c997",
-    "#0dcaf0",
-  ];
-
-  const seriesData = dataArray.map((dataPoint) => {
-    return {
-      x: dataPoint[0], // Year
-      y: dataPoint[1], // Value
-    };
+        $("#category-card-list").append(categoryCard);
+        renderCategoryGraph(item.id, valueItem, [2000]);
+      });
+      handelCategoryDetail() //Call handle on category detail
+    },
   });
 
-  new ApexCharts(document.querySelector(`#all-earnings-graph${id}`), {
-    chart: {
-      type: "bar",
-      height: 50,
-      sparkline: {
-        enabled: true,
-      },
-    },
-    colors: [
-      `${
-        bootstrapColorsCode[
-          Math.floor(Math.random() * bootstrapColorsCode.length)
-        ]
-      }`,
-    ],
-    plotOptions: {
-      bar: {
-        columnWidth: "80%",
-      },
-    },
-    series: [
-      {
-        data: seriesData,
-      },
-    ],
-    xaxis: {
-      crosshairs: {
-        width: 1,
-      },
-    },
-    tooltip: {
-      fixed: {
-        enabled: true,
-      },
-      x: {
-        show: true,
-        formatter: function (val) {
-          return `Year: ${val}`; // Access x value (year) directly
+
+  //Handel onclick category detail
+  let handelCategoryDetail = () =>{
+    $(".detail-category").click(function(){
+      let buttonData = $(this).data();
+      $.ajax({
+        url: `/dashboard-api/category_detail_list/${buttonData.id}`,
+        beforeSend: function () {
+          showLoadingSkeleton();
         },
-      },
-      y: {
-        title: {
-          formatter: function (e) {
-            return "";
-          },
+        complete: function () {
+          hideLoadingSkeletonCategory();
         },
-      },
-      marker: {
-        show: false,
-      },
-    },
-  }).render();
-};
+        success: function (data) {
+          
+        let min = data.values[0].for_datapoint_id__year_EC
+        let max = data.values[data.values.length-1].for_datapoint_id__year_EC
+
+          
+
+          table = `
+          <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Indicator</th>
+          `
+          for (let i = min ; i<=max ; i++){
+            table += `<th scope="col">${i}</th>`
+          }
+        table += `
+        <th scope="col"></th>    
+        </tr>
+          </thead>
+          <tbody>`
+          let counter = 1
+          data.indicators.forEach((item) => {
+            
+            let values = data.values.filter((value) => value.for_indicator_id == item.id)
+
+          
+
+
+             table +=  `<tr>
+               <th scope="row">${counter}</th>
+               <td>${item.title_ENG}</td>
+               `
+               for (let value of values){
+                  table += `<td>${value.value}</td>`
+               }
+               `
+               
+               </tr>`
+                counter ++;
+          })
+
+          
+            
+         table +=  `</tbody>
+        </table>
+          `
+
+          $('#category-detail-table').html(table)
+
+        }
+
+      })
+    })
+  }
+});
+
+

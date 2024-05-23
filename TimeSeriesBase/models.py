@@ -170,7 +170,7 @@ class DataValue(models.Model):
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", related_name="datavalue_set", on_delete=models.SET_NULL, blank=True, null=True)
     for_source = models.ForeignKey("Source",on_delete=models.SET_NULL  ,blank=True, null=True,)
-    for_indicator = models.ForeignKey(Indicator, null=True, blank=True, on_delete=models.SET_NULL)
+    for_indicator = models.ForeignKey(Indicator,related_name='indicator_value' ,null=True, blank=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default = False)
 
 
