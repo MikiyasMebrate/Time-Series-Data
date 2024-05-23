@@ -487,12 +487,11 @@
     <div class="modal-dialog modal-xl  modal-fullscreen-lg-down modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLabel"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-
-
+            <div id="chart"></div>
             <div id="category-detail-table">
 
             </div>
@@ -702,6 +701,10 @@
             </div>
         </div>
     </div><!-- [Page Specific JS] start -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="{% static 'dashoboard_assets/assets/js/plugins/apexcharts.min.js' %}"></script>
     <script src="{% static 'dashoboard_assets/assets/js/pages/dashboard-default.js' %}"></script><!-- [Page Specific JS] end --><!-- Required Js -->

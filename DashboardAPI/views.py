@@ -36,6 +36,8 @@ def topic_lists(request):
 def category_list(request , id):
 
         indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).select_related().values_list('dashboard_category_indicator__id', flat=True))
+
+        print(indicator_list_id)
         
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
@@ -46,8 +48,10 @@ def category_list(request , id):
             'for_month_id__month_AMH',
         ))
 
+
+
         queryset = list(
-            Category.objects.filter(dashboard_topic__id = id).select_related().values(
+            Category.objects.filter(dashboard_topic__id = id, ).select_related().values(
                 'dashboard_topic__title_ENG',
                 'dashboard_category_indicator__id',
                 'dashboard_category_indicator__title_ENG',
