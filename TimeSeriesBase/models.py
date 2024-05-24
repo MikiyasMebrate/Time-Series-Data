@@ -42,7 +42,6 @@ class Category(models.Model):
     name_ENG = models.CharField(max_length=300, unique = True)
     name_AMH = models.CharField(max_length=300, unique = True)
     dashboard_topic = models.ForeignKey(DashboardTopic, null=True, blank=True, on_delete=models.SET_NULL)
-    dashboard_category_indicator = models.ManyToManyField("Indicator",)
     topic = models.ForeignKey(Topic, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     is_deleted = models.BooleanField(default=False)
@@ -74,6 +73,7 @@ class Indicator(models.Model):
     measurement = models.ForeignKey('Measurement', blank=True, null=True, on_delete=models.CASCADE)
     type_of = models.CharField(choices=data_point_type ,max_length=60, null=True, blank=True)
     is_public = models.BooleanField(default = True)
+    is_dashboard_visible = models.BooleanField(default = False)
    
     def save(self, *args, **kwargs):
         self.composite_key = str(self.title_ENG.replace(" ","").replace("/","").replace("&","")) +  str(self.id)
