@@ -78,8 +78,7 @@ class CategoryResource(resources.ModelResource):
 
 class CategoryAdmin(ImportExportModelAdmin):
     resource_classes = [CategoryResource]
-    filter_horizontal  = ['dashboard_category_indicator']
-
+    
 
 
 
