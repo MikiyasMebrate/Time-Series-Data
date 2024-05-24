@@ -78,7 +78,6 @@ class CategoryResource(resources.ModelResource):
 
 class CategoryAdmin(ImportExportModelAdmin):
     resource_classes = [CategoryResource]
-    
 
 
 

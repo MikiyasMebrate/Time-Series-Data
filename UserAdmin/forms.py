@@ -106,6 +106,7 @@ class IndicatorForm(forms.Form):
         'class' : 'form-select'
     }))
     is_public = forms.BooleanField(required=False)
+    
 
 
 
@@ -128,6 +129,7 @@ class DashboardIndicatorForm(forms.Form):
         'class' : 'form-select'
     }))
     is_public = forms.BooleanField(required=False)    
+    is_dashboard_visible = forms.BooleanField(required=False)
 
 
 class operationForm(forms.Form):
