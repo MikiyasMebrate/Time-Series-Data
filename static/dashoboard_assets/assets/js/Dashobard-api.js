@@ -129,6 +129,141 @@ let renderCategoryGraph = (id, dataArray) => {
 
 
 
+let lineGraph = (graphData, min) => {
+  Highcharts.chart('lineGraph', {
+    chart: {
+        type: 'area'
+    },
+    title: {
+        text: 'Indicators Relation'
+    },
+    yAxis: {
+        title: {
+            text: 'Value'
+        }
+    },
+    tooltip: {
+        pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>' +
+            'warheads in {point.x}'
+    },
+    plotOptions: {
+        area: {
+            pointStart: Number(min),
+            marker: {
+                enabled: false,
+                symbol: 'circle',
+                radius: 2,
+                states: {
+                    hover: {
+                        enabled: true
+                    }
+                }
+            }
+        }
+    },
+    series: graphData
+  });
+}
+
+let barChart = (graphData, indicators) => {
+  Highcharts.chart('barChart', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: `Last 3 Year's `,
+        align: 'left'
+    },
+    xAxis: {
+        categories: indicators,
+        title: {
+            text: null
+        },
+        gridLineWidth: 1,
+        lineWidth: 0
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Values',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        },
+        gridLineWidth: 0
+    },
+    tooltip: {
+        valueSuffix: ' '
+    },
+    plotOptions: {
+        bar: {
+            borderRadius: '50%',
+            dataLabels: {
+                enabled: true
+            },
+            groupPadding: 0.1
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: graphData,
+  });
+}
+
+let pieChart = (graphData, max) => {
+  // Data retrieved from https://netmarketshare.com/
+// Build the chart
+Highcharts.chart('pieChart', {
+  chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
+      type: 'pie'
+  },
+  title: {
+      text: `Indicator shares in ${max}`,
+      align: 'left'
+  },
+  tooltip: {
+      pointFormat: '{series.name} <b>{point.percentage:.1f}%</b>'
+  },
+  accessibility: {
+      point: {
+          valueSuffix: '%'
+      }
+  },
+  plotOptions: {
+      pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+              enabled: false
+          },
+      }
+  },
+  series: [{
+      name: 'Values',
+      colorByPoint: true,
+      data: graphData,
+  }]
+});
+
+}
+
 
 $(document).ready(function () {
 
@@ -212,17 +347,17 @@ $(document).ready(function () {
           success: function (data) {
             let categoryCard = ``;
             $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
-
+      
             data.categories.forEach((item) => {
               const valueItem = [];
               let value = data.values.filter(
                 (value) =>
-                  value.for_indicator_id == item.dashboard_category_indicator__id
+                  value.for_indicator_id == item.indicator__id
               );
-
-
+      
+      
               let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
-
+      
               for (val of value) {
                 if (String(val.for_indicator__type_of) == "monthly") {
                   valueItem.push([
@@ -235,9 +370,9 @@ $(document).ready(function () {
                   valueItem.push([val.for_datapoint_id__year_EC, val.value]);
                 }
               }
-
-
-
+      
+      
+      
               //console.log(Number(value[value.length - 1].value))
               let calculatePercentageDifference,
                 roundDifference,
@@ -255,7 +390,7 @@ $(document).ready(function () {
               } catch {
                 null;
               }
-
+      
               categoryCard = `
                             <div class="col-md-6 col-xxl-4 col-12 ">
                                 <div class="card" >
@@ -300,9 +435,9 @@ $(document).ready(function () {
                                         <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
                                             <div class="mt-3 row align-items-center">
                                                 <div class="col-7">
-                                                    <div id="all-earnings-graph${item.dashboard_category_indicator__id
+                                                    <div id="all-earnings-graph${item.indicator__id
                 }"></div>
-                                                    <div class="text-center pt-3">${item.dashboard_category_indicator__title_ENG
+                                                    <div class="text-center pt-3">${item.indicator__title_ENG
                 }</div>
                                                 </div>
                                                 <div class="col-5">
@@ -327,9 +462,9 @@ $(document).ready(function () {
                             </div>
         
                             `;
-
+      
               $("#category-card-list").append(categoryCard);
-              renderCategoryGraph(item.dashboard_category_indicator__id, valueItem, [2000]);
+              renderCategoryGraph(item.indicator__id, valueItem);
             });
             handelCategoryDetail() //Call handle on category detail
           },
@@ -357,7 +492,7 @@ $(document).ready(function () {
         const valueItem = [];
         let value = data.values.filter(
           (value) =>
-            value.for_indicator_id == item.dashboard_category_indicator__id
+            value.for_indicator_id == item.indicator__id
         );
 
 
@@ -389,6 +524,7 @@ $(document).ready(function () {
             100;
           roundDifference =
             Math.round(calculatePercentageDifference * 100) / 100;
+          
           difference = (
             value[value.length - 1].value - value[value.length - 2].value
           ).toFixed(2);
@@ -440,9 +576,9 @@ $(document).ready(function () {
                                   <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
                                       <div class="mt-3 row align-items-center">
                                           <div class="col-7">
-                                              <div id="all-earnings-graph${item.dashboard_category_indicator__id
+                                              <div id="all-earnings-graph${item.indicator__id
           }"></div>
-                                              <div class="text-center pt-3">${item.dashboard_category_indicator__title_ENG
+                                              <div class="text-center pt-3">${item.indicator__title_ENG
           }</div>
                                           </div>
                                           <div class="col-5">
@@ -458,7 +594,7 @@ $(document).ready(function () {
                                               <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
                                               <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                               </svg>
-                                               ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "None"}</h5>
+                                               ${roundDifference || roundDifference == 0  ? (roundDifference >= 0 ? roundDifference : roundDifference * -1) + "%" : "None"}</h5>
                                           </div>
                                       </div>
                                   </div>
@@ -469,7 +605,7 @@ $(document).ready(function () {
                       `;
 
         $("#category-card-list").append(categoryCard);
-        renderCategoryGraph(item.dashboard_category_indicator__id, valueItem, [2000]);
+        renderCategoryGraph(item.indicator__id, valueItem);
       });
       handelCategoryDetail() //Call handle on category detail
     },
@@ -490,6 +626,9 @@ $(document).ready(function () {
         },
         success: function (data) {
           const graphData = []
+          const barChartData = []
+          const pieChartData = []
+
           let min = data.values[0].for_datapoint_id__year_EC
           let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
 
@@ -513,7 +652,14 @@ $(document).ready(function () {
           </thead>
           <tbody>`
           let counter = 1
+          const dataValueChart1 = []
+          const dataValueChart2 = []
+          const dataValueChart3 = []
+
+          const indicatorName = []
+
           data.indicators.forEach((item) => {
+            indicatorName.push(item.title_ENG)
 
             let values = data.values.filter((value) => value.for_indicator_id == item.id)
 
@@ -525,13 +671,16 @@ $(document).ready(function () {
                <td>${item.title_ENG}</td>
                `
             const dataValue = []
+            
+
+
             for (let value of values) {
               table += `<td>${value.value}</td>`
               dataValue.push(value.value)
             }
             
             table+=`</tr>`
-            counter++;
+           
 
             graphData.push(
               {
@@ -539,7 +688,41 @@ $(document).ready(function () {
                 data : dataValue
               }
             )
+
+            dataValueChart1.push(dataValue[dataValue.length -  1])
+            dataValueChart2.push(dataValue[dataValue.length -  2])
+            dataValueChart3.push(dataValue[dataValue.length -  3])
+
+            pieChartData.push({
+              name: item.title_ENG,
+              y : dataValue[dataValue.length -  1]
+            })
+          
+
+            counter++;
+          
           })
+
+          barChartData.push(
+            {
+              name: `Year ${max}`,
+              data: dataValueChart1,
+            }
+          )
+          barChartData.push(
+            {
+              name: `Year ${max-1}`,
+              data: dataValueChart2,
+            }
+          )
+          barChartData.push(
+            {
+              name: `Year ${max-2}`,
+              data: dataValueChart3,
+            }
+          )
+
+          
 
           
 
@@ -554,41 +737,19 @@ $(document).ready(function () {
               `
 
           $('#category-detail-table').html(table)
+          console.log(pieChartData)
+          lineGraph(graphData, min)
+          barChart(barChartData,indicatorName)
+          pieChart(pieChartData, max)
 
-          // Data retrieved from https://fas.org/issues/nuclear-weapons/status-world-nuclear-forces/
-Highcharts.chart('chart', {
-  chart: {
-      type: 'area'
-  },
-  title: {
-      text: 'Indicators Relation'
-  },
-  yAxis: {
-      title: {
-          text: 'Value'
-      }
-  },
-  tooltip: {
-      pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>' +
-          'warheads in {point.x}'
-  },
-  plotOptions: {
-      area: {
-          pointStart: Number(min),
-          marker: {
-              enabled: false,
-              symbol: 'circle',
-              radius: 2,
-              states: {
-                  hover: {
-                      enabled: true
-                  }
-              }
-          }
-      }
-  },
-  series: graphData
-});
+
+
+
+
+
+
+
+
 
 
         }
@@ -598,6 +759,8 @@ Highcharts.chart('chart', {
 
 
   }
+
+  
 });
 
 
