@@ -81,6 +81,9 @@ class Indicator(models.Model):
 
     def __str__(self):
         return self.title_ENG 
+
+
+
     
 
 class Indicator_Point(models.Model):

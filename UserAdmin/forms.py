@@ -131,6 +131,21 @@ class DashboardIndicatorForm(forms.Form):
     is_public = forms.BooleanField(required=False)    
     is_dashboard_visible = forms.BooleanField(required=False)
 
+class IndicatorFormEdit(forms.ModelForm):
+    class Meta:
+        model = Indicator
+        fields = ['title_ENG', 'title_AMH', 'parent', 'is_deleted', 'measurement', 'type_of', 'is_public', 'is_dashboard_visible']
+        widgets = {
+            'title_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'title_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            'parent': forms.Select(attrs={'class': 'form-control'}),
+            'is_deleted': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+            'measurement': forms.Select(attrs={'class': 'form-control'}),
+            'type_of': forms.Select(attrs={'class': 'form-control'}),
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+            'is_dashboard_visible': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+        }
+
 
 class operationForm(forms.Form):
      operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={

@@ -1485,20 +1485,28 @@ def dashboard_topic_delete(request, id):
 
 
 @admin_user_required
-def edit_dashboard_topic(request):
-    id = request.POST['id']
-    title_ENG = request.POST['title_ENG']
-    title_AMH = request.POST['title_AMH']
-
+def edit_dashboard_topic(request , id):
     try:
-        topic = DashboardTopic.objects.get(id = id)
-        topic.title_ENG = title_ENG
-        topic.title_AMH = title_AMH
+        topic = DashboardTopic.objects.get(pk = id)
+        topic.read = True
         topic.save()
-        response = {'success' : True}
     except:
-        response = {'success' : False}
-    return JsonResponse(response)
+        topic = None
+    
+    form = DashboardTopicForm(request.POST or None, request.FILES or None, instance=topic)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('dashbord_topic')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+       
+        'form' : form
+    }
+    return render(request , "user-admin/edit_dashboard_topic.html" , context)        
     
 
 
@@ -1542,7 +1550,30 @@ def dashboard_category_delete(request, id):
 
 
 
+@admin_user_required
+def edit_dashboard_topic_category(request , id):
+    try:
+        catagory = Category.objects.get(pk = id)
+        catagory.read = True
+        catagory.save()
+    except:
+        catagory = None
+    
+    form = catagoryFormTopic(request.POST or None, request.FILES or None, instance=catagory)
+    topic = catagory.dashboard_topic.id
 
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('topic_category' , f'{topic}')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+        "topic" : topic,
+        'form' : form
+    }
+    return render(request , "user-admin/edit_dashboard_category.html" , context)  
 
 
 
@@ -1598,3 +1629,30 @@ def dashboard_indicator_delete(request, id):
         messages.error(request, 'An error occurred while Deleting')
     
     return redirect('topic_category_indicator' , category)        
+
+
+
+@admin_user_required
+def edit_dashboard_indicator(request , id):
+    try:
+        indicator = Indicator.objects.get(pk = id)
+        indicator.read = True
+        indicator.save()
+    except:
+        indicator = None
+    
+    form = IndicatorFormEdit(request.POST or None, request.FILES or None, instance=indicator)
+    category = indicator.for_category.id
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('topic_category_indicator' , f'{category}')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+        "category" : category,
+        'form' : form
+    }
+    return render(request , "user-admin/edit_dashboard_indicator.html" , context)      
