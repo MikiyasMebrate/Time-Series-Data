@@ -25,16 +25,15 @@ def index(request):
 def pie_chart_data(request):
 
     if request.method == 'GET':
-        topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
-        category = list(Category.objects.annotate(category_count=Count('indicator')).select_related().values())
-        indicators = list(Indicator.objects.all().values())
-        
-        
-        
-        serializer = DashboardTopicSerializer(topics, many=True)
+        topics = list(DashboardTopic.objects.annotate(category_count=Count('category')).select_related().values('title_ENG'))
+        topics_id_list = list(DashboardTopic.objects.filter().values_list('id', flat = True))
+        category = list(Category.objects.filter(Q(dashboard_topic__id__in=topics_id_list)).annotate(category_count=Count('indicator')).select_related().values('name_ENG' , 'category_count'))
+        category_id_list = list(Category.objects.filter().values_list('id', flat = True))
+        indicators = list(Indicator.objects.filter(Q(for_category__id__in=category_id_list)).values('title_ENG'))
+          
 
         context = {
-            "topics" : serializer.data,
+            "topics" : topics,
             "category" : category,
             "indicators" : indicators,
             
