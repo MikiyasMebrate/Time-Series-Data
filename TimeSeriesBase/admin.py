@@ -15,6 +15,7 @@ admin.site.register(models.DataPoint)
 admin.site.register(models.Quarter)
 admin.site.register(models.Month)
 admin.site.register(models.Source)
+admin.site.register(models.DashboardTopic)
 # Import Export 
 
 #Topic 
