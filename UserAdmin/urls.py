@@ -69,6 +69,7 @@ urlpatterns = [
 
     #Dashboard Topic
     path('dashbord_topic/', views.dashbord_topic, name='dashbord_topic'),
+    path('dashbord_topic/', views.dashbord_topic, name='dashbord_topic'),
     path('dashboard_topic_delete/<int:id>', views.dashboard_topic_delete, name='dashboard_topic_delete'), 
     path('edit_dashboard_topic/<int:id>', views.edit_dashboard_topic, name='edit_dashboard_topic'),
 

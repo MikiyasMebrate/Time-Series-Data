@@ -107,6 +107,7 @@
                             <th scope="col">Title English</th>
                             <th scope="col">Title Amharic</th>
                             <th scope="col">Action</th>
+                            <th scope="col">Indicators</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -116,11 +117,7 @@
                               
                                   <td>{{forloop.counter }}</td> 
 
-                                  <td>
-                                    <a href="{% url "topic_category_indicator" category.id %}">
-                                        {{category.name_ENG}}
-                                      </a>
-                                  </td>
+                                  <td>{{category.name_ENG}}</td>
                                   <td>{{category.name_AMH}}</td>
                               
                           <td>
@@ -139,12 +136,15 @@
                               <i class="fa fa-trash"></i> 
                         </button>
                         </td>
+                        <td><a href="{% url "topic_category_indicator" category.id %}"><i class="fa fa-eye"></i> </a></td>
+                         
                           </tr>
                           {% endfor %}
                           {% else %}
                           <tr>
                             <td class="text-center text-danger" colspan="10">No Data Found</td>
-                          </tr>
+                            
+                            </tr>
                           {% endif %}
                         </tbody>
                       </table>

@@ -138,6 +138,7 @@
                             <th scope="col">Title English</th>
                             <th scope="col">Title Amharic</th>
                             <th scope="col">Action</th>
+                            <th scope="col">Categories</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -145,9 +146,7 @@
                             {% for topic in topics %}
                           <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td> <a href="{% url "topic_category" topic.id %}">
-                                  {{topic.title_ENG}}
-                                </a></td>
+                                <td> {{topic.title_ENG}}</td>
                                 <td>{{topic.title_AMH}}</td>
                               
                           <td>
@@ -156,7 +155,7 @@
                             
                             <a class="btn btn-outline-warning mt-2 btn-sm me-2 btn-edit " href="{% url 'edit_dashboard_topic' topic.id %}"><i class="fa fa-pen"></i></a>
                              
-                            </button>
+                          </button>
                       
                               <button 
                               class="btn btn-outline-danger mt-2 btn-sm btn-delete"  
@@ -169,6 +168,7 @@
                               <i class="fa fa-trash"></i> 
                         </button>
                         </td>
+                        <td><a href="{% url "topic_category" topic.id %}"> <i class="fa fa-eye"></i> <a></td>
                           </tr>
                           {% endfor %}
                           {% else %}

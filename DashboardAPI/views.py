@@ -10,6 +10,7 @@ from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicat
 from django.db.models import Q
 from rest_framework.decorators import api_view
 import time
+from django.db.models import Max
 
 
 
@@ -17,6 +18,29 @@ def index(request):
 
     return render(request, 'dashboard-pages/dashboard-index.html')
 
+
+
+
+@api_view(['GET'])
+def pie_chart_data(request):
+
+    if request.method == 'GET':
+        topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
+        category = list(Category.objects.annotate(category_count=Count('indicator')).select_related().values())
+        indicators = list(Indicator.objects.all().values())
+        
+        
+        
+        serializer = DashboardTopicSerializer(topics, many=True)
+
+        context = {
+            "topics" : serializer.data,
+            "category" : category,
+            "indicators" : indicators,
+            
+        }
+        
+        return JsonResponse(context)
 
 # Create your views here.
 @api_view(['GET'])
