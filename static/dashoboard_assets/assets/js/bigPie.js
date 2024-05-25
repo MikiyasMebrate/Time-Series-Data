@@ -108,11 +108,6 @@ $(document).ready(function () {
               '{point.value}</b>'
       }
   });
-<<<<<<< HEAD
-=======
-    
-
->>>>>>> 9225bce887ddf8c6d93b65874a3864142b503b02
       },
       error: function (xhr, status, error) {
         console.error("AJAX request failed:", error);
