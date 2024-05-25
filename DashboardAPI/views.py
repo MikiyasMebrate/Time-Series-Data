@@ -13,11 +13,7 @@ from django.forms.models import model_to_dict
 
 
 def index(request):
-<<<<<<< HEAD
-    return render(request, 'dashboard-pages/dashboard-index.html' , {"form":form})
-=======
     return render(request, 'dashboard-pages/dashboard-index.html')
->>>>>>> e521b12fda90e01a9303b42e0803eb600fafb440
 
 
 def pie_chart(request):

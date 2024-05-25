@@ -1701,3 +1701,31 @@ def project_delete(request, id):
         messages.error(request, 'An error occurred while Deleting')
     
     return redirect('project')     
+
+
+
+
+@admin_user_required
+def edit_project(request , id):
+    try:
+        project = Project.objects.get(pk = id)
+        project.read = True
+        project.save()
+    except:
+        project = None
+    
+    form = ProjectForm(request.POST or None ,  instance=project)
+  
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('project')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+        "category" : category,
+        'form' : form
+    }
+    return render(request , "user-admin/edit_project.html" , context)         
