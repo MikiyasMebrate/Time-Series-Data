@@ -264,6 +264,20 @@ Highcharts.chart('pieChart', {
 
 }
 
+let fetchIndicatorDetail = () =>{
+  $(".indicator-detail").click(function(){
+    const buttonData = $(this).data()
+  
+    $.ajax({
+      type: "GET",
+      url: `/dashboard-api/indicator-detail/${buttonData.indicatorId}`,
+      success: function(data){
+        console.log(data)
+      }
+    })
+  })
+}
+
 
 $(document).ready(function () {
 
@@ -641,13 +655,14 @@ $(document).ready(function () {
             <tr>
               <th scope="col">#</th>
               <th scope="col">Indicator</th>
+              
           `
           for (let i = min; i <= max; i++) {
             table += `<th scope="col">${i}</th>`
           }
 
           table += `
-        <th scope="col"></th>    
+        <th scope="col">Action</th>    
         </tr>
           </thead>
           <tbody>`
@@ -668,7 +683,7 @@ $(document).ready(function () {
 
             table += `<tr>
                <th scope="row">${counter}</th>
-               <td>${item.title_ENG}</td>
+                <td>${item.title_ENG}</td>
                `
             const dataValue = []
             
@@ -679,7 +694,9 @@ $(document).ready(function () {
               dataValue.push(value.value)
             }
             
-            table+=`</tr>`
+            table+=`
+            <td> <button data-indicator-id = ${item.id} class="btn btn-sm btn-primary indicator-detail" ><i class="bi bi-eye"></i></button> </td>
+            </tr>`
            
 
             graphData.push(
@@ -722,13 +739,7 @@ $(document).ready(function () {
             }
           )
 
-          
-
-          
-
-
         
-
 
 
           table += `</tbody>
@@ -737,29 +748,16 @@ $(document).ready(function () {
               `
 
           $('#category-detail-table').html(table)
-          console.log(pieChartData)
           lineGraph(graphData, min)
           barChart(barChartData,indicatorName)
           pieChart(pieChartData, max)
-
-
-
-
-
-
-
-
-
-
+          fetchIndicatorDetail()
 
         }
 
       })
     })
-
-
   }
-
   
 });
 

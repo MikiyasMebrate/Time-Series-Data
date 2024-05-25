@@ -10,6 +10,7 @@ from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicat
 from django.db.models import Q
 from rest_framework.decorators import api_view
 import time
+from django.db.models import Max
 
 
 
@@ -17,6 +18,28 @@ def index(request):
 
     return render(request, 'dashboard-pages/dashboard-index.html')
 
+
+
+
+@api_view(['GET'])
+def pie_chart_data(request):
+
+    if request.method == 'GET':
+        topics = list(DashboardTopic.objects.annotate(category_count=Count('category')).select_related().values('title_ENG'))
+        topics_id_list = list(DashboardTopic.objects.filter().values_list('id', flat = True))
+        category = list(Category.objects.filter(Q(dashboard_topic__id__in=topics_id_list)).annotate(category_count=Count('indicator')).select_related().values('name_ENG' , 'category_count'))
+        category_id_list = list(Category.objects.filter().values_list('id', flat = True))
+        indicators = list(Indicator.objects.filter(Q(for_category__id__in=category_id_list)).values('title_ENG'))
+          
+
+        context = {
+            "topics" : topics,
+            "category" : category,
+            "indicators" : indicators,
+            
+        }
+        
+        return JsonResponse(context)
 
 # Create your views here.
 @api_view(['GET'])
@@ -86,5 +109,24 @@ def category_detail_lists(request , id):
         ))
         serialized_indicator = list(indicators.values('id', 'title_ENG', 'type_of'))
         return JsonResponse({'indicators': serialized_indicator,'values': value_filter})
+
+from django.db.models import Subquery, OuterRef
     
-    
+@api_view(['GET'])
+def indicator_detail(request, id):
+     if request.method == 'GET':
+          indicator = Indicator.objects.get(pk = id)
+          indicators_with_children = Indicator.objects.filter(parent=indicator).prefetch_related("children")
+
+          #Post.objects.annotate(count=Count(Tag.objects.filter(post=OuterRef('pk'))))
+
+
+          #indicatormm = Indicator.objects.filter(parent=indicator).annotate(count=Count(Indicator.objects.filter(parent__id = OuterRef('pk'))))
+          from django.db.models import Count, Q
+          indicator_cte = Indicator.objects.as_recursive(base=Q(parent__isnull=True),num_level=1,)
+          
+          indicators = indicator_cte.annotate(child_count=Count('children'),).filter(parent__id=OuterRef('pk'))
+          
+          return JsonResponse({'indicators': list(indicators.values())})
+     else:
+          return JsonResponse({'indicators': 'failed to access.'})
