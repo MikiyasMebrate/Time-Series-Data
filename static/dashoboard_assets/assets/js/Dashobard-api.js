@@ -128,9 +128,59 @@ let renderCategoryGraph = (id, dataArray) => {
 };
 
 
+let renderHalfPieChart = (data, html, max) => {
+  Highcharts.chart(`${html}`, {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    title: {
+        text: `Indicator<br>shares<br>${max}`,
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 60,
+        style: {
+            fontSize: '1.1em'
+        }
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    plotOptions: {
+        pie: {
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '75%'],
+            size: '110%'
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Indicators share',
+        innerSize: '50%',
+        data: data
+    }]
+});
 
-let lineGraph = (graphData, min) => {
-  Highcharts.chart('lineGraph', {
+}
+
+
+let lineGraph = (graphData, min, html) => {
+  Highcharts.chart(`${html}`, {
     chart: {
         type: 'area'
     },
@@ -267,12 +317,109 @@ Highcharts.chart('pieChart', {
 let fetchIndicatorDetail = () =>{
   $(".indicator-detail").click(function(){
     const buttonData = $(this).data()
+
+      $("#analytics-tab-2")[0].click(); //Trigger to detail button clicked automatically 
+
+   
   
     $.ajax({
       type: "GET",
       url: `/dashboard-api/indicator-detail/${buttonData.indicatorId}`,
       success: function(data){
-        console.log(data)
+        const graphData = []
+        const dataValue = []
+        const childData = []
+        let min = data.values[0].for_datapoint_id__year_EC
+        let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
+
+        table = `
+        <div class="table-responsive">
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Indicator</th>
+            
+        `
+        for (let i = min; i <= max; i++) {
+          table += `<th scope="col">${i}</th>`
+        }
+
+        table += `
+      </tr>
+        </thead>
+        <tbody>`
+
+        let counter = 1
+        let parentIndicator = data.indicators[0]
+
+        table += `<tr>
+        <th scope="row">${counter}</th>
+        <td class="fw-bold">  ${parentIndicator.title_ENG}</td>
+      `
+      let values = data.values.filter((value) => value.for_indicator_id == parentIndicator.id)
+      for (let value of values) {
+        table += `<td>${value.value}</td>`
+        dataValue.push(value.value)
+      }
+
+      graphData.push(
+        {
+          name: parentIndicator.title_ENG,
+          data : dataValue
+        }
+      )
+
+      table+=`</tr>`
+       
+
+        let filterChildIndicatorTable = (parent, space) =>{
+          let spaceChild = space+"&nbsp;&nbsp;&nbsp;&nbsp;"
+
+          let childLists = data.indicators.filter((children) => children.parent_id == parent.id )
+          for(let child of  childLists){   
+            if(child.parent_id == parent.id){
+              counter++;
+              table += `<tr>
+              <th scope="row">${counter}</th>
+              <td> ${space} ${child.title_ENG}</td>
+            `
+            let values = data.values.filter((value) => value.for_indicator_id == child.id)
+
+            for (let value  of values) {
+              table += `<td>${value.value}</td>`
+            }
+
+            childData.push(
+              [child.title_ENG, values[values.length-1].value]
+            )
+
+            table+=`</tr>`
+            filterChildIndicatorTable(child, spaceChild)
+            }
+          }
+        }
+        
+        filterChildIndicatorTable(parentIndicator, "&nbsp;&nbsp;")
+
+        table += `</tbody>
+        </table>
+      </div>
+        `
+
+      
+        $('#indicator-detail-table').html(table)
+        lineGraph(graphData, min, 'lineGraph-detail')
+
+        if(childData.length > 0){
+          $('#lineGraph-detail-parent-html').removeClass('col-12').addClass('col-md-6')
+          renderHalfPieChart(childData, 'half-pie-chart-detail', max)
+        }else{
+          $('#lineGraph-detail-parent-html').removeClass('col-md-6').addClass('col-12')
+
+          $('#half-pie-chart-detail').html('')
+        }
+       
       }
     })
   })
@@ -746,9 +893,9 @@ $(document).ready(function () {
               </table>
             </div>
               `
-
+          $("#analytics-tab-1")[0].click();
           $('#category-detail-table').html(table)
-          lineGraph(graphData, min)
+          lineGraph(graphData, min, 'lineGraph')
           barChart(barChartData,indicatorName)
           pieChart(pieChartData, max)
           fetchIndicatorDetail()
