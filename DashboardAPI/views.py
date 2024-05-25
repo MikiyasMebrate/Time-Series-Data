@@ -130,5 +130,24 @@ def category_detail_lists(request , id):
         ))
         serialized_indicator = list(indicators.values('id', 'title_ENG', 'type_of'))
         return JsonResponse({'indicators': serialized_indicator,'values': value_filter})
+
+from django.db.models import Subquery, OuterRef
     
-    
+@api_view(['GET'])
+def indicator_detail(request, id):
+     if request.method == 'GET':
+          indicator = Indicator.objects.get(pk = id)
+          indicators_with_children = Indicator.objects.filter(parent=indicator).prefetch_related("children")
+
+          #Post.objects.annotate(count=Count(Tag.objects.filter(post=OuterRef('pk'))))
+
+
+          #indicatormm = Indicator.objects.filter(parent=indicator).annotate(count=Count(Indicator.objects.filter(parent__id = OuterRef('pk'))))
+          from django.db.models import Count, Q
+          indicator_cte = Indicator.objects.as_recursive(base=Q(parent__isnull=True),num_level=1,)
+          
+          indicators = indicator_cte.annotate(child_count=Count('children'),).filter(parent__id=OuterRef('pk'))
+          
+          return JsonResponse({'indicators': list(indicators.values())})
+     else:
+          return JsonResponse({'indicators': 'failed to access.'})

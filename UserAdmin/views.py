@@ -44,9 +44,6 @@ def site_configuration_view(request):
 ##############################
 #          JSON             #
 #############################
-
-
-
 ##LIST VIEW START
 from django.core.cache import cache
 def json(request):
@@ -103,7 +100,7 @@ def filter_indicator_lists(request, pk):
     def child_list(parent, child_lists):
         for i in child_lists:
             if i.parent.id == parent.id:
-                child_lists = child_indicator_filter(indicator)
+                child_lists = child_indicator_filter(i)
                 returned_json.extend(list(child_lists.values()))
                 child_list(i,child_lists)
 
@@ -125,24 +122,37 @@ def filter_indicator_value(request, pk):
     single_category = get_object_or_404(Category, pk=pk)
 
     # Fetch all indicators related to the category using select_related to minimize queries
-    parent_indicators = Indicator.objects.filter(for_category=single_category, parent=None).select_related("for_category")
-
-    # Prefetch child indicators to minimize additional queries inside loops
-    indicators_with_children = Indicator.objects.filter(parent__in=parent_indicators).prefetch_related("children")
-
-    # Create a dictionary for each parent and child indicator
-    indicator_list = [model_to_dict(parent_indicator) for parent_indicator in parent_indicators]
-    indicator_list += [model_to_dict(child_indicator) for child_indicator in indicators_with_children]
-
     value_new = []
 
+
+
+    l = Indicator.objects.filter(for_category=single_category, parent=None).prefetch_related("children")
+
+    all_indicator =  Indicator.objects.prefetch_related("children")
+    returned_json = []
+   
+    def child_list(child_lists):
+        for i in child_lists:
+            child = all_indicator.filter(parent = i).prefetch_related("children")
+            if child is not None:
+                returned_json.extend(list(child.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))
+                child_list(child)
+
+    returned_json.extend(list(l.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public')))             
+    for indicator in l:
+        child_lists =all_indicator.filter(parent = indicator).prefetch_related("children")
+        returned_json.extend(list(child_lists.values('id', 'title_ENG', 'title_AMH', 'composite_key', 'op_type', 'parent_id', 'for_category_id', 'is_deleted', 'measurement_id', 'measurement__Amount_ENG', 'type_of', 'is_public'))) 
+        child_list(child_lists)
+
+
+
+
     # Fetch data values for each indicator in a single query
-    for indicator in indicator_list:
-        value_filter = DataValue.objects.filter(for_indicator__id=indicator['id']).select_related("for_datapoint", "for_indicator").values()
+    for indicator in returned_json:
+        value_filter =  DataValue.objects.filter(for_indicator__id=indicator['id']).select_related("for_datapoint", "for_indicator").values()
 
         for val in value_filter:
             value_new.append(val)
-
     return JsonResponse(value_new, safe=False)
 
 ##LIST VIEW END
@@ -226,6 +236,9 @@ def filter_indicator(request, pk):
     indicator_list = [model_to_dict(single_indicator)]
     indicator_list += [model_to_dict(child_indicator) for child_indicator in indicators_with_children]
 
+
+
+
     def child_list(parent):
         for i in indicators:
             if i['parent_id'] == parent.id:
@@ -238,7 +251,7 @@ def filter_indicator(request, pk):
     year_new = []
 
     # Fetch data values for each indicator in a single query
-    for indicator in indicator_list:
+    for indicator in returned_json:
         # Fetch DataValues and related DataPoint instances in a single query
         value_filter = DataValue.objects.filter(for_indicator__id=indicator['id']).select_related(
             "for_datapoint", "for_indicator")
@@ -273,10 +286,8 @@ def filter_indicator(request, pk):
         'month': month_data,
         'quarter': quarter_data
     }
-
-    import time
-    time.sleep(5)
     return JsonResponse(context)
+
 
 
 #Source Page
@@ -471,7 +482,6 @@ def json_filter_drilldown(request):
         "topic_data": topic_data,
         "drilldown": drilldown
     })
-
 
 
 ##############################
