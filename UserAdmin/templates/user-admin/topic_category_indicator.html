@@ -92,12 +92,12 @@
                 <div class="table-responsive">
                     <table class="table table-sm table-hover caption-top ">
                                        
-                      <h3 class="mb-3">Topics Category</h3>
+                      <h3 class="mb-3">Topic Category</h3>
                         <button class="btn btn-primary float-end mb-4" 
                         data-bs-toggle="modal"
                         data-bs-target="#AddTopic"
                         data-bs-whatever="@mdo">Add Topic Category</button>
-                        {% comment %} <a type="button"  href="{% url 'download-topics' %}"   download  class="btn float-end btn-primary me-3 mb-2"> {% endcomment %}
+                        {% comment %} <a type="button"  href="{% url 'download-indicators. %}"   download  class="btn float-end btn-primary me-3 mb-2"> {% endcomment %}
                           
                        </a>
                      
@@ -115,7 +115,8 @@
                             {% for indicator in indicators %}
                           <tr>
                               
-                                  <td>{{forloop.counter }}</td> 
+                                 <th scope="row">{{count | add:forloop.counter}} </th>
+                                  
                                   <td>{{indicator.title_ENG}}</td>
                                   <td>{{indicator.title_AMH}}</td>
                                  
@@ -161,9 +162,9 @@
                       <!-- Pagination -->
              <nav aria-label="Page navigation example">
                 <ul class="pagination pagination-circle pagination-outline justify-content-center" >
-                {% if topics.has_previous %}
+                {% if indicators.has_previous %}
                   <li class="page-item">
-                  <a class="page-link" href="?page={{ topics.previous_page_number }}">Previous</a>
+                  <a class="page-link" href="?page={{ indicators.previous_page_number }}">Previous</a>
                   </li>
                 {% else %}
                   <li class="page-item disabled">
@@ -171,30 +172,30 @@
                   </li>
                 {% endif %}
             
-                {% if topics.number|add:'-4' > 1 %}
-                  <li class="page-item"><a class="page-link" href="?page={{ topics.number|add:'-5' }}">&hellip;</a></li>
+                {% if indicators.number|add:'-4' > 1 %}
+                  <li class="page-item"><a class="page-link" href="?page={{ indicators.number|add:'-5' }}">&hellip;</a></li>
                 {% endif %}
             
-                {% for i in topics.paginator.page_range %}
-                  {% if topics.number == i %}
+                {% for i in indicators.paginator.page_range %}
+                  {% if indicators.number == i %}
                     <li class="page-item active" aria-current="page">
                     <span class="page-link">
                     {{ i }}
                     <span class="sr-only">(current)</span>
                     </span>
                   </li>
-                  {% elif i > topics.number|add:'-5' and i < topics.number|add:'5' %}
+                  {% elif i > indicators.number|add:'-5' and i < indicators.number|add:'5' %}
                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                   {% endif %}
                 {% endfor %}
             
-                {% if topics.paginator.num_pages > topics.number|add:'4' %}
-                   <li class="page-item"><a class="page-link" href="?page={{ topics.number|add:'5' }}">&hellip;</a></li>
+                {% if indicators.paginator.num_pages > indicators.number|add:'4' %}
+                   <li class="page-item"><a class="page-link" href="?page={{ indicators.number|add:'5' }}">&hellip;</a></li>
                 {% endif %}
             
-                {% if topics.has_next %}
+                {% if indicators.has_next %}
                   <li class="page-item">
-                  <a class="page-link" href="?page={{ topics.next_page_number }}">Next</a>
+                  <a class="page-link" href="?page={{ indicators.next_page_number }}">Next</a>
                   </li>
                 {% else %}
                   <li class="page-item disabled">

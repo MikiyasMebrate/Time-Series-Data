@@ -16,6 +16,10 @@ def index(request):
     return render(request, 'dashboard-pages/dashboard-index.html')
 
 
+def index2(request):
+    return render(request, 'dashboard-pages/dashboard-index2.html')    
+
+
 def pie_chart(request):
 
     return render(request, 'dashboard-pages/bigPie.html')    
@@ -75,8 +79,14 @@ def topic_lists(request):
 @api_view(['GET'])
 def category_list(request , id):
 
-        indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
 
+        
+        indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
+        try :
+            Category.objects.filter(dashboard_topic__id = id).prefetch_related('project__set').all().values('project__id')
+            project = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('project__set').all().values('name_ENG','project__id', 'project__for_catgory__name_ENG' ,'project__title_ENG' , 'project__title_AMH' , 'project__content'))
+        except:
+           project = None
         
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
@@ -86,6 +96,7 @@ def category_list(request , id):
             'for_quarter_id',
             'for_month_id__month_AMH',
         ))
+        
 
 
 
@@ -102,8 +113,7 @@ def category_list(request , id):
                 
             )
         )
-        
-        return JsonResponse({'categories':queryset, 'values':value_filter})
+        return JsonResponse({'categories':queryset, 'values':value_filter , 'project' : project})
 
 
 

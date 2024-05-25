@@ -139,7 +139,8 @@ aria-hidden="true">
                           {% if projects %}
                             {% for project in projects %}
                           <tr>
-                                <td>{{ forloop.counter }}</td>
+                               <th scope="row">{{count | add:forloop.counter}} </th>
+                                  
                                 <td> {{project.title_ENG}}</td>
                                 <td>{{project.title_AMH}}</td>
                               
