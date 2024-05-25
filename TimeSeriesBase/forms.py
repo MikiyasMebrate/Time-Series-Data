@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from UserManagement.models import CustomUser
 from django.contrib.auth.forms import SetPasswordForm
 from django_icon_picker.widgets import IconPicker
-from .models import DashboardTopic
+from .models import DashboardTopic , Project , Category
+
 
 
 from django.contrib import admin
@@ -79,3 +80,17 @@ class UserChangingForm(UserChangeForm):
 class Login_Form(forms.Form):
     username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter your password'}))
+
+
+
+
+
+
+##REDACTOR_wysiwyg_EDITOR
+
+
+
+
+
+
+    

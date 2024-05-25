@@ -18,7 +18,7 @@ from django.db.models import Count,Prefetch
 import random
 import json as toJSON
 from django.contrib.auth.models import AnonymousUser
-from TimeSeriesBase.models import DashboardTopic
+from TimeSeriesBase.models import DashboardTopic , Project
 
 def site_configuration_view(request):
     # Fetch the first instance of SiteConfiguration from the database
@@ -1666,3 +1666,38 @@ def edit_dashboard_indicator(request , id):
         'form' : form
     }
     return render(request , "user-admin/edit_dashboard_indicator.html" , context)      
+
+
+
+@login_required(login_url='login')
+@admin_user_required
+def project(request):
+    form = ProjectForm(request.POST or None, request.FILES or None)
+    projects = Project.objects.all()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Added')
+            return redirect('project')
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'projects': projects,
+        'form' : form
+    }
+    return render(request, 'user-admin/projects.html', context=context)    
+
+
+
+
+@admin_user_required
+def project_delete(request, id):
+    try:
+        project = Project.objects.get(pk = id)
+        project.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('project')     

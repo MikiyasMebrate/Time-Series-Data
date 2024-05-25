@@ -15,8 +15,7 @@ from django.db.models import Max
 
 
 def index(request):
-
-    return render(request, 'dashboard-pages/dashboard-index.html')
+    return render(request, 'dashboard-pages/dashboard-index.html' , {"form":form})
 
 
 def pie_chart(request):

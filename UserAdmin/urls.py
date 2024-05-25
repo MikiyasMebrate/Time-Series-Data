@@ -69,7 +69,6 @@ urlpatterns = [
 
     #Dashboard Topic
     path('dashbord_topic/', views.dashbord_topic, name='dashbord_topic'),
-    path('dashbord_topic/', views.dashbord_topic, name='dashbord_topic'),
     path('dashboard_topic_delete/<int:id>', views.dashboard_topic_delete, name='dashboard_topic_delete'), 
     path('edit_dashboard_topic/<int:id>', views.edit_dashboard_topic, name='edit_dashboard_topic'),
 
@@ -83,6 +82,12 @@ urlpatterns = [
     path('topic_category_indicator/<int:id>', views.topic_category_indicator, name='topic_category_indicator'),
     path('dashboard_indicator_delete/<int:id>', views.dashboard_indicator_delete, name='dashboard_indicator_delete'),
     path('edit_dashboard_indicator/<int:id>', views.edit_dashboard_indicator, name='edit_dashboard_indicator'),
+
+
+
+    
+    path('project/', views.project, name='project'),
+    path('project_delete/<int:id>', views.project_delete, name='project_delete'), 
 
     
   
