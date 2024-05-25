@@ -18,27 +18,33 @@
     <!-- [Font] Family -->
     <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/inter/inter.css' %}" id="main-font-link">
     <!-- [Tabler Icons] https://tablericons.com -->
-    <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/tabler-icons.min.css' %}"><!-- [Feather Icons] https://feathericons.com -->
+    <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/tabler-icons.min.css' %}">
+    <!-- [Feather Icons] https://feathericons.com -->
     <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/feather.css' %}">
     <!-- [Font Awesome Icons] https://fontawesome.com/icons -->
     <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/fontawesome.css' %}">
     <!-- [Material Icons] https://fonts.google.com/icons -->
-    <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/material.css' %}"><!-- [Template CSS Files] -->
+    <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/fonts/material.css' %}">
+    <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/css/style.css' %}" id="main-style-link">
     <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/css/style-preset.css' %}">
     <link rel="stylesheet" href="{% static 'dashoboard_assets/assets/css/skeleton.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+        integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    {% fontawesome_5_static %} 
+    {% fontawesome_5_static %}
 
     <link rel="stylesheet" src="{% static 'dashoboard_assets/assets/css/bigPie.css' %}">
     <style>
- 
+
     </style>
 
 </head><!-- [Head] end --><!-- [Body] Start -->
 
-<body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-layout="vertical" data-pc-direction="ltr" data-pc-theme_contrast="" data-pc-theme="light">
+<body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-layout="vertical" data-pc-direction="ltr"
+    data-pc-theme_contrast="" data-pc-theme="light">
     <!-- script for echarts 
     <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js' %}"></script>
   echart end -->
@@ -55,13 +61,14 @@
                     class="b-brand text-primary"><!-- ========   Change your logo from here   ============ --> <img
                         src="https://ableproadmin.com/assets/images/logo-dark.svg" class="img-fluid logo-lg" alt="logo">
                     <span class="badge bg-light-success rounded-pill ms-2 theme-version">MoPD</span></a>
-                </div>
+            </div>
             <div class="navbar-content">
                 <div class="card pc-user-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0"><img src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}" alt="user-image"
-                                    class="user-avtar wid-45 rounded-circle"></div>
+                            <div class="flex-shrink-0"><img
+                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
+                                    alt="user-image" class="user-avtar wid-45 rounded-circle"></div>
                             <div class="flex-grow-1 ms-3 me-2">
                                 <h6 class="mb-0">MoPD Ministery</h6><small>Owner</small>
                             </div><a class="btn btn-icon btn-link-secondary avtar" data-bs-toggle="collapse"
@@ -78,20 +85,20 @@
                     </div>
                 </div>
 
-            <ul id="sidebar-topic-list" class="pc-navbar">
-                
-              <!-- <li class="pc-item pc-caption"><label>Category</label></li> -->
-          
+                <ul id="sidebar-topic-list" class="pc-navbar">
 
-            <!-- end -->
-          </ul>
+                    <!-- <li class="pc-item pc-caption"><label>Category</label></li> -->
 
+
+                    <!-- end -->
+                </ul>
+
+            </div>
         </div>
-    </div>
     </nav><!-- [ Sidebar Menu ] end -->
 
 
-    
+
     <!-- [ Header Topbar ] start -->
     <header class="pc-header">
         <div class="header-wrapper"><!-- [Mobile Media Block] start -->
@@ -104,10 +111,12 @@
                     </li>
                     <div class="m-header">
                         <a href="index.html"
-                            class="b-brand text-primary"><!-- ========   Change your logo from here   ============ --> <img
-                                src="{% static 'dashoboard_assets/assets/images/logo-dark.svg' %}" class="img-fluid logo-lg" alt="logo">
-                            <span class="badge bg-light-success rounded-pill ms-2 theme-version">Ministry of Planning and Development</span></a>
-                        </div>
+                            class="b-brand text-primary"><!-- ========   Change your logo from here   ============ -->
+                            <img src="{% static 'dashoboard_assets/assets/images/logo-dark.svg' %}"
+                                class="img-fluid logo-lg" alt="logo">
+                            <span class="badge bg-light-success rounded-pill ms-2 theme-version">Ministry of Planning
+                                and Development</span></a>
+                    </div>
                     <!-- <li class="pc-h-item d-none d-md-inline-flex">
                         <form class="form-search"><i class="search-icon"><svg class="pc-icon">
                                     <use xlink:href="#custom-search-normal-1"></use>
@@ -115,7 +124,7 @@
                     </li> -->
                 </ul>
             </div><!-- [Mobile Media Block end] -->
-            
+
             <div class="ms-auto">
                 <ul class="list-unstyled">
                     <li class="dropdown pc-h-item"><a class="pc-head-link dropdown-toggle arrow-none me-0"
@@ -255,7 +264,8 @@
                     <li class="dropdown pc-h-item header-user-profile"><a
                             class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                             role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false"><img
-                                src="{% static 'dashoboard_assets/assets/images/user/avatar-2.jpg' %}" alt="user-image" class="user-avtar"></a>
+                                src="{% static 'dashoboard_assets/assets/images/user/avatar-2.jpg' %}" alt="user-image"
+                                class="user-avtar"></a>
                         <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                             <div class="dropdown-header d-flex align-items-center justify-content-between">
                                 <h5 class="m-0">Profile</h5>
@@ -264,7 +274,8 @@
                                 <div class="profile-notification-scroll position-relative"
                                     style="max-height: calc(100vh - 225px)">
                                     <div class="d-flex mb-1">
-                                        <div class="flex-shrink-0"><img src="{% static 'dashoboard_assets/assets/images/user/avatar-2.jpg' %}"
+                                        <div class="flex-shrink-0"><img
+                                                src="{% static 'dashoboard_assets/assets/images/user/avatar-2.jpg' %}"
                                                 alt="user-image" class="user-avtar wid-35"></div>
                                         <div class="flex-grow-1 ms-3">
                                             <h6 class="mb-1">Carson Darrin 🖖</h6><span><a
@@ -302,7 +313,8 @@
                                                 class="pc-icon text-muted me-2">
                                                 <use xlink:href="#custom-profile-2user-outline"></use>
                                             </svg> <span>UI Design team</span></span>
-                                        <div class="user-group"><img src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
+                                        <div class="user-group"><img
+                                                src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
                                                 alt="user-image" class="avtar"> <span
                                                 class="avtar bg-danger text-white">K</span> <span
                                                 class="avtar bg-success text-white"><svg class="pc-icon m-0">
@@ -312,7 +324,8 @@
                                     </a><a href="#" class="dropdown-item"><span><svg class="pc-icon text-muted me-2">
                                                 <use xlink:href="#custom-profile-2user-outline"></use>
                                             </svg> <span>Friends Groups</span></span>
-                                        <div class="user-group"><img src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
+                                        <div class="user-group"><img
+                                                src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
                                                 alt="user-image" class="avtar"> <span
                                                 class="avtar bg-danger text-white">K</span> <span
                                                 class="avtar bg-success text-white"><svg class="pc-icon m-0">
@@ -333,13 +346,16 @@
                                     <div class="card border-0 shadow-none drp-upgrade-card mb-0"
                                         style="background-image: url({% static 'dashoboard_assets/assets/images/layout/img-profile-card.jpg)' %}">
                                         <div class="card-body">
-                                            <div class="user-group"><img src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
+                                            <div class="user-group"><img
+                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-1.jpg' %}"
                                                     alt="user-image" class="avtar"> <img
-                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-2.jpg' %}" alt="user-image"
-                                                    class="avtar"> <img src="{% static 'dashoboard_assets/assets/images/user/avatar-3.jpg' %}"
+                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-2.jpg' %}"
                                                     alt="user-image" class="avtar"> <img
-                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-4.jpg' %}" alt="user-image"
-                                                    class="avtar"> <img src="{% static 'dashoboard_assets/assets/images/user/avatar-5.jpg' %}"
+                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-3.jpg' %}"
+                                                    alt="user-image" class="avtar"> <img
+                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-4.jpg' %}"
+                                                    alt="user-image" class="avtar"> <img
+                                                    src="{% static 'dashoboard_assets/assets/images/user/avatar-5.jpg' %}"
                                                     alt="user-image" class="avtar"> <span
                                                     class="avtar bg-light-primary text-primary">+20</span></div>
                                             <h3 class="my-3 text-dark">245.3k <small
@@ -359,7 +375,7 @@
     </header>
 
 
-    
+
     <div class="offcanvas pc-announcement-offcanvas offcanvas-end" tabindex="-1" id="announcement"
         aria-labelledby="announcementLabel">
         <div class="offcanvas-header">
@@ -375,8 +391,9 @@
                         <p class="mb-0 text-muted">2 min ago</p><span class="badge dot bg-warning"></span>
                     </div>
                     <h5 class="mb-3">The dashboard is Redesigned</h5>
-                    <p class="text-muted">The dashboard is completely renowed with high aesthetics User Interface.</p><img
-                        src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-1.png' %}" alt="img" class="img-fluid mb-3">
+                    <p class="text-muted">The dashboard is completely renowed with high aesthetics User Interface.</p>
+                    <img src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-1.png' %}" alt="img"
+                        class="img-fluid mb-3">
                     <div class="row">
                         <div class="col-12">
                             <div class="d-grid"><a class="btn btn-outline-secondary"
@@ -394,7 +411,8 @@
                     <h5 class="mb-3">The dashboard is in best offer price</h5>
                     <p class="text-muted">Get the exclusive on from MoPD team with best CK.</p><a
                         href="https://1.envato.market/zNkqj6" target="_blank"><img
-                            src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-2.png' %} " alt="img" class="img-fluid"></a>
+                            src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-2.png' %} "
+                            alt="img" class="img-fluid"></a>
                 </div>
             </div>
             <p class="text-span mt-4">Yesterday</p>
@@ -405,8 +423,10 @@
                         <p class="mb-0 text-muted">12 hour ago</p><span class="badge dot bg-warning"></span>
                     </div>
                     <h5 class="mb-3">Featured Dashboard Template</h5>
-                    <p class="text-muted">Do you know national dashboard is one of the featured dashboard template selected by
-                        MoPD team.?</p><img src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-3.png' %}" alt="img"
+                    <p class="text-muted">Do you know national dashboard is one of the featured dashboard template
+                        selected by
+                        MoPD team.?</p><img
+                        src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-3.png' %}" alt="img"
                         class="img-fluid">
                 </div>
             </div>
@@ -418,7 +438,8 @@
                     </div>
                     <h5 class="mb-3">Buy Once - Get Free Updated lifetime</h5>
                     <p class="text-muted">Get the lifetime free updates once you get the dashboard.</p><img
-                        src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-4.png' %}" alt="img" class="img-fluid">
+                        src="{% static 'dashoboard_assets/assets/images/layout/img-announcement-4.png' %}" alt="img"
+                        class="img-fluid">
                 </div>
             </div>
         </div>
@@ -435,18 +456,19 @@
                                 <div class="col-sm-6">
                                     <div class="p-4">
                                         <h2 class="text-white">National Aggregated Data Dashboard</h2>
-                                        <p class="text-white">A dashboard is a way of displaying various types of visual data in one place. Usually, a dashboard is intended to convey different, but related information in an easy-to-digest form.
+                                        <p class="text-white">A dashboard is a way of displaying various types of visual
+                                            data in one place. Usually, a dashboard is intended to convey different, but
+                                            related information in an easy-to-digest form.
                                         </p>
-                                        <a
-                                            href="https://1.envato.market/zNkqj6"
-                                            class="btn btn-outline-light">All done is Here,Welcome!
+                                        <a href="https://1.envato.market/zNkqj6" class="btn btn-outline-light">All done
+                                            is Here,Welcome!
                                         </a>
                                     </div>
                                 </div>
                                 <div class="col-sm-5 text-center">
                                     <div class="img-welcome-banner"><img
-                                            src="{% static 'dashoboard_assets/assets/images/widget/welcome-banner.png' %}" alt="img"
-                                            class="img-fluid"></div>
+                                            src="{% static 'dashoboard_assets/assets/images/widget/welcome-banner.png' %}"
+                                            alt="img" class="img-fluid"></div>
                                 </div>
                             </div>
                         </div>
@@ -456,115 +478,169 @@
                 <!--
                 ===   Topic Lists ===
                 -->
-               <div class="row" id="topic-card-lists">
-               </div>
+                <div class="row" id="topic-card-lists">
+                </div>
 
                 <!--Loading Skeleton-->
-                <div class="row" id="loading-skeleton-topic" >
+                <div class="row" id="loading-skeleton-topic">
 
 
-            </div>
- <!-- end -->
+                </div>
+                <!-- end -->
                 <div class="row container-fluid justify-content-center">
-                    <div> <p class="text-success"><strong id="category-title">Macro Sector</strong></p></div>
-                   
+                    <div>
+                        <p class="text-success"><strong id="category-title">Macro Sector</strong></p>
+                    </div>
 
-                <!--
+
+                    <!--
                 ===   Category Lists ===
                 -->
-                <div class="row container-fluid justify-content-center" id="category-card-list">
+                    <div class="row container-fluid justify-content-center" id="category-card-list">
+                    </div>
+
+                    <!--Loading Skeleton-->
+                    <div class="row justify-content-center" id="loading-skeleton-category">
+
+                    </div>
+
+
+                </div><!-- [ Main Content ] end -->
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-xl  modal-fullscreen-lg-down modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+
+
+                                <!--Navigation-->
+                                <ul class="nav nav-tabs analytics-tab" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation"><button class="nav-link active"
+                                            id="analytics-tab-1" data-bs-toggle="tab"
+                                            data-bs-target="#analytics-tab-1-pane" type="button" role="tab"
+                                            aria-controls="analytics-tab-1-pane" aria-selected="true">All</button> </li>
+                                    <li class="nav-item" role="presentation"><button class="nav-link"
+                                            id="analytics-tab-2" data-bs-toggle="tab"
+                                            data-bs-target="#analytics-tab-2-pane" type="button" role="tab"
+                                            aria-controls="analytics-tab-2-pane" aria-selected="false">Detail</button>
+                                    </li>
+                                </ul>
+
+
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="analytics-tab-1-pane" role="tabpanel"
+                                        aria-labelledby="analytics-tab-1" tabindex="0">
+                                        <!--Render Data from Js-->
+                                        <div class="row justify-content-center">
+
+                                            <div class="col-12" id="category-detail-table">
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div id="lineGraph"></div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <figure class="highcharts-figure">
+                                                    <div id="barChart"></div>
+                                                </figure>
+                                            </div>
+
+
+                                            <div class="col-md-6">
+                                                <figure class="highcharts-figure">
+                                                    <div id="pieChart"></div>
+                                                </figure>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="analytics-tab-2-pane" role="tabpanel"
+                                        aria-labelledby="analytics-tab-1" tabindex="0">
+                                        <!--Render Data from Js-->
+                                        <div class="row justify-content-center">
+
+                                            <div class="col-12">
+                                                <div id="indicator-detail-table">
+                                                    <p class="text-center text-danger"> Please select indicator</p>
+                                                </div>
+                                            </div>
+
+                                            <div id="lineGraph-detail-parent-html" class="col-md-6">
+                                                <div id="lineGraph-detail"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div id="half-pie-chart-detail"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <!--Loading Skeleton-->
-                <div class="row justify-content-center" id="loading-skeleton-category" >
-
-                </div>
-
-
-            </div><!-- [ Main Content ] end -->
-
-  
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl  modal-fullscreen-lg-down modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            
-            <div id="category-detail-table">
 
             </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div id="lineGraph"></div>
-                </div>
-            </div>
-
-
             <div class="row justify-content-center">
+                <div class="col-lg-6 card border shadow">
+                    <figure class="highcharts-figure">
+                        <div id="bigPieChart"></div>
 
-                <div class="col-md-6">
-                    <figure class="highcharts-figure">
-                        <div id="barChart"></div>
                     </figure>
                 </div>
-                
-                <div class="col-md-6">
-                    <figure class="highcharts-figure">
-                        <div id="pieChart"></div>
-                    </figure>
-                </div>
-                
             </div>
-            
+        </div><!-- [ Main Content ] end -->
 
-            
+        <footer class="pc-footer">
+            <div class="footer-wrapper container-fluid">
+                <div class="row">
+                    <div class="col my-1">
+                        <p class="m-0">Dashboard &#9829; crafted by Team <a
+                                href="https://themeforest.net/user/phoenixcoded" target="_blank">MoPD</a></p>
+                    </div>
+                    <div class="col-auto my-1">
+                        <ul class="list-inline footer-link mb-0">
+                            <li class="list-inline-item"><a href="https://ableproadmin.com/index.html">Home</a></li>
+                            <li class="list-inline-item"><a href="https://phoenixcoded.gitbook.io/able-pro/"
+                                    target="_blank">User-manual</a></li>
+                            <li class="list-inline-item"><a href="https://phoenixcoded.authordesk.app/"
+                                    target="_blank">Support</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+        <div class="pct-c-btn"><a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_pc_layout"><i
+                    class="ph-duotone ph-gear-six"></i></a></div>
+        <div class="offcanvas border-0 pct-offcanvas offcanvas-end" tabindex="-1" id="offcanvas_pc_layout">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Settings</h5><button type="button"
+                    class="btn btn-icon btn-link-danger ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"><i
+                        class="ti ti-x"></i></button>
+            </div>
         </div>
-      </div>
+
+
     </div>
-  </div>
-
-  <div class="row justify-content-center">
-    <div class="col-lg-5 card border shadow">
-        <figure class="highcharts-figure">
-            <div id="bigPieChart"></div>
-           
-        </figure>
     </div>
-  </div>
- 
-
-
-  
-
-        </div>
+    </div>
+    </div>
     </div><!-- [ Main Content ] end -->
 
-
-
-    <footer class="pc-footer">
-        <div class="footer-wrapper container-fluid">
-            <div class="row">
-                <div class="col my-1">
-                    <p class="m-0">Dashboard &#9829; crafted by Team <a href="https://themeforest.net/user/phoenixcoded"
-                            target="_blank">MoPD</a></p>
-                </div>
-                <div class="col-auto my-1">
-                    <ul class="list-inline footer-link mb-0">
-                        <li class="list-inline-item"><a href="https://ableproadmin.com/index.html">Home</a></li>
-                        <li class="list-inline-item"><a href="https://phoenixcoded.gitbook.io/able-pro/"
-                                target="_blank">User-manual</a></li>
-                        <li class="list-inline-item"><a href="https://phoenixcoded.authordesk.app/"
-                                target="_blank">Support</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
 
 
     <div class="pct-c-btn"><a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_pc_layout"><i
@@ -738,12 +814,13 @@
         </div>
     </div><!-- [Page Specific JS] start -->
     <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="{% static 'dashoboard_assets/assets/js/plugins/apexcharts.min.js' %}"></script>
-    <script src="{% static 'dashoboard_assets/assets/js/pages/dashboard-default.js' %}"></script><!-- [Page Specific JS] end --><!-- Required Js -->
+    <script src="{% static 'dashoboard_assets/assets/js/pages/dashboard-default.js' %}"></script>
+    <!-- [Page Specific JS] end --><!-- Required Js -->
     <script src="{% static 'dashoboard_assets/assets/js/plugins/popper.min.js' %}"></script>
     <script src="{% static 'dashoboard_assets/assets/js/plugins/simplebar.min.js' %}"></script>
     <script src="{% static 'dashoboard_assets/assets/js/plugins/bootstrap.min.js' %}"></script>
@@ -760,22 +837,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{% static 'dashoboard_assets/assets/js/Dashobard-api.js' %}"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/sunburst.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="{% static 'dashoboard_assets/assets/js/bigPie.js' %}"></script>
+    <script src="https://code.highcharts.com/modules/sunburst.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="{% static 'dashoboard_assets/assets/js/bigPie.js' %}"></script>
+
 </body>
 
 <script>
-   
 
 
 
 
 
- 
+
+
 
 </script>
 
