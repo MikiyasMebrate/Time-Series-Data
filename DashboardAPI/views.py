@@ -24,7 +24,7 @@ def topic_lists(request):
 
     if request.method == 'GET':
         topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
-        #topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
+        topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
         serializer = DashboardTopicSerializer(topics, many=True)
         
         return JsonResponse({'topics':serializer.data})
@@ -35,7 +35,8 @@ def topic_lists(request):
 @api_view(['GET'])
 def category_list(request , id):
 
-        indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).select_related().values_list('dashboard_category_indicator__id', flat=True))
+        indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
+
         
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
@@ -46,19 +47,23 @@ def category_list(request , id):
             'for_month_id__month_AMH',
         ))
 
+
+
         queryset = list(
-            Category.objects.filter(dashboard_topic__id = id).select_related().values(
+            Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').filter(indicator__is_dashboard_visible = True).values(
                 'dashboard_topic__title_ENG',
-                'dashboard_category_indicator__id',
-                'dashboard_category_indicator__title_ENG',
-                'dashboard_category_indicator__title_AMH',
                 'id',
                 'name_ENG',
                 'name_AMH',
-        )
+                'indicator__id',
+                'indicator__title_ENG',
+                'indicator__title_AMH',
+                'indicator__is_dashboard_visible'
+                
+            )
         )
         
-        return JsonResponse({'categories':queryset, 'values' : value_filter})
+        return JsonResponse({'categories':queryset, 'values':value_filter})
 
 
 

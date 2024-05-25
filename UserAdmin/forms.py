@@ -1,5 +1,5 @@
 from django import forms
-from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue,SiteConfiguration
+from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue,SiteConfiguration , DashboardTopic
 
 class SiteConfigurationForm(forms.ModelForm):
     class Meta:
@@ -69,6 +69,23 @@ operation_type = [
 ]
 
 
+
+
+class catagoryFormTopic(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ('name_ENG', 'name_AMH')
+
+        widgets = {
+            'name_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'name_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            
+        }
+
+  
+
+
+
 class IndicatorForm(forms.Form):
     data_point_type = [
     ('yearly', 'Yearly'),
@@ -89,6 +106,45 @@ class IndicatorForm(forms.Form):
         'class' : 'form-select'
     }))
     is_public = forms.BooleanField(required=False)
+    
+
+
+
+class DashboardIndicatorForm(forms.Form):
+    data_point_type = [
+    ('yearly', 'Yearly'),
+    ('quarterly', 'Quarterly'),
+    ('monthly', 'Monthly'),
+]
+    title_ENG = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    }))
+    title_AMH = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class' : 'form-control'
+    })) 
+    type_of = forms.CharField(required=True, widget=forms.Select(choices=data_point_type,attrs={
+        'class' : 'form-select'
+    }))
+    operation_type = forms.ChoiceField(required=True, choices = operation_type ,widget=forms.Select(attrs={
+        'class' : 'form-select'
+    }))
+    is_public = forms.BooleanField(required=False)    
+    is_dashboard_visible = forms.BooleanField(required=False)
+
+class IndicatorFormEdit(forms.ModelForm):
+    class Meta:
+        model = Indicator
+        fields = ['title_ENG', 'title_AMH', 'parent', 'is_deleted', 'measurement', 'type_of', 'is_public', 'is_dashboard_visible']
+        widgets = {
+            'title_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'title_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            'parent': forms.Select(attrs={'class': 'form-control'}),
+            'is_deleted': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+            'measurement': forms.Select(attrs={'class': 'form-control'}),
+            'type_of': forms.Select(attrs={'class': 'form-control'}),
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+            'is_dashboard_visible': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+        }
 
 
 class operationForm(forms.Form):
@@ -283,3 +339,17 @@ class ValueForm2(forms.Form):
 
 
 
+
+
+
+############### DashBoard Topic ################3
+class DashboardTopicForm(forms.ModelForm):
+    class Meta:
+        model = DashboardTopic
+        fields = ('title_ENG', 'title_AMH', 'icon')
+        widgets = {
+            'title_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'title_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        
+       
