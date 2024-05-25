@@ -43,6 +43,9 @@
     <style>
 
     </style>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 </head><!-- [Head] end --><!-- [Body] Start -->
 
@@ -541,12 +544,18 @@
                                 <div class="tab-content" id="myTabContent">
                                     <div class="tab-pane fade show active" id="analytics-tab-1-pane" role="tabpanel"
                                         aria-labelledby="analytics-tab-1" tabindex="0">
+
                                         <!--Render Data from Js-->
-                                        <div class="row justify-content-center">
+                                        <div class="col-12" id="category-detail-table">
+                                        </div>
 
-                                            <div class="col-12" id="category-detail-table">
-                                            </div>
+                                        <div class="col-12">
+                                            <div id="monthChart"></div>
+                                        </div>
 
+
+                                        
+                                        <div id="category-detail-chart-lists" class="row justify-content-center">
                                             <div class="col-12">
                                                 <div id="lineGraph"></div>
                                             </div>
@@ -845,6 +854,10 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.6/css/highcharts.css" />
+    
     <script src="{% static 'dashoboard_assets/assets/js/bigPie.js' %}"></script>
 
 </body>

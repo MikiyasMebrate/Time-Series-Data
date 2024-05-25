@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.shortcuts import render
 from django.http import JsonResponse
 from .serializers import DashboardTopicSerializer , CategorySerializer , CategorySerializer 
-from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator , DataPoint
+from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator , DataPoint, Month
 from django.db.models import Q
 from rest_framework.decorators import api_view
 import time
@@ -62,7 +62,6 @@ def pie_chart_data(request):
         
         return JsonResponse(context)
 
-# Create your views here.
 @api_view(['GET'])
 def topic_lists(request):
 
@@ -95,6 +94,7 @@ def category_list(request , id):
             'for_datapoint_id__year_EC',
             'for_quarter_id',
             'for_month_id__month_AMH',
+            
         ))
         
 
@@ -109,7 +109,8 @@ def category_list(request , id):
                 'indicator__id',
                 'indicator__title_ENG',
                 'indicator__title_AMH',
-                'indicator__is_dashboard_visible'
+                'indicator__is_dashboard_visible',
+                'indicator__type_of'
                 
             )
         )
@@ -125,7 +126,7 @@ def category_detail_lists(request , id):
         indicators = Indicator.objects.filter(for_category__id = category.pk).select_related()
         
         indicator_list_id = list(indicators.select_related().values_list('id', flat=True))
-
+        month = list(Month.objects.all().values())
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
             'value',
@@ -133,9 +134,10 @@ def category_detail_lists(request , id):
             'for_datapoint_id__year_EC',
             'for_quarter_id',
             'for_month_id__month_AMH',
+            'for_month_id__number',
         ))
         serialized_indicator = list(indicators.values('id', 'title_ENG', 'type_of'))
-        return JsonResponse({'indicators': serialized_indicator,'values': value_filter})
+        return JsonResponse({'indicators': serialized_indicator,'months' : month,'values': value_filter})
 
 
     
