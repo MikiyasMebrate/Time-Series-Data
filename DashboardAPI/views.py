@@ -6,7 +6,7 @@ from django.db.models import Count
 from django.shortcuts import render
 from django.http import JsonResponse
 from .serializers import DashboardTopicSerializer , CategorySerializer , CategorySerializer 
-from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator
+from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator , DataPoint
 from django.db.models import Q
 from rest_framework.decorators import api_view
 import time
@@ -19,18 +19,39 @@ def index(request):
     return render(request, 'dashboard-pages/dashboard-index.html')
 
 
+def pie_chart(request):
+
+    return render(request, 'dashboard-pages/bigPie.html')    
+
+
 
 
 @api_view(['GET'])
 def pie_chart_data(request):
 
     if request.method == 'GET':
-        topics = list(DashboardTopic.objects.annotate(category_count=Count('category')).select_related().values('title_ENG'))
+        topics = list(DashboardTopic.objects.annotate(category_count=Count('category')).select_related().values('id','title_ENG' , 'category_count'))
         topics_id_list = list(DashboardTopic.objects.filter().values_list('id', flat = True))
-        category = list(Category.objects.filter(Q(dashboard_topic__id__in=topics_id_list)).annotate(category_count=Count('indicator')).select_related().values('name_ENG' , 'category_count'))
+        category = list(Category.objects.filter(Q(dashboard_topic__id__in=topics_id_list)).annotate(category_count=Count('indicator')).select_related().values('id' ,'name_ENG' , 'category_count' , 'dashboard_topic__id'))
+        latest_year = DataPoint.objects.filter().last()
         category_id_list = list(Category.objects.filter().values_list('id', flat = True))
-        indicators = list(Indicator.objects.filter(Q(for_category__id__in=category_id_list)).values('title_ENG'))
-          
+        indicators = list(Indicator.objects.filter(
+    Q(for_category__id__in=category_id_list),
+    Q(is_dashboard_visible=True) ,  
+    Q(Q(indicator_value__for_month__number=9) , Q(indicator_value__for_datapoint=latest_year) ) |  # indicator_value__for_month
+    Q(Q(indicator_value__for_quarter__number=4) , Q(indicator_value__for_datapoint=latest_year)) | # indicator_value__for_quarter
+    Q(Q(indicator_value__for_datapoint=latest_year) , Q(indicator_value__for_month = None , indicator_value__for_quarter = None))  # indicator_value__for_datapoint
+).prefetch_related('datavalue_set').values(
+    'id',
+    'title_ENG',
+    'for_category__id',
+    'indicator_value__value',
+    'indicator_value__for_datapoint__year_EC',
+    'indicator_value__for_month__number'
+))
+           
+           
+   
 
         context = {
             "topics" : topics,
