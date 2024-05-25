@@ -1310,6 +1310,9 @@ $(document).ready(function () {
           }
           createChart(data_set);
         })();
+
+
+        
       }else if (String(currentIndicator.type_of) == "quarterly") {
         data.year = data.year.reverse()
         let childIndicator = data.indicators.filter(

@@ -109,8 +109,7 @@ $(document).ready(function () {
       }
   });
     
-  
-        console.log(data);
+
       },
       error: function (xhr, status, error) {
         console.error("AJAX request failed:", error);

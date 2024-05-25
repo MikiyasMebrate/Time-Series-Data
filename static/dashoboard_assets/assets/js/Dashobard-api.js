@@ -425,6 +425,54 @@ let fetchIndicatorDetail = () =>{
   })
 }
 
+let monthGraph = (data_set) =>{
+
+  (async () => {
+    /**
+     * Create the chart when all data is loaded
+     * @return {undefined}
+     */
+    function createChart(series) {
+      Highcharts.stockChart("monthChart", {
+        rangeSelector: {
+          selected: 4,
+        },
+
+        yAxis: {
+          labels: {
+            format: "{#if (gt value 0)}+{/if}{value}%",
+          },
+          plotLines: [
+            {
+              value: 0,
+              width: 2,
+              color: "silver",
+            },
+          ],
+        },
+
+        plotOptions: {
+          series: {
+            label: {
+              connectorAllowed: false,
+            },
+          },
+        },
+
+        tooltip: {
+          pointFormat:
+            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+          valueDecimals: 2,
+          split: true,
+        },
+
+        series,
+      });
+    }
+    createChart(data_set);
+  })();
+
+}
 
 $(document).ready(function () {
 
@@ -533,8 +581,6 @@ $(document).ready(function () {
               }
       
       
-      
-              //console.log(Number(value[value.length - 1].value))
               let calculatePercentageDifference,
                 roundDifference,
                 difference = null;
@@ -588,7 +634,7 @@ $(document).ready(function () {
                                                     <a class="dropdown-item" href="#">Year</a>
                                                     ` : ''}
                                                        
-                                                        <button data-id="${item.id}"  class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
+                                                        <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
                                                         </div>
                                                 </div>
                                             </div>
@@ -674,7 +720,6 @@ $(document).ready(function () {
 
 
 
-        //console.log(Number(value[value.length - 1].value))
         let calculatePercentageDifference,
           roundDifference,
           difference = null;
@@ -685,7 +730,6 @@ $(document).ready(function () {
             100;
           roundDifference =
             Math.round(calculatePercentageDifference * 100) / 100;
-          
           difference = (
             value[value.length - 1].value - value[value.length - 2].value
           ).toFixed(2);
@@ -729,7 +773,7 @@ $(document).ready(function () {
                                               <a class="dropdown-item" href="#">Year</a>
                                               ` : ''}
                                                  
-                                                  <button data-id="${item.id}"  class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
+                                                  <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
                                                   </div>
                                           </div>
                                       </div>
@@ -755,7 +799,7 @@ $(document).ready(function () {
                                               <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
                                               <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                               </svg>
-                                               ${roundDifference || roundDifference == 0  ? (roundDifference >= 0 ? roundDifference : roundDifference * -1) + "%" : "None"}</h5>
+                                               ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "None"}</h5>
                                           </div>
                                       </div>
                                   </div>
@@ -777,6 +821,7 @@ $(document).ready(function () {
   let handelCategoryDetail = () => {
     $(".detail-category").click(function () {
       let buttonData = $(this).data();
+     
       $.ajax({
         url: `/dashboard-api/category_detail_list/${buttonData.id}`,
         beforeSend: function () {
@@ -786,119 +831,240 @@ $(document).ready(function () {
           hideLoadingSkeletonCategory();
         },
         success: function (data) {
-          const graphData = []
-          const barChartData = []
-          const pieChartData = []
-
-          let min = data.values[0].for_datapoint_id__year_EC
-          let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
-
-
-
-          table = `
-          <div class="table-responsive">
-          <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Indicator</th>
-              
-          `
-          for (let i = min; i <= max; i++) {
-            table += `<th scope="col">${i}</th>`
-          }
-
-          table += `
-        <th scope="col">Action</th>    
-        </tr>
-          </thead>
-          <tbody>`
-          let counter = 1
-          const dataValueChart1 = []
-          const dataValueChart2 = []
-          const dataValueChart3 = []
-
-          const indicatorName = []
-
-          data.indicators.forEach((item) => {
-            indicatorName.push(item.title_ENG)
-
-            let values = data.values.filter((value) => value.for_indicator_id == item.id)
-
-
-
-
-            table += `<tr>
-               <th scope="row">${counter}</th>
-                <td>${item.title_ENG}</td>
-               `
-            const dataValue = []
-            
-
-
-            for (let value of values) {
-              table += `<td>${value.value}</td>`
-              dataValue.push(value.value)
+          if(buttonData.typeOf == 'yearly'){
+            const graphData = []
+            const barChartData = []
+            const pieChartData = []
+  
+            let min = data.values[0].for_datapoint_id__year_EC
+            let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
+  
+  
+  
+            table = `
+            <div class="table-responsive">
+            <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Indicator</th>
+                
+            `
+            for (let i = min; i <= max; i++) {
+              table += `<th scope="col">${i}</th>`
             }
-            
-            table+=`
-            <td> <button data-indicator-id = ${item.id} class="btn btn-sm btn-primary indicator-detail" ><i class="bi bi-eye"></i></button> </td>
-            </tr>`
-           
-
-            graphData.push(
-              {
+  
+            table += `
+          <th scope="col">Action</th>    
+          </tr>
+            </thead>
+            <tbody>`
+            let counter = 1
+            const dataValueChart1 = []
+            const dataValueChart2 = []
+            const dataValueChart3 = []
+  
+            const indicatorName = []
+  
+            data.indicators.forEach((item) => {
+              indicatorName.push(item.title_ENG)
+  
+              let values = data.values.filter((value) => value.for_indicator_id == item.id)
+  
+  
+  
+  
+              table += `<tr>
+                 <th scope="row">${counter}</th>
+                  <td>${item.title_ENG}</td>
+                 `
+              const dataValue = []
+              
+  
+  
+              for (let value of values) {
+                table += `<td>${value.value}</td>`
+                dataValue.push(value.value)
+              }
+              
+              table+=`
+              <td> <button data-indicator-id = ${item.id} class="btn btn-sm btn-primary indicator-detail" ><i class="bi bi-eye"></i></button> </td>
+              </tr>`
+             
+  
+              graphData.push(
+                {
+                  name: item.title_ENG,
+                  data : dataValue
+                }
+              )
+  
+              dataValueChart1.push(dataValue[dataValue.length -  1])
+              dataValueChart2.push(dataValue[dataValue.length -  2])
+              dataValueChart3.push(dataValue[dataValue.length -  3])
+  
+              pieChartData.push({
                 name: item.title_ENG,
-                data : dataValue
+                y : dataValue[dataValue.length -  1]
+              })
+            
+  
+              counter++;
+            
+            })
+  
+            barChartData.push(
+              {
+                name: `Year ${max}`,
+                data: dataValueChart1,
               }
             )
+            barChartData.push(
+              {
+                name: `Year ${max-1}`,
+                data: dataValueChart2,
+              }
+            )
+            barChartData.push(
+              {
+                name: `Year ${max-2}`,
+                data: dataValueChart3,
+              }
+            )
+  
+          
+  
+  
+            table += `</tbody>
+                </table>
+              </div>
+                `
+            $("#analytics-tab-1")[0].click();
+            $("#monthChart").hide()
+            $('#category-detail-table').html(table)
+            $("#analytics-tab-2").show()
+            $("#indicator-detail-table").show()
+            $("#category-detail-chart-lists").show()
+            lineGraph(graphData, min, 'lineGraph')
+            barChart(barChartData,indicatorName)
+            pieChart(pieChartData, max)
+            fetchIndicatorDetail()
+          }
+          else if (buttonData.typeOf == 'monthly'){
+            let data_set = []
+            let min = data.values[0].for_datapoint_id__year_EC
+            let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
 
-            dataValueChart1.push(dataValue[dataValue.length -  1])
-            dataValueChart2.push(dataValue[dataValue.length -  2])
-            dataValueChart3.push(dataValue[dataValue.length -  3])
+            table = `
+            <div class="table-responsive">
+            <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Year</th>
+                <th scope="col">Month</th>
+            `
 
-            pieChartData.push({
-              name: item.title_ENG,
-              y : dataValue[dataValue.length -  1]
-            })
+            let counter = 1;
+            for(indicator of data.indicators){
+              table += `<th scope="col">${indicator.title_ENG}</th>`
+            }
+
+            table += `
+          </tr>
+            </thead>
+            <tbody>`
+
+            //For table creation
+            for (let i = min; i <= max; i++) {
+              let yearPrint = false
+              
+
+              for(let month of data.months){
+                table += `
+                <tr>`
+                if(!yearPrint){
+                  table += `
+                  <th scope="col">${counter}</th>
+                  <td class="fw-bold">${i}</td>
+                  `
+                  counter++;
+                }else{
+                  table += `
+                  <th scope="col"></th>
+                  <td> </td>
+                  `
+                }
+
+                table+=`
+                <td>${month.month_AMH}</td>
+                `
+              
+                yearPrint = true
+
+
+                for(indicator of data.indicators){
+                   let value = data.values.find((value) => value.for_datapoint_id__year_EC == i && value.for_month_id__number == month.number && value.for_indicator_id == indicator.id)
+                   if(value){
+                      table+=` <td>${value.value}</td>`
+                   }else{
+                    table+=` <td> - </td>`
+                   }
+                }
+
+                
+                
+
+                table+= `
+                </tr>
+                `
+              }
+              
+            }
+
+
+            //for chart
+            let arr = [];
+            for(indicator of data.indicators){
+              for(let year=min; year<=max; year++){
+                for(month of data.months){
+                  let value = data.values.find((value) => value.for_datapoint_id__year_EC == year && value.for_month_id__number == month.number && value.for_indicator_id == indicator.id)
+                  if(value){
+                    arr.push([Date.UTC(parseInt(year), parseInt(month.number), 1), (value.value)]);
+                  }
+                }
+              }
+              data_set.push({'name' : indicator.title_ENG, 'data' : arr})
+              arr = []
+            }
+
+            console.log(data_set)
+
+
+  
+  
+
+            table += `</tbody>
+                  </table>
+                </div>
+                  `
+
+
+            monthGraph(data_set)
+            $("#monthChart").show()
+            $("#analytics-tab-1")[0].click();
+            $("#analytics-tab-2").hide()
+            $("#indicator-detail-table").hide()
+            $("#category-detail-chart-lists").hide()
+            $('#category-detail-table').html(table)
+            
+
+            
+            
+          }
+
           
 
-            counter++;
-          
-          })
-
-          barChartData.push(
-            {
-              name: `Year ${max}`,
-              data: dataValueChart1,
-            }
-          )
-          barChartData.push(
-            {
-              name: `Year ${max-1}`,
-              data: dataValueChart2,
-            }
-          )
-          barChartData.push(
-            {
-              name: `Year ${max-2}`,
-              data: dataValueChart3,
-            }
-          )
-
-        
-
-
-          table += `</tbody>
-              </table>
-            </div>
-              `
-          $("#analytics-tab-1")[0].click();
-          $('#category-detail-table').html(table)
-          lineGraph(graphData, min, 'lineGraph')
-          barChart(barChartData,indicatorName)
-          pieChart(pieChartData, max)
-          fetchIndicatorDetail()
 
         }
 
