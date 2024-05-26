@@ -223,3 +223,5 @@ def indicator_detail(request, id):
      
      else:
           return JsonResponse({'indicators': 'failed to access.'})
+
+

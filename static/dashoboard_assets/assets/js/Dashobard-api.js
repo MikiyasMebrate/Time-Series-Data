@@ -767,6 +767,7 @@ let handleTopicClicked = () =>{
   $(".topic-card").click(function () {
     $("#category-card-list").html("");
     $("#sidebarHtml").addClass("d-none")
+    $(".selected-card").removeClass("border border-secondary shadow-lg border-4")
 
     const buttonData = $(this).data();
    
@@ -1096,7 +1097,7 @@ let defaultCategoryLists = (page = null, search = null) => {
 
         categoryCard = `
                       <div class="col-md-6 col-xxl-4 col-12 ">
-                          <div class="card" >
+                          <div class="card " >
                               <div class="card-body">
                                   <div class="d-flex align-items-center">
                                       <div class="flex-shrink-0">
@@ -1293,15 +1294,15 @@ $(document).ready(function () {
 
       let cardTopic = ``;
       let sideNav = ``;
-
+      let selectedCard = 'border border-secondary shadow-lg border-4'
       data.topics.forEach((item) => {
         cardTopic += `
         <!-- custom cards -->
-             <div class="col-md-6 col-xl-3 d-none d-md-block topic-card"
+             <div class="col-md-6  col-xl-3 d-none d-md-block topic-card"
              data-id = ${item.id}
              data-category-name = "${item.title_ENG}"
              >
-                <div class="card social-widget-card bg-${bootstrapColors[
+                <div class="card ${ item.id == 3 ? selectedCard : '' } selected-card social-widget-card bg-${bootstrapColors[
           Math.floor(Math.random() * bootstrapColors.length)
           ]
           }">
