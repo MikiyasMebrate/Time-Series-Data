@@ -1,11 +1,10 @@
 from .views import (topic_lists, index , pie_chart ,  category_list , category_detail_lists , pie_chart_data)
 
-from .views import (topic_lists, index , index2 , category_list , category_detail_lists, indicator_detail,pie_chart_data)
+from .views import (topic_lists, index  , category_list , category_detail_lists, indicator_detail,pie_chart_data)
 from django.urls import path
 
 urlpatterns = [
     path('',index, name="dashboard-index"),
-    path('index2',index2, name="dashboard-index2"),
     path('pie_chart/',pie_chart, name="pie_chart"),
     path('topic_lists/',topic_lists, name="topic_lists"),
     path('pie_chart_data/',pie_chart_data, name="pie_chart_data"),

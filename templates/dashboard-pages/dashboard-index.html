@@ -5,6 +5,11 @@
   <!-- Mirrored from ableproadmin.com/dashboard/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 16 May 2024 06:39:22 GMT -->
 
   <head>
+    <style>
+      #cke_id_text table {
+        width: fit-content!important;
+      }
+  </style>
     <title>Home | National dashboard</title>
     <!-- [Meta] -->
     <meta charset="utf-8" />
@@ -167,6 +172,21 @@
       </div>
     </nav>
     <!-- [ Sidebar Menu ] end -->
+
+     <!-- [ Project Detail Modal ]  -->
+     <div class="modal fade" id="detailProjects" tabindex="-1" aria-labelledby="detailProjectsLabel"
+     aria-hidden="true">
+     <div class="modal-dialog modal-lg">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title" id="detailProjectsLabel">Project Information</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+           <div id="ProjectdetailModalBody" class="modal-body">
+           </div>
+       </div>
+     </div>
+     </div>
 
     <!-- [ Header Topbar ] start -->
     <header class="pc-header">

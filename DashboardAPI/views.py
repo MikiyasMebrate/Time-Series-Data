@@ -15,9 +15,6 @@ def index(request):
     return render(request, 'dashboard-pages/dashboard-index.html')
 
 
-def index2(request):
-    return render(request, 'dashboard-pages/dashboard-index2.html')    
-
 
 def pie_chart(request):
 

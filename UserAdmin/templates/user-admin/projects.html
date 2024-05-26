@@ -16,6 +16,11 @@
 {% endblock %}
   {% include 'user-admin/include/head.html' %}
 </head>
+<style>
+  #cke_id_text table {
+    width: fit-content!important;
+  }
+</style>
 
 <body class="hold-transition sidebar-mini layout-fixed">
 
@@ -48,7 +53,7 @@
 
 <div class="modal fade" id="detailProjects" tabindex="-1" aria-labelledby="detailProjectsLabel"
 aria-hidden="true">
-<div class="modal-dialog modal-xl">
+<div class="modal-dialog modal-lg">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title" id="detailProjectsLabel">Project Information</h5>
@@ -289,7 +294,7 @@ aria-hidden="true">
               <p class="fw-bold" >Name English: <span class="fw-normal">${title_eng}</span></p> 
               <p class="fw-bold" >Name Amharic: <span class="fw-normal" >${title_amh}</span></p>
               <p class="fw-bold" >Category: <span class="fw-normal" >${for_category}</span></p>
-              <p class="fw-bold" >Content: <span class="fw-normal" ><div class="ml-3"> ${content} </div></span></p> 
+              <p class="fw-bold" >Content: <span class="fw-normal" ><div class="ml-3" id="cke_id_text"> ${content} </div></span></p> 
              </div>
       `
       $('#ProjectdetailModalBody').html(htmlBody)
