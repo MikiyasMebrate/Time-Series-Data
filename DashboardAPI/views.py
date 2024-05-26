@@ -1,13 +1,12 @@
 from django.db.models import Count
 from django.shortcuts import render
 from django.http import JsonResponse
-from .serializers import DashboardTopicSerializer , CategorySerializer , CategorySerializer 
+from .serializers import DashboardTopicSerializer 
 from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator , DataPoint, Month
 from django.db.models import Q
 from rest_framework.decorators import api_view
 import time
-from django.db.models import Max
-from django.db.models import Subquery, OuterRef
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import model_to_dict
 
 
@@ -75,11 +74,9 @@ def topic_lists(request):
 
 
 @api_view(['GET'])
-def category_list(request , id):
-
-
-        
+def category_list(request , id):        
         indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
+
         try :
             Category.objects.filter(dashboard_topic__id = id).prefetch_related('project__set').all().values('project__id')
             project = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('project__set').all().values('name_ENG','project__id', 'project__for_catgory__name_ENG' ,'project__title_ENG' , 'project__title_AMH' , 'project__content'))
@@ -97,10 +94,7 @@ def category_list(request , id):
         ))
         
 
-
-
-        queryset = list(
-            Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').filter(indicator__is_dashboard_visible = True).values(
+        queryset = Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').filter(indicator__is_dashboard_visible = True).values(
                 'dashboard_topic__title_ENG',
                 'id',
                 'name_ENG',
@@ -112,8 +106,32 @@ def category_list(request , id):
                 'indicator__type_of'
                 
             )
-        )
-        return JsonResponse({'categories':queryset, 'values':value_filter , 'project' : project})
+        
+        paginator = Paginator(queryset, 6) 
+        page_number = request.GET.get('page')
+        try:
+            page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            # if the page is out of range, deliver the last page
+            page_obj = paginator.page(paginator.num_pages)
+
+    
+        return JsonResponse(
+            {
+            'categories':list(page_obj), 
+            'has_previous' : page_obj.has_previous(),
+            'has_next' : page_obj.has_next(),
+            'previous_page_number' : page_obj.has_previous() and page_obj.previous_page_number() or None,
+            'next_page_number' : page_obj.has_next() and page_obj.next_page_number() or None,
+            'number' : int(page_obj.number),
+            'page_range':list(page_obj.paginator.page_range),
+            'num_pages' : page_obj.paginator.num_pages,
+            'values':value_filter , 
+            'project' : project
+             })
 
 
 

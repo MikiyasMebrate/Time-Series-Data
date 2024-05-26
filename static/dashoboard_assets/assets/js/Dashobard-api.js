@@ -11,12 +11,9 @@ let showLoadingSpinner = (div) => {
   )
 }
 
-
 let hideLoadingSpinner = (div) =>{
   $(`#${div}`).html('')
 }
-
-
 
 let showLoadingSkeletonTopic = () => {
   for (let i = 0; i < 8; i++) {
@@ -493,333 +490,11 @@ let monthGraph = (data_set) =>{
 
 }
 
-$(document).ready(function () {
 
-  $.ajax({
-    type: "GET",
-    url: "/dashboard-api/topic_lists/",
-    beforeSend: function () {
-      showLoadingSkeletonTopic();
-      showLoadingSkeleton();
-    },
-    complete: function () {
-      hideLoadingSkeletonTopic();
-    },
-    success: function (data) {
-      const bootstrapColors = [
-        "primary",
-        "secondary",
-        "success",
-        "warning",
-        "info",
-        "dark",
-      ];
-
-      let cardTopic = ``;
-      let sideNav = ``;
-
-      data.topics.forEach((item) => {
-        cardTopic += `
-        <!-- custom cards -->
-             <div class="col-md-6 col-xl-3 d-none d-md-block topic-card"
-             data-id = ${item.id}
-             data-category-name = "${item.title_ENG}"
-             >
-                <div class="card social-widget-card bg-${bootstrapColors[
-          Math.floor(Math.random() * bootstrapColors.length)
-          ]
-          }">
-                    <div class="card-body d-flex justify-content-between align-items-center p-2">
-                        <div class="d-flex flex-column">
-                            <h3 class="text-white m-0">${Number(
-            item.category_count
-          )} +</h3>
-                            <span class="m-t-10">${item.title_ENG}</span>
-                        </div>
-                        <i class="fa fa-${item.icon.split(",")[1]}"></i>
-
-                    </div>
-                </div>
-            </div>`;
-
-        sideNav += `  <li class="pc-item topic-card" data-id = ${item.id
-          } data-category-name = "${item.title_ENG}">
-            <a href="#" class="pc-link">
-                <span class="pc-micon">
-                    <i class="fa fa-${item.icon.split(",")[1]}"></i>
-                </span>
-                <span class="pc-mtext">${item.title_ENG}</span>   
-                </a>
-                
-                
-        </li>
-        `;
-      });
-
-      $("#topic-card-lists").html(cardTopic);
-      $("#sidebar-topic-list").html(sideNav);
-
-      //Handel on Click topic card
-      $(".topic-card").click(function () {
-        $("#category-card-list").html("");
-        const buttonData = $(this).data();
-        $.ajax({
-          type: "GET",
-          url: `/dashboard-api/category_list/${buttonData.id}`,
-          beforeSend: function () {
-            showLoadingSkeleton();
-          },
-          complete: function () {
-            hideLoadingSkeletonCategory();
-          },
-          success: function (data) {
-            let categoryCard = ``;
-            $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
-      
-            data.categories.forEach((item) => {
-              const valueItem = [];
-              let value = data.values.filter(
-                (value) =>
-                  value.for_indicator_id == item.indicator__id
-              );
-      
-      
-              let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
-      
-              for (val of value) {
-                if (String(val.for_indicator__type_of) == "monthly") {
-                  valueItem.push([
-                    val.for_datapoint_id__year_EC +
-                    " - " +
-                    val.for_month_id__month_AMH,
-                    val.value,
-                  ]);
-                } else {
-                  valueItem.push([val.for_datapoint_id__year_EC, val.value]);
-                }
-              }
-      
-      
-              let calculatePercentageDifference,
-                roundDifference,
-                difference = null;
-              try {
-                calculatePercentageDifference =
-                  ((value[value.length - 1].value - value[value.length - 2].value) /
-                    value[value.length - 2].value) *
-                  100;
-                roundDifference =
-                  Math.round(calculatePercentageDifference * 100) / 100;
-                difference = (
-                  value[value.length - 1].value - value[value.length - 2].value
-                ).toFixed(2);
-              } catch {
-                null;
-              }
-      
-              categoryCard = `
-              <div class="col-md-6 col-xxl-4 col-12 ">
-                  <div class="card" >
-                      <div class="card-body">
-                          <div class="d-flex align-items-center">
-                              <div class="flex-shrink-0">
-                                  <div class="avtar avtar-s  bg-light-primary">
-                                      <svg  width="24" height="24"
-                                          viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                          <path opacity="0.4" d="M13 9H7" stroke="#4680FF" stroke-width="1.5"
-                                              stroke-linecap="round" stroke-linejoin="round" />
-                                          <path
-                                              d="M22.0002 10.9702V13.0302C22.0002 13.5802 21.5602 14.0302 21.0002 14.0502H19.0402C17.9602 14.0502 16.9702 13.2602 16.8802 12.1802C16.8202 11.5502 17.0602 10.9602 17.4802 10.5502C17.8502 10.1702 18.3602 9.9502 18.9202 9.9502H21.0002C21.5602 9.9702 22.0002 10.4202 22.0002 10.9702Z"
-                                              stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
-                                              stroke-linejoin="round" />
-                                          <path
-                                              d="M17.48 10.55C17.06 10.96 16.82 11.55 16.88 12.18C16.97 13.26 17.96 14.05 19.04 14.05H21V15.5C21 18.5 19 20.5 16 20.5H7C4 20.5 2 18.5 2 15.5V8.5C2 5.78 3.64 3.88 6.19 3.56C6.45 3.52 6.72 3.5 7 3.5H16C16.26 3.5 16.51 3.50999 16.75 3.54999C19.33 3.84999 21 5.76 21 8.5V9.95001H18.92C18.36 9.95001 17.85 10.17 17.48 10.55Z"
-                                              stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
-                                              stroke-linejoin="round" />
-                                      </svg>
-                                      </div>
-                              </div>
-                              <div class="flex-grow-1 ms-3" >
-                                  <h6 class="mb-0">${item.name_ENG}</h6>
-                              </div>
-                              <div class="flex-shrink-0 ms-3">
-                                  <div class="dropdown"><a
-                                          class="avtar avtar-s btn-link-primary dropdown-toggle arrow-none" href="#"
-                                          data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                                              class="ti ti-dots-vertical f-18"></i></a>
-                                      <div class="dropdown-menu dropdown-menu-end">
-                                      ${seasonType == 'monthly' ? `
-                                      <a class="dropdown-item" href="#">Month</a>
-                                      <a class="dropdown-item" href="#">Year</a>
-                                      ` : ''}
-                                         
-                                          <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
-                                          </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
-                              <div class="mt-3 row align-items-center">
-                                  <div class="col-7">
-                                      <div id="all-earnings-graph${item.indicator__id}"></div>
-                                      <div class="text-center pt-3">${item.indicator__title_ENG}</div>
-                                  </div>
-                                  <div class="col-5">
-                                      <h5 class="mb-1">Last ${seasonType}: ${difference ? difference < 0 ? ( difference * -1 ).toLocaleString() : difference.toLocaleString() : "0" }</h5>
-                                      <h5 class="text-primary" mb-0">
-                                      <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
-                                      <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                                      </svg>
-                                       ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "0"}</h5>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              `;
-      
-              $("#category-card-list").append(categoryCard);
-              renderCategoryGraph(item.indicator__id, valueItem);
-            });
-            handelCategoryDetail() //Call handle on category detail
-          },
-        });
-      });
-    },
-  });
-
-  //Default 
-  $("#category-card-list").html("");
-  $.ajax({
-    type: "GET",
-    url: `/dashboard-api/category_list/3`,
-    beforeSend: function () {
-      showLoadingSkeleton();
-    },
-    complete: function () {
-      hideLoadingSkeletonCategory();
-    },
-    success: function (data) {
-      let categoryCard = ``;
-      $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
-
-      data.categories.forEach((item) => {
-        const valueItem = [];
-        let value = data.values.filter(
-          (value) =>
-            value.for_indicator_id == item.indicator__id
-        );
-
-
-        let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
-
-        for (val of value) {
-          if (String(val.for_indicator__type_of) == "monthly") {
-            valueItem.push([
-              val.for_datapoint_id__year_EC +
-              " - " +
-              val.for_month_id__month_AMH,
-              val.value,
-            ]);
-          } else {
-            valueItem.push([val.for_datapoint_id__year_EC, val.value]);
-          }
-        }
-
-
-
-        let calculatePercentageDifference,
-          roundDifference,
-          difference = null;
-        try {
-          calculatePercentageDifference =
-            ((value[value.length - 1].value - value[value.length - 2].value) /
-              value[value.length - 2].value) *
-            100;
-          roundDifference =
-            Math.round(calculatePercentageDifference * 100) / 100;
-          difference = (
-            value[value.length - 1].value - value[value.length - 2].value
-          ).toFixed(2);
-        } catch {
-          null;
-        }
-
-        categoryCard = `
-                      <div class="col-md-6 col-xxl-4 col-12 ">
-                          <div class="card" >
-                              <div class="card-body">
-                                  <div class="d-flex align-items-center">
-                                      <div class="flex-shrink-0">
-                                          <div class="avtar avtar-s  bg-light-primary">
-                                              <svg  width="24" height="24"
-                                                  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                  <path opacity="0.4" d="M13 9H7" stroke="#4680FF" stroke-width="1.5"
-                                                      stroke-linecap="round" stroke-linejoin="round" />
-                                                  <path
-                                                      d="M22.0002 10.9702V13.0302C22.0002 13.5802 21.5602 14.0302 21.0002 14.0502H19.0402C17.9602 14.0502 16.9702 13.2602 16.8802 12.1802C16.8202 11.5502 17.0602 10.9602 17.4802 10.5502C17.8502 10.1702 18.3602 9.9502 18.9202 9.9502H21.0002C21.5602 9.9702 22.0002 10.4202 22.0002 10.9702Z"
-                                                      stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
-                                                      stroke-linejoin="round" />
-                                                  <path
-                                                      d="M17.48 10.55C17.06 10.96 16.82 11.55 16.88 12.18C16.97 13.26 17.96 14.05 19.04 14.05H21V15.5C21 18.5 19 20.5 16 20.5H7C4 20.5 2 18.5 2 15.5V8.5C2 5.78 3.64 3.88 6.19 3.56C6.45 3.52 6.72 3.5 7 3.5H16C16.26 3.5 16.51 3.50999 16.75 3.54999C19.33 3.84999 21 5.76 21 8.5V9.95001H18.92C18.36 9.95001 17.85 10.17 17.48 10.55Z"
-                                                      stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
-                                                      stroke-linejoin="round" />
-                                              </svg>
-                                              </div>
-                                      </div>
-                                      <div class="flex-grow-1 ms-3" >
-                                          <h6 class="mb-0">${item.name_ENG}</h6>
-                                      </div>
-                                      <div class="flex-shrink-0 ms-3">
-                                          <div class="dropdown"><a
-                                                  class="avtar avtar-s btn-link-primary dropdown-toggle arrow-none" href="#"
-                                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                                                      class="ti ti-dots-vertical f-18"></i></a>
-                                              <div class="dropdown-menu dropdown-menu-end">
-                                              ${seasonType == 'monthly' ? `
-                                              <a class="dropdown-item" href="#">Month</a>
-                                              <a class="dropdown-item" href="#">Year</a>
-                                              ` : ''}
-                                                 
-                                                  <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
-                                                  </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
-                                      <div class="mt-3 row align-items-center">
-                                          <div class="col-7">
-                                              <div id="all-earnings-graph${item.indicator__id}"></div>
-                                              <div class="text-center pt-3">${item.indicator__title_ENG}</div>
-                                          </div>
-                                          <div class="col-5">
-                                              <h5 class="mb-1">Last ${seasonType}: ${difference ? difference < 0 ? ( difference * -1 ).toLocaleString() : difference.toLocaleString() : "0" }</h5>
-                                              <h5 class="text-primary" mb-0">
-                                              <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
-                                              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                                              </svg>
-                                               ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "0"}</h5>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-  
-                      `;
-
-        $("#category-card-list").append(categoryCard);
-        renderCategoryGraph(item.indicator__id, valueItem);
-      });
-      handelCategoryDetail() //Call handle on category detail
-    },
-  });
 
 
   //Handel onclick category detail
-  let handelCategoryDetail = () => {
+let handelCategoryDetail = () => {
     $(".detail-category").click(function () {
       let buttonData = $(this).data();
      
@@ -1056,13 +731,7 @@ $(document).ready(function () {
               }
               data_set.push({'name' : indicator.title_ENG, 'data' : arr})
               arr = []
-            }
-
-            console.log(data_set)
-
-
-  
-  
+            }  
 
             table += `</tbody>
                   </table>
@@ -1091,6 +760,444 @@ $(document).ready(function () {
       })
     })
   }
+
+
+let handleTopicClicked = () =>{
+  //Handel on Click topic card
+  $(".topic-card").click(function () {
+    $("#category-card-list").html("");
+    const buttonData = $(this).data();
+   
+   let handleOnPagination = (pages = null) =>{
+    $("#category-card-list").html("");
+    $.ajax({
+      type: "GET",
+      url: `/dashboard-api/category_list/${buttonData.id}${pages ? pages : ''}`,
+      beforeSend: function () {
+        showLoadingSkeleton();
+      },
+      complete: function () {
+        hideLoadingSkeletonCategory();
+      },
+      success: function (data) {
+        console.log(`/dashboard-api/category_list/${buttonData.id}${pages ? pages : ''}`)
+        let categoryCard = ``;
+        $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
+  
+        data.categories.forEach((item) => {
+          const valueItem = [];
+          let value = data.values.filter(
+            (value) =>
+              value.for_indicator_id == item.indicator__id
+          );
+  
+  
+          let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
+  
+          for (val of value) {
+            if (String(val.for_indicator__type_of) == "monthly") {
+              valueItem.push([
+                val.for_datapoint_id__year_EC +
+                " - " +
+                val.for_month_id__month_AMH,
+                val.value,
+              ]);
+            } else {
+              valueItem.push([val.for_datapoint_id__year_EC, val.value]);
+            }
+          }
+  
+  
+          let calculatePercentageDifference,
+            roundDifference,
+            difference = null;
+          try {
+            calculatePercentageDifference =
+              ((value[value.length - 1].value - value[value.length - 2].value) /
+                value[value.length - 2].value) *
+              100;
+            roundDifference =
+              Math.round(calculatePercentageDifference * 100) / 100;
+            difference = (
+              value[value.length - 1].value - value[value.length - 2].value
+            ).toFixed(2);
+          } catch {
+            null;
+          }
+  
+          categoryCard = `
+          <div class="col-md-6 col-xxl-4 col-12 ">
+              <div class="card" >
+                  <div class="card-body">
+                      <div class="d-flex align-items-center">
+                          <div class="flex-shrink-0">
+                              <div class="avtar avtar-s  bg-light-primary">
+                                  <svg  width="24" height="24"
+                                      viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path opacity="0.4" d="M13 9H7" stroke="#4680FF" stroke-width="1.5"
+                                          stroke-linecap="round" stroke-linejoin="round" />
+                                      <path
+                                          d="M22.0002 10.9702V13.0302C22.0002 13.5802 21.5602 14.0302 21.0002 14.0502H19.0402C17.9602 14.0502 16.9702 13.2602 16.8802 12.1802C16.8202 11.5502 17.0602 10.9602 17.4802 10.5502C17.8502 10.1702 18.3602 9.9502 18.9202 9.9502H21.0002C21.5602 9.9702 22.0002 10.4202 22.0002 10.9702Z"
+                                          stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
+                                          stroke-linejoin="round" />
+                                      <path
+                                          d="M17.48 10.55C17.06 10.96 16.82 11.55 16.88 12.18C16.97 13.26 17.96 14.05 19.04 14.05H21V15.5C21 18.5 19 20.5 16 20.5H7C4 20.5 2 18.5 2 15.5V8.5C2 5.78 3.64 3.88 6.19 3.56C6.45 3.52 6.72 3.5 7 3.5H16C16.26 3.5 16.51 3.50999 16.75 3.54999C19.33 3.84999 21 5.76 21 8.5V9.95001H18.92C18.36 9.95001 17.85 10.17 17.48 10.55Z"
+                                          stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
+                                          stroke-linejoin="round" />
+                                  </svg>
+                                  </div>
+                          </div>
+                          <div class="flex-grow-1 ms-3" >
+                              <h6 class="mb-0">${item.name_ENG}</h6>
+                          </div>
+                          <div class="flex-shrink-0 ms-3">
+                              <div class="dropdown"><a
+                                      class="avtar avtar-s btn-link-primary dropdown-toggle arrow-none" href="#"
+                                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                                          class="ti ti-dots-vertical f-18"></i></a>
+                                  <div class="dropdown-menu dropdown-menu-end">
+                                  ${seasonType == 'monthly' ? `
+                                  <a class="dropdown-item" href="#">Month</a>
+                                  <a class="dropdown-item" href="#">Year</a>
+                                  ` : ''}
+                                     
+                                      <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
+                                      </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
+                          <div class="mt-3 row align-items-center">
+                              <div class="col-7">
+                                  <div id="all-earnings-graph${item.indicator__id}"></div>
+                                  <div class="text-center pt-3">${item.indicator__title_ENG}</div>
+                              </div>
+                              <div class="col-5">
+                                  <h5 class="mb-1">Last ${seasonType}: ${difference ? difference < 0 ? ( difference * -1 ).toLocaleString() : difference.toLocaleString() : "0" }</h5>
+                                  <h5 class="text-primary" mb-0">
+                                  <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
+                                  <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                  </svg>
+                                   ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "0"}</h5>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          `;
+  
+          $("#category-card-list").append(categoryCard);
+          renderCategoryGraph(item.indicator__id, valueItem);
+        });
+        handelCategoryDetail() //Call handle on category detail
+        //Pagination
+          pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
+          //Handle Pagination
+          $(".page-link").click(function(){
+          const hrefData = $(this).data()
+          console.log(hrefData)
+          handleOnPagination(hrefData.href)
+      })
+      },
+    });
+   }
+
+   handleOnPagination()
+   
+  });
+}
+
+let defaultCategoryLists = (page = null) => {
+  //Default 
+
+  $("#category-card-list").html("");
+  $.ajax({
+    type: "GET",
+    url: `/dashboard-api/category_list/3${page ? page : ''}`,
+    beforeSend: function () {
+      showLoadingSkeleton();
+    },
+    complete: function () {
+      hideLoadingSkeletonCategory();
+    },
+    success: function (data) {
+      let categoryCard = ``;
+      $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
+
+      data.categories.forEach((item) => {
+        const valueItem = [];
+        let value = data.values.filter(
+          (value) =>
+            value.for_indicator_id == item.indicator__id
+        );
+
+
+        let seasonType = value.length > 0 ? (value[0].for_indicator__type_of == "monthly" ? 'Month' : 'Year') : 'None'
+
+        for (val of value) {
+          if (String(val.for_indicator__type_of) == "monthly") {
+            valueItem.push([
+              val.for_datapoint_id__year_EC +
+              " - " +
+              val.for_month_id__month_AMH,
+              val.value,
+            ]);
+          } else {
+            valueItem.push([val.for_datapoint_id__year_EC, val.value]);
+          }
+        }
+
+
+
+        let calculatePercentageDifference,
+          roundDifference,
+          difference = null;
+        try {
+          calculatePercentageDifference =
+            ((value[value.length - 1].value - value[value.length - 2].value) /
+              value[value.length - 2].value) *
+            100;
+          roundDifference =
+            Math.round(calculatePercentageDifference * 100) / 100;
+          difference = (
+            value[value.length - 1].value - value[value.length - 2].value
+          ).toFixed(2);
+        } catch {
+          null;
+        }
+
+        categoryCard = `
+                      <div class="col-md-6 col-xxl-4 col-12 ">
+                          <div class="card" >
+                              <div class="card-body">
+                                  <div class="d-flex align-items-center">
+                                      <div class="flex-shrink-0">
+                                          <div class="avtar avtar-s  bg-light-primary">
+                                              <svg  width="24" height="24"
+                                                  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                  <path opacity="0.4" d="M13 9H7" stroke="#4680FF" stroke-width="1.5"
+                                                      stroke-linecap="round" stroke-linejoin="round" />
+                                                  <path
+                                                      d="M22.0002 10.9702V13.0302C22.0002 13.5802 21.5602 14.0302 21.0002 14.0502H19.0402C17.9602 14.0502 16.9702 13.2602 16.8802 12.1802C16.8202 11.5502 17.0602 10.9602 17.4802 10.5502C17.8502 10.1702 18.3602 9.9502 18.9202 9.9502H21.0002C21.5602 9.9702 22.0002 10.4202 22.0002 10.9702Z"
+                                                      stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
+                                                      stroke-linejoin="round" />
+                                                  <path
+                                                      d="M17.48 10.55C17.06 10.96 16.82 11.55 16.88 12.18C16.97 13.26 17.96 14.05 19.04 14.05H21V15.5C21 18.5 19 20.5 16 20.5H7C4 20.5 2 18.5 2 15.5V8.5C2 5.78 3.64 3.88 6.19 3.56C6.45 3.52 6.72 3.5 7 3.5H16C16.26 3.5 16.51 3.50999 16.75 3.54999C19.33 3.84999 21 5.76 21 8.5V9.95001H18.92C18.36 9.95001 17.85 10.17 17.48 10.55Z"
+                                                      stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
+                                                      stroke-linejoin="round" />
+                                              </svg>
+                                              </div>
+                                      </div>
+                                      <div class="flex-grow-1 ms-3" >
+                                          <h6 class="mb-0">${item.name_ENG}</h6>
+                                      </div>
+                                      <div class="flex-shrink-0 ms-3">
+                                          <div class="dropdown"><a
+                                                  class="avtar avtar-s btn-link-primary dropdown-toggle arrow-none" href="#"
+                                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                                                      class="ti ti-dots-vertical f-18"></i></a>
+                                              <div class="dropdown-menu dropdown-menu-end">
+                                              ${seasonType == 'monthly' ? `
+                                              <a class="dropdown-item" href="#">Month</a>
+                                              <a class="dropdown-item" href="#">Year</a>
+                                              ` : ''}
+                                                 
+                                                  <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
+                                                  </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
+                                      <div class="mt-3 row align-items-center">
+                                          <div class="col-7">
+                                              <div id="all-earnings-graph${item.indicator__id}"></div>
+                                              <div class="text-center pt-3">${item.indicator__title_ENG}</div>
+                                          </div>
+                                          <div class="col-5">
+                                              <h5 class="mb-1">Last ${seasonType}: ${difference ? difference < 0 ? ( difference * -1 ).toLocaleString() : difference.toLocaleString() : "0" }</h5>
+                                              <h5 class="text-primary" mb-0">
+                                              <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
+                                              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                              </svg>
+                                               ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "0"}</h5>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+  
+                      `;
+
+        $("#category-card-list").append(categoryCard);
+        renderCategoryGraph(item.indicator__id, valueItem);
+      });
+      handelCategoryDetail() //Call handle on category detail
+
+      //Pagination
+      pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
+      //Handle Pagination
+      $(".page-link").click(function(){
+      const buttonData = $(this).data()
+      defaultCategoryLists(buttonData.href)
+  })
+    },
+  });
+}
+
+let pagination = (has_previous,has_next,previous_page_number,next_page_number,number,page_range, num_pages) => {
+  let page = `
+  <nav aria-label="Page navigation example">
+  <ul class="pagination pagination-circle pagination-outline justify-content-center" >
+  `
+  
+  if(has_previous){
+    page+=`
+    <li class="page-item">
+    <a data-href="?page=${previous_page_number}" class="page-link">Previous</a>
+    </li>
+    ` 
+  }else{
+    page+=`
+    <li class="page-item disabled">
+    <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Previous</a>
+    </li>
+    `
+  }
+
+  if(number+4 > 1){
+    page += `
+    <li class="page-item">
+    <a data-href="?page=${number-5}" class="page-link" >&hellip;</a>
+    </li>
+    `
+  }
+
+  for(i of page_range){
+    if(number == i){
+      page+=`
+      <li class="page-item active" aria-current="page">
+      <span class="page-link">
+      ${i}
+      <span class="sr-only">(current)</span>
+      </span>
+    </li>
+      `
+    }else if ( i > number-5 && i < number + 5){
+      page+=`
+      <li class="page-item">
+      <a data-href="?page=${i}" class="page-link" >${i}</a>
+      </li>
+      `
+    }
+  }
+
+  if(num_pages > number + 4){
+    page+=`
+    <li class="page-item">
+    <a data-href="?page=${number + 5}" class="page-link" >&hellip;</a>
+    </li>
+    `
+  }
+
+  if(has_next){
+    page+=`
+    <li class="page-item">
+    <a data-href="?page=${next_page_number}" class="page-link" >Next</a>
+    </li>
+    `
+  }else{
+    page+=`
+    <li class="page-item disabled">
+    <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Next</a>
+    </li>
+    `
+  }
+
+  page+=`
+  </ul>
+  </nav>`
+
+  $("#Pagination").html(page)
+}
+
+
+
+$(document).ready(function () {
+
+  $.ajax({
+    type: "GET",
+    url: "/dashboard-api/topic_lists/",
+    beforeSend: function () {
+      showLoadingSkeletonTopic();
+      showLoadingSkeleton();
+    },
+    complete: function () {
+      hideLoadingSkeletonTopic();
+    },
+    success: function (data) {
+      const bootstrapColors = [
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "info",
+        "dark",
+      ];
+
+      let cardTopic = ``;
+      let sideNav = ``;
+
+      data.topics.forEach((item) => {
+        cardTopic += `
+        <!-- custom cards -->
+             <div class="col-md-6 col-xl-3 d-none d-md-block topic-card"
+             data-id = ${item.id}
+             data-category-name = "${item.title_ENG}"
+             >
+                <div class="card social-widget-card bg-${bootstrapColors[
+          Math.floor(Math.random() * bootstrapColors.length)
+          ]
+          }">
+                    <div class="card-body d-flex justify-content-between align-items-center p-2">
+                        <div class="d-flex flex-column">
+                            <h3 class="text-white m-0">${Number(
+            item.category_count
+          )} +</h3>
+                            <span class="m-t-10">${item.title_ENG}</span>
+                        </div>
+                        <i class="fa fa-${item.icon.split(",")[1]}"></i>
+
+                    </div>
+                </div>
+            </div>`;
+
+        sideNav += `  <li class="pc-item topic-card" data-id = ${item.id
+          } data-category-name = "${item.title_ENG}">
+            <a href="#" class="pc-link">
+                <span class="pc-micon">
+                    <i class="fa fa-${item.icon.split(",")[1]}"></i>
+                </span>
+                <span class="pc-mtext">${item.title_ENG}</span>   
+                </a>
+                
+                
+        </li>
+        `;
+      });
+
+      $("#topic-card-lists").html(cardTopic);
+      $("#sidebar-topic-list").html(sideNav);
+
+      handleTopicClicked() //handle Topic Clicked
+
+    },
+  });
+
+  //Default 
+  defaultCategoryLists()
   
 });
 
