@@ -50,7 +50,7 @@
                                             class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
                                         <strong class="font-13">Account</strong>
                                     </a>
-                                    <a href="{% url 'page_signin-1' %}" class="list-group-item">
+                                    <a href="{% url 'page_signin_1' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-red shadow-bg shadow-bg-xs color-white rounded-xs bi bi-power"></i>
                                         <strong class="font-13">Log Out</strong>
@@ -170,7 +170,7 @@
                         <h6 class="font-13 opacity-80 font-500 mb-0 pt-2">Exchange</h6>
                     </div>
                     <div class="ms-auto">
-                        <a href="{% url 'page-payment-bill' %}" class="icon icon-xxl rounded-m bg-theme shadow-m"><i
+                        <a href="{% url 'page_payment_bill' %}" class="icon icon-xxl rounded-m bg-theme shadow-m"><i
                                 class="font-28 color-brown-dark bi bi-filter-circle"></i></a>
                         <h6 class="font-13 opacity-80 font-500 mb-0 pt-2">Bills</h6>
                     </div>
@@ -183,14 +183,14 @@
                         <h3 class="font-16 mb-2">Recent Activity</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="{% url 'page-activit' %}" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_activity' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
 
             <div class="card card-style">
                 <div class="content">
-                    <a href="{% url 'page-activit' %}" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-orange shadow-bg shadow-bg-s"><i
                                     class="bi bi-google color-white"></i></span>
@@ -205,7 +205,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="{% url 'page-activit' %}" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-green shadow-bg shadow-bg-s"><i
                                     class="bi bi-caret-up-fill color-white"></i></span>
@@ -220,7 +220,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="{% url 'page-activit' %}" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-yellow shadow-bg shadow-bg-s"><i
                                     class="bi bi-pie-chart-fill color-white"></i></span>
@@ -243,14 +243,14 @@
                         <h3 class="font-16 mb-2">Account Activity</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="{% url 'page-activity' %}" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_activity' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
 
             <div class="card card-style gradient-green shadow-bg shadow-bg-s">
                 <div class="content">
-                    <a href="{% url 'page-activity' %}" class="d-flex">
+                    <a href="{% url 'page_activity' %}" class="d-flex">
                         <div class="align-self-center">
                             <h1 class="mb-0 font-40"><i class="bi bi-check-circle color-white pe-3"></i></h1>
                         </div>
@@ -272,7 +272,7 @@
                         <h3 class="font-16 mb-2">Send Money</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="{% url 'page-payment-transfer' %}" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_payment_transfer' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
@@ -322,7 +322,7 @@
             class="offcanvas offcanvas-top offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-card-more" data-menu-load= "{% url 'menu_card-settings' %}"
+        <div id="menu-card-more" data-menu-load= "#"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
@@ -334,7 +334,7 @@
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-request" data-menu-load="{% url 'menu_request' %}"
+        <div id="menu-request" data-menu-load="#}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 

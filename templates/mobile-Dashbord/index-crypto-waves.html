@@ -24,10 +24,10 @@
         </div>
         
 
-        <div class="page-content footer-clear">
+        <div class="page_content footer-clear">
 
             <div class="pt-3">
-                <div class="page-title d-flex">
+                <div class="page_title d-flex">
                     <div class="align-self-center me-auto">
                         <p class="color-white opacity-80 header-date">Friday 24th May</p>
                         <h1 class="color-white">Welcome</h1>
@@ -49,7 +49,7 @@
                         <div class="dropdown-menu">
                             <div class="card card-style shadow-m mt-1 me-1">
                                 <div class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
-                                    <a href="{% url 'page-wallet' %}" class="list-group-item">
+                                    <a href="{% url 'page_wallet' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
                                         <strong class="font-13">Wallet</strong>
@@ -64,7 +64,7 @@
                                             class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
                                         <strong class="font-13">Account</strong>
                                     </a>
-                                    <a href="{% url 'page_signin-1' %}" class="list-group-item">
+                                    <a href="{% url 'page_signin_1' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-red shadow-bg shadow-bg-xs color-white rounded-xs bi bi-power"></i>
                                         <strong class="font-13">Log Out</strong>
@@ -313,7 +313,7 @@
                         <h3 class="font-16 mb-2">Crypto Stats</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="{% url 'page-activity' %}" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_activity' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
@@ -742,7 +742,7 @@
                     </a>
                 </div>
             </div>
-            <a href="{% url 'page-crypto-report' %}" class="btn btn-full gradient-blue mx-3 rounded-s btn-m">View your
+            <a href="{% url 'page_crypto_report' %}" class="btn btn-full gradient-blue mx-3 rounded-s btn-m">View your
                 Reports</a>
             <div class="divider mx-3 my-4"></div>
             <p class="font-12 color-theme opacity-50 mx-3 text-center line-height-s">Tap Get Started in the Footer Bar
@@ -993,7 +993,7 @@
             <div class="menu-size" style="width:230px;">
                 <!-- Menu Title-->
                 <div class="pt-3">
-                    <div class="page-title sidebar-title d-flex">
+                    <div class="page_title sidebar-title d-flex">
                         <div class="align-self-center me-auto">
                             <p class="color-highlight">Welcome Back</p>
                             <h1>Enabled</h1>
@@ -1008,22 +1008,22 @@
                                 <div class="card card-style shadow-m mt-1 me-1">
                                     <div
                                         class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
-                                        <a href="{% url 'page-wallet' %}" class="list-group-item">
+                                        <a href="{% url 'page_wallet' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
                                             <strong class="font-13">Wallet</strong>
                                         </a>
-                                        <a href="{% url 'page-activity' %}" class="list-group-item">
+                                        <a href="{% url 'page_activity' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-blue shadow-bg shadow-bg-xs color-white rounded-xs bi bi-graph-up"></i>
                                             <strong class="font-13">Activity</strong>
                                         </a>
-                                        <a href="{% url 'page-profile' %}" class="list-group-item">
+                                        <a href="{% url 'page_profile' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
                                             <strong class="font-13">Account</strong>
                                         </a>
-                                        <a href="{% url 'page-signin-1' %}" class="list-group-item">
+                                        <a href="{% url 'page_signin_1' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-red shadow-bg shadow-bg-xs color-white rounded-xs bi bi-power"></i>
                                             <strong class="font-13">Log Out</strong>
@@ -1038,7 +1038,7 @@
 
                     <!-- Main Menu List-->
                     <div class="list-group list-custom list-menu-large">
-                        <a href="{% url 'index-waves' %}" id="nav-welcome" class="list-group-item list-group-item-active">
+                        <a href="{% url 'index_waves' %}" id="nav-welcome" class="list-group-item list-group-item-active">
                             <i class="bi bg-red-dark shadow-bg shadow-bg-xs bi-heart-fill"></i>
                             <div>Welcome</div>
                             <i class="bi bi-chevron-right"></i>
@@ -1054,7 +1054,7 @@
                             <i class="bi bi-plus font-18"></i>
                         </a>
                         <div class="list-submenu" id="sub1">
-                            <a href="{% url 'index-waves' %}" id="nav-waves" class="list-group-item">
+                            <a href="{% url 'index_waves' %}" id="nav-waves" class="list-group-item">
                                 <div class="ps-4">Waves</div>
                                 <i class="bi bi-chevron-right"></i>
                             </a>
@@ -1122,12 +1122,12 @@
                             <div>Support</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="{% 'page-profile' %}" class="list-group-item">
+                        <a href="{%  url 'page_profile' %}" class="list-group-item">
                             <i class="bi bi-person-circle opacity-20 font-16"></i>
                             <div>Account</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="{% 'page-signin-1' %}" class="list-group-item">
+                        <a href="{%  url 'page_signin_1' %}" class="list-group-item">
                             <i class="bi bi-bar-chart-fill opacity-20 font-16"></i>
                             <div>Log Out</div>
                             <i class="bi bi-chevron-right"></i>
@@ -1143,7 +1143,7 @@
             </div>
         </div>
 
-        <div id="menu-highlights" data-menu-load="{% url 'menu-highlights' %}"
+        <div id="menu-highlights" data-menu-load="{% url 'menu_highlights' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:380px;">
@@ -1213,7 +1213,7 @@
             </div>
         </div>
 
-        <div id="menu-notifications" data-menu-load="{% url 'menu-notifications' %}"
+        <div id="menu-notifications" data-menu-load="{% url 'menu_notifications' %}"
             class="offcanvas offcanvas-top offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:365px;">
@@ -1228,7 +1228,7 @@
                     </div>
                 </div>
                 <div class="content pb-2">
-                    <a href="{% url 'page-activity' %}" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-orange shadow-bg shadow-bg-xs"><i
                                     class="bi bi-google color-white"></i></span>
@@ -1243,7 +1243,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="{% url 'page-activity' %}" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-green shadow-bg shadow-bg-xs"><i
                                     class="bi bi-caret-up-fill color-white"></i></span>
@@ -1258,7 +1258,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="{% url 'page-activity' %}" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-yellow shadow-bg shadow-bg-xs"><i
                                     class="bi bi-pie-chart-fill color-white"></i></span>
@@ -1272,7 +1272,7 @@
                         </div>
                     </a>
                 </div>
-                <a href="{% url 'page-activity' %}" class="mx-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">View All
+                <a href="{% url 'page_activity' %}" class="mx-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">View All
                     Notifications</a>
             </div>
         </div>
