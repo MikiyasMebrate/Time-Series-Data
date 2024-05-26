@@ -119,7 +119,6 @@ def category_list(request , id):
             page_obj = paginator.page(paginator.num_pages)
 
     
-        time.sleep(1)
         return JsonResponse(
             {
             'categories':list(page_obj), 
