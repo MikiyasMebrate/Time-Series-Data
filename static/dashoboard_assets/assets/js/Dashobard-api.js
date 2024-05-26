@@ -1,4 +1,23 @@
 //Loading
+let showLoadingSpinner = (div) => {
+  $(`#${div}`).html(
+    `
+    <div class="text-center">
+  <div class="spinner-grow text-success" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+    `
+  )
+}
+
+
+let hideLoadingSpinner = (div) =>{
+  $(`#${div}`).html('')
+}
+
+
+
 let showLoadingSkeletonTopic = () => {
   for (let i = 0; i < 8; i++) {
     $("#loading-skeleton-topic").append(
@@ -599,76 +618,67 @@ $(document).ready(function () {
               }
       
               categoryCard = `
-                            <div class="col-md-6 col-xxl-4 col-12 ">
-                                <div class="card" >
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <div class="avtar avtar-s  bg-light-primary">
-                                                    <svg  width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path opacity="0.4" d="M13 9H7" stroke="#4680FF" stroke-width="1.5"
-                                                            stroke-linecap="round" stroke-linejoin="round" />
-                                                        <path
-                                                            d="M22.0002 10.9702V13.0302C22.0002 13.5802 21.5602 14.0302 21.0002 14.0502H19.0402C17.9602 14.0502 16.9702 13.2602 16.8802 12.1802C16.8202 11.5502 17.0602 10.9602 17.4802 10.5502C17.8502 10.1702 18.3602 9.9502 18.9202 9.9502H21.0002C21.5602 9.9702 22.0002 10.4202 22.0002 10.9702Z"
-                                                            stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                        <path
-                                                            d="M17.48 10.55C17.06 10.96 16.82 11.55 16.88 12.18C16.97 13.26 17.96 14.05 19.04 14.05H21V15.5C21 18.5 19 20.5 16 20.5H7C4 20.5 2 18.5 2 15.5V8.5C2 5.78 3.64 3.88 6.19 3.56C6.45 3.52 6.72 3.5 7 3.5H16C16.26 3.5 16.51 3.50999 16.75 3.54999C19.33 3.84999 21 5.76 21 8.5V9.95001H18.92C18.36 9.95001 17.85 10.17 17.48 10.55Z"
-                                                            stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                    </svg>
-                                                    </div>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3" >
-                                                <h6 class="mb-0">${item.name_ENG}</h6>
-                                            </div>
-                                            <div class="flex-shrink-0 ms-3">
-                                                <div class="dropdown"><a
-                                                        class="avtar avtar-s btn-link-primary dropdown-toggle arrow-none" href="#"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                                                            class="ti ti-dots-vertical f-18"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                    ${seasonType == 'monthly' ? `
-                                                    <a class="dropdown-item" href="#">Month</a>
-                                                    <a class="dropdown-item" href="#">Year</a>
-                                                    ` : ''}
-                                                       
-                                                        <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
-                                                        </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
-                                            <div class="mt-3 row align-items-center">
-                                                <div class="col-7">
-                                                    <div id="all-earnings-graph${item.indicator__id
-                }"></div>
-                                                    <div class="text-center pt-3">${item.indicator__title_ENG
-                }</div>
-                                                </div>
-                                                <div class="col-5">
-                                                    <h5 class="mb-1">Last ${seasonType}: ${difference
-                  ? difference < 0
-                    ? (
-                      difference * -1
-                    ).toLocaleString()
-                    : difference.toLocaleString()
-                  : "None"
-                }</h5>
-                                                    <h5 class="text-primary" mb-0">
-                                                    <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
-                                                    <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                                                    </svg>
-                                                     ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "None"}</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-        
-                            `;
+              <div class="col-md-6 col-xxl-4 col-12 ">
+                  <div class="card" >
+                      <div class="card-body">
+                          <div class="d-flex align-items-center">
+                              <div class="flex-shrink-0">
+                                  <div class="avtar avtar-s  bg-light-primary">
+                                      <svg  width="24" height="24"
+                                          viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path opacity="0.4" d="M13 9H7" stroke="#4680FF" stroke-width="1.5"
+                                              stroke-linecap="round" stroke-linejoin="round" />
+                                          <path
+                                              d="M22.0002 10.9702V13.0302C22.0002 13.5802 21.5602 14.0302 21.0002 14.0502H19.0402C17.9602 14.0502 16.9702 13.2602 16.8802 12.1802C16.8202 11.5502 17.0602 10.9602 17.4802 10.5502C17.8502 10.1702 18.3602 9.9502 18.9202 9.9502H21.0002C21.5602 9.9702 22.0002 10.4202 22.0002 10.9702Z"
+                                              stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round" />
+                                          <path
+                                              d="M17.48 10.55C17.06 10.96 16.82 11.55 16.88 12.18C16.97 13.26 17.96 14.05 19.04 14.05H21V15.5C21 18.5 19 20.5 16 20.5H7C4 20.5 2 18.5 2 15.5V8.5C2 5.78 3.64 3.88 6.19 3.56C6.45 3.52 6.72 3.5 7 3.5H16C16.26 3.5 16.51 3.50999 16.75 3.54999C19.33 3.84999 21 5.76 21 8.5V9.95001H18.92C18.36 9.95001 17.85 10.17 17.48 10.55Z"
+                                              stroke="#4680FF" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round" />
+                                      </svg>
+                                      </div>
+                              </div>
+                              <div class="flex-grow-1 ms-3" >
+                                  <h6 class="mb-0">${item.name_ENG}</h6>
+                              </div>
+                              <div class="flex-shrink-0 ms-3">
+                                  <div class="dropdown"><a
+                                          class="avtar avtar-s btn-link-primary dropdown-toggle arrow-none" href="#"
+                                          data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                                              class="ti ti-dots-vertical f-18"></i></a>
+                                      <div class="dropdown-menu dropdown-menu-end">
+                                      ${seasonType == 'monthly' ? `
+                                      <a class="dropdown-item" href="#">Month</a>
+                                      <a class="dropdown-item" href="#">Year</a>
+                                      ` : ''}
+                                         
+                                          <button data-id="${item.id}"  data-type-of = "${item.indicator__type_of}" class=" detail-category  detail-category dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" > <svg class="pc-icon"> <use xlink:href="#custom-flash"></use></svg> Detail</button>
+                                          </div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
+                              <div class="mt-3 row align-items-center">
+                                  <div class="col-7">
+                                      <div id="all-earnings-graph${item.indicator__id}"></div>
+                                      <div class="text-center pt-3">${item.indicator__title_ENG}</div>
+                                  </div>
+                                  <div class="col-5">
+                                      <h5 class="mb-1">Last ${seasonType}: ${difference ? difference < 0 ? ( difference * -1 ).toLocaleString() : difference.toLocaleString() : "0" }</h5>
+                                      <h5 class="text-primary" mb-0">
+                                      <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
+                                      <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                      </svg>
+                                       ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "0"}</h5>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              `;
       
               $("#category-card-list").append(categoryCard);
               renderCategoryGraph(item.indicator__id, valueItem);
@@ -781,25 +791,16 @@ $(document).ready(function () {
                                   <div class="bg-body p-3 mt-3 rounded" style="height: 190px;">
                                       <div class="mt-3 row align-items-center">
                                           <div class="col-7">
-                                              <div id="all-earnings-graph${item.indicator__id
-          }"></div>
-                                              <div class="text-center pt-3">${item.indicator__title_ENG
-          }</div>
+                                              <div id="all-earnings-graph${item.indicator__id}"></div>
+                                              <div class="text-center pt-3">${item.indicator__title_ENG}</div>
                                           </div>
                                           <div class="col-5">
-                                              <h5 class="mb-1">Last ${seasonType}: ${difference
-            ? difference < 0
-              ? (
-                difference * -1
-              ).toLocaleString()
-              : difference.toLocaleString()
-            : "None"
-          }</h5>
+                                              <h5 class="mb-1">Last ${seasonType}: ${difference ? difference < 0 ? ( difference * -1 ).toLocaleString() : difference.toLocaleString() : "0" }</h5>
                                               <h5 class="text-primary" mb-0">
                                               <svg  class="text-primary" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
                                               <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                               </svg>
-                                               ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "None"}</h5>
+                                               ${roundDifference ? (roundDifference > 0 ? roundDifference : roundDifference * -1) + "%" : "0"}</h5>
                                           </div>
                                       </div>
                                   </div>
@@ -825,20 +826,32 @@ $(document).ready(function () {
       $.ajax({
         url: `/dashboard-api/category_detail_list/${buttonData.id}`,
         beforeSend: function () {
-          showLoadingSkeleton();
+          showLoadingSpinner('spinnerLoading')
+          $("#analytics-tab-1")[0].click();
+          $("#monthChart").hide()
+          $("#analytics-tab-2").hide()
+          $("#indicator-detail-table").hide()
+          $("#category-detail-chart-lists").hide()
+          $("#analytics-tab-2").hide()
+          $("#indicator-detail-table").hide()
+          $("#category-detail-chart-lists").hide()
+          $('#category-detail-table').hide()
         },
         complete: function () {
-          hideLoadingSkeletonCategory();
+          hideLoadingSpinner('spinnerLoading')
+          $('#category-detail-table').show()
         },
         success: function (data) {
+          data.year = data.year.sort()
+          let min = data.year[0]
+          let max = data.year[data.year.length - 1]
+
           if(buttonData.typeOf == 'yearly'){
             const graphData = []
             const barChartData = []
             const pieChartData = []
   
-            let min = data.values[0].for_datapoint_id__year_EC
-            let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
-  
+            
   
   
             table = `
@@ -881,11 +894,22 @@ $(document).ready(function () {
               const dataValue = []
               
   
-  
-              for (let value of values) {
-                table += `<td>${value.value}</td>`
-                dataValue.push(value.value)
+              for (let yr = min; yr <= max; yr++) {
+                let checkedYear = false
+
+                let yearValue = values.find((item) => item.for_datapoint_id__year_EC == yr)
+
+                  if(yearValue){
+                    checkedYear = true
+                    table += `<td>${yearValue.value}</td>`
+                    dataValue.push(yearValue.value)
+                  }
+              
+              if(checkedYear  == false ){
+                dataValue.push(0)
+                table += `<td> - </td>`
               }
+            }
               
               table+=`
               <td> <button data-indicator-id = ${item.id} class="btn btn-sm btn-primary indicator-detail" ><i class="bi bi-eye"></i></button> </td>
@@ -952,8 +976,6 @@ $(document).ready(function () {
           }
           else if (buttonData.typeOf == 'monthly'){
             let data_set = []
-            let min = data.values[0].for_datapoint_id__year_EC
-            let max = data.values[data.values.length - 1].for_datapoint_id__year_EC
 
             table = `
             <div class="table-responsive">
@@ -1013,8 +1035,6 @@ $(document).ready(function () {
                 }
 
                 
-                
-
                 table+= `
                 </tr>
                 `
