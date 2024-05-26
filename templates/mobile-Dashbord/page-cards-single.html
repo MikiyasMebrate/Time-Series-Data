@@ -1,22 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
-    <title>PayApp - Finance, Banking, Wallet, Crypto Mobile PWA</title>
-    <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="fonts/bootstrap-icons.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@500;600;700&amp;family=Roboto:wght@400;500;700&amp;display=swap"
-        rel="stylesheet">
-    <link rel="manifest" href="_manifest.json">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <meta id="theme-check" name="theme-color" content="#FFFFFF">
-    <link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-192x192.png">
+    {% include 'mobile-Dashbord/include/head.html'%}
 </head>
 
 <body class="theme-light" data-highlight="magenta" monica-version="5.3.1" monica-id="fhimbbbmdjiifimnepkibjfjbppnjble">
@@ -26,14 +13,7 @@
 
     <div id="page" data-swup="0" style="display: block;">
 
-        <div id="footer-bar" class="footer-bar-1 footer-bar-detached">
-            <a href="page-wallet.html" class="active-nav"><i class="bi bi-wallet2"></i><span>Cards</span></a>
-            <a href="page-activity.html"><i class="bi bi-graph-up"></i><span>Activity</span></a>
-            <a href="index-waves.html" class="circle-nav-2"><i class="bi bi-house-fill"></i><span>Home</span></a>
-            <a href="page-payments.html"><i class="bi bi-receipt"></i><span>Payments</span></a>
-            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-sidebar"><i
-                    class="bi bi-three-dots"></i><span>More</span></a>
-        </div>
+        {% include 'mobile-Dashbord/include/navbar.html'%}
 
         <div class="page-content footer-clear">
 
@@ -193,7 +173,7 @@
                         </div>
 
                         <div class="collapse" id="tab-x" data-bs-parent="#tab-group-2" style="">
-                            <a href="page-activity.html" class="d-flex py-1">
+                            <a href="page_activity" class="d-flex py-1">
                                 <div class="align-self-center">
                                     <span class="icon rounded-s me-2 gradient-orange shadow-bg shadow-bg-xs"><i
                                             class="bi bi-google color-white"></i></span>
@@ -209,7 +189,7 @@
                                 </div>
                             </a>
                             <div class="divider my-2 opacity-50"></div>
-                            <a href="page-activity.html" class="d-flex py-1">
+                            <a href="page_activity" class="d-flex py-1">
                                 <div class="align-self-center">
                                     <span class="icon rounded-s me-2 gradient-blue shadow-bg shadow-bg-xs"><i
                                             class="bi bi-cloud-fill color-white"></i></span>
@@ -225,7 +205,7 @@
                                 </div>
                             </a>
                             <div class="divider my-2 opacity-50"></div>
-                            <a href="page-activity.html" class="d-flex py-1">
+                            <a href="page_activity" class="d-flex py-1">
                                 <div class="align-self-center">
                                     <span class="icon rounded-s me-2 gradient-orange shadow-bg shadow-bg-xs">
                                         <img src="images/pictures/31s.jpg" width="46" class="rounded-s" alt="img">
@@ -242,7 +222,7 @@
                                 </div>
                             </a>
                             <div class="divider my-2 opacity-50"></div>
-                            <a href="page-activity.html" class="d-flex py-1">
+                            <a href="page_activity" class="d-flex py-1">
                                 <div class="align-self-center">
                                     <span class="icon rounded-s me-2 gradient-green shadow-bg shadow-bg-xs"><i
                                             class="bi bi-caret-up-fill color-white"></i></span>
@@ -258,7 +238,7 @@
                                 </div>
                             </a>
                             <div class="divider my-2 opacity-50"></div>
-                            <a href="page-activity.html" class="d-flex py-1">
+                            <a href="page_activity" class="d-flex py-1">
                                 <div class="align-self-center">
                                     <span class="icon rounded-s me-2 gradient-yellow shadow-bg shadow-bg-xs"><i
                                             class="bi bi-pie-chart-fill color-white"></i></span>
@@ -285,7 +265,7 @@
 
 
 
-        <div id="menu-sidebar" data-menu-active="nav-pages" data-menu-load="menu-sidebar.html"
+        <div id="menu-sidebar" data-menu-active="nav-pages" data-menu-load="{% url 'menu_sidebar' %}"
             class="offcanvas offcanvas-start offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="width:230px;">
@@ -306,22 +286,22 @@
                                 <div class="card card-style shadow-m mt-1 me-1">
                                     <div
                                         class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
-                                        <a href="page-wallet.html" class="list-group-item">
+                                        <a href="{% url 'page_wallet' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
                                             <strong class="font-13">Wallet</strong>
                                         </a>
-                                        <a href="page-activity.html" class="list-group-item">
+                                        <a href="{% url 'page_activity' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-blue shadow-bg shadow-bg-xs color-white rounded-xs bi bi-graph-up"></i>
                                             <strong class="font-13">Activity</strong>
                                         </a>
-                                        <a href="page-profile.html" class="list-group-item">
+                                        <a href="{% url 'page_profile' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
                                             <strong class="font-13">Account</strong>
                                         </a>
-                                        <a href="page-signin-1.html" class="list-group-item">
+                                        <a href="{% url 'page_signin-1' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-red shadow-bg shadow-bg-xs color-white rounded-xs bi bi-power"></i>
                                             <strong class="font-13">Log Out</strong>
@@ -336,32 +316,32 @@
 
                     <!-- Main Menu List-->
                     <div class="list-group list-custom list-menu-large">
-                        <a href="index-waves.html" id="nav-welcome" class="list-group-item">
+                        <a href="{% url 'index_waves' %}" id="nav-welcome" class="list-group-item">
                             <i class="bi bg-red-dark shadow-bg shadow-bg-xs bi-heart-fill"></i>
                             <div>Welcome</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="pages.html" id="nav-pages" class="list-group-item list-group-item-active">
+                        <a href="{% url 'pages' %}" id="nav-pages" class="list-group-item list-group-item-active">
                             <i class="bi bg-green-dark shadow-bg shadow-bg-xs bi-star-fill"></i>
                             <div>Page Packs</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="#" id="nav-homes" data-submenu="sub1" class="list-group-item">
+                        <a href="#" id="nav_homes" data-submenu="sub1" class="list-group-item">
                             <i class="bi bg-blue-dark shadow-bg shadow-bg-xs bi-house-fill"></i>
                             <div>Home Styles</div>
                             <i class="bi bi-plus font-18"></i>
                         </a>
-                        <div class="list-submenu" id="sub1">
-                            <a href="index-waves.html" id="nav-waves" class="list-group-item">
+                        <div class="list_submenu" id="sub1">
+                            <a href="{%  url 'index-waves' %}" id="nav-waves" class="list-group-item">
                                 <div class="ps-4">Waves</div>
                                 <i class="bi bi-chevron-right"></i>
                             </a>
-                            <a href="index.html" id="nav-classic" class="list-group-item">
+                            <a href="{% url 'index' %}" id="nav-classic" class="list-group-item">
                                 <div class="ps-4">Classic</div>
                                 <i class="bi bi-chevron-right"></i>
                             </a>
                         </div>
-                        <a href="components.html" id="nav-comps" class="list-group-item">
+                        <a href="{% url 'components' %}" id="nav-comps" class="list-group-item">
                             <i class="bi bg-brown-dark shadow-bg shadow-bg-xs bi-gear-wide-connected"></i>
                             <div>Components</div>
                             <i class="bi bi-chevron-right"></i>
@@ -389,19 +369,19 @@
                     <div class="content pt-1">
                         <div class="d-flex text-center">
                             <div class="me-auto">
-                                <a href="page-payment-transfer.html"
+                                <a href="{% url 'page-payment-transfer' %}"
                                     class="icon icon-s rounded-s gradient-red shadow-bg shadow-bg-xs"><i
                                         class="font-16 color-white bi bi-arrow-up"></i></a>
                                 <h6 class="font-11 font-400 opacity-70 mb-n1 pt-2">Transfer</h6>
                             </div>
                             <div class="m-auto">
-                                <a href="page-payment-request.html"
+                                <a href="{% url 'page-payment-request' %}"
                                     class="icon icon-s rounded-s gradient-green shadow-bg shadow-bg-xs"><i
                                         class="font-16 color-white bi bi-arrow-down"></i></a>
                                 <h6 class="font-11 font-400 opacity-70 mb-n1 pt-2">Request</h6>
                             </div>
                             <div class="ms-auto">
-                                <a href="page-payment-exchange.html"
+                                <a href="{% url 'page-payment-exchange' %}"
                                     class="icon icon-s rounded-s gradient-blue shadow-bg shadow-bg-xs"><i
                                         class="font-16 color-white bi bi-arrow-left-right"></i></a>
                                 <h6 class="font-11 font-400 opacity-70 mb-n1 pt-2">Exchange</h6>
@@ -420,12 +400,12 @@
                             <div>Support</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="page-profile.html" class="list-group-item">
+                        <a href="{% url 'page-profile' %}" class="list-group-item">
                             <i class="bi bi-person-circle opacity-20 font-16"></i>
                             <div>Account</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="page-signin-1.html" class="list-group-item">
+                        <a href="{% url 'page-signin-1' %}" class="list-group-item">
                             <i class="bi bi-bar-chart-fill opacity-20 font-16"></i>
                             <div>Log Out</div>
                             <i class="bi bi-chevron-right"></i>
@@ -441,7 +421,7 @@
             </div>
         </div>
 
-        <div id="menu-highlights" data-menu-load="menu-highlights.html"
+        <div id="menu-highlights" data-menu-load="{% url 'menu_highlights' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:380px;">
@@ -511,7 +491,7 @@
             </div>
         </div>
 
-        <div id="menu-add-card" data-menu-load="menu-add-card.html"
+        <div id="menu-add-card" data-menu-load="{% url 'menu_add_card' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:410px;">
@@ -588,7 +568,7 @@
             </div>
         </div>
 
-        <div id="menu-card-more" data-menu-load="menu-card-settings.html"
+        <div id="menu-card-more" data-menu-load="{% url 'menu_card_settings' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:410px;">
@@ -615,29 +595,29 @@
                         <div><strong class="font-600 font-14">Request Funds</strong></div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="page-limits.html" class="list-group-item">
+                    <a href="{% url 'page_limits' %}" class="list-group-item">
                         <i
                             class="has-bg gradient-yellow color-white shadow-bg shadow-bg-xs rounded-xs bi-arrows-expand"></i>
                         <div><strong class="font-600 font-14">Lift Limits</strong></div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="page-report.html" class="list-group-item">
+                    <a href="{% url 'page_report' %}" class="list-group-item">
                         <i class="has-bg gradient-magenta color-white shadow-bg shadow-bg-xs rounded-xs bi-x"></i>
                         <div><strong class="font-600 font-14">Remove Card</strong></div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="page-report.html" class="list-group-item">
+                    <a href="{% url 'page_report' %}" class="list-group-item">
                         <i class="has-bg gradient-red color-white shadow-bg shadow-bg-xs rounded-xs bi-lock"></i>
                         <div><strong class="font-600 font-14">Report Lost</strong></div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
                 </div>
-                <a href="page-card.html" class="mx-3 mb-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">View
+                <a href="{% url 'page_card' %}" class="mx-3 mb-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">View
                     All Card Details</a>
             </div>
         </div>
 
-        <div id="menu-notifications" data-menu-load="menu-notifications.html"
+        <div id="menu-notifications" data-menu-load="{% url 'menu_notifications' %}"
             class="offcanvas offcanvas-top offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:365px;">
@@ -652,7 +632,7 @@
                     </div>
                 </div>
                 <div class="content pb-2">
-                    <a href="page-activity.html" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-orange shadow-bg shadow-bg-xs"><i
                                     class="bi bi-google color-white"></i></span>
@@ -667,7 +647,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="page-activity.html" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-green shadow-bg shadow-bg-xs"><i
                                     class="bi bi-caret-up-fill color-white"></i></span>
@@ -682,7 +662,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="page-activity.html" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-yellow shadow-bg shadow-bg-xs"><i
                                     class="bi bi-pie-chart-fill color-white"></i></span>
@@ -696,14 +676,13 @@
                         </div>
                     </a>
                 </div>
-                <a href="page-activity.html" class="mx-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">View All
+                <a href="{% url 'page_activity' %}" class="mx-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">View All
                     Notifications</a>
             </div>
         </div>
     </div>
 
-    <script src="scripts/bootstrap.min.js"></script>
-    <script src="scripts/custom.js"></script>
+    {% include 'mobile-Dashbord/include/script.html'%}
 </body>
 
 </html>

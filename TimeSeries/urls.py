@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('TimeSeriesBase.urls')),
     path('user-admin/', include('UserAdmin.urls')),
     path('dashboard-api/', include('DashboardAPI.urls')),
+    path('mobile/', include('MobileApp.urls')),
     path('user-management/', include('UserManagement.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path("__debug__/", include("debug_toolbar.urls")),

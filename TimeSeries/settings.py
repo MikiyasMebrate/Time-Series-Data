@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'TimeSeriesBase',
     'UserManagement',
     'UserAdmin',
+    'MobileApp',
     'widget_tweaks',
     'import_export',
     'auditlog',
@@ -149,11 +150,6 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
 
 #Custom User
 AUTH_USER_MODEL = 'UserManagement.CustomUser'
