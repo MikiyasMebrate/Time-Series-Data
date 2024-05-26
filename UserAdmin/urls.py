@@ -87,8 +87,16 @@ urlpatterns = [
 
     
     path('project/', views.project, name='project'),
+    path('project_category/<int:id>', views.project_category, name='project_category'),
     path('project_delete/<int:id>', views.project_delete, name='project_delete'),
     path('edit_project/<int:id>', views.edit_project, name='edit_project'), 
+
+
+
+
+    path('variable_category/<int:id>', views.variable_category, name='variable_category'),
+    path('variable_delete/<int:id>', views.variable_delete, name='variable_delete'),
+    path('edit_variable/<int:id>', views.edit_variable, name='edit_variable'), 
 
     
   

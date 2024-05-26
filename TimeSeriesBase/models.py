@@ -22,12 +22,25 @@ class SiteConfiguration(models.Model):
 class Project(models.Model):
     title_ENG = models.CharField(max_length=300, unique = True)
     title_AMH = models.CharField(max_length=300, null = True)
-    for_catgory = models.ForeignKey("Category" , on_delete=models.SET_NULL, null=True)
+    for_catgory = models.ForeignKey("Category" , on_delete=models.SET_NULL, null=True,blank=True)
     content = RichTextField()
     is_dashboard_visible = models.BooleanField(default = False)
 
     def __str__(self):
-        return self.title_ENG      
+        return self.title_ENG 
+
+
+
+class Variables(models.Model):
+    title_ENG = models.CharField(max_length=300, unique = True)
+    title_AMH = models.CharField(max_length=300, null = True)
+    for_catgory = models.ForeignKey("Category" , on_delete=models.SET_NULL, null=True,blank=True)
+    content = RichTextField()
+    is_dashboard_visible = models.BooleanField(default = False)
+
+    def __str__(self):
+        return self.title_ENG 
+
 
 class Topic(models.Model):
     title_ENG = models.CharField(max_length=300, unique = True)

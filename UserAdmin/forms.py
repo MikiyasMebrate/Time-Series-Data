@@ -1,5 +1,5 @@
 from django import forms
-from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue,SiteConfiguration , DashboardTopic ,Project
+from TimeSeriesBase.models import Topic,Category,Source,Measurement, Indicator, DataPoint, Month, DataValue,SiteConfiguration , DashboardTopic ,Project ,Variables
 
 class SiteConfigurationForm(forms.ModelForm):
     class Meta:
@@ -372,3 +372,48 @@ class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['for_catgory'].queryset = Category.objects.all()       
+
+
+
+class CategoryProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project 
+        fields = ['title_ENG', 'title_AMH', 'for_catgory', 'content', 'is_dashboard_visible']
+        widgets = {
+            'title_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'title_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            'for_catgory': forms.HiddenInput(),
+            'content': CKEditorWidget(attrs={'class': 'form-control'}),
+            'is_dashboard_visible': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+        }
+
+
+
+class CategoryVariableForm(forms.ModelForm):
+    class Meta:
+        model = Variables
+        fields = ['title_ENG', 'title_AMH', 'for_catgory', 'content', 'is_dashboard_visible']
+        widgets = {
+            'title_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'title_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            'for_catgory': forms.HiddenInput(),
+            'content': CKEditorWidget(attrs={'class': 'form-control'}),
+            'is_dashboard_visible': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+        }
+
+class VariableForm(forms.ModelForm):
+    class Meta:
+        model = Variables
+        fields = ['title_ENG', 'title_AMH', 'for_catgory', 'content', 'is_dashboard_visible']
+        widgets = {
+            'title_ENG': forms.TextInput(attrs={'class': 'form-control'}),
+            'title_AMH': forms.TextInput(attrs={'class': 'form-control'}),
+            'for_catgory': forms.Select(attrs={'class': 'form-control'}),
+            'content': CKEditorWidget(attrs={'class': 'form-control'}),
+            'is_dashboard_visible': forms.CheckboxInput(attrs={'class': 'form-check-input ml-3'}),
+        }
+
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['for_catgory'].queryset = Category.objects.all()         

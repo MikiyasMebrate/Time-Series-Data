@@ -1752,6 +1752,46 @@ def project(request):
     return render(request, 'user-admin/projects.html', context=context)    
 
 
+@login_required(login_url='login')
+@admin_user_required
+def project_category(request , id):
+    form = CategoryProjectForm(request.POST or None, request.FILES or None)
+    projects = Project.objects.filter(for_catgory__id=id)
+    paginator = Paginator(projects, 10) 
+    page_number = request.GET.get('page')
+    category = Category.objects.get(id=id)
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
+   
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.for_catgory = category
+            obj.save()
+            messages.success(request, 'Successfully Added')
+
+            return redirect('project_category' , id)
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'projects': page,
+        'count' : count,
+        'form' : form
+    }
+    return render(request, 'user-admin/project_category.html', context=context)    
+
+
 
 
 @admin_user_required
@@ -1792,3 +1832,94 @@ def edit_project(request , id):
         'form' : form
     }
     return render(request , "user-admin/edit_project.html" , context)         
+
+
+
+
+
+
+
+
+
+
+
+@login_required(login_url='login')
+@admin_user_required
+def variable_category(request , id):
+    form = CategoryVariableForm(request.POST or None, request.FILES or None)
+    variables = Variables.objects.filter(for_catgory__id=id)
+    paginator = Paginator(variables, 10) 
+    page_number = request.GET.get('page')
+    category = Category.objects.get(id=id)
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
+   
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.for_catgory = category
+            obj.save()
+            messages.success(request, 'Successfully Added')
+
+            return redirect('variable_category' , id)
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'variables': page,
+        'count' : count,
+        'form' : form
+    }
+    return render(request, 'user-admin/variable_category.html', context=context)    
+
+
+
+
+@admin_user_required
+def variable_delete(request, id):
+    try:
+        variable = Variables.objects.get(pk = id)
+        variable.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('variable')     
+
+
+
+
+@admin_user_required
+def edit_variable(request , id):
+    try:
+        variable = Variables.objects.get(pk = id)
+        variable.read = True
+        variable.save()
+    except:
+        variable = None
+    
+    form = VariableForm(request.POST or None ,  instance=variable)
+  
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('variable')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+        "category" : category,
+        'form' : form
+    }
+    return render(request , "user-admin/edit_variable.html" , context)         

@@ -71,14 +71,26 @@ def topic_lists(request):
 
 
 @api_view(['GET'])
-def category_list(request , id):        
+def category_list(request , id , topic_type=None): 
+               
         indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
 
-        try :
-            Category.objects.filter(dashboard_topic__id = id).prefetch_related('project__set').all().values('project__id')
-            project = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('project__set').all().values('name_ENG','project__id', 'project__for_catgory__name_ENG' ,'project__title_ENG' , 'project__title_AMH' , 'project__content'))
-        except:
-           project = None
+         # Retrieve projects based on the provided id
+        # Retrieve projects or variables based on the provided id
+        project = None
+        variables = None
+        
+        projects = list(Category.objects.filter(dashboard_topic__id=id)
+                            .prefetch_related('project__set')
+                            .annotate(chiled_count=Count('project'))
+                            .values('name_ENG', 'project__id', 'project__for_catgory__name_ENG',
+                                    'project__title_ENG', 'project__title_AMH', 'project__content' , 'chiled_count'))
+                 
+        variables = list(Category.objects.filter(dashboard_topic__id=id)
+                                 .prefetch_related('variables__set')
+                                 .values('name_ENG', 'variables__id', 'variables__for_catgory__name_ENG',
+                                         'variables__title_ENG', 'variables__title_AMH', 'variables__content'))
+         
         
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
@@ -127,7 +139,8 @@ def category_list(request , id):
             'page_range':list(page_obj.paginator.page_range),
             'num_pages' : page_obj.paginator.num_pages,
             'values':value_filter , 
-            'project' : project
+            'project' : projects ,
+            'variables' : variables
              })
 
 

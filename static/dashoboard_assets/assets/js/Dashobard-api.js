@@ -780,6 +780,7 @@ let handleTopicClicked = () =>{
         hideLoadingSkeletonCategory();
       },
       success: function (data) {
+        console.log(data)
         if (data.values && data.values.length !== undefined && data.values.length === 0) {
           const bootstrapColors = [
             "primary",
@@ -814,6 +815,55 @@ let handleTopicClicked = () =>{
                         .addClass("d-flex flex-column")
                         .append($("<h3>").addClass("text-white mb-0").text(item.name_ENG))
                         .append($("<span>").addClass("mt-2").text(item.project__title_ENG))
+                    )
+                )
+            );
+            $("#category-card-list").append(categoryCard);
+          });
+         handelCategoryDetail() //Call handle on category detail
+        //Pagination
+          pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
+          //Handle Pagination
+          $(".page-link").click(function(){
+          const hrefData = $(this).data()
+          console.log(hrefData)
+          handleOnPagination(hrefData.href)
+      })
+        }
+        else  if (data.values && data.values.length !== undefined && data.values.length === 0) {
+          const bootstrapColors = [
+            "primary",
+            "secondary",
+            "success",
+            "warning",
+            "info",
+            "dark",
+          ];
+          let categoryCard = ``;
+          $("#category-title").html(data.variable[0].variable__for_catgory__name_ENG);
+          data.variable.forEach((item) => {
+            categoryCard = $("<div>")
+            .attr("id", "project-card")
+            .addClass("col-md-6 col-xl-4 d-none d-md-block project-card")
+            .attr("data-bs-toggle", "modal")
+            .attr("data-bs-target", "#detailProjects")
+            .attr("data-bs-whatever", "@mdo")
+            .attr("data-id", item.variable__id)
+            .attr("data-title_eng", item.variable__title_ENG)
+            .attr("data-title_amh", item.variable__title_ENG)
+            .attr("data-for_category", item.variable__for_catgory__name_ENG)
+            .data("for_content", item.variable__content)
+            .append(
+              $("<div>")
+                .addClass(`card social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}`)
+                .append(
+                  $("<div>")
+                    .addClass("card-body d-flex justify-content-between align-items-center p-3")
+                    .append(
+                      $("<div>")
+                        .addClass("d-flex flex-column")
+                        .append($("<h3>").addClass("text-white mb-0").text(item.name_ENG))
+                        .append($("<span>").addClass("mt-2").text(item.variable__title_ENG))
                     )
                 )
             );

@@ -135,8 +135,21 @@
                               <i class="fa fa-trash"></i> 
                         </button>
                         </td>
-                        <td><a href="{% url "topic_category_indicator" category.id %}"><i class="fa fa-eye"></i> </a>
+                        <td>
+                          {% if  category.dashboard_topic.title_ENG == "Project" %}
+                          
+                          <a href="{% url "project_category" category.id %}"><i class="fa fa-eye"></i> </a>
+                          [{{ category.project_set.all.count }}] Projects
+
+                          {% elif category.dashboard_topic.title_ENG == "Variables"  %}
+
+                          <a href="{% url "variable_category" category.id %}"><i class="fa fa-eye"></i> </a>
+                          [{{ category.variables_set.all.count }}] Variables
+                          
+                          {% else %}
+                          <a href="{% url "topic_category_indicator" category.id %}"><i class="fa fa-eye"></i> </a>
                           [{{ category.indicator_set.all.count }}] Indicators
+                          {% endif %}
                         </td>
                          
                           </tr>
