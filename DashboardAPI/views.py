@@ -116,6 +116,21 @@ def category_list(request , id , topic_type=None):
                 
             )
         
+        if 'q' in request.GET:
+            q = request.GET['q']
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) ).values(
+                'dashboard_topic__title_ENG',
+                'id',
+                'name_ENG',
+                'name_AMH',
+                'indicator__id',
+                'indicator__title_ENG',
+                'indicator__title_AMH',
+                'indicator__is_dashboard_visible',
+                'indicator__type_of'
+            )
+
+        
         paginator = Paginator(queryset, 6) 
         page_number = request.GET.get('page')
         try:

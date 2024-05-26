@@ -98,6 +98,7 @@
     data-pc-direction="ltr"
     data-pc-theme_contrast=""
     data-pc-theme="light"
+    id="body"
   >
     <!-- script for echarts 
     <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js' %}"></script>
@@ -108,7 +109,7 @@
     </div>
     <!-- [ Pre-loader ] End --><!-- [ Sidebar Menu ] start -->
 
-    <nav class="pc-sidebar">
+    <nav id="sidebarHtml" class="pc-sidebar">
       <div class="navbar-wrapper">
         <div class="m-header">
           <a href="index.html" class="b-brand text-primary"
@@ -194,9 +195,6 @@
         <!-- [Mobile Media Block] start -->
         <div class="me-auto pc-mob-drp">
           <ul class="list-unstyled">
-            <!-- ======= Menu collapse Icon ===== -->
-            <!-- <li class="pc-h-item pc-sidebar-collapse"><a href="#" class="pc-head-link ms-0" id="sidebar-hide"><i
-                                class="ti ti-menu-2"></i></a></li> -->
             <li class="pc-h-item pc-sidebar-popup">
               <a href="#" class="pc-head-link ms-0" id="mobile-collapse"
                 ><i class="ti ti-menu-2"></i
@@ -216,11 +214,6 @@
                 ></a
               >
             </div>
-            <!-- <li class="pc-h-item d-none d-md-inline-flex">
-                        <form class="form-search"><i class="search-icon"><svg class="pc-icon">
-                                    <use xlink:href="#custom-search-normal-1"></use>
-                                </svg> </i><input type="search" class="form-control" placeholder="Ctrl + G"></form>
-                    </li> -->
           </ul>
         </div>
         <!-- [Mobile Media Block end] -->
@@ -822,6 +815,20 @@
           <!--Loading Skeleton-->
           <div class="row" id="loading-skeleton-topic"></div>
           <!-- end -->
+
+          <form id="searchItemForm">
+
+            <div class="row container-fluid">
+              <div class="col-9 col-md-3  mb-2">
+                <input id="searchItemValue" type="text" name="q" class="form-control" placeholder="Enter Key Word">
+              </div>
+              <div class="col-3 col-md-1 mb-2 ">
+                <button  type="submit" class="btn btn-primary" ><i class="bi bi-search"></i></button>
+              </div>        
+          </div>
+
+          </form>
+
           <div class="row container-fluid justify-content-center">
             <div>
               <p class="text-success">
@@ -866,6 +873,8 @@
                     aria-label="Close"
                   ></button>
                 </div>
+
+
                 <div class="modal-body">
                   <!--Navigation-->
                   <ul class="nav nav-tabs analytics-tab" id="myTab" role="tablist" >
