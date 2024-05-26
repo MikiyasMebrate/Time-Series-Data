@@ -52,7 +52,6 @@ def pie_chart_data(request):
            
            
    
-
         context = {
             "topics" : topics,
             "category" : category,
@@ -136,8 +135,14 @@ def category_detail_lists(request , id):
             'for_month_id__month_AMH',
             'for_month_id__number',
         ))
+
+        year = set(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values_list(
+            'for_datapoint_id__year_EC',flat=True
+        ))
+
+
         serialized_indicator = list(indicators.values('id', 'title_ENG', 'type_of'))
-        return JsonResponse({'indicators': serialized_indicator,'months' : month,'values': value_filter})
+        return JsonResponse({'indicators': serialized_indicator,'months' : month,'values': value_filter, 'year' : list(year)})
 
 
     
@@ -169,6 +174,8 @@ def indicator_detail(request, id):
             'for_quarter_id',
             'for_month_id__month_AMH',
         ))
+
+        
         return JsonResponse({'indicators': list(returned_json), 'values' : value_filter})
      
      else:
