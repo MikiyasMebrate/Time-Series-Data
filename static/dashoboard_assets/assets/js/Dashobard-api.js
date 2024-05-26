@@ -985,13 +985,13 @@ let handleTopicClicked = () =>{
   });
 }
 
-let defaultCategoryLists = (page = null) => {
+let defaultCategoryLists = (page = null, search = null) => {
   //Default 
-
+  console.log(`/dashboard-api/category_list/3${page ? page : ''}${search ? '&'+search : '' }`,)
   $("#category-card-list").html("");
   $.ajax({
     type: "GET",
-    url: `/dashboard-api/category_list/3${page ? page : ''}`,
+    url: `/dashboard-api/category_list/3${page ? page : ''}${search ? '&'+search : '' }`,
     beforeSend: function () {
       showLoadingSkeleton();
     },
@@ -1111,19 +1111,26 @@ let defaultCategoryLists = (page = null) => {
         renderCategoryGraph(item.indicator__id, valueItem);
       });
       handelCategoryDetail() //Call handle on category detail
-
+      if(search){
+        null;
+        //console.log('===',search)
+      }else if(page){
+        search = page.substr(page.search(/q=/i))
+      }
       //Pagination
-      pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
+      pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages, search);
       //Handle Pagination
       $(".page-link").click(function(){
       const buttonData = $(this).data()
+      console.log(buttonData.href)
       defaultCategoryLists(buttonData.href)
-  })
+      })
     },
   });
 }
 
-let pagination = (has_previous,has_next,previous_page_number,next_page_number,number,page_range, num_pages) => {
+let pagination = (has_previous,has_next,previous_page_number,next_page_number,number,page_range, num_pages, search = null) => {
+  console.log('Pages-->',search)
   let page = `
   <nav aria-label="Page navigation example">
   <ul class="pagination pagination-circle pagination-outline justify-content-center" >
@@ -1132,7 +1139,7 @@ let pagination = (has_previous,has_next,previous_page_number,next_page_number,nu
   if(has_previous){
     page+=`
     <li class="page-item">
-    <a data-href="?page=${previous_page_number}" class="page-link">Previous</a>
+    <a data-href="?page=${previous_page_number}${search ? "&"+search : '' }" class="page-link">Previous</a>
     </li>
     ` 
   }else{
@@ -1146,7 +1153,7 @@ let pagination = (has_previous,has_next,previous_page_number,next_page_number,nu
   if(number+4 > 1){
     page += `
     <li class="page-item">
-    <a data-href="?page=${number-5}" class="page-link" >&hellip;</a>
+    <a data-href="?page=${number-5}${search ? "&"+search : '' }" class="page-link" >&hellip;</a>
     </li>
     `
   }
@@ -1164,7 +1171,7 @@ let pagination = (has_previous,has_next,previous_page_number,next_page_number,nu
     }else if ( i > number-5 && i < number + 5){
       page+=`
       <li class="page-item">
-      <a data-href="?page=${i}" class="page-link" >${i}</a>
+      <a data-href="?page=${i}${search ? "&"+search : '' }" class="page-link" >${i}</a>
       </li>
       `
     }
@@ -1173,7 +1180,7 @@ let pagination = (has_previous,has_next,previous_page_number,next_page_number,nu
   if(num_pages > number + 4){
     page+=`
     <li class="page-item">
-    <a data-href="?page=${number + 5}" class="page-link" >&hellip;</a>
+    <a data-href="?page=${number + 5}${search ? "&"+search : '' }" class="page-link" >&hellip;</a>
     </li>
     `
   }
@@ -1181,7 +1188,7 @@ let pagination = (has_previous,has_next,previous_page_number,next_page_number,nu
   if(has_next){
     page+=`
     <li class="page-item">
-    <a data-href="?page=${next_page_number}" class="page-link" >Next</a>
+    <a data-href="?page=${next_page_number}${search ? "&"+search : '' }" class="page-link" >Next</a>
     </li>
     `
   }else{
@@ -1199,6 +1206,16 @@ let pagination = (has_previous,has_next,previous_page_number,next_page_number,nu
   $("#Pagination").html(page)
 }
 
+let handleOnSearch = () =>{
+  $("#searchItemForm").submit(function(e){
+    let form = $("#searchItemForm")
+    e.preventDefault()
+    let searchItem  = this.q.value
+    defaultCategoryLists(`?page=1`,`q=${searchItem}`)
+    
+    
+  })
+}
 
 
 $(document).ready(function () {
@@ -1214,6 +1231,7 @@ $(document).ready(function () {
       hideLoadingSkeletonTopic();
     },
     success: function (data) {
+      handleOnSearch()
       const bootstrapColors = [
         "primary",
         "secondary",
