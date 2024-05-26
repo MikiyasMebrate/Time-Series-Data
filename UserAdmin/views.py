@@ -18,7 +18,8 @@ from django.db.models import Count,Prefetch
 import random
 import json as toJSON
 from django.contrib.auth.models import AnonymousUser
-from TimeSeriesBase.models import DashboardTopic
+from TimeSeriesBase.models import DashboardTopic , Project
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def site_configuration_view(request):
     # Fetch the first instance of SiteConfiguration from the database
@@ -1467,6 +1468,21 @@ def year_add(request, year=None):
 def dashbord_topic(request):
     form = DashboardTopicForm(request.POST or None, request.FILES or None)
     topics = DashboardTopic.objects.all()
+    paginator = Paginator(topics, 10) 
+    page_number = request.GET.get('page')
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
+   
     if request.method == 'POST':
         if form.is_valid():
             form.save()
@@ -1476,7 +1492,8 @@ def dashbord_topic(request):
             messages.error(request, 'An error occurred while Adding')
     
     context = {
-        'topics': topics,
+        'topics': page,
+        'count' : count,
         'form' : form
     }
     return render(request, 'user-admin/dashboard_topic.html', context=context)
@@ -1528,6 +1545,20 @@ def topic_category(request , id):
     form = catagoryFormTopic(request.POST or None, request.FILES or None)
     topic = DashboardTopic.objects.get(id = id)
     categories = Category.objects.filter(dashboard_topic__id = id)
+    paginator = Paginator(categories, 10) 
+    page_number = request.GET.get('page')
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
     if request.method == 'POST':
         if form.is_valid():
             form.instance.dashboard_topic = topic
@@ -1538,7 +1569,8 @@ def topic_category(request , id):
             messages.error(request, 'An error occurred while Adding')
     
     context = {
-        'categories': categories,
+        'categories': page,
+        'count' : count,
         'form' : form
     }
     return render(request, 'user-admin/topic_category.html', context=context)
@@ -1595,6 +1627,20 @@ def topic_category_indicator(request , id):
     form = DashboardIndicatorForm(request.POST or None, request.FILES or None)
     category = Category.objects.get(id = id)
     indicators = Indicator.objects.filter(for_category__id = id)
+    paginator = Paginator(indicators, 10) 
+    page_number = request.GET.get('page')
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
     if request.method == 'POST':
         if form.is_valid():
             title_ENG = form.cleaned_data['title_ENG']
@@ -1621,7 +1667,8 @@ def topic_category_indicator(request , id):
             messages.error(request, 'An error occurred while Adding')
     
     context = {
-        'indicators': indicators,
+        'indicators': page,
+        'count' : count,
         'form' : form
     }
     return render(request, 'user-admin/topic_category_indicator.html', context=context)
@@ -1666,3 +1713,213 @@ def edit_dashboard_indicator(request , id):
         'form' : form
     }
     return render(request , "user-admin/edit_dashboard_indicator.html" , context)      
+
+
+
+@login_required(login_url='login')
+@admin_user_required
+def project(request):
+    form = ProjectForm(request.POST or None, request.FILES or None)
+    projects = Project.objects.all()
+    paginator = Paginator(projects, 10) 
+    page_number = request.GET.get('page')
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
+   
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Added')
+            return redirect('project')
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'projects': page,
+        'count' : count,
+        'form' : form
+    }
+    return render(request, 'user-admin/projects.html', context=context)    
+
+
+@login_required(login_url='login')
+@admin_user_required
+def project_category(request , id):
+    form = CategoryProjectForm(request.POST or None, request.FILES or None)
+    projects = Project.objects.filter(for_catgory__id=id)
+    paginator = Paginator(projects, 10) 
+    page_number = request.GET.get('page')
+    category = Category.objects.get(id=id)
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
+   
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.for_catgory = category
+            obj.save()
+            messages.success(request, 'Successfully Added')
+
+            return redirect('project_category' , id)
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'projects': page,
+        'count' : count,
+        'form' : form
+    }
+    return render(request, 'user-admin/project_category.html', context=context)    
+
+
+
+
+@admin_user_required
+def project_delete(request, id):
+    try:
+        project = Project.objects.get(pk = id)
+        project.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('project')     
+
+
+
+
+@admin_user_required
+def edit_project(request , id):
+    try:
+        project = Project.objects.get(pk = id)
+        project.read = True
+        project.save()
+    except:
+        project = None
+    
+    form = ProjectForm(request.POST or None ,  instance=project)
+  
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('project')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+        "category" : category,
+        'form' : form
+    }
+    return render(request , "user-admin/edit_project.html" , context)         
+
+
+
+
+
+
+
+
+
+
+
+@login_required(login_url='login')
+@admin_user_required
+def variable_category(request , id):
+    form = CategoryVariableForm(request.POST or None, request.FILES or None)
+    variables = Variables.objects.filter(for_catgory__id=id)
+    paginator = Paginator(variables, 10) 
+    page_number = request.GET.get('page')
+    category = Category.objects.get(id=id)
+    try:
+        page = paginator.get_page(page_number)
+        try: count = (10 * (int(page_number) if page_number  else 1) ) - 10
+        except: count = (10 * (int(1) if page_number  else 1) ) - 10
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+        count = (10 * (int(1) if page_number  else 1) ) - 10
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
+        count = (10 * (int(paginator.num_pages) if page_number  else 1) ) - 10
+   
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.for_catgory = category
+            obj.save()
+            messages.success(request, 'Successfully Added')
+
+            return redirect('variable_category' , id)
+        else:
+            messages.error(request, 'An error occurred while Adding')
+    
+    context = {
+        'variables': page,
+        'count' : count,
+        'form' : form
+    }
+    return render(request, 'user-admin/variable_category.html', context=context)    
+
+
+
+
+@admin_user_required
+def variable_delete(request, id):
+    try:
+        variable = Variables.objects.get(pk = id)
+        variable.delete()
+        messages.success(request, 'Successfully Deleted')
+    except:
+        messages.error(request, 'An error occurred while Deleting')
+    
+    return redirect('variable')     
+
+
+
+
+@admin_user_required
+def edit_variable(request , id):
+    try:
+        variable = Variables.objects.get(pk = id)
+        variable.read = True
+        variable.save()
+    except:
+        variable = None
+    
+    form = VariableForm(request.POST or None ,  instance=variable)
+  
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully Updated')
+            return redirect('variable')
+        else:
+            messages.error(request, 'An error occurred while updating')
+    context = {
+        "category" : category,
+        'form' : form
+    }
+    return render(request , "user-admin/edit_variable.html" , context)         

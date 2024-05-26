@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'auditlog',
     'debug_toolbar',
     'fontawesome_5',
-    'rest_framework'
+    'rest_framework',
+    'ckeditor',
+
     
 ]
 
@@ -162,8 +164,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = 'index'
 
-
-
 #EMAIL
 
 #DEFAULT_FROM_EMAIL = 'mikiyasmebrate2656@gmail.com'
@@ -178,3 +178,13 @@ EMAIL_USE_SSL = False
 
 
 #itdx avkv bkab armz  
+
+
+#REDACTOR_wysiwyg_EDITOR
+REDACTOR_OPTIONS = {'lang': 'en'}
+REDACTOR_UPLOAD = 'uploads/'
+
+
+DJANGO_WYSIWYG_FLAVOR = 'yui' # Default
+DJANGO_WYSIWYG_FLAVOR = 'ckeditor' # Requires you to also place the ckeditor files˓→here:
+DJANGO_WYSIWYG_MEDIA_URL = STATIC_URL + "ckeditor/"

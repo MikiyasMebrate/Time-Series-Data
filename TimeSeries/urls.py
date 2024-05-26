@@ -28,6 +28,7 @@ urlpatterns = [
     path('user-management/', include('UserManagement.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
 
     
 ]

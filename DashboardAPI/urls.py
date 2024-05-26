@@ -1,6 +1,6 @@
 from .views import (topic_lists, index , pie_chart ,  category_list , category_detail_lists , pie_chart_data)
 
-from .views import (topic_lists, index , category_list , category_detail_lists, indicator_detail,pie_chart_data)
+from .views import (topic_lists, index  , category_list , category_detail_lists, indicator_detail,pie_chart_data)
 from django.urls import path
 
 urlpatterns = [

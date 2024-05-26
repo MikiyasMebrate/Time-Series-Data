@@ -429,3 +429,25 @@ def confirm_file(imported_data, type):
     except Exception as e:
          return False, f"Error importing data: Please review your Document."
         
+
+
+
+
+
+##CKeditor
+
+from ckeditor.widgets import CKEditorWidget
+
+
+from django import forms
+
+class ProjectAdminForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorWidget())
+    class Meta:
+        model = models.Project
+        fields = '__all__'
+
+class ProjectAdmin(admin.ModelAdmin):
+    form = ProjectAdminForm
+
+admin.site.register(models.Project, ProjectAdmin)
