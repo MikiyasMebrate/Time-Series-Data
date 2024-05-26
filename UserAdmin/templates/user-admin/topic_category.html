@@ -135,7 +135,9 @@
                               <i class="fa fa-trash"></i> 
                         </button>
                         </td>
-                        <td><a href="{% url "topic_category_indicator" category.id %}"><i class="fa fa-eye"></i> </a></td>
+                        <td><a href="{% url "topic_category_indicator" category.id %}"><i class="fa fa-eye"></i> </a>
+                          [{{ category.indicator_set.all.count }}] Indicators
+                        </td>
                          
                           </tr>
                           {% endfor %}
