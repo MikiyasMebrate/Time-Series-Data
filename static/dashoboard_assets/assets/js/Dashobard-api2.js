@@ -500,30 +500,36 @@ let showLoadingSkeletonTopic = () => {
             type: "GET",
             url: `/dashboard-api/category_list/${buttonData.id}`,
             success: function (data) {
-              if (data.project) {
+              console.log(data.values)
+              if (data.values && data.values.length !== undefined && data.values.length === 0) {
                 let categoryCard = ``;
                 $("#category-title").html(data.project[0].dashboard_topic__title_ENG);
                 data.project.forEach((item) => {
-                  categoryCard = `
-                    <div id="project-card" class="col-md-6 col-xl-4 d-none d-md-block project-card"
-                         data-bs-toggle="modal"
-                         data-bs-target="#detailProjects"
-                         data-bs-whatever="@mdo"
-                         data-id="${item.project__id}"
-                         data-title_eng="${item.project__title_ENG}"
-                         data-title_amh="${item.project__title_ENG}"
-                         data-for_category="${item.project__for_catgory__name_ENG}"
-                         
-                    >
-                        <div class="card social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}">
-                            <div class="card-body d-flex justify-content-between align-items-center p-3">
-                                <div class="d-flex flex-column">
-                                    <h3 class="text-white mb-0">${item.name_ENG}</h3>
-                                    <span class="mt-2">${item.project__title_ENG}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+                  categoryCard = $("<div>")
+                  .attr("id", "project-card")
+                  .addClass("col-md-6 col-xl-4 d-none d-md-block project-card")
+                  .attr("data-bs-toggle", "modal")
+                  .attr("data-bs-target", "#detailProjects")
+                  .attr("data-bs-whatever", "@mdo")
+                  .attr("data-id", item.project__id)
+                  .attr("data-title_eng", item.project__title_ENG)
+                  .attr("data-title_amh", item.project__title_ENG)
+                  .attr("data-for_category", item.project__for_catgory__name_ENG)
+                  .data("for_content", item.project__content)
+                  .append(
+                    $("<div>")
+                      .addClass(`card social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}`)
+                      .append(
+                        $("<div>")
+                          .addClass("card-body d-flex justify-content-between align-items-center p-3")
+                          .append(
+                            $("<div>")
+                              .addClass("d-flex flex-column")
+                              .append($("<h3>").addClass("text-white mb-0").text(item.name_ENG))
+                              .append($("<span>").addClass("mt-2").text(item.project__title_ENG))
+                          )
+                      )
+                  );
                   $("#category-card-list").append(categoryCard);
                 });
               } else {
@@ -659,7 +665,7 @@ let showLoadingSkeletonTopic = () => {
                   buttonData.title_eng,
                   buttonData.title_amh,
                   buttonData.for_category,
-                  buttonData.content
+                  buttonData.for_content
                 );
               });
           
