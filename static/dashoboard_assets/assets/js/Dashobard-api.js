@@ -766,6 +766,8 @@ let handleTopicClicked = () =>{
   //Handel on Click topic card
   $(".topic-card").click(function () {
     $("#category-card-list").html("");
+    $("#sidebarHtml").addClass("d-none")
+
     const buttonData = $(this).data();
    
    let handleOnPagination = (pages = null) =>{
@@ -1262,6 +1264,10 @@ $(document).ready(function () {
         `;
       });
 
+      $("#mobile-collapse").click(function(){
+        $("#sidebarHtml").removeClass("d-none")
+      })
+      
       $("#topic-card-lists").html(cardTopic);
       $("#sidebar-topic-list").html(sideNav);
 
