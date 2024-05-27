@@ -826,7 +826,9 @@
 
             <div class="row container-fluid">
               <div class="col-9 col-md-3  mb-2">
-                <input id="searchItemValue" type="text" name="q" class="form-control" placeholder="Enter Key Word">
+                <input id="searchItemValue" list="autocomplete" type="text" name="q" class="form-control" placeholder="Enter Key Word">
+                <datalist id="autocomplete">
+                </datalist>
               </div>
               <div class="col-3 col-md-1 mb-2 ">
                 <button  type="submit" class="btn btn-primary" ><i class="bi bi-search"></i></button>

@@ -128,7 +128,7 @@ def category_list(request , id , topic_type=None):
         
         if 'q' in request.GET:
             q = request.GET['q']
-            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) ).values(
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) | Q(indicator__for_category__name_ENG__contains=q) ).values(
                 'dashboard_topic__title_ENG',
                 'id',
                 'name_ENG',
@@ -233,5 +233,19 @@ def indicator_detail(request, id):
      
      else:
           return JsonResponse({'indicators': 'failed to access.'})
+
+
+def search_category_indicator(request):
+    queryset = []
+    if 'search' in request.GET:
+            q = request.GET['search']
+            print(q)
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) | Q(indicator__for_category__name_ENG__contains=q) ).values(
+                'name_ENG',
+                'indicator__title_ENG',
+            )
+    return JsonResponse({'indicators': list(queryset)})
+    
+        
 
 

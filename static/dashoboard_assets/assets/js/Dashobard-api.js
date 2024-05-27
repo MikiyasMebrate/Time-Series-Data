@@ -2259,6 +2259,40 @@ let handleOnSearch = () =>{
     let searchItem  = this.q.value
     defaultCategoryLists(`?page=1`,`q=${searchItem}`)
     
+  })
+
+  $("#searchItemValue").on("keydown", function(event){
+    let searchValue = $(this).val()
+    // Prevent default form submission if enter is pressed (optional)
+    if (event.keyCode === 13) {
+      event.preventDefault();
+    }
+
+    // Minimum characters to trigger search (optional)
+    if (searchValue.length < 2) {
+      return; // Exit if not enough characters entered
+    }
+
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: "/dashboard-api/search_category_indicator/",
+      data: { search: searchValue },
+      success: function(data) {
+        
+        let a = data.indicators.map((item) => `<option value="${item.indicator__title_ENG}">${item.indicator__title_ENG}</option>`)
+        console.log(a)
+        $("#autocomplete").html(a)
+      },
+    })
+
+
+    $("autocomplete").append(
+
+      `
+      <option value="USA">United States of America</option>s
+      `
+    )
     
   })
 }
