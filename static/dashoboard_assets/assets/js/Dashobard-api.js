@@ -490,9 +490,6 @@ let monthGraph = (data_set) =>{
 
 }
 
-
-
-
   //Handel onclick category detail
 let handelCategoryDetail = () => {
     $(".detail-category").click(function () {
@@ -784,7 +781,7 @@ let handleTopicClicked = () =>{
       },
       success: function (data) {
         console.log(data)
-        if (data.values && data.values.length !== undefined && data.values.length === 0) {
+        if (data.project.length > 0 && data.variables.length == 0) {
           const bootstrapColors = [
             "primary",
             "secondary",
@@ -829,11 +826,10 @@ let handleTopicClicked = () =>{
           //Handle Pagination
           $(".page-link").click(function(){
           const hrefData = $(this).data()
-          console.log(hrefData)
           handleOnPagination(hrefData.href)
       })
         }
-        else  if (data.values && data.values.length !== undefined && data.values.length === 0) {
+        else  if (data.variables.length > 0 && data.project.length == 0) {
           const bootstrapColors = [
             "primary",
             "secondary",
@@ -843,19 +839,19 @@ let handleTopicClicked = () =>{
             "dark",
           ];
           let categoryCard = ``;
-          $("#category-title").html(data.variable[0].variable__for_catgory__name_ENG);
-          data.variable.forEach((item) => {
+          $("#category-title").html(data.variables[0].variables__for_catgory__name_ENG);
+          data.variables.forEach((item) => {
             categoryCard = $("<div>")
             .attr("id", "project-card")
             .addClass("col-md-6 col-xl-4 d-none d-md-block project-card")
             .attr("data-bs-toggle", "modal")
             .attr("data-bs-target", "#detailProjects")
             .attr("data-bs-whatever", "@mdo")
-            .attr("data-id", item.variable__id)
-            .attr("data-title_eng", item.variable__title_ENG)
-            .attr("data-title_amh", item.variable__title_ENG)
-            .attr("data-for_category", item.variable__for_catgory__name_ENG)
-            .data("for_content", item.variable__content)
+            .attr("data-id", item.variables__id)
+            .attr("data-title_eng", item.variables__title_ENG)
+            .attr("data-title_amh", item.variables__title_AMH)
+            .attr("data-for_category", item.variables__for_catgory__name_ENG)
+            .data("for_content", item.variables__content)
             .append(
               $("<div>")
                 .addClass(`card social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}`)
@@ -866,7 +862,7 @@ let handleTopicClicked = () =>{
                       $("<div>")
                         .addClass("d-flex flex-column")
                         .append($("<h3>").addClass("text-white mb-0").text(item.name_ENG))
-                        .append($("<span>").addClass("mt-2").text(item.variable__title_ENG))
+                        .append($("<span>").addClass("mt-2").text(item.variables__title_ENG))
                     )
                 )
             );
@@ -878,12 +874,10 @@ let handleTopicClicked = () =>{
           //Handle Pagination
           $(".page-link").click(function(){
           const hrefData = $(this).data()
-          console.log(hrefData)
           handleOnPagination(hrefData.href)
       })
         }
         else {
-        console.log(`/dashboard-api/category_list/${buttonData.id}${pages ? pages : ''}`)
         let categoryCard = ``;
         $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
   
@@ -1001,13 +995,12 @@ let handleTopicClicked = () =>{
           //Handle Pagination
           $(".page-link").click(function(){
           const hrefData = $(this).data()
-          console.log(hrefData)
           handleOnPagination(hrefData.href)
       })
           }
+          
           $("#category-card-list").on("click", "#project-card", function () {
             const buttonData = $(this).data();
-            console.log(buttonData);
             // Open Modal
             handleDetailModalProject(
               buttonData.title_eng,
@@ -1023,7 +1016,11 @@ let handleTopicClicked = () =>{
                   <p class="fw-bold">Name English: <span class="fw-normal">${title_eng}</span></p> 
                   <p class="fw-bold">Name Amharic: <span class="fw-normal">${title_amh}</span></p>
                   <p class="fw-bold">Category: <span class="fw-normal">${for_category}</span></p>
-                  <p class="fw-bold">Content: <span class="fw-normal"><div class="ml-5 pl-5" id="cke_id_text">${content}</div></span></p> 
+                  <p class="fw-bold">Content: <span class="fw-normal">
+                  <div class="table-responsive">
+                      <div class="m-5" id="cke_id_text">${content}</div>
+                  </div>
+                  </span></p> 
               </div>`;
             $("#ProjectdetailModalBody").html(htmlBody);
           };
@@ -1038,7 +1035,6 @@ let handleTopicClicked = () =>{
 
 let defaultCategoryLists = (page = null, search = null) => {
   //Default 
-  console.log(`/dashboard-api/category_list/3${page ? page : ''}${search ? '&'+search : '' }`,)
   $("#category-card-list").html("");
   $.ajax({
     type: "GET",
@@ -1173,7 +1169,6 @@ let defaultCategoryLists = (page = null, search = null) => {
       //Handle Pagination
       $(".page-link").click(function(){
       const buttonData = $(this).data()
-      console.log(buttonData.href)
       defaultCategoryLists(buttonData.href)
       })
     },
@@ -1181,7 +1176,6 @@ let defaultCategoryLists = (page = null, search = null) => {
 }
 
 let pagination = (has_previous,has_next,previous_page_number,next_page_number,number,page_range, num_pages, search = null) => {
-  console.log('Pages-->',search)
   let page = `
   <nav aria-label="Page navigation example">
   <ul class="pagination pagination-circle pagination-outline justify-content-center" >
@@ -1330,7 +1324,7 @@ $(document).ready(function () {
                 
                 
         </li>
-        `;
+        `
       });
 
       $("#mobile-collapse").click(function(){

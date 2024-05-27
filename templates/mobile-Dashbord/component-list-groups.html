@@ -1,10 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    {% include 'mobile-Dashbord/include/head.html'%}
 </head>
 
 <body class="theme-light" data-highlight="green">
@@ -14,14 +13,7 @@
 
     <div id="page" data-swup="0" style="display: block;">
 
-        <div id="footer-bar" class="footer-bar-1 footer-bar-detached">
-            <a href="page-wallet.html"><i class="bi bi-wallet2"></i><span>Cards</span></a>
-            <a href="page-activity.html"><i class="bi bi-graph-up"></i><span>Activity</span></a>
-            <a href="index-waves.html" class="circle-nav-2"><i class="bi bi-house-fill"></i><span>Home</span></a>
-            <a href="page-payments.html"><i class="bi bi-receipt"></i><span>Payments</span></a>
-            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-sidebar"><i
-                    class="bi bi-three-dots"></i><span>More</span></a>
-        </div>
+        {% include 'mobile-Dashbord/include/navbar.html'%}
 
         <div class="header-bar header-fixed header-app header-auto-show">
             <a href="#" data-back-button=""><i class="bi bi-chevron-left font-13"></i></a>
@@ -212,10 +204,7 @@
             </div>
         </div>
 
-
-
-
-        <div id="menu-sidebar" data-menu-active="nav-comps" data-menu-load="menu-sidebar.html"
+        <div id="menu-sidebar" data-menu-active="nav-comps" data-menu-load="{% url 'menu_sidebar' %}"
             class="offcanvas offcanvas-start offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="width:230px;">
@@ -236,22 +225,22 @@
                                 <div class="card card-style shadow-m mt-1 me-1">
                                     <div
                                         class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
-                                        <a href="page-wallet.html" class="list-group-item">
+                                        <a href="{% url 'page_wallet' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
                                             <strong class="font-13">Wallet</strong>
                                         </a>
-                                        <a href="page-activity.html" class="list-group-item">
+                                        <a href="{% url 'page_activity' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-blue shadow-bg shadow-bg-xs color-white rounded-xs bi bi-graph-up"></i>
                                             <strong class="font-13">Activity</strong>
                                         </a>
-                                        <a href="page-profile.html" class="list-group-item">
+                                        <a href="{% url 'page_profile' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
                                             <strong class="font-13">Account</strong>
                                         </a>
-                                        <a href="page-signin-1.html" class="list-group-item">
+                                        <a href="{% url 'page_signin_1' %}" class="list-group-item">
                                             <i
                                                 class="has-bg gradient-red shadow-bg shadow-bg-xs color-white rounded-xs bi bi-power"></i>
                                             <strong class="font-13">Log Out</strong>
@@ -266,12 +255,12 @@
 
                     <!-- Main Menu List-->
                     <div class="list-group list-custom list-menu-large">
-                        <a href="index-waves.html" id="nav-welcome" class="list-group-item">
+                        <a href="{% url 'index_waves' %}" id="nav-welcome" class="list-group-item">
                             <i class="bi bg-red-dark shadow-bg shadow-bg-xs bi-heart-fill"></i>
                             <div>Welcome</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="pages.html" id="nav-pages" class="list-group-item">
+                        <a href="{% url 'pages' %}" id="nav-pages" class="list-group-item">
                             <i class="bi bg-green-dark shadow-bg shadow-bg-xs bi-star-fill"></i>
                             <div>Page Packs</div>
                             <i class="bi bi-chevron-right"></i>
@@ -282,16 +271,16 @@
                             <i class="bi bi-plus font-18"></i>
                         </a>
                         <div class="list-submenu" id="sub1">
-                            <a href="index-waves.html" id="nav-waves" class="list-group-item">
+                            <a href="{% url 'index_waves' %}" id="nav-waves" class="list-group-item">
                                 <div class="ps-4">Waves</div>
                                 <i class="bi bi-chevron-right"></i>
                             </a>
-                            <a href="index.html" id="nav-classic" class="list-group-item">
+                            <a href="{% url 'Mobile_index' %}" id="nav-classic" class="list-group-item">
                                 <div class="ps-4">Classic</div>
                                 <i class="bi bi-chevron-right"></i>
                             </a>
                         </div>
-                        <a href="components.html" id="nav-comps" class="list-group-item list-group-item-active">
+                        <a href="{% url 'components' %}" id="nav-comps" class="list-group-item list-group-item-active">
                             <i class="bi bg-brown-dark shadow-bg shadow-bg-xs bi-gear-wide-connected"></i>
                             <div>Components</div>
                             <i class="bi bi-chevron-right"></i>
@@ -319,19 +308,19 @@
                     <div class="content pt-1">
                         <div class="d-flex text-center">
                             <div class="me-auto">
-                                <a href="page-payment-transfer.html"
+                                <a href="{% url 'page_payment_transfer' %}"
                                     class="icon icon-s rounded-s gradient-red shadow-bg shadow-bg-xs"><i
                                         class="font-16 color-white bi bi-arrow-up"></i></a>
                                 <h6 class="font-11 font-400 opacity-70 mb-n1 pt-2">Transfer</h6>
                             </div>
                             <div class="m-auto">
-                                <a href="page-payment-request.html"
+                                <a href="{% url 'page_payment_request' %}"
                                     class="icon icon-s rounded-s gradient-green shadow-bg shadow-bg-xs"><i
                                         class="font-16 color-white bi bi-arrow-down"></i></a>
                                 <h6 class="font-11 font-400 opacity-70 mb-n1 pt-2">Request</h6>
                             </div>
                             <div class="ms-auto">
-                                <a href="page-payment-exchange.html"
+                                <a href="{% url 'page_payment_exchange' %}"
                                     class="icon icon-s rounded-s gradient-blue shadow-bg shadow-bg-xs"><i
                                         class="font-16 color-white bi bi-arrow-left-right"></i></a>
                                 <h6 class="font-11 font-400 opacity-70 mb-n1 pt-2">Exchange</h6>
@@ -350,12 +339,12 @@
                             <div>Support</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="page-profile.html" class="list-group-item">
+                        <a href="{% url 'page_profile' %}" class="list-group-item">
                             <i class="bi bi-person-circle opacity-20 font-16"></i>
                             <div>Account</div>
                             <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="page-signin-1.html" class="list-group-item">
+                        <a href="{% url 'page_signin-1' %}" class="list-group-item">
                             <i class="bi bi-bar-chart-fill opacity-20 font-16"></i>
                             <div>Log Out</div>
                             <i class="bi bi-chevron-right"></i>
@@ -371,7 +360,7 @@
             </div>
         </div>
 
-        <div id="menu-highlights" data-menu-load="menu-highlights.html"
+        <div id="menu-highlights" data-menu-load="{% url 'menu_highlights' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m" style="display: block;">
             <!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
             <div class="menu-size" style="height:380px;">
@@ -440,13 +429,12 @@
                     class="mx-3 btn btn-full gradient-highlight shadow-bg shadow-bg-s">Awesome</a>
             </div>
         </div>
+        
         <p class="offline-message bg-red-dark shadow-bg shadow-bg-s color-white"><i class="bi bi-wifi-off pe-2"></i> No
             internet connection detected</p>
         <p class="online-message bg-green-dark shadow-bg shadow-bg-s color-white"><i class="bi bi-wifi pe-2"></i> You
             are back online.</p>
     </div>
 
-    <script src="scripts/bootstrap.min.js"></script>
-    <script src="scripts/custom.js"></script>
-
+    {% include 'mobile-Dashbord/include/script.html'%}
 </html>

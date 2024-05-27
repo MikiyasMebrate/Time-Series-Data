@@ -76,9 +76,7 @@ def category_list(request , id , topic_type=None):
         indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
 
          # Retrieve projects based on the provided id
-        # Retrieve projects or variables based on the provided id
-        project = None
-        variables = None
+        # Retrieve projects or variables based on the provided ids
         
         projects = list(Category.objects.filter(dashboard_topic__id=id)
                             .prefetch_related('project__set')
@@ -90,7 +88,19 @@ def category_list(request , id , topic_type=None):
                                  .prefetch_related('variables__set')
                                  .values('name_ENG', 'variables__id', 'variables__for_catgory__name_ENG',
                                          'variables__title_ENG', 'variables__title_AMH', 'variables__content'))
+        
+
+    
+       
+        if projects[0]['project__id'] == None and variables[0]['variables__id'] == None:
+            projects = []
+            variables = []
+        elif projects[0]['project__id'] == None:
+            projects = []
+        elif variables[0]['variables__id'] == None:
+            variables = []
          
+
         
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',

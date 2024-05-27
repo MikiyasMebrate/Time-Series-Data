@@ -1,26 +1,9 @@
+{% load static %}
 <!DOCTYPE HTML>
 <html lang="en">
 
-<!-- Mirrored from www.enableds.com/products/payapp/v13/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 23 May 2024 12:33:17 GMT -->
-<!-- Added by HTTrack -->
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
-
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
-    <title>PayApp - Finance, Banking, Wallet, Crypto Mobile PWA</title>
-    <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="fonts/bootstrap-icons.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@500;600;700&amp;family=Roboto:wght@400;500;700&amp;display=swap"
-        rel="stylesheet">
-    <link rel="manifest" href="_manifest.json">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <meta id="theme-check" name="theme-color" content="#FFFFFF">
-    <link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-192x192.png">
+    {% include 'mobile-Dashbord/include/head.html'%}
 </head>
 
 <body class="theme-light">
@@ -29,17 +12,9 @@
     </div>
 
     <div id="page">
-        <div id="footer-bar" class="footer-bar-1 footer-bar-detached">
-            <a href="page-wallet.html"><i class="bi bi-wallet2"></i><span>Cards</span></a>
-            <a href="page-activity.html"><i class="bi bi-graph-up"></i><span>Activity</span></a>
-            <a href="index-waves.html" class="circle-nav-2"><i class="bi bi-house-fill"></i><span>Home</span></a>
-            <a href="page-payments.html"><i class="bi bi-receipt"></i><span>Payments</span></a>
-            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-sidebar"><i
-                    class="bi bi-three-dots"></i><span>More</span></a>
-        </div>
 
+        {% include 'mobile-Dashbord/include/navbar.html'%}
         <div class="page-content footer-clear">
-
             <div class="pt-3">
                 <div class="page-title d-flex">
                     <div class="align-self-center me-auto">
@@ -60,22 +35,22 @@
                         <div class="dropdown-menu">
                             <div class="card card-style shadow-m mt-1 me-1">
                                 <div class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
-                                    <a href="page-wallet.html" class="list-group-item">
+                                    <a href="{% url 'page_wallet' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
                                         <strong class="font-13">Wallet</strong>
                                     </a>
-                                    <a href="page-activity.html" class="list-group-item">
+                                    <a href="{% url 'page_activity' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-blue shadow-bg shadow-bg-xs color-white rounded-xs bi bi-graph-up"></i>
                                         <strong class="font-13">Activity</strong>
                                     </a>
-                                    <a href="page-profile.html" class="list-group-item">
+                                    <a href="{% url 'page_profile' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
                                         <strong class="font-13">Account</strong>
                                     </a>
-                                    <a href="page-signin-1.html" class="list-group-item">
+                                    <a href="{% url 'page_signin_1' %}" class="list-group-item">
                                         <i
                                             class="has-bg gradient-red shadow-bg shadow-bg-xs color-white rounded-xs bi bi-power"></i>
                                         <strong class="font-13">Log Out</strong>
@@ -195,7 +170,7 @@
                         <h6 class="font-13 opacity-80 font-500 mb-0 pt-2">Exchange</h6>
                     </div>
                     <div class="ms-auto">
-                        <a href="page-payment-bill.html" class="icon icon-xxl rounded-m bg-theme shadow-m"><i
+                        <a href="{% url 'page_payment_bill' %}" class="icon icon-xxl rounded-m bg-theme shadow-m"><i
                                 class="font-28 color-brown-dark bi bi-filter-circle"></i></a>
                         <h6 class="font-13 opacity-80 font-500 mb-0 pt-2">Bills</h6>
                     </div>
@@ -208,14 +183,14 @@
                         <h3 class="font-16 mb-2">Recent Activity</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="page-activity.html" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_activity' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
 
             <div class="card card-style">
                 <div class="content">
-                    <a href="page-activity.html" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-orange shadow-bg shadow-bg-s"><i
                                     class="bi bi-google color-white"></i></span>
@@ -230,7 +205,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="page-activity.html" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-green shadow-bg shadow-bg-s"><i
                                     class="bi bi-caret-up-fill color-white"></i></span>
@@ -245,7 +220,7 @@
                         </div>
                     </a>
                     <div class="divider my-2 opacity-50"></div>
-                    <a href="page-activity.html" class="d-flex py-1">
+                    <a href="{% url 'page_activity' %}" class="d-flex py-1">
                         <div class="align-self-center">
                             <span class="icon rounded-s me-2 gradient-yellow shadow-bg shadow-bg-s"><i
                                     class="bi bi-pie-chart-fill color-white"></i></span>
@@ -268,14 +243,14 @@
                         <h3 class="font-16 mb-2">Account Activity</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="page-activity.html" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_activity' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
 
             <div class="card card-style gradient-green shadow-bg shadow-bg-s">
                 <div class="content">
-                    <a href="page-activity.html" class="d-flex">
+                    <a href="{% url 'page_activity' %}" class="d-flex">
                         <div class="align-self-center">
                             <h1 class="mb-0 font-40"><i class="bi bi-check-circle color-white pe-3"></i></h1>
                         </div>
@@ -297,7 +272,7 @@
                         <h3 class="font-16 mb-2">Send Money</h3>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="page-payment-transfer.html" class="font-12 pt-1">View All</a>
+                        <a href="{% url 'page_payment_transfer' %}" class="font-12 pt-1">View All</a>
                     </div>
                 </div>
             </div>
@@ -335,40 +310,38 @@
             </div>
         </div>
 
+        <div id="menu-sidebar" data-menu-active="nav-pages" data-menu-load="{% url 'menu_sidebar' %}"
+         class="offcanvas offcanvas-start offcanvas-detached rounded-m" style="display: block;">
 
 
-
-        <div id="menu-sidebar" data-menu-active="nav-welcome" data-menu-load="menu-sidebar.html"
-            class="offcanvas offcanvas-start offcanvas-detached rounded-m">
-        </div>
-
-        <div id="menu-highlights" data-menu-load="menu-highlights.html"
+        <div id="menu-highlights" data-menu-load= "{% url 'menu_highlights' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-notifications" data-menu-load="menu-notifications.html"
+        <div id="menu-notifications" data-menu-load= "{% url 'menu_notifications' %}"
             class="offcanvas offcanvas-top offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-card-more" data-menu-load="menu-card-settings.html"
+        <div id="menu-card-more" data-menu-load= "#"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-transfer" data-menu-load="menu-transfer.html"
+        <div id="menu-transfer" data-menu-load= "{% url 'menu_transfer' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-friends-transfer" data-menu-load="menu-friends-transfer.html"
+        <div id="menu-friends-transfer" data-menu-load="{% url 'menu_friends_transfer' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-request" data-menu-load="menu-request.html"
+        <div id="menu-request" data-menu-load="#}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-exchange" data-menu-load="menu-exchange.html"
+        <div id="menu-exchange" data-menu-load="{% url 'menu_exchange' %}"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
+
         <div class="offcanvas offcanvas-bottom rounded-m offcanvas-detached" id="menu-install-pwa-ios">
             <div class="content">
                 <img src="app/icons/icon-128x128.png" alt="img" width="80" class="rounded-m mx-auto my-4">
@@ -382,6 +355,7 @@
                     data-bs-dismiss="offcanvas">Maybe Later</a>
             </div>
         </div>
+
         <div class="offcanvas offcanvas-bottom rounded-m offcanvas-detached" id="menu-install-pwa-android">
             <div class="content">
                 <img src="app/icons/icon-128x128.png" alt="img" width="80" class="rounded-m mx-auto my-4">
@@ -397,8 +371,8 @@
                     later</a>
             </div>
         </div>
+        
     </div>
 
-    <script src="scripts/bootstrap.min.js"></script>
-    <script src="scripts/custom.js"></script>
+    {% include 'mobile-Dashbord/include/script.html'%}
 </body>
