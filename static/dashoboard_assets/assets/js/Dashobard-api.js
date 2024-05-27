@@ -90,7 +90,7 @@ let renderCategoryGraph = (id, dataArray) => {
     };
   });
 
-  new ApexCharts(document.querySelector(`#all-earnings-graph${id}`), {
+new ApexCharts(document.querySelector(`#all-earnings-graph${id}`), {
     chart: {
       type: "bar",
       height: 50,
@@ -142,6 +142,7 @@ let renderCategoryGraph = (id, dataArray) => {
     },
   }).render();
 };
+
 
 
 let renderHalfPieChart = (data, html, max) => {
@@ -762,6 +763,411 @@ let handelCategoryDetail = () => {
 let handleTopicClicked = () =>{
   //Handel on Click topic card
   $(".topic-card").click(function () {
+    const buttonData = $(this).data();
+  
+    if (buttonData.id == "Civil_Service") {
+      $("#category-title").html('Civil Service');
+      categoryCard = ` 
+      <link
+      rel="stylesheet"
+      href="{% static 'dashoboard_assets/assets/css/male_female.css' %}"
+      />  
+    <link
+      rel="stylesheet"
+      href="{% static 'dashoboard_assets/assets/css/map_style.css' %}"
+    />  
+    <script src="{% static 'dashoboard_assets/assets/js/pages/dashboard-default.js' %}"></script>
+   
+          <div class="col-lg-7 card table-responsive">
+            <h3 class="text-center p-3">Regional Civil servant (2014 EFY)</h3>
+            <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Job Grade</th>
+                <th>Number of Civil Servants</th>
+                <th>Share from the Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Professional Science (PS)</td>
+                <td>39,767</td>
+                <td>1.7</td>
+              </tr>
+              <tr>
+                <td>Administrative (AD)</td>
+                <td>38,736</td>
+                <td>1.7</td>
+              </tr>
+              <tr>
+                <td>Sub Professional (SP)</td>
+                <td>98,080</td>
+                <td>4.3</td>
+              </tr>
+              <tr>
+                <td>Clerical and Fiscal (CF)</td>
+                <td>71,895</td>
+                <td>3.2</td>
+              </tr>
+              <tr>
+                <td>Trades and Crafts (TC)</td>
+                <td>27,678</td>
+                <td>1.2</td>
+              </tr>
+              <tr>
+                <td>Custodial and Manual (CM)</td>
+                <td>58,892</td>
+                <td>2.6</td>
+              </tr>
+              <tr>
+                <td>Teachers</td>
+                <td>78,776</td>
+                <td>3.5</td>
+              </tr>
+              <tr>
+                <td>Health Professionals</td>
+                <td>119,968</td>
+                <td>5.3</td>
+              </tr>
+              <tr>
+                <td>Appointment/Cariour</td>
+                <td>161,013</td>
+                <td>7.1</td>
+              </tr>
+              <tr>
+                <td>Agricultural professionals</td>
+                <td>202,566</td>
+                <td>8.9</td>
+              </tr>
+              <tr>
+                <td>Engineers</td>
+                <td>234,279</td>
+                <td>10.3</td>
+              </tr>
+              <tr>
+                <td>ICT Professionals</td>
+                <td>163,389</td>
+                <td>7.2</td>
+              </tr>
+              <tr>
+                <td>Special Classification (SC)</td>
+                <td>123,020</td>
+                <td>5.4</td>
+              </tr>
+              <tr>
+                <td>Job grade (XV-XXII)</td>
+                <td>163,153</td>
+                <td>7.2</td>
+              </tr>
+              <tr>
+                <td>Not Stated (NS)</td>
+                <td>536,884</td>
+                <td>23.6</td>
+              </tr>
+              <tr>
+                <td>Total</td>
+                <td>2,278,770</td>
+                <td>100.0</td>
+              </tr>
+            </tbody>
+          </table>
+  </div>
+  <div class="col-lg-5 mt-4 mt-lg-0">
+      <div class="card">
+          <div class="card-body">
+              <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0">
+                      <div class="avatar avatar-s bg-light-primary">
+                          <!-- avatar icon -->
+                      </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-0">Civil Service</h6>
+                  </div>
+                  <div class="flex-shrink-0 ms-3">
+                      <div class="dropdown">
+                          <!-- dropdown menu -->
+                      </div>
+                  </div>
+              </div>
+              <div class="bg-body p-3 mt-3 rounded">
+                  <div class="mt-3 row align-items-center">
+                      <div class="col-12 col-lg-7">
+                          <div id="all-earnings-graph3"></div>
+                      </div>
+                      <div class="col-12 col-lg-5 mt-4 mt-lg-0">
+                          <h5 class="mb-1">$3,020</h5>
+                          <p class="text-primary mb-0"><i class="ti ti-arrow-up-right"></i> 30.6%</p>
+                      </div>
+                  </div>
+              </div>
+          </div> <hr>
+          <div id="bar_civil_servant"></div> <hr>
+          <div id="pie_civil_servant" class="mt-5"></div>
+      </div>
+  </div>
+
+  <div id="ethio_map"></div>
+  
+  
+  <script>
+  new ApexCharts(document.querySelector("#all-earnings-graph3"), {
+    chart: { type: "bar", height: 80, sparkline: { enabled: !0 } },
+    colors: ["#2CA87F"],
+    plotOptions: { bar: { columnWidth: "80%" } },
+    series: [{ data: [
+      { x: "Label 1", y: 1.7 },
+      { x: "Label 2", y: 1.9 },
+      { x: "Label 3", y: 2.1 },
+      { x: "Label 4", y: 2.2 },
+      { x: "Label 5", y: 2.3 }
+    ], }],
+    xaxis: { crosshairs: { width: 1 } },
+    tooltip: {
+      fixed: { enabled: !1 },
+      x: { show: !1 },
+      y: {
+        title: {
+          formatter: function (e) {
+            return "";
+          },
+        },
+      },
+      marker: { show: !1 },
+    },
+  }).render() 
+  
+  Highcharts.chart('bar_civil_servant', {
+    chart: {
+      type: 'bar'
+    },
+    title: {
+      text: 'Number of Civil Servants by Region and gender'
+    },
+    xAxis: {
+      categories: ['Tigray', 'Afar', 'Amhara', 'Oromia', 'Somali', 'Benishangul Gumuz', 'SNNP', 'Gambella', 'Harari', 'Sidama', 'South West', 'Addis Ababa', 'Dire Dawa', 'የክልል ድምር']
+    },
+    yAxis: {
+      title: {
+        text: 'Number of Civil Servants'
+      }
+    },
+    series: [{
+      name: 'Male',
+      data: [63880, 28220, 241539, 397643, 102641, 22380, 188063, 19364, 6343, 66744, 49024, 72137, 6106, 1264084]
+    }, {
+      name: 'Female',
+      data: [50757, 11966, 178514, 218781, 30120, 13405, 103864, 8455, 4884, 30497, 24615, 90290, 3888, 770036]
+    }]
+  });
+  Highcharts.chart('pie_civil_servant', {
+    chart: {
+      type: 'pie'
+    },
+    title: {
+      text: 'Civil Servants by Salary Category'
+    },
+    plotOptions: {
+      pie: {
+        innerSize: '50%',
+        dataLabels: {
+          enabled: true,
+          format: '{point.name}: {point.y} ({point.percentage:.1f}%)'
+        }
+      }
+    },
+    series: [{
+      name: 'Number of Civil Servants',
+      data: [
+        ['<1000', 15247],
+        ['1000-1999', 229914],
+        ['2000-2999', 154014],
+        ['3000-3999', 253189],
+        ['4000-4999', 252463],
+        ['5000-5999', 251688],
+        ['6000-6999', 255935],
+        ['7000-7999', 263504],
+        ['8000-8999', 200100],
+        ['9000-9999', 155200],
+        ['>10000', 189905],
+        ['Not Stated', 57611]
+      ]
+    }]
+  });
+  
+  Highcharts.Templating.helpers.abs = value => Math.abs(value);
+  
+  
+  
+  Highcharts.chart('male_female', {
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: 'Population pyramid for Somalia, 2021',
+          align: 'left'
+      },
+      subtitle: {
+          text: 'Source: <a ' +
+              'href="https://countryeconomy.com/demography/population-structure/somalia"' +
+              'target="_blank">countryeconomy.com</a>',
+          align: 'left'
+      },
+      accessibility: {
+          point: {
+              valueDescriptionFormat: '{index}. Age {xDescription}, {value}%.'
+          }
+      },
+      xAxis: [{
+          categories: categories,
+          reversed: false,
+          labels: {
+              step: 1
+          },
+          accessibility: {
+              description: 'Age (male)'
+          }
+      }, { // mirror axis on right side
+          opposite: true,
+          reversed: false,
+          categories: categories,
+          linkedTo: 0,
+          labels: {
+              step: 1
+          },
+          accessibility: {
+              description: 'Age (female)'
+          }
+      }],
+      yAxis: {
+          title: {
+              text: null
+          },
+          labels: {
+              format: '{abs value}%'
+          },
+          accessibility: {
+              description: 'Percentage population',
+              rangeDescription: 'Range: 0 to 5%'
+          }
+      },
+  
+      plotOptions: {
+          series: {
+              stacking: 'normal',
+              borderRadius: '50%'
+          }
+      },
+  
+      tooltip: {
+          format: '<b>{series.name}, age {point.category}</b><br/>' +
+              'Population: {(abs point.y):.1f}%'
+      },
+  
+      series: [{
+          name: 'Male',
+          data:  [
+            63,880,
+            28,220,
+            241,539,
+            397,643,
+            102,641,
+            22,380,
+            188,063,
+            19,364,
+            6,343,
+            66,744,
+            49,024,
+            72,137,
+            6,106
+        ]
+      }, {
+          name: 'Female',
+          data: [
+            50,757,
+            11,966,
+            178,514,
+            218,781,
+            30,120,
+            13,405,
+            103,864,
+            8,455,
+            4,884,
+            30,497,
+            24,615,
+            90,290,
+            3,888
+        ]
+      }]
+  });
+  </script>
+  <script>
+      (async () => {
+
+        const topology = await fetch(
+            'https://code.highcharts.com/mapdata/countries/et/et-all.topo.json'
+        ).then(response => response.json());
+    
+        // Prepare demo data. The data is joined to map using value of 'hc-key'
+        // property by default. See API docs for 'joinBy' for more info on linking
+        // data and map.
+        const data = [
+            ['et-be', 35785 ], ['et-2837', 162427 ], ['et-ha', 11227 ], ['et-sn', 291927],
+            ['et-ga', 27819 ], ['et-aa', 616424  ], ['et-so', 132761], ['et-dd', 9994 ],
+            ['et-ti', 114637 ], ['et-af', 40186 ], ['et-am', 420053]
+        ];
+    
+        // Create the chart
+        Highcharts.mapChart('ethio_map', {
+            chart: {
+                map: topology
+            },
+    
+            title: {
+                text: 'Highcharts Maps basic demo'
+            },
+    
+            subtitle: {
+                text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/et/et-all.topo.json">Ethiopia</a>'
+            },
+    
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+    
+            colorAxis: {
+                min: 0
+            },
+    
+            series: [{
+                data: data,
+                name: 'Civil Servant',
+                states: {
+                    hover: {
+                        color: '#BADA55'
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
+            }]
+        });
+    
+    })();
+    
+    </script> 
+  
+
+                    
+  `
+      $("#category-card-list").html(categoryCard);
+    }
+    else {
+
     $("#category-card-list").html("");
     $("#sidebarHtml").addClass("d-none")
     $(".selected-card").removeClass("border border-secondary shadow-lg border-4")
@@ -781,103 +1187,7 @@ let handleTopicClicked = () =>{
       },
       success: function (data) {
         console.log(data)
-        if (data.project.length > 0 && data.variables.length == 0) {
-          const bootstrapColors = [
-            "primary",
-            "secondary",
-            "success",
-            "warning",
-            "info",
-            "dark",
-          ];
-          let categoryCard = ``;
-          $("#category-title").html(data.project[0].project__for_catgory__name_ENG);
-          data.project.forEach((item) => {
-            categoryCard = $("<div>")
-            .attr("id", "project-card")
-            .addClass("col-md-6 col-xl-4 d-none d-md-block project-card")
-            .attr("data-bs-toggle", "modal")
-            .attr("data-bs-target", "#detailProjects")
-            .attr("data-bs-whatever", "@mdo")
-            .attr("data-id", item.project__id)
-            .attr("data-title_eng", item.project__title_ENG)
-            .attr("data-title_amh", item.project__title_ENG)
-            .attr("data-for_category", item.project__for_catgory__name_ENG)
-            .data("for_content", item.project__content)
-            .append(
-              $("<div>")
-                .addClass(`card social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}`)
-                .append(
-                  $("<div>")
-                    .addClass("card-body d-flex justify-content-between align-items-center p-3")
-                    .append(
-                      $("<div>")
-                        .addClass("d-flex flex-column")
-                        .append($("<h3>").addClass("text-white mb-0").text(item.name_ENG))
-                        .append($("<span>").addClass("mt-2").text(item.project__title_ENG))
-                    )
-                )
-            );
-            $("#category-card-list").append(categoryCard);
-          });
-         handelCategoryDetail() //Call handle on category detail
-        //Pagination
-          pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
-          //Handle Pagination
-          $(".page-link").click(function(){
-          const hrefData = $(this).data()
-          handleOnPagination(hrefData.href)
-      })
-        }
-        else  if (data.variables.length > 0 && data.project.length == 0) {
-          const bootstrapColors = [
-            "primary",
-            "secondary",
-            "success",
-            "warning",
-            "info",
-            "dark",
-          ];
-          let categoryCard = ``;
-          $("#category-title").html(data.variables[0].variables__for_catgory__name_ENG);
-          data.variables.forEach((item) => {
-            categoryCard = $("<div>")
-            .attr("id", "project-card")
-            .addClass("col-md-6 col-xl-4 d-none d-md-block project-card")
-            .attr("data-bs-toggle", "modal")
-            .attr("data-bs-target", "#detailProjects")
-            .attr("data-bs-whatever", "@mdo")
-            .attr("data-id", item.variables__id)
-            .attr("data-title_eng", item.variables__title_ENG)
-            .attr("data-title_amh", item.variables__title_AMH)
-            .attr("data-for_category", item.variables__for_catgory__name_ENG)
-            .data("for_content", item.variables__content)
-            .append(
-              $("<div>")
-                .addClass(`card social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}`)
-                .append(
-                  $("<div>")
-                    .addClass("card-body d-flex justify-content-between align-items-center p-3")
-                    .append(
-                      $("<div>")
-                        .addClass("d-flex flex-column")
-                        .append($("<h3>").addClass("text-white mb-0").text(item.name_ENG))
-                        .append($("<span>").addClass("mt-2").text(item.variables__title_ENG))
-                    )
-                )
-            );
-            $("#category-card-list").append(categoryCard);
-          });
-         handelCategoryDetail() //Call handle on category detail
-        //Pagination
-          pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
-          //Handle Pagination
-          $(".page-link").click(function(){
-          const hrefData = $(this).data()
-          handleOnPagination(hrefData.href)
-      })
-        }
-        else {
+        
         let categoryCard = ``;
         $("#category-title").html(data.categories[0].dashboard_topic__title_ENG);
   
@@ -996,41 +1306,17 @@ let handleTopicClicked = () =>{
           $(".page-link").click(function(){
           const hrefData = $(this).data()
           handleOnPagination(hrefData.href)
-      })
-          }
+            })
           
-          $("#category-card-list").on("click", "#project-card", function () {
-            const buttonData = $(this).data();
-            // Open Modal
-            handleDetailModalProject(
-              buttonData.title_eng,
-              buttonData.title_amh,
-              buttonData.for_category,
-              buttonData.for_content
-            );
-          });
-      
-          handleDetailModalProject = (title_eng, title_amh, for_category, content) => {
-            let htmlBody = `
-              <div class="mt-3">
-                  <p class="fw-bold">Name English: <span class="fw-normal">${title_eng}</span></p> 
-                  <p class="fw-bold">Name Amharic: <span class="fw-normal">${title_amh}</span></p>
-                  <p class="fw-bold">Category: <span class="fw-normal">${for_category}</span></p>
-                  <p class="fw-bold">Content: <span class="fw-normal">
-                  <div class="table-responsive">
-                      <div class="m-5" id="cke_id_text">${content}</div>
-                  </div>
-                  </span></p> 
-              </div>`;
-            $("#ProjectdetailModalBody").html(htmlBody);
-          };
       },
     });
    }
 
    handleOnPagination()
+    }
    
   });
+  
 }
 
 let defaultCategoryLists = (page = null, search = null) => {
@@ -1286,7 +1572,20 @@ $(document).ready(function () {
         "dark",
       ];
 
-      let cardTopic = ``;
+      let cardTopic = `
+      <div class="col-md-6  col-xl-3 d-none d-md-block topic-card"  data-id="Civil_Service" data-category-name="Civil_Service" id="Civil_Service" bis_skin_checked="1">
+              <div class="card  selected-card social-widget-card bg-secondary" bis_skin_checked="1">
+                  <div class="card-body d-flex justify-content-between align-items-center p-2" bis_skin_checked="1">
+                      <div class="d-flex flex-column" bis_skin_checked="1">
+                          <h3 class="text-white m-0">3 +</h3>
+                          <span class="m-t-10">Civil Service</span>
+                      </div>
+                      <i class="fas fa-user-hard-hat"></i>
+
+                  </div>
+              </div>
+          </div>
+      `;
       let sideNav = ``;
       let selectedCard = 'border border-secondary shadow-lg border-4'
       data.topics.forEach((item) => {
@@ -1343,7 +1642,6 @@ $(document).ready(function () {
   defaultCategoryLists()
   
 });
-
 
 
 

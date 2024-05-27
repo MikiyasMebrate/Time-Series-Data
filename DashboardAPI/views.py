@@ -141,7 +141,7 @@ def category_list(request , id , topic_type=None):
             )
 
         
-        paginator = Paginator(queryset, 6) 
+        paginator = Paginator(queryset, 20) 
         page_number = request.GET.get('page')
         try:
             page_obj = paginator.page(page_number)

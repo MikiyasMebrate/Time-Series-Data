@@ -73,6 +73,7 @@
       rel="stylesheet"
       href="{% static 'dashoboard_assets/assets/css/skeleton.css' %}"
     />
+   
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
@@ -82,7 +83,6 @@
     />
 
     {% fontawesome_5_static %}
-    <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <link
@@ -90,7 +90,8 @@
       src="{% static 'dashoboard_assets/assets/css/bigPie.css' %}"
     /></head
   ><!-- [Head] end --><!-- [Body] Start -->
-
+  <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+  <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
   <body
     data-pc-preset="preset-1"
     data-pc-sidebar-caption="true"
@@ -745,6 +746,8 @@
             />
           </div>
         </div>
+     
+                
         <div class="card mb-3">
           <div class="card-body">
             <div class="align-items-center d-flex flex-wrap gap-2 mb-3">
@@ -810,7 +813,9 @@
           <!--
             ===   Topic Lists ===
             -->
-          <div class="row" id="topic-card-lists"></div>
+          <div class="row" id="topic-card-lists">
+            
+          </div>
 
           <!--Loading Skeleton-->
           <div class="row" id="loading-skeleton-topic"></div>
@@ -972,6 +977,9 @@
 
         <!-- Pagination -->
         <div class="m-5" id="Pagination"></div>
+        
+
+        
 
         <div class="row justify-content-center">
           <div class="col-lg-6 card border shadow bg-secondary">
@@ -1073,13 +1081,15 @@
     <script>main_layout_change('vertical');</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{% static 'dashoboard_assets/assets/js/Dashobard-api.js' %}"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/sunburst.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
     <script src="{% static 'dashoboard_assets/assets/js/bigPie.js' %}"></script>
+    
+    
     
 
 </html>
