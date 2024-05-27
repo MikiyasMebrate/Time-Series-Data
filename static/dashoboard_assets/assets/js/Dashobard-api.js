@@ -1,4 +1,70 @@
 //Loading
+let renderRoadProject = () => {
+
+  var options = {
+    series: [{
+    name: 'Total',
+    data: [360, 781.0, 20.5, 306.8, 78.7, 100.0]
+  }, {
+    name: 'Trunk Road Rehabilitation',
+    data: [781.0, 6.5, 237.1, 523.5, 13.8, 0.1]
+  },
+  {
+    name: 'Trunk Road Upgrading',
+    data: [20.5, 0.2, 1.6, 15.3, 3.4, 0.0]
+  },
+  {
+    name: 'New Road Project',
+    data: [306.8, 1.9, 48.9, 134.2, 121.8, 0.0]
+  },
+  {
+    name: 'Road Heavy Maintenance',
+    data: [78.7, 1.3, 18.6, 54.2, 2.6, 2.0]
+  },
+  {
+    name: 'Bridge Construction and Rehabilitation',
+    data: [100.0, 0.8, 30.4, 67.0, 1.8, 0.0]
+  },
+],
+    chart: {
+    type: 'bar',
+    height: 900
+  },
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      dataLabels: {
+        position: 'top',
+      },
+    }
+  },
+  dataLabels: {
+    enabled: true,
+    offsetX: -6,
+    style: {
+      fontSize: '12px',
+      colors: ['#fff']
+    }
+  },
+  stroke: {
+    show: true,
+    width: 1,
+    colors: ['#fff']
+  },
+  tooltip: {
+    shared: true,
+    intersect: false
+  },
+  xaxis: {
+    categories: ["Total", "Trunk Road Rehabilitation", "Trunk Road Upgrading", "New Road Project", "Road Heavy Maintenance", "Bridge Construction and Rehabilitation"],
+  },
+  };
+
+  var chart = new ApexCharts(document.querySelector("#monthly-report-graph"), options);
+  chart.render();
+} 
+
+
 let showLoadingSpinner = (div) => {
   $(`#${div}`).html(
     `
@@ -764,7 +830,7 @@ let handleTopicClicked = () =>{
   //Handel on Click topic card
   $(".topic-card").click(function () {
     const buttonData = $(this).data();
-  
+    
     if (buttonData.id == "Civil_Service") {
       $("#category-title").html('Civil Service');
       categoryCard = ` 
@@ -895,10 +961,7 @@ let handleTopicClicked = () =>{
                       <div class="col-12 col-lg-7">
                           <div id="all-earnings-graph3"></div>
                       </div>
-                      <div class="col-12 col-lg-5 mt-4 mt-lg-0">
-                          <h5 class="mb-1">$3,020</h5>
-                          <p class="text-primary mb-0"><i class="ti ti-arrow-up-right"></i> 30.6%</p>
-                      </div>
+                      
                   </div>
               </div>
           </div> <hr>
@@ -1165,6 +1228,658 @@ let handleTopicClicked = () =>{
                     
   `
       $("#category-card-list").html(categoryCard);
+      hideLoadingSkeletonCategory()
+    }
+    else  if(buttonData.id == "project"){
+      $("#category-title").html('Project');
+      let categoryCard = ``;
+      let dashboardItem = [
+        {
+        name: 'Number of Projects',
+        value: 360,
+        icon: '<i class="bi bi-gear-fill"></i>'
+        },
+        {
+        name: 'Length of Road in thousand KM',
+        value: 21,
+        icon : '<i class="bi bi-rulers"></i>'
+        },
+        {
+        name: 'Total Cost (original) in billion birr',
+        value: 779,
+        icon : '<i class="bi bi-cash-coin"></i>'
+        },
+        {
+        name: 'Total Cost (revised) in billion birr',
+        value: 781,
+        icon : '<i class="bi bi-coin"></i>'
+        },
+        {
+        name: 'Expenditure to date',
+        value: 306.7,
+        icon : '<i class="bi bi-calendar-fill"></i>'
+        },
+        {
+        name: 'Total budget required to complete the project',
+        value: 475,
+        icon : '<i class="bi bi-cart-check-fill"></i>'
+        },
+        {
+        name: 'Performance in percent to date (average)',
+        value: 29,
+        icon : '<i class="bi bi-percent"></i>'
+        },
+        {
+        name: 'Planned average physical performance in percent for 2017 FY',
+        value: 7,
+        icon : '<i class="bi bi-send-fill"></i>'
+        },
+        {
+        name: 'Budget request for 2017 FY in billion birr',
+        value: 78.7,
+        icon : '<i class="bi bi-wallet2"></i>'
+        },
+        {
+        name: 'Number of Projects Not Yet Started',
+        value: 137,
+        icon : '<i class="bi bi-signpost"></i>'
+        },
+        {
+        name: 'Total Estimated Cost of Projects Not Yet Started (in billion birr)',
+        value: 412,
+        icon : '<i class="bi bi-person-walking"></i>'
+        },
+        {
+        name: 'Total Length of Projects Not Yet Started (in thousand KM)',
+        value: 10.8,
+        icon : '<i class="bi bi-easel"></i>'
+        },
+        {
+        name: 'Budget Request for Projects Not Yet Started in the 2017 Fiscal Year (in billion birr)',
+        value: 15.3,
+        icon : '<i class="bi bi-cash"></i>'
+        }
+        ];
+        let summaryItem = [
+          {
+           project : [
+            
+               ["Total", 360, 781.0, 20.5, 306.8, 78.7, 100.0],
+               ["Trunk Road Rehabilitation",4, 6.5, 0.2, 1.9, 1.3, 0.8],
+               ["Trunk Road Upgrading", 78, 237.1, 1.6, 48.9, 18.6, 30.4],
+               ["New Road Project", 230, 523.5, 15.3, 134.2, 54.2, 67.0],
+               ["Road Heavy Maintenance", 42, 13.8, 3.4, 121.8, 2.6, 1.8],
+               ["Bridge Construction and Rehabilitation",6, 0.1, 0.0, 0.0, 2.0, 0.0]
+           ]
+          }
+       ]
+ 
+
+       categoryCard+=`
+       <div class="col-12">
+    <div class="card">
+        <div class="card-header pb-0 pt-2">
+            <ul class="nav nav-tabs analytics-tab" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="analytics-tab-1" data-bs-toggle="tab" data-bs-target="#analytics-tab-1-pane" type="button" role="tab" aria-controls="analytics-tab-1-pane" aria-selected="true">Road</button>
+            </li> 
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="analytics-tab-2" data-bs-toggle="tab" data-bs-target="#analytics-tab-2-pane" type="button" role="tab" aria-controls="analytics-tab-2-pane" aria-selected="false">Energy</button>
+           </li>   
+           <li class="nav-item" role="presentation">
+           <button class="nav-link" id="analytics-tab-3" data-bs-toggle="tab" data-bs-target="#analytics-tab-3-pane" type="button" role="tab" aria-controls="analytics-tab-3-pane" aria-selected="false">Irrigation and Dam</button>
+          </li>                
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="row">
+              <div class="col-lg-9 col-xl-9 ">
+                    <div class="tab-content" id="myTabContent">
+
+                    <div class="tab-pane fade show active" id="analytics-tab-1-pane" role="tabpanel" aria-labelledby="analytics-tab-1" tabindex="0">
+
+                        <div id="overview-chart-1" >
+
+                        <!--Start-->
+
+                        <div class="row">`
+
+                        summaryItem[0].project.forEach((item) =>
+                        
+                        categoryCard+= `
+                       
+                        <div class="col-4">
+                        <div class="card">
+                            <div class="card-body">
+                              <div
+                                class="d-flex align-items-center justify-content-between mb-3"
+                              >
+                                <h5 class="mb-0">${item[0]}</h5>
+                              </div>
+                              <div
+                                class="card rounded-4 overflow-hidden"
+                                style="
+                                  background-image: url(https://ableproadmin.com/assets/images/widget/img-card-bg.svg);
+                                  background-size: cover;
+                                "
+                              >
+                                <div class="card-body">
+                                  <div class="d-flex">
+                                    <div class="flex-grow-1 me-3">
+                                      <p class="text-white text-sm text-opacity-50 mb-0">
+                                        Number of Projects
+                                      </p>
+                                      <h5 class="text-white">${item[1]}</h5>
+                                    </div>
+                                  </div>
+                                  <div class="flex-grow-1 me-3">
+                                    <p class="text-white text-sm text-opacity-50 mb-0">
+                                      Total Cost of the project in billion birr
+                                    </p>
+                                    <h5 class="text-white">${item[2]}</h5>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-auto">
+                                      <p class="text-white text-sm text-opacity-50 mb-0">
+                                        Total Length in Thousand KM
+                                      </p>
+                                      <h6 class="text-white mb-0">${item[3]}</h6>
+                                    </div>
+                                    <div class="col-auto">
+                                      <p class="text-white text-sm text-opacity-50 mb-0">
+                                        Expenditure to date in billion birr
+                                      </p>
+                                      <h6 class="text-white mb-0">${item[4]}</h6>
+                                    </div>
+                                    <div class="flex-grow-1 me-3">
+                                      <p class="text-white text-sm text-opacity-50 mb-0">
+                                        Total Cost of the project in billion birr
+                                      </p>
+                                      <h5 class="text-white">${item[5]}</h5>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="text-center mt-3">
+                                <h3 class="mb-1">${item[6]}</h3>
+                                <p class="text-muted mb-0">Total Cost Share  in %</p>
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+                
+                        ` )
+
+                        
+
+    categoryCard+=` 
+
+                  </div>
+                        <!--End-->
+
+                          <div class="card">
+                             <div class="card-body">
+                              <h5 class="m-3">Road projects Regional Distribution</5>
+                             <!--table-->
+                             <div class="mt-3 table-responsive">
+                             <table class="table table-hover">
+                               <thead>
+                                 <tr>
+                                   <th>Region</th>
+                                   <th>Number of Road Project</th>
+                                   <th>Total Road Project Budget</th>
+                                   <th>% share</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                   <td>Afar</td>
+                                   <td>15</td>
+                                   <td>28,298</td>
+                                   <td>3.6</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Amhara</td>
+                                   <td>86</td>
+                                   <td>168,924</td>
+                                   <td>21.6</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Amhara and Afar</td>
+                                   <td>1</td>
+                                   <td>2,236</td>
+                                   <td>0.3</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Benishangul Gumuz</td>
+                                   <td>10</td>
+                                   <td>29,483</td>
+                                   <td>3.8</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Dire Dawa</td>
+                                   <td>1</td>
+                                   <td>478</td>
+                                   <td>0.1</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Dire Dawa and Somale</td>
+                                   <td>2</td>
+                                   <td>1,318</td>
+                                   <td>0.2</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Gambella</td>
+                                   <td>16</td>
+                                   <td>35,258</td>
+                                   <td>4.5</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Oromia</td>
+                                   <td>93</td>
+                                   <td>241,186</td>
+                                   <td>30.9</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Sidama</td>
+                                   <td>3</td>
+                                   <td>4,781</td>
+                                   <td>0.6</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Somale</td>
+                                   <td>23</td>
+                                   <td>42,467</td>
+                                   <td>5.4</td>
+                                 </tr>
+                                 <tr>
+                                   <td>South Ethiopia</td>
+                                   <td>33</td>
+                                   <td>82,776</td>
+                                   <td>10.6</td>
+                                 </tr>
+                                 <tr>
+                                   <td>South West</td>
+                                   <td>10</td>
+                                   <td>30,221</td>
+                                   <td>3.9</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Tigray</td>
+                                   <td>32</td>
+                                   <td>47,014</td>
+                                   <td>6.0</td>
+                                 </tr>
+                                 <tr>
+                                   <td>Interregional</td>
+                                   <td>35</td>
+                                   <td>70,303</td>
+                                   <td>9.0</td>
+                                 </tr>
+                               </tbody>
+                               <tfoot>
+                                 <tr>
+                                   <th>Grand Total</th>
+                                   <th>357</th>
+                                   <th>781,189</th>
+                                   <th>100.0</th>
+                                 </tr>
+                               </tfoot>
+                              </table>
+   
+   
+                             </div>
+   
+                           <!--end-->
+                             </div>
+                          </div>
+                        </div>
+                        
+
+                    </div>
+
+
+                    <!--Page Start -->
+
+                    <div class="tab-pane fade" id="analytics-tab-2-pane" role="tabpanel" aria-labelledby="analytics-tab-2" tabindex="0">
+                        <div id="overview-chart-2" style="min-height: 265px">
+
+                        <!--Table Start -->
+                      <div class="card">
+                        <div class="card-body">
+                           <h2>Energy Projects Performance </h2>
+                        <div class="table-responsive"> 
+                          <table class="table table-striped table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Project Name</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Project Start Date</th>
+                                <th scope="col">Project Expected Completion Date</th>
+                                <th scope="col">Physical Performance to date</th>
+                                <th scope="col">Project Expenditure to date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th scope="row">1</th>
+                                <td>Grand Renissance hydroelectric project</td>
+                                <td>Benishangul Gumuz</td>
+                                <td>2003</td>
+                                <td>2017</td>
+                                <td>95.79</td>
+                                <td>193.3</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">2</th>
+                                <td>Koisha hydroelectric project</td>
+                                <td>South Western</td>
+                                <td>2008</td>
+                                <td>2019/2020</td>
+                                <td>66.42</td>
+                                <td>50.13</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">3</th>
+                                <td>Aiysha Wind Energy Project</td>
+                                <td>Somali</td>
+                                <td>2008</td>
+                                <td>2018</td>
+                                <td>83.41</td>
+                                <td>4.18</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">4</th>
+                                <td>Aluto Geothermal energy Project</td>
+                                <td>Oromia</td>
+                                <td></td>
+                                <td></td>
+                                <td>99.39</td>
+                                <td>5.38</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">5</th>
+                                <td>Assela Wind Energy Project</td>
+                                <td>Oromia</td>
+                                <td></td>
+                                <td></td>
+                                <td>52.24</td>
+                                <td>4.53</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">6</th>
+                                <td>Bahirdar-Woldiya -Kombolcha Transmission Line</td>
+                                <td>Amhara</td>
+                                <td>2010</td>
+                                <td>2017</td>
+                                <td>91.6</td>
+                                <td>6.8</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">7</th>
+                                <td>Bekji and Debertabor Transmission Line</td>
+                                <td>Amhara and Oromia</td>
+                                <td></td>
+                                <td></td>
+                                <td>73.37</td>
+                                <td>1.3</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">8</th>
+                                <td>Southern Electric Grid Project</td>
+                                <td>South Ethiopia and Sidama</td>
+                                <td>2015</td>
+                                <td>2017</td>
+                                <td>45.45</td>
+                                <td>4.15</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">9</th>
+                                <td>Chaka Project</td>
+                                <td>Addis Ababa</td>
+                                <td></td>
+                                <td></td>
+                                <td>89.6</td>
+                                <td>0.137</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">10</th>
+                                <td>Kotebe Compound Project</td>
+                                <td>Addis Ababa</td>
+                                <td></td>
+                                <td></td>
+                                <td>96.58</td>
+                                <td>0.604</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">11</th>
+                                <td>Grand Renissance Collector</td>
+                                <td>Benishangul Gumuz</td>
+                                <td></td>
+                                <td></td>
+                                <td>57.2</td>
+                                <td>0.109</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    </div>
+
+
+                    <!-- Page End -->
+                    <div
+  class="tab-pane fade"
+  id="analytics-tab-3-pane"
+  role="tabpanel"
+  aria-labelledby="analytics-tab-3"
+  tabindex="0">
+
+
+
+  <div id="overview-chart-2" style="min-height: 265px">
+  <div class="card">
+  <div class="card-body">
+  <h2 class="p-3">Irrigation</h2>
+  <div class="table-responsive">
+  <table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Project</th>
+      <th scope="col">Number of Projects</th>
+      <th scope="col">Total Project Cost Requirements (in Billion Birr)</th>
+      <th scope="col">Expenditure to date</th>
+      <th scope="col">Required Cost for Project Completion (in Billion Birr)</th>
+      <th scope="col">Requested Budget for 2017 FY Budget (in Billion Birr)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Total Irrigation projects</td>
+      <td>32</td>
+      <td>91.2</td>
+      <td>28.2</td>
+      <td>63.03</td>
+      <td>6.6</td>
+    </tr>
+    <tr>
+      <td>Ongoing Irrigation projects</td>
+      <td>19</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Ongoing Irrigation Projects with >50 Physical Performance</td>
+      <td>10</td>
+      <td>48.3</td>
+      <td>24.2</td>
+      <td>24.2</td>
+      <td>2.30</td>
+    </tr>
+    <tr>
+      <td>Ongoing Irrigation Projects with <50 Physical Performance</td>
+      <td>9</td>
+      <td>21.6</td>
+      <td>4.02</td>
+      <td>17.53</td>
+      <td>2.4</td>
+    </tr>
+    <tr>
+      <td>Number of Not Started Projects</td>
+      <td>13</td>
+      <td>21.4</td>
+      <td>-</td>
+      <td>21.4</td>
+      <td>1.9</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+
+<div class="card">
+<div class="card-body">
+<h2 class="p-3">Regional Distribution of Irrigation Projects </h2>
+<div class="table-responsive">
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Region</th>
+      <th scope="col">Regional Distribution of Irrigation projects (in Number)</th>
+      <th scope="col">Total Project Cost Requirements (in Billion Birr)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Harari</td>
+      <td>1</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Central Ethiopia</td>
+      <td>1</td>
+      <td>1,490</td>
+    </tr>
+    <tr>
+      <td>Somali</td>
+      <td>2</td>
+      <td>8,410</td>
+    </tr>
+    <tr>
+      <td>Benishangul Gumuz</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Tigray</td>
+      <td>2</td>
+      <td>16,433</td>
+    </tr>
+    <tr>
+      <td>Amhara</td>
+      <td>6</td>
+      <td>16,918</td>
+    </tr>
+    <tr>
+      <td>Afar</td>
+      <td>5</td>
+      <td>7,991</td>
+    </tr>
+    <tr>
+      <td>Oromia</td>
+      <td>8</td>
+      <td>30,470</td>
+    </tr>
+    <tr>
+      <td>Oromia and Sidama</td>
+      <td>1</td>
+      <td>5,609</td>
+    </tr>
+    <tr>
+      <td>South Ethiopia</td>
+      <td>3</td>
+      <td>2,435</td>
+    </tr>
+    <tr>
+      <td>South Western Ethiopia</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>South Ethiopia and South Western Ethiopia</td>
+      <td>1</td>
+      <td>1,465</td>
+    </tr>
+    <tr>
+      <td>Grand Total</td>
+      <td>32</td>
+      <td>91,221</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+
+                    </div>
+                </div>
+
+
+
+                <div class="col-lg-3">
+                    <ul class="list-group list-group-flush">
+
+                  `
+
+
+        dashboardItem.forEach((item) => {
+          categoryCard+= `
+           <!-- Total Project -->
+          <li class="list-group-item">
+              <div class="d-flex align-items-start">
+                  <div class="flex-shrink-0">
+                      <div class="avtar avtar-s bg-light-secondary">${item.icon}
+                      </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                      <div class="row g-1">
+                          <div class="col-8">
+                              <p class="text-muted mb-1">${item.name}</p>
+                              <h4 class="mb-0">${item.value}</h4>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </li>`
+        })
+
+
+                        
+                       
+                  categoryCard+= ` </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+       `   
+      
+    
+   
+      $("#category-card-list").html(categoryCard);
+      renderRoadProject() // render Graph
+      hideLoadingSkeletonCategory()
     }
     else {
 
@@ -1301,8 +2016,8 @@ let handleTopicClicked = () =>{
        
         handelCategoryDetail() //Call handle on category detail
         //Pagination
-          pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
-          //Handle Pagination
+          // pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages);
+          // //Handle Pagination
           $(".page-link").click(function(){
           const hrefData = $(this).data()
           handleOnPagination(hrefData.href)
@@ -1451,8 +2166,8 @@ let defaultCategoryLists = (page = null, search = null) => {
         search = page.substr(page.search(/q=/i))
       }
       //Pagination
-      pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages, search);
-      //Handle Pagination
+      // pagination(data.has_previous,data.has_next,data.previous_page_number,data.next_page_number,data.number,data.page_range, data.num_pages, search);
+      // //Handle Pagination
       $(".page-link").click(function(){
       const buttonData = $(this).data()
       defaultCategoryLists(buttonData.href)
@@ -1461,81 +2176,81 @@ let defaultCategoryLists = (page = null, search = null) => {
   });
 }
 
-let pagination = (has_previous,has_next,previous_page_number,next_page_number,number,page_range, num_pages, search = null) => {
-  let page = `
-  <nav aria-label="Page navigation example">
-  <ul class="pagination pagination-circle pagination-outline justify-content-center" >
-  `
+// let pagination = (has_previous,has_next,previous_page_number,next_page_number,number,page_range, num_pages, search = null) => {
+//   let page = `
+//   <nav aria-label="Page navigation example">
+//   <ul class="pagination pagination-circle pagination-outline justify-content-center" >
+//   `
   
-  if(has_previous){
-    page+=`
-    <li class="page-item">
-    <a data-href="?page=${previous_page_number}${search ? "&"+search : '' }" class="page-link">Previous</a>
-    </li>
-    ` 
-  }else{
-    page+=`
-    <li class="page-item disabled">
-    <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Previous</a>
-    </li>
-    `
-  }
+//   if(has_previous){
+//     page+=`
+//     <li class="page-item">
+//     <a data-href="?page=${previous_page_number}${search ? "&"+search : '' }" class="page-link">Previous</a>
+//     </li>
+//     ` 
+//   }else{
+//     page+=`
+//     <li class="page-item disabled">
+//     <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Previous</a>
+//     </li>
+//     `
+//   }
 
-  if(number+4 > 1){
-    page += `
-    <li class="page-item">
-    <a data-href="?page=${number-5}${search ? "&"+search : '' }" class="page-link" >&hellip;</a>
-    </li>
-    `
-  }
+//   if(number+4 > 1){
+//     page += `
+//     <li class="page-item">
+//     <a data-href="?page=${number-5}${search ? "&"+search : '' }" class="page-link" >&hellip;</a>
+//     </li>
+//     `
+//   }
 
-  for(i of page_range){
-    if(number == i){
-      page+=`
-      <li class="page-item active" aria-current="page">
-      <span class="page-link">
-      ${i}
-      <span class="sr-only">(current)</span>
-      </span>
-    </li>
-      `
-    }else if ( i > number-5 && i < number + 5){
-      page+=`
-      <li class="page-item">
-      <a data-href="?page=${i}${search ? "&"+search : '' }" class="page-link" >${i}</a>
-      </li>
-      `
-    }
-  }
+//   for(i of page_range){
+//     if(number == i){
+//       page+=`
+//       <li class="page-item active" aria-current="page">
+//       <span class="page-link">
+//       ${i}
+//       <span class="sr-only">(current)</span>
+//       </span>
+//     </li>
+//       `
+//     }else if ( i > number-5 && i < number + 5){
+//       page+=`
+//       <li class="page-item">
+//       <a data-href="?page=${i}${search ? "&"+search : '' }" class="page-link" >${i}</a>
+//       </li>
+//       `
+//     }
+//   }
 
-  if(num_pages > number + 4){
-    page+=`
-    <li class="page-item">
-    <a data-href="?page=${number + 5}${search ? "&"+search : '' }" class="page-link" >&hellip;</a>
-    </li>
-    `
-  }
+//   if(num_pages > number + 4){
+//     page+=`
+//     <li class="page-item">
+//     <a data-href="?page=${number + 5}${search ? "&"+search : '' }" class="page-link" >&hellip;</a>
+//     </li>
+//     `
+//   }
 
-  if(has_next){
-    page+=`
-    <li class="page-item">
-    <a data-href="?page=${next_page_number}${search ? "&"+search : '' }" class="page-link" >Next</a>
-    </li>
-    `
-  }else{
-    page+=`
-    <li class="page-item disabled">
-    <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Next</a>
-    </li>
-    `
-  }
+//   if(has_next){
+//     page+=`
+//     <li class="page-item">
+//     <a data-href="?page=${next_page_number}${search ? "&"+search : '' }" class="page-link" >Next</a>
+//     </li>
+//     `
+//   }else{
+//     page+=`
+//     <li class="page-item disabled">
+//     <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Next</a>
+//     </li>
+//     `
+//   }
 
-  page+=`
-  </ul>
-  </nav>`
+//   page+=`
+//   </ul>
+//   </nav>`
 
-  $("#Pagination").html(page)
-}
+//   $("#Pagination").html(page)
+// }
 
 let handleOnSearch = () =>{
   $("#searchItemForm").submit(function(e){
@@ -1624,7 +2339,24 @@ $(document).ready(function () {
                 
         </li>
         `
+
+        
       });
+
+      
+      cardTopic += `
+      <!-- custom cards -->
+      <div class="col-md-6  col-xl-3 d-none d-md-block topic-card" data-id = "project" data-category-name = "project">
+         <div class="card  social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}">
+             <div class="card-body d-flex justify-content-between align-items-center p-2">
+                 <div class="d-flex flex-column">
+                     <h3 class="text-white m-0">3 +</h3>
+                     <span class="m-t-10">Project</span>
+                 </div>
+                 <i class="fa fa-cogs" aria-hidden="true"></i>
+             </div>
+         </div>
+     </div>`;
 
       $("#mobile-collapse").click(function(){
         $("#sidebarHtml").removeClass("d-none")

@@ -62,7 +62,7 @@ def topic_lists(request):
 
     if request.method == 'GET':
         topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
-        topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
+        # topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
         serializer = DashboardTopicSerializer(topics, many=True)
         
         return JsonResponse({'topics':serializer.data})
@@ -155,7 +155,7 @@ def category_list(request , id , topic_type=None):
     
         return JsonResponse(
             {
-            'categories':list(page_obj), 
+            'categories':list(queryset), 
             'has_previous' : page_obj.has_previous(),
             'has_next' : page_obj.has_next(),
             'previous_page_number' : page_obj.has_previous() and page_obj.previous_page_number() or None,
