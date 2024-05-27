@@ -153,46 +153,12 @@ rel="stylesheet"
             <p>Trash (Recyclebin)</p>
           </a>
         </li>
-        <li class="nav-item  
-        
-        {% if request.path == '/user-admin/data-list/' %}active menu-open{% endif %} 
-        {% if request.path == '/user-admin/topic/' %}active menu-open{% endif %}
-        {% if request.path == '/user-admin/category/' %}active menu-open{% endif %}
-        {% if request.path == '/user-admin/indicators/' %}active menu-open{% endif %}
-        {% if request.path == '/user-admin/measurement/' %}active menu-open{% endif %}
-        {% if request.path == '/user-admin/source/' %}active menu-open{% endif %}
-        "> 
-          <a href="#" class="nav-link 
-          {% if request.path == '/user-admin/data-list/' %}active{% endif %} 
-          {% if request.path == '/user-admin/topic/' %}active{% endif %}
-          {% if request.path == '/user-admin/category/' %}active{% endif %}
-          {% if request.path == '/user-admin/indicators/' %}active{% endif %}
-          {% if request.path == '/user-admin/measurement/' %}active{% endif %}
-          {% if request.path == '/user-admin/source/' %}active{% endif %}
-
-          ">
-            {% comment %} <i class="nav-icon fas fa-database"></i> {% endcomment %}
-            <i class="nav-icon bi bi-database-fill-gear"></i>
-            <p>
-              Dashboard Topic
-              <i class="right fas fa-angle-left"></i>
-            </p>
+        <li class="nav-item ">
+          <a href="{% url 'dashbord_topic'%}" class="nav-link {% if request.path == '/user-admin/dashbord_topic/' %}active{% endif %}">
+            <i class="nav-icon fas fa-users"></i>
+            <p>Dashboard Topic</p>
           </a>
-          <ul class="nav nav-treeview ms-1">
-            <li class="nav-item ">
-              <a href="{% url 'dashbord_topic'%}" class="nav-link {% if request.path == '/user-admin/dashbord_topic/' %}active{% endif %}">
-                <i class="nav-icon fas fa-users"></i>
-                <p>Dashboard Topic</p>
-              </a>
-            </li>   
-            <li class="nav-item ">
-              <a href="{% url 'project'%}" class="nav-link {% if request.path == '/user-admin/project/' %}active{% endif %}">
-                <i class="nav-icon fas fa-users"></i>
-                <p>Dashboard Project</p>
-              </a>
-            </li>   
-          </ul>
-        </li>
+        </li>   
                      
           </ul>
         </li>

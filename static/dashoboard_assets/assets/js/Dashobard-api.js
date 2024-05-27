@@ -2152,12 +2152,14 @@ let defaultCategoryLists = (page = null, search = null) => {
                               </div>
                           </div>
                       </div>
+                     
   
                       `;
 
         $("#category-card-list").append(categoryCard);
         renderCategoryGraph(item.indicator__id, valueItem);
       });
+      
       handelCategoryDetail() //Call handle on category detail
       if(search){
         null;
