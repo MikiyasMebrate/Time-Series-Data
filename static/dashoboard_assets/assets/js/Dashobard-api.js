@@ -698,7 +698,7 @@ let handelCategoryDetail = () => {
           
   
   
-            table += `</tbody>
+            table += `</tbody>s
                 </table>
               </div>
                 `
@@ -828,7 +828,9 @@ let handelCategoryDetail = () => {
 
 let handleTopicClicked = () =>{
   //Handel on Click topic card
+  
   $(".topic-card").click(function () {
+    $("#bigPieChartParent").html('')
     const buttonData = $(this).data();
     
     if (buttonData.id == "Civil_Service") {
@@ -2261,10 +2263,161 @@ let handleOnSearch = () =>{
     let searchItem  = this.q.value
     defaultCategoryLists(`?page=1`,`q=${searchItem}`)
     
+  })
+
+  $("#searchItemValue").on("keydown", function(event){
+    let searchValue = $(this).val()
+    // Prevent default form submission if enter is pressed (optional)
+    if (event.keyCode === 13) {
+      event.preventDefault();
+    }
+
+    // Minimum characters to trigger search (optional)
+    if (searchValue.length < 2) {
+      return; // Exit if not enough characters entered
+    }
+
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: "/dashboard-api/search_category_indicator/",
+      data: { search: searchValue },
+      success: function(data) {
+        
+        let a = data.indicators.map((item) => `<option value="${item.indicator__title_ENG}">${item.indicator__title_ENG}</option>`)
+        console.log(a)
+        $("#autocomplete").html(a)
+      },
+    })
+
+
+    $("autocomplete").append(
+
+      `
+      <option value="USA">United States of America</option>s
+      `
+    )
     
   })
 }
 
+
+let homePieChart = () => {
+  $.ajax({
+    url: "/dashboard-api/pie_chart_data",
+    type: "GET",
+
+    success: function (dataMain) {
+      let data = [
+        {
+          id: "0.0",
+          parent: "",
+          name: "National Topic",
+        },
+      ];
+
+      // Assign topics with their corresponding parent
+for (const topic of dataMain.topics) {
+    const newObj = {
+      id: `1.${topic.id}`,
+      parent: '0.0',
+      name: topic.title_ENG,
+    };
+    data.push(newObj);
+  }
+  
+  // Assign categories with their corresponding parent
+  for (const category of dataMain.category) {
+    const newObj = {
+      id: `2.${category.id}`,
+      parent: `1.${category.dashboard_topic__id}`,
+      name: category.name_ENG,
+    };
+    data.push(newObj);
+  }
+  
+  // Assign indicators with their corresponding parent
+  for (const indicator of dataMain.indicators) {
+    const newObj = {
+      id: `3.${indicator.id}`,
+      parent: `2.${indicator.for_category__id}`,
+      name: indicator.title_ENG,
+      value: indicator.indicator_value__value
+    };
+    data.push(newObj);
+  }
+
+
+  Highcharts.chart('bigPieChart', {
+
+    chart: {
+        height: '100%'
+    },
+
+    // Let the center circle be transparent
+    colors: ['transparent'].concat(Highcharts.getOptions().colors),
+
+    title: {
+        text: 'National Topic'
+    },
+
+    series: [{
+        type: 'sunburst',
+        data: data,
+        name: 'National Level',
+        allowDrillToNode: true,
+        borderRadius: 3,
+        cursor: 'pointer',
+        dataLabels: {
+            format: '{point.name}',
+            filter: {
+                property: 'innerArcLength',
+                operator: '>',
+                value: 16
+            }
+        },
+        levels: [{
+            level: 1,
+            levelIsConstant: false,
+            dataLabels: {
+                filter: {
+                    property: 'outerArcLength',
+                    operator: '>',
+                    value: 64
+                }
+            }
+        }, {
+            level: 2,
+            colorByPoint: true
+        },
+        {
+            level: 3,
+            colorVariation: {
+                key: 'brightness',
+                to: -0.5
+            }
+        }, {
+            level: 4,
+            colorVariation: {
+                key: 'brightness',
+                to: 0.5
+            }
+        }]
+
+    }],
+
+    tooltip: {
+        headerFormat: '',
+        pointFormat: '<b>{point.name}</b> is <b>' +
+            '{point.value}</b>'
+    }
+});
+    },
+    error: function (xhr, status, error) {
+      console.error("AJAX request failed:", error);
+    },
+  });
+}
 
 $(document).ready(function () {
 
@@ -2368,8 +2521,10 @@ $(document).ready(function () {
       $("#sidebar-topic-list").html(sideNav);
 
       handleTopicClicked() //handle Topic Clicked
+      homePieChart()
 
     },
+  
   });
 
   //Default 
