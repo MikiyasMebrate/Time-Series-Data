@@ -1799,7 +1799,9 @@ def project_delete(request, id):
     try:
         project = Project.objects.get(pk = id)
         project.delete()
+        category = project.for_category
         messages.success(request, 'Successfully Deleted')
+        return redirect('project_category' , category)
     except:
         messages.error(request, 'An error occurred while Deleting')
     
@@ -1889,12 +1891,13 @@ def variable_category(request , id):
 def variable_delete(request, id):
     try:
         variable = Variables.objects.get(pk = id)
+        category = variable.for_catgory.id
         variable.delete()
         messages.success(request, 'Successfully Deleted')
     except:
         messages.error(request, 'An error occurred while Deleting')
     
-    return redirect('variable')     
+    return redirect('variable_category' , category)     
 
 
 
@@ -1903,6 +1906,7 @@ def variable_delete(request, id):
 def edit_variable(request , id):
     try:
         variable = Variables.objects.get(pk = id)
+        category = variable.for_catgory.id
         variable.read = True
         variable.save()
     except:
@@ -1915,7 +1919,7 @@ def edit_variable(request , id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Successfully Updated')
-            return redirect('variable')
+            return redirect('variable_category' ,category)
         else:
             messages.error(request, 'An error occurred while updating')
     context = {
