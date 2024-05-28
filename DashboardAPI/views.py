@@ -8,21 +8,48 @@ from rest_framework.decorators import api_view
 import time
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import model_to_dict
+from UserManagement.forms import LoginFormDashboard
+from  UserManagement.decorators import dashboard_user_required
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import login,authenticate,logout
 
 
 
+def dashboard_login(request):
+    form = LoginFormDashboard(request.POST or None)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        user = authenticate(request,email=email,password=password)
+        if user is not None and user.is_dashboard:
+            login(request, user)
+            return redirect('dashboard-index')
+        else:
+            messages.error(request, 'Invalid Password or Email')
+        form = LoginFormDashboard()
+    context = {
+        'form' : form
+    }
+    return render(request, 'dashboard-pages/authentication/login.html', context=context)
+
+
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 def index(request):
-
     return render(request, 'dashboard-pages/dashboard-index.html')
 
 
 
-def pie_chart(request):
 
-    return render(request, 'dashboard-pages/bigPie.html')    
+@login_required(login_url='dashboard-login')
+def dashboard_logout(request):
+    logout(request)
+    return redirect('dashboard-login')
 
-
-
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def pie_chart_data(request):
 
@@ -58,6 +85,10 @@ def pie_chart_data(request):
         
         return JsonResponse(context)
 
+
+
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def topic_lists(request):
 
@@ -70,7 +101,8 @@ def topic_lists(request):
     
 
 
-
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def category_list(request , id , topic_type=None): 
                
@@ -155,7 +187,8 @@ def category_list(request , id , topic_type=None):
              })
 
 
-
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def category_detail_lists(request , id):
 
@@ -184,7 +217,8 @@ def category_detail_lists(request , id):
         return JsonResponse({'indicators': serialized_indicator,'months' : month,'values': value_filter, 'year' : list(year)})
 
 
-    
+@login_required(login_url='dashboard-login')
+@dashboard_user_required    
 @api_view(['GET'])
 def indicator_detail(request, id):
      if request.method == 'GET':
@@ -221,6 +255,8 @@ def indicator_detail(request, id):
           return JsonResponse({'indicators': 'failed to access.'})
 
 
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 def search_category_indicator(request):
     queryset = []
     if 'search' in request.GET:
