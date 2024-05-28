@@ -29,7 +29,7 @@
                         </a>
                         <a href="#" data-bs-toggle="dropdown"
                             class="icon gradient-blue shadow-bg shadow-bg-s rounded-m">
-                            <img src="images/pictures/25s.jpg" width="45" class="rounded-m" alt="img">
+                            <img src="{% static 'mobile/images/pictures/25s.jpg' %}" width="45" class="rounded-m" alt="img">
                         </a>
 
                         <div class="dropdown-menu">
@@ -318,9 +318,11 @@
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
         </div>
 
-        <div id="menu-notifications" data-menu-load= "{% url 'menu_notifications' %}"
-            class="offcanvas offcanvas-top offcanvas-detached rounded-m">
-        </div>
+        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-notifications"
+        class="icon gradient-blue color-white shadow-bg shadow-bg-xs rounded-m">
+        <i class="bi bi-bell-fill font-17"></i>
+        <em class="badge bg-red-dark color-white scale-box">3</em>
+    </a>
 
         <div id="menu-card-more" data-menu-load= "#"
             class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
