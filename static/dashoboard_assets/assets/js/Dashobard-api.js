@@ -2442,20 +2442,7 @@ $(document).ready(function () {
         "dark",
       ];
 
-      let cardTopic = `
-      <div class="col-md-6  col-xl-3 d-none d-md-block topic-card"  data-id="Civil_Service" data-category-name="Civil_Service" id="Civil_Service" bis_skin_checked="1">
-              <div class="card  selected-card social-widget-card bg-secondary" bis_skin_checked="1">
-                  <div class="card-body d-flex justify-content-between align-items-center p-2" bis_skin_checked="1">
-                      <div class="d-flex flex-column" bis_skin_checked="1">
-                          <h3 class="text-white m-0">3 +</h3>
-                          <span class="m-t-10">Civil Service</span>
-                      </div>
-                      <i class="fas fa-user-hard-hat"></i>
-
-                  </div>
-              </div>
-          </div>
-      `;
+      let cardTopic = ``
       let sideNav = ``;
       let selectedCard = 'border border-secondary shadow-lg border-4'
       data.topics.forEach((item) => {
@@ -2498,7 +2485,20 @@ $(document).ready(function () {
         
       });
 
-      
+       cardTopic += `
+      <div class="col-md-6  col-xl-3 d-none d-md-block topic-card"  data-id="Civil_Service" data-category-name="Civil_Service" id="Civil_Service" bis_skin_checked="1">
+      <div class="card  social-widget-card bg-${bootstrapColors[Math.floor(Math.random() * bootstrapColors.length)]}">
+                  <div class="card-body d-flex justify-content-between align-items-center p-2" bis_skin_checked="1">
+                      <div class="d-flex flex-column" bis_skin_checked="1">
+                          <h3 class="text-white m-0">3 +</h3>
+                          <span class="m-t-10">Civil Service</span>
+                      </div>
+                      <i class="fa fa-briefcase" aria-hidden="true"></i>
+
+                  </div>
+              </div>
+          </div>
+      `;
       cardTopic += `
       <!-- custom cards -->
       <div class="col-md-6  col-xl-3 d-none d-md-block topic-card" data-id = "project" data-category-name = "project">
@@ -2511,8 +2511,27 @@ $(document).ready(function () {
                  <i class="fa fa-cogs" aria-hidden="true"></i>
              </div>
          </div>
-     </div>`;
+     </div>
+     `;
 
+     sideNav += `  <li class="pc-item topic-card" data-id = "Civil_Service" data-category-name = "Civil_Service">
+       <a href="#" class="pc-link">
+           <span class="pc-micon">
+           <i class="fa fa-briefcase" aria-hidden="true"></i>
+           </span>
+           <span class="pc-mtext">Civil Service</span>   
+           </a>     
+   </li>
+   `
+     sideNav += `  <li class="pc-item topic-card" data-id = "project" data-category-name = "project">
+       <a href="#" class="pc-link">
+           <span class="pc-micon">
+           <i class="fa fa-cogs" aria-hidden="true"></i>
+           </span>
+           <span class="pc-mtext">Project</span>   
+           </a>     
+   </li>
+   `
       $("#mobile-collapse").click(function(){
         $("#sidebarHtml").removeClass("d-none")
       })
