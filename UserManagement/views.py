@@ -94,6 +94,8 @@ def forget_password(request):
 
     return render(request, 'forget_pass.html')
 
+
+
 # views.py
 def reset_password(request, token, uidb64):
     try:

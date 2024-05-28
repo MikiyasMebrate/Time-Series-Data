@@ -8,20 +8,48 @@ from rest_framework.decorators import api_view
 import time
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import model_to_dict
+from UserManagement.forms import LoginFormDashboard
+from  UserManagement.decorators import dashboard_user_required
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import login,authenticate,logout
 
 
 
+def dashboard_login(request):
+    form = LoginFormDashboard(request.POST or None)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        user = authenticate(request,email=email,password=password)
+        if user is not None and user.is_dashboard:
+            login(request, user)
+            return redirect('dashboard-index')
+        else:
+            messages.error(request, 'Invalid Password or Email')
+        form = LoginFormDashboard()
+    context = {
+        'form' : form
+    }
+    return render(request, 'dashboard-pages/authentication/login.html', context=context)
+
+
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 def index(request):
     return render(request, 'dashboard-pages/dashboard-index.html')
 
 
 
-def pie_chart(request):
 
-    return render(request, 'dashboard-pages/bigPie.html')    
+@login_required(login_url='dashboard-login')
+def dashboard_logout(request):
+    logout(request)
+    return redirect('dashboard-login')
 
-
-
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def pie_chart_data(request):
 
@@ -57,40 +85,31 @@ def pie_chart_data(request):
         
         return JsonResponse(context)
 
+
+
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def topic_lists(request):
 
     if request.method == 'GET':
         topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
-        topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
+        # topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
         serializer = DashboardTopicSerializer(topics, many=True)
         
         return JsonResponse({'topics':serializer.data})
     
 
 
-
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def category_list(request , id , topic_type=None): 
                
         indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
 
-         # Retrieve projects based on the provided id
-        # Retrieve projects or variables based on the provided id
-        project = None
-        variables = None
+
         
-        projects = list(Category.objects.filter(dashboard_topic__id=id)
-                            .prefetch_related('project__set')
-                            .annotate(chiled_count=Count('project'))
-                            .values('name_ENG', 'project__id', 'project__for_catgory__name_ENG',
-                                    'project__title_ENG', 'project__title_AMH', 'project__content' , 'chiled_count'))
-                 
-        variables = list(Category.objects.filter(dashboard_topic__id=id)
-                                 .prefetch_related('variables__set')
-                                 .values('name_ENG', 'variables__id', 'variables__for_catgory__name_ENG',
-                                         'variables__title_ENG', 'variables__title_AMH', 'variables__content'))
-         
         
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
@@ -118,7 +137,7 @@ def category_list(request , id , topic_type=None):
         
         if 'q' in request.GET:
             q = request.GET['q']
-            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) ).values(
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) | Q(indicator__for_category__name_ENG__contains=q) ).values(
                 'dashboard_topic__title_ENG',
                 'id',
                 'name_ENG',
@@ -129,9 +148,20 @@ def category_list(request , id , topic_type=None):
                 'indicator__is_dashboard_visible',
                 'indicator__type_of'
             )
+            indicator_list_id = queryset.values_list('indicator__id', flat=True)
+
+            value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
+            'for_indicator__type_of',
+            'value',
+            'for_indicator_id',
+            'for_datapoint_id__year_EC',
+            'for_quarter_id',
+            'for_month_id__month_AMH',
+            
+        ))
 
         
-        paginator = Paginator(queryset, 6) 
+        paginator = Paginator(queryset, 20) 
         page_number = request.GET.get('page')
         try:
             page_obj = paginator.page(page_number)
@@ -145,7 +175,7 @@ def category_list(request , id , topic_type=None):
     
         return JsonResponse(
             {
-            'categories':list(page_obj), 
+            'categories':list(queryset), 
             'has_previous' : page_obj.has_previous(),
             'has_next' : page_obj.has_next(),
             'previous_page_number' : page_obj.has_previous() and page_obj.previous_page_number() or None,
@@ -154,12 +184,11 @@ def category_list(request , id , topic_type=None):
             'page_range':list(page_obj.paginator.page_range),
             'num_pages' : page_obj.paginator.num_pages,
             'values':value_filter , 
-            'project' : projects ,
-            'variables' : variables
              })
 
 
-
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
 @api_view(['GET'])
 def category_detail_lists(request , id):
 
@@ -188,7 +217,8 @@ def category_detail_lists(request , id):
         return JsonResponse({'indicators': serialized_indicator,'months' : month,'values': value_filter, 'year' : list(year)})
 
 
-    
+@login_required(login_url='dashboard-login')
+@dashboard_user_required    
 @api_view(['GET'])
 def indicator_detail(request, id):
      if request.method == 'GET':
@@ -223,3 +253,21 @@ def indicator_detail(request, id):
      
      else:
           return JsonResponse({'indicators': 'failed to access.'})
+
+
+@login_required(login_url='dashboard-login')
+@dashboard_user_required
+def search_category_indicator(request):
+    queryset = []
+    if 'search' in request.GET:
+            q = request.GET['search']
+            print(q)
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) | Q(indicator__for_category__name_ENG__contains=q) ).values(
+                'name_ENG',
+                'indicator__title_ENG',
+            )
+    return JsonResponse({'indicators': list(queryset)})
+    
+        
+
+

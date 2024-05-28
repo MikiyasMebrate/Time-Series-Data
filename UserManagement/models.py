@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS=['first_name','username','last_name']
     is_first_time = models.BooleanField(default = True)
     last_reset_password = models.DateTimeField(null=True, blank=True)
+    is_dashboard =  models.BooleanField(default = False)
 
 
 

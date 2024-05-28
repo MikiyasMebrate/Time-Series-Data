@@ -69,6 +69,18 @@ class Login_Form(forms.Form):
         fields = ['email', 'password']
 
 
+class LoginFormDashboard(forms.Form):
+
+    email = forms.EmailField(label='',widget=forms.EmailInput(attrs={
+        'class' : 'form-control',
+        'placeholder' : 'Email address'
+    }))
+    password = forms.CharField(label='',widget=forms.PasswordInput(attrs={
+        'class' : 'form-control',
+        'placeholder' : 'Password'
+    }))
+
+
 class CustomUserCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
         'class' : 'form-control',
