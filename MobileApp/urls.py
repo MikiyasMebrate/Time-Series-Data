@@ -23,6 +23,7 @@ urlpatterns = [
     path('index-waves/',index_waves,name="index_waves"),
     path('menu-add-card/',menu_add_card,name="menu_add_card"),
     path('menu_exchange/',menu_exchange,name="menu_exchange"),
+    path('menu-card-settings/',menu_card_settings,name="menu_card_settings"),
     path('menu-friends-transfer/',menu_friends_transfer,name="menu_friends_transfer"),
     path('menu-highlights/',menu_highlights,name="menu_highlights"),
     path('menu-notifications/',menu_notifications,name="menu_notifications"),
