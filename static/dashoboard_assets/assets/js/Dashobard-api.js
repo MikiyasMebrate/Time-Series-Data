@@ -1350,7 +1350,7 @@ let handleTopicClicked = () =>{
                         
                         categoryCard+= `
                        
-                        <div class="col-4">
+                        <div class="col-12 col-md-4">
                         <div class="card">
                             <div class="card-body">
                               <div
@@ -1361,7 +1361,7 @@ let handleTopicClicked = () =>{
                               <div
                                 class="card rounded-4 overflow-hidden"
                                 style="
-                                  background-image: url(https://ableproadmin.com/assets/images/widget/img-card-bg.svg);
+                                  background-image: url('https://files.ekmcdn.com/reedycdboy/images/true-green-a4-card-290gsm-select-pack-size-40-sheets-5701-p.jpg');
                                   background-size: cover;
                                 "
                               >
