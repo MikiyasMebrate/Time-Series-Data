@@ -1,7 +1,15 @@
 from django.shortcuts import render
+from DashboardAPI.views import topic_lists
+from TimeSeriesBase.models import DashboardTopic
+from django.db.models import Count
 
 def index(request):
-    return render(request, 'mobile-Dashbord/index.html')
+    context = {
+         "topics" : DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
+
+    }
+    
+    return render(request, 'mobile-Dashbord/index.html' , context)
 
 def component_accordion(request):
     return render(request, 'mobile-Dashbord/component-accordion.html')
