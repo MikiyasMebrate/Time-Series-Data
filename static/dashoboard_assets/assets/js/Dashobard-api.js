@@ -2308,10 +2308,10 @@ let homePieChart = () => {
     type: "GET",
 
     success: function (dataMain) {
-      let data = [
+      let chartData = [
         {
-          id: "0.0",
-          parent: "",
+          id: '0.0',
+          parent: '',
           name: "National Topic",
         },
       ];
@@ -2322,32 +2322,34 @@ for (const topic of dataMain.topics) {
       id: `1.${topic.id}`,
       parent: '0.0',
       name: topic.title_ENG,
-      value: topic.category_count
+      value: topic.category_count,
     };
-    data.push(newObj);
+    chartData.push(newObj);
   }
   
   // Assign categories with their corresponding parent
-  for (const category of dataMain.category) {
+  for (const cat of dataMain.category) {
     const newObj = {
-      id: `2.${category.id}`,
-      parent: `1.${category.dashboard_topic__id}`,
-      name: category.name_ENG,
-      value: category.indicator_count
+      id: `2.${cat.id}`,
+      parent: `1.${cat.dashboard_topic__id}`,
+      name: cat.name_ENG,
+      value: cat.category_count,
     };
-    data.push(newObj);
+    chartData.push(newObj);
   }
   
   // Assign indicators with their corresponding parent
-  // for (const indicator of dataMain.indicators) {
-  //   const newObj = {
-  //     id: `3.${indicator.id}`,
-  //     parent: `2.${indicator.for_category__id}`,
-  //     name: indicator.title_ENG,
-  //     value: 1
-  //   };
-  //   data.push(newObj);
-  // }
+  for (const indicator of dataMain.indicators) {
+    const obj = {
+      id: `3.${indicator.id}`,
+      parent: `2.${indicator.for_category__id}`,
+      name: indicator.title_ENG,
+      value: 3,
+    };
+    chartData.push(obj);
+  }
+
+  console.log(chartData)
 
 
   Highcharts.chart('bigPieChart', {
@@ -2365,7 +2367,7 @@ for (const topic of dataMain.topics) {
 
     series: [{
         type: 'sunburst',
-        data: data,
+        data: chartData,
         name: 'National Level',
         allowDrillToNode: true,
         borderRadius: 3,
@@ -2409,10 +2411,8 @@ for (const topic of dataMain.topics) {
     }],
 
     tooltip: {
-      headerFormat: '',
-      pointFormat:
-           '<b>{point.name}</b> has <b>' + '{point.value}</b> childrens'
-  
+        headerFormat: '',
+        pointFormat: '<b>{point.name}</b>' 
     }
 });
     },

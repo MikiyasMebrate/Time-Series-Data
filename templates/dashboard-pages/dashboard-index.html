@@ -67,7 +67,7 @@
     <div class="navbar-wrapper">
       <div class="m-header">
         <a href="index.html" class="b-brand text-primary"><!-- ========   Change your logo from here   ============ -->
-          <img src="https://ableproadmin.com/assets/images/logo-dark.svg" class="img-fluid logo-lg" alt="logo" />
+         
           <span class="badge bg-light-success rounded-pill ms-2 theme-version">MoPD</span></a>
       </div>
       <div class="navbar-content">
@@ -90,9 +90,10 @@
             </div>
             <div class="collapse pc-user-links" id="pc_sidebar_userlink">
               <div class="pt-3">
-                <a href="#!"><i class="ti ti-user"></i> <span>My Account</span> </a><a href="#!"><i
-                    class="ti ti-settings"></i> <span>Settings</span> </a><a href="#!"><i class="ti ti-lock"></i>
-                  <span>Lock Screen</span> </a><a href="#!"><i class="ti ti-power"></i> <span>Logout</span></a>
+                {% comment %} <a href="#!"><i class="ti ti-user"></i> <span>My Account</span> </a>
+                <a href="#!"><i class="ti ti-settings"></i> <span>Settings</span> </a>
+                <a href="#!"><i class="ti ti-lock"></i><span>Lock Screen</span> </a> {% endcomment %}
+                <a href="{% url 'dashboard-logout'%}"><i class="ti ti-power"></i> <span>Logout</span></a>
               </div>
             </div>
           </div>
@@ -633,13 +634,13 @@
       <!-- Pagination -->
       <div class="m-5" id="Pagination"></div>
 
-      <div id="bigPieChartParent" class="row justify-content-center">
+      {% comment %} <div id="bigPieChartParent" class="row justify-content-center">
         <div class="col-lg-6 card shadow">
           <figure class="highcharts-figure">
             <div id="bigPieChart"></div>
           </figure>
         </div>
-      </div>
+      </div> {% endcomment %}
     </div>
     <!-- [ Main Content ] end -->
 
