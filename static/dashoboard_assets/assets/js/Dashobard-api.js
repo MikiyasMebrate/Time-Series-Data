@@ -2322,6 +2322,7 @@ for (const topic of dataMain.topics) {
       id: `1.${topic.id}`,
       parent: '0.0',
       name: topic.title_ENG,
+      value: topic.category_count
     };
     data.push(newObj);
   }
@@ -2332,20 +2333,21 @@ for (const topic of dataMain.topics) {
       id: `2.${category.id}`,
       parent: `1.${category.dashboard_topic__id}`,
       name: category.name_ENG,
+      value: category.indicator_count
     };
     data.push(newObj);
   }
   
   // Assign indicators with their corresponding parent
-  for (const indicator of dataMain.indicators) {
-    const newObj = {
-      id: `3.${indicator.id}`,
-      parent: `2.${indicator.for_category__id}`,
-      name: indicator.title_ENG,
-      value: indicator.indicator_value__value
-    };
-    data.push(newObj);
-  }
+  // for (const indicator of dataMain.indicators) {
+  //   const newObj = {
+  //     id: `3.${indicator.id}`,
+  //     parent: `2.${indicator.for_category__id}`,
+  //     name: indicator.title_ENG,
+  //     value: 1
+  //   };
+  //   data.push(newObj);
+  // }
 
 
   Highcharts.chart('bigPieChart', {
@@ -2407,9 +2409,10 @@ for (const topic of dataMain.topics) {
     }],
 
     tooltip: {
-        headerFormat: '',
-        pointFormat: '<b>{point.name}</b> is <b>' +
-            '{point.value}</b>'
+      headerFormat: '',
+      pointFormat:
+           '<b>{point.name}</b> has <b>' + '{point.value}</b> childrens'
+  
     }
 });
     },
