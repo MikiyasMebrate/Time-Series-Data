@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.shortcuts import render
 from django.http import JsonResponse
 from .serializers import DashboardTopicSerializer 
-from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator , DataPoint, Month
+from TimeSeriesBase.models import DashboardTopic , Category, DataValue , Indicator , DataPoint, Month, Quarter
 from django.db.models import Q
 from rest_framework.decorators import api_view
 import time
@@ -134,6 +134,7 @@ def category_list(request , id , topic_type=None):
             'value',
             'for_indicator_id',
             'for_datapoint_id__year_EC',
+            'for_datapoint_id__year_GC',
             'for_quarter_id',
             'for_month_id__month_AMH',
             
@@ -149,13 +150,13 @@ def category_list(request , id , topic_type=None):
                 'indicator__title_ENG',
                 'indicator__title_AMH',
                 'indicator__is_dashboard_visible',
-                'indicator__type_of'
-                
+                'indicator__type_of'   
             )
         
         if 'q' in request.GET:
             q = request.GET['q']
-            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) | Q(indicator__for_category__name_ENG__contains=q) ).values(
+            dashboard_topic = DashboardTopic.objects.all()
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q,dashboard_topic__in = dashboard_topic ) | Q(indicator__for_category__name_ENG__contains=q ,dashboard_topic__in = dashboard_topic) ).values(
                 'dashboard_topic__title_ENG',
                 'id',
                 'name_ENG',
@@ -173,8 +174,10 @@ def category_list(request , id , topic_type=None):
             'value',
             'for_indicator_id',
             'for_datapoint_id__year_EC',
+            'for_datapoint_id__year_GC',
             'for_quarter_id',
             'for_month_id__month_AMH',
+            'for_quarter_id__title_ENG',
             
         ))
 
@@ -216,6 +219,7 @@ def category_detail_lists(request , id):
         
         indicator_list_id = list(indicators.select_related().values_list('id', flat=True))
         month = list(Month.objects.all().values())
+        quarter = list(Quarter.objects.all().values())
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
             'value',
@@ -224,6 +228,8 @@ def category_detail_lists(request , id):
             'for_quarter_id',
             'for_month_id__month_AMH',
             'for_month_id__number',
+            'for_quarter__title_ENG',
+            'for_quarter__number',
         ))
 
         year = set(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values_list(
@@ -232,7 +238,7 @@ def category_detail_lists(request , id):
 
 
         serialized_indicator = list(indicators.values('id', 'title_ENG', 'type_of'))
-        return JsonResponse({'indicators': serialized_indicator,'months' : month,'values': value_filter, 'year' : list(year)})
+        return JsonResponse({'indicators': serialized_indicator,'months' : quarter,'quarters' : month,'values': value_filter, 'year' : list(year)})
 
 
 @login_required(login_url='dashboard-login')

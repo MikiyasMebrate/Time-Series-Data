@@ -13,7 +13,7 @@
   <title>Home | National dashboard</title>
   <!-- [Meta] -->
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,minimal-ui" />
+  <meta name="viewport" content="width=800">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="description"
     content="The Dashboard is trending dashboard template made using Bootstrap 5 design framework.Dashboard is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies." />
@@ -42,10 +42,7 @@
     integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  {% fontawesome_5_static %} {% comment %}
-  <script src="https://code.highcharts.com/maps/highmaps.js"></script>
-  <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
-  {% endcomment %}
+  {% fontawesome_5_static %}
   <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
   <script src="https://code.highcharts.com/modules/accessibility.js"></script>
   <script src="https://code.highcharts.com/stock/highstock.js"></script>
@@ -66,8 +63,8 @@
   <nav id="sidebarHtml" class="pc-sidebar">
     <div class="navbar-wrapper">
       <div class="m-header">
-        <a href="index.html" class="b-brand text-primary"><!-- ========   Change your logo from here   ============ -->
-         
+        <a href="#" class="b-brand text-primary"><!-- ========   Change your logo from here   ============ -->
+
           <span class="badge bg-light-success rounded-pill ms-2 theme-version">MoPD</span></a>
       </div>
       <div class="navbar-content">
@@ -170,7 +167,8 @@
               <a href="#!" class="dropdown-item"><i class="ti ti-settings"></i> <span>Settings</span> </a>
               <a href="#!" class="dropdown-item"><i class="ti ti-headset"></i> <span>Support</span></a>
               <a href="#!" class="dropdown-item"><i class="ti ti-lock"></i> <span>Lock Screen</span></a> -->
-              <a href="{% url 'dashboard-logout'%}" class="dropdown-item"><i class="ti ti-power"></i> <span>Logout</span></a>
+              <a href="{% url 'dashboard-logout'%}" class="dropdown-item"><i class="ti ti-power"></i>
+                <span>Logout</span></a>
             </div>
           </li>
         </ul>
@@ -479,23 +477,24 @@
           <div class="card welcome-banner bg-blue-800">
             <div class="card-body">
               <div class="row">
-                <div class="col-sm-6">
+                <div class="col-lg-6 col-12">
                   <div class="p-4">
                     <h2 class="text-white">
                       National Aggregated Data Dashboard
                     </h2>
                     <p class="text-white">
-                      A dashboard is a way of displaying various types of
-                      visual data in one place. Usually, a dashboard is
-                      intended to convey different, but related information in
-                      an easy-to-digest form.
+                      The Ethiopian National Dashboard is a comprehensive and dynamic platform designed to provide the
+                      nation's key development outcomes. It is developed with the aim of enhancing data access for
+                      better decision-making, and supporting development tracking. This dashboard aggregates data from
+                      various sectors including macro, economic, infrastructure and projects, social sectors, and
+                      governance and civil service, environment, and climate.
                     </p>
                     <a href="" class="btn btn-outline-light">All done is Here,Welcome!
                     </a>
-                    
+
                   </div>
                 </div>
-                <div class="col-sm-5 text-center">
+                <div class="col-lg-5 col-12 text-center d-none d-lg-block d-xl-block">
                   <div class="img-welcome-banner">
                     <img src="{% static 'dashoboard_assets/assets/images/widget/welcome-banner.png' %}" alt="img"
                       class="img-fluid" />
@@ -687,6 +686,9 @@
 
   <!-- [ Main Content ] end -->
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"
+  integrity="sha512-k37wQcV4v2h6jgYf5IUz1MoSKPpDs630XGSmCaCCOXxy2awgAWKHGZWr9nMyGgk3IOxA1NxdkN8r1JHgkUtMoQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
