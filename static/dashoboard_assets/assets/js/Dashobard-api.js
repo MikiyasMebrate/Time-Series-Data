@@ -1014,7 +1014,7 @@ let handleTopicClicked = () =>{
       <link
       rel="stylesheet"
       href="{% static 'dashoboard_assets/assets/css/male_female.css' %}"
-      />  
+      />  s
     <link
       rel="stylesheet"
       href="{% static 'dashoboard_assets/assets/css/map_style.css' %}"
