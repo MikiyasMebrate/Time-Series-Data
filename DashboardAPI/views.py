@@ -111,7 +111,7 @@ def pie_chart_data(request):
 def topic_lists(request):
 
     if request.method == 'GET':
-        topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related()
+        topics = DashboardTopic.objects.annotate(category_count=Count('category')).select_related().order_by('order')
         # topics = topics.filter(~Q(category_count = 0)) #Only Display with category > 0
         serializer = DashboardTopicSerializer(topics, many=True)
         
@@ -122,13 +122,10 @@ def topic_lists(request):
 @login_required(login_url='dashboard-login')
 @dashboard_user_required
 @api_view(['GET'])
-def category_list(request , id , topic_type=None): 
+def category_list(request , id): 
                
         indicator_list_id = list(Category.objects.filter(dashboard_topic__id = id).prefetch_related('indicator__set').all().values_list('indicator__id', flat=True))
 
-
-        
-        
         value_filter = list(DataValue.objects.filter( Q(for_indicator__id__in=indicator_list_id) & ~Q(for_datapoint_id__year_EC = None)).select_related("for_datapoint", "for_indicator").values(
             'for_indicator__type_of',
             'value',
@@ -152,6 +149,21 @@ def category_list(request , id , topic_type=None):
                 'indicator__is_dashboard_visible',
                 'indicator__type_of'   
             )
+        
+        categories_lists = Category.objects.filter(dashboard_topic__id = id).annotate(count_indicators=Count('indicator')).filter(indicator__is_dashboard_visible = True).values(
+                'id',
+                'name_ENG',
+                'name_AMH', 
+                'count_indicators'
+            )
+        categories_lists = categories_lists.filter(~Q(count_indicators = 0)).values(
+            'id',
+            'name_ENG',
+            'name_AMH', 
+            'count_indicators'
+        )
+
+        
         
         if 'q' in request.GET:
             q = request.GET['q']
@@ -180,6 +192,14 @@ def category_list(request , id , topic_type=None):
             'for_quarter_id__title_ENG',
             
         ))
+            
+            categories_lists_id = queryset.values_list('id', flat=True)
+
+            categories_lists = Category.objects.filter(id__in = categories_lists_id ).values(
+                'id',
+                'name_ENG',
+                'name_AMH', 
+            )
 
         
         paginator = Paginator(queryset, 20) 
@@ -205,7 +225,10 @@ def category_list(request , id , topic_type=None):
             'page_range':list(page_obj.paginator.page_range),
             'num_pages' : page_obj.paginator.num_pages,
             'values':value_filter , 
+            'categories_lists': list(categories_lists),
              })
+
+
 
 
 @login_required(login_url='dashboard-login')
@@ -285,8 +308,8 @@ def search_category_indicator(request):
     queryset = []
     if 'search' in request.GET:
             q = request.GET['search']
-            print(q)
-            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q) | Q(indicator__for_category__name_ENG__contains=q) ).values(
+            dashboard_topic = DashboardTopic.objects.all()
+            queryset = Category.objects.filter().prefetch_related('indicator__set').filter(Q(indicator__title_ENG__contains=q, indicator__for_category__dashboard_topic__in = dashboard_topic ) | Q(indicator__for_category__name_ENG__contains=q, indicator__for_category__dashboard_topic__in = dashboard_topic) ).values(
                 'name_ENG',
                 'indicator__title_ENG',
             )

@@ -9,7 +9,7 @@ from .forms import UserPasswordResetForm, UserPasswordConfirmForm
 urlpatterns = [
     path('',index, name="dashboard-index"),
     path('login/',dashboard_login, name="dashboard-login"),
-     path('login/',dashboard_logout, name="dashboard-logout"),
+     path('logout/',dashboard_logout, name="dashboard-logout"),
     path('topic_lists/',topic_lists, name="topic_lists"),
     path('pie_chart_data/',pie_chart_data, name="pie_chart_data"),
     path('category_list/<int:id>/',category_list, name="category_list"),

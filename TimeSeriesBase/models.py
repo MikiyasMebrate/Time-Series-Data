@@ -63,10 +63,10 @@ class DashboardTopic(models.Model):
     order = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.title_ENG   
+        return self.title_ENG + " : Order : " + str(self.order)
     
     class Meta:
-        ordering = ['number'] #Oldest First
+        ordering = ['order'] #Oldest First
     
 class Category(models.Model):
     name_ENG = models.CharField(max_length=300, unique = True)
@@ -90,6 +90,8 @@ operation_type = [
     ('sum', 'Sum'),
     ('average','Average')
 ]
+
+
 
 class Indicator(models.Model):
     title_ENG = models.CharField(max_length=300) 
@@ -198,8 +200,25 @@ class Measurement(models.Model):
     def __str__(self):
         return self.get_full_path()
     
+
+value_entrance_type = [
+    ('1month', '1 Month'),
+    ('2month','2 Month'),
+    ('3month','3 Month'),
+    ('4month','4 Month'),
+    ('5month','5 Month'),
+    ('6month','6 Month'),
+    ('7month','7 Month'),
+    ('8month','8 Month'),
+    ('9month','9 Month'),
+    ('10month','10 Month'),
+    ('11month','11 Month'),
+]
+
+
 class DataValue(models.Model):
     value = models.FloatField(blank=True ,null=True, max_length=40)
+    value_entrance_type = models.CharField(max_length=15, choices=value_entrance_type, null=True, blank=True)
     for_quarter = models.ForeignKey("Quarter", on_delete=models.SET_NULL, blank=True ,null=True)
     for_month = models.ForeignKey("Month", on_delete=models.SET_NULL, blank=True ,null=True)
     for_datapoint = models.ForeignKey("DataPoint", related_name="datavalue_set", on_delete=models.SET_NULL, blank=True, null=True)

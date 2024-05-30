@@ -15,11 +15,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=800">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description"
-    content="The Dashboard is trending dashboard template made using Bootstrap 5 design framework.Dashboard is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies." />
-  <meta name="keywords"
-    content="Bootstrap admin template, Dashboard UI Kit, Dashboard Template, Backend Panel, react dashboard, angular dashboard" />
-  <meta name="author" content="Phoenixcoded" />
+  <meta name="description" content="Ethiopian National Aggregated Data Dashboard: Real-Time Data Visualization and Sectoral Insights">
+  <meta name="author" content="MoPD">
   <!-- [Favicon] icon -->
   <link rel="icon" href="https://ableproadmin.com/assets/images/favicon.svg" type="image/x-icon" />
   <!-- [Font] Family -->
@@ -477,6 +474,7 @@
           <div class="card welcome-banner bg-blue-800">
             <div class="card-body">
               <div class="row">
+
                 <div class="col-lg-6 col-12">
                   <div class="p-4">
                     <h2 class="text-white">
@@ -494,16 +492,27 @@
 
                   </div>
                 </div>
+
                 <div class="col-lg-5 col-12 text-center d-none d-lg-block d-xl-block">
                   <div class="img-welcome-banner">
                     <img src="{% static 'dashoboard_assets/assets/images/widget/welcome-banner.png' %}" alt="img"
                       class="img-fluid" />
                   </div>
                 </div>
+
+
+                
+                
+
               </div>
             </div>
+
+            
           </div>
+          
         </div>
+
+        
 
         <!--
             ===   Topic Lists ===
@@ -514,32 +523,37 @@
         <div class="row" id="loading-skeleton-topic"></div>
         <!-- end -->
 
-        <form id="searchItemForm">
-          <div class="row container-fluid">
-            <div class="col-9 col-md-3 mb-2">
-              <input id="searchItemValue" list="autocomplete" type="text" name="q" class="form-control"
-                placeholder="Enter Key Word" />
-              <datalist id="autocomplete"> </datalist>
-            </div>
-            <div class="col-3 col-md-1 mb-2">
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-search"></i>
-              </button>
-            </div>
-          </div>
-        </form>
+        
 
         <div class="row container-fluid justify-content-center">
+          <div class="container-fluid m-3 p-2 ">
+            <form id="searchItemForm">
+              <div class="row justify-content-center ">
+                <div class="col-9 col-md-6 mb-2">
+                  <input id="searchItemValue" list="autocomplete" type="text" name="q" class="form-control  rounded-pill"
+                    placeholder="Enter Key Word" />
+                  <datalist id="autocomplete"> </datalist>
+                </div>
+                <div class="col-3 col-md-2 mb-2">
+                  <button type="submit" class="btn btn-primary rounded-circle">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
           <div>
             <p class="text-success">
               <strong id="category-title">Macro Sector</strong>
             </p>
           </div>
 
+      
+
           <!--
             ===   Category Lists ===
             -->
-          <div class="row container-fluid justify-content-center" id="category-card-list"></div>
+          <div class="row container-fluid justify-content-start" id="category-card-list"></div>
 
           <!--Loading Skeleton-->
           <div class="row justify-content-center" id="loading-skeleton-category"></div>
